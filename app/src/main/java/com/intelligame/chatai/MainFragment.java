@@ -332,7 +332,7 @@ public class MainFragment extends Fragment {
         });
 
         mImageAttachButton = (ImageButton) view.findViewById(R.id.image_attach_button);
-        Button suggestionButton = view.findViewById(R.id.suggestion_button);
+        ImageButton suggestionButton = view.findViewById(R.id.suggestion_button);
         mImagePreview = (ImageView) view.findViewById(R.id.image_preview);
         View imgContainer = view.findViewById(R.id.image_preview_container);
         if (imgContainer != null) imgContainer.setVisibility(View.GONE);
