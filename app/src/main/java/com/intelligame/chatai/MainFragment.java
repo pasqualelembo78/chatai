@@ -34,7 +34,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -402,7 +401,7 @@ public class MainFragment extends Fragment {
             }).start();
         });
 
-        Button removeImageBtn = (Button) view.findViewById(R.id.image_preview_remove);
+        View removeImageBtn = view.findViewById(R.id.image_preview_remove);
         if (removeImageBtn != null) {
             removeImageBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -412,7 +411,7 @@ public class MainFragment extends Fragment {
             });
         }
 
-        Button stopBtn = (Button) view.findViewById(R.id.stream_stop_button);
+        View stopBtn = view.findViewById(R.id.stream_stop_button);
         if (stopBtn != null) {
             stopBtn.setVisibility(View.GONE);
             stopBtn.setOnClickListener(new View.OnClickListener() {
@@ -713,7 +712,7 @@ public class MainFragment extends Fragment {
 
         populateConnectionDialog(dialogView);
 
-        Button reconnectBtn = (Button) dialogView.findViewById(R.id.btn_reconnect);
+        View reconnectBtn = dialogView.findViewById(R.id.btn_reconnect);
         reconnectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1275,8 +1274,8 @@ public class MainFragment extends Fragment {
 
         final Spinner providerSpinner = (Spinner) dialogView.findViewById(R.id.dialog_provider_spinner);
         final Spinner modelSpinner = (Spinner) dialogView.findViewById(R.id.dialog_model_spinner);
-        Button refreshBtn = (Button) dialogView.findViewById(R.id.dialog_refresh_models);
-        Button testBtn = (Button) dialogView.findViewById(R.id.dialog_test_model);
+        View refreshBtn = dialogView.findViewById(R.id.dialog_refresh_models);
+        View testBtn = dialogView.findViewById(R.id.dialog_test_model);
 
         // Load current saved provider/model
         final String savedProvider = mPrefs.getProvider();
@@ -1788,8 +1787,6 @@ public class MainFragment extends Fragment {
                         setConnStage("loading_memory");
 
                         updateCharacterNameHeader();
-
-                        loadLocalMessages();
 
                         mMemoryLoaded = true;
                         setConnStage("preparing_chat");
