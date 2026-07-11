@@ -191,7 +191,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (null == mMessageView) return;
             mMessageView.setText(message);
             mMessageView.setTypeface(Typeface.DEFAULT);
-            mMessageView.setTextColor(0xFFE8E8F0);
+            mMessageView.setTextColor(0xFF000000);
         }
 
         public void setRoleplayMessage(String message) {
@@ -210,7 +210,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             sb.append(message.substring(lastEnd));
             mMessageView.setText(sb);
             mMessageView.setTypeface(Typeface.DEFAULT);
-            mMessageView.setTextColor(0xFFE8E8F0);
+            mMessageView.setTextColor(0xFF000000);
         }
 
         public void setProviderInfo(String provider, String model) {
