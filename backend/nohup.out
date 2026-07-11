@@ -1,0 +1,9 @@
+usage: avatar_tool.py [-h] [--token TOKEN] [--groq-token GROQ_TOKEN]
+                      [--model {flux-schnell,sd3-medium,pexels,pollinations,tpde,pravatar,dicebear}]
+                      [--prompt PROMPT] [--bio] [--generate ID]
+                      [--generate-all] [--list-missing] [--limit LIMIT]
+                      [--avatar-limit AVATAR_LIMIT] [--bio-limit BIO_LIMIT]
+                      [--animate ID] [--animate-all] [--list-avatars]
+                      [--generate-category-icons]
+                      [--generate-category-icon CATEGORY]
+avatar_tool.py: error: argument --model: expected one argument

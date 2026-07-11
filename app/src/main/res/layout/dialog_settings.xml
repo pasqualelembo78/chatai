@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="20dp">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Server URL"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface"
+            android:paddingBottom="4dp"/>
+
+    <EditText
+            android:id="@+id/dialog_server_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="http://localhost:5000"
+            android:inputType="textUri"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:background="@drawable/edittext_bg"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Provider"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface"
+            android:paddingBottom="4dp"/>
+
+    <Spinner
+            android:id="@+id/dialog_provider_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Modello"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface"
+            android:paddingBottom="4dp"/>
+
+    <Spinner
+            android:id="@+id/dialog_model_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+        <Button
+                android:id="@+id/dialog_refresh_models"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Aggiorna modelli"
+                android:layout_marginRight="8dp"/>
+
+        <Button
+                android:id="@+id/dialog_test_model"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Test connessione"/>
+
+    </LinearLayout>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Per cambiare personaggio,\nriconnettiti dalla schermata di login."
+            android:textSize="12sp"
+            android:textColor="@color/on_surface_variant"/>
+
+</LinearLayout>

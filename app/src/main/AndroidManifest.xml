@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" android:maxSdkVersion="32" />
+
+    <application
+        android:allowBackup="true"
+        android:name="com.intelligame.chatai.ChatApplication"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:networkSecurityConfig="@xml/network_security_config" >
+
+        <!-- Google Play richiede URL privacy policy nel manifest -->
+        <meta-data
+            android:name="android.privacy.POLICY_URL"
+            android:value="https://example.com/privacy"/>
+
+        <activity
+            android:name="com.intelligame.chatai.MainActivity"
+            android:label="@string/app_name"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713"/>
+
+        <activity
+            android:name="com.intelligame.chatai.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
+
+        <activity
+            android:name="com.intelligame.chatai.CharacterDetailActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustNothing">
+        </activity>
+
+        <activity
+            android:name="com.intelligame.chatai.GameCenterActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
+            android:name=".OnboardingActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
+            android:name=".MvcEarnActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
+            android:name=".ImportActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+    </application>
+
+</manifest>

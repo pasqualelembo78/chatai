@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@color/surface_card">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="STATO CONNESSIONE"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/on_surface"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/surface_container"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Server:"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/status_server"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="API AI:"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/status_api"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Latenza:"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/status_latency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Memoria:"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/status_memory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Stato chat:"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/status_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ultimo errore:"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/status_last_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/error"
+                android:textSize="12sp"
+                android:maxWidth="180dp"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/status_last_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@color/on_surface_dim"
+        android:gravity="end"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btn_reconnect"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="RICONNETTI"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@color/primary"
+        android:gravity="center"/>
+
+</LinearLayout>

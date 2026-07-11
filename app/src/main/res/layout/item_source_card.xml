@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:orientation="horizontal"
+    android:padding="14dp"
+    android:background="@drawable/card_bg"
+    android:gravity="center_vertical">
+
+    <View
+        android:id="@+id/source_indicator"
+        android:layout_width="4dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="12dp"
+        android:background="@color/primary"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/source_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/source_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/source_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textColor="@color/primary_light"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <!-- Center content -->
+            <LinearLayout
+                android:id="@+id/center_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_centerInParent="true"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:text="🐱"
+                    android:textSize="48sp"
+                    android:gravity="center"
+                    android:background="@drawable/circle_logo_bg"
+                    android:padding="16dp"
+                    android:layout_marginBottom="24dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ChatAI"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Il tuo compagno AI"
+                    android:textSize="16sp"
+                    android:textColor="#B0B0C0"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <!-- Bottom content -->
+            <LinearLayout
+                android:id="@+id/bottom_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="24dp">
+
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/google_sign_in_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="12dp"
+                    android:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/login_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/card_bg"
+                    android:padding="16dp"
+                    android:layout_marginBottom="16dp">
+
+                    <EditText
+                        android:id="@+id/username_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Inserisci il tuo username"
+                        android:textColorHint="#A0A0B8"
+                        android:textColor="#E8E8F0"
+                        android:inputType="textPersonName"
+                        android:maxLength="20"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:background="@drawable/edittext_bg"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp"/>
+
+                    <Button
+                        android:id="@+id/login_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:text="ACCEDI"
+                        android:textSize="14sp"
+                        android:backgroundTint="#7C4DFF"
+                        android:textColor="#FFFFFF"
+                        android:textAllCaps="true"/>
+
+                    <TextView
+                        android:id="@+id/server_url_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Configura server..."
+                        android:textSize="13sp"
+                        android:textColor="#B388FF"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="4dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <EditText
+                        android:id="@+id/server_url_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="URL del server (es. http://192.168.1.100:5000)"
+                        android:textColorHint="#A0A0B8"
+                        android:textColor="#E8E8F0"
+                        android:inputType="textUri"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:background="@drawable/edittext_bg"
+                        android:padding="14dp"
+                        android:visibility="gone"/>
+
+                    <EditText
+                        android:id="@+id/referral_code_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Codice referral (opzionale)"
+                        android:textColorHint="#A0A0B8"
+                        android:textColor="#E8E8F0"
+                        android:inputType="textVisiblePassword"
+                        android:maxLength="8"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:background="@drawable/edittext_bg"
+                        android:padding="14dp"
+                        android:layout_marginTop="4dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hai un codice invito? Inseriscilo qui e ricevi 50 MVC!"
+                        android:textSize="11sp"
+                        android:textColor="#808090"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="8dp"/>
+
+                    <ProgressBar
+                        android:id="@+id/auth_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="#808090"
+                    android:gravity="center"
+                    android:autoLink="web"
+                    android:text="@string/privacy_notice"/>
+            </LinearLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+</FrameLayout>

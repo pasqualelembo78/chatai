@@ -1,0 +1,12 @@
+.gradle
+.idea
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+*.iml
+backend/__pycache__/
+backend/roleplay_data.db
+*.keystore
+backend/venv/

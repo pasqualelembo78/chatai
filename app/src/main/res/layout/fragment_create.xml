@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crea Personaggio"
+            android:textColor="@color/on_surface"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Dai vita al tuo personaggio AI"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Nome *"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_name"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="es. Luna"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Età"
+                    android:textColor="@color/on_surface"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/field_age"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/edittext_bg"
+                    android:hint="25"
+                    android:inputType="number"
+                    android:padding="12dp"
+                    android:textColor="@color/on_surface"
+                    android:textColorHint="@color/on_surface_dim"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ruolo"
+                    android:textColor="@color/on_surface"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/field_role"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/edittext_bg"
+                    android:hint="musicista"
+                    android:padding="12dp"
+                    android:textColor="@color/on_surface"
+                    android:textColorHint="@color/on_surface_dim"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Categoria"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/field_category"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:padding="4dp"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Avatar (emoji)"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="🎸"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Descrizione"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="Musicista notturna dall'anima romantica"
+            android:minLines="2"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp"
+            android:gravity="top" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Tag (separati da virgola)"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_tags"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="Romantico, Musica, Poesia"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Essenza (frase chiave del personaggio)"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_essence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="Sei Luna, una musicista di 24 anni, introversa e dolce..."
+            android:minLines="3"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp"
+            android:gravity="top" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Personalità (descrizione dettagliata)"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_personality"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="Sei introversa e dolce, con un'anima profondamente romantica..."
+            android:minLines="4"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp"
+            android:gravity="top" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Stile di conversazione"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_speaking_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="Parli in modo dolce e calmo, con pause poetiche..."
+            android:minLines="3"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp"
+            android:gravity="top" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Backstory (storia del personaggio)"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_backstory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="Luna è cresciuta in una piccola città..."
+            android:minLines="4"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp"
+            android:gravity="top" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Hobby (separati da virgola)"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_hobbies"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="suonare la chitarra, osservare le stelle, scrivere poesie"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="System Prompt (istruzioni per l'AI)"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/field_system_prompt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="Sei Luna. Hai 24 anni. Sei una musicista introversa e dolce..."
+            android:minLines="4"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_dim"
+            android:textSize="14sp"
+            android:gravity="top" />
+
+        <CheckBox
+            android:id="@+id/field_is_adult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Contenuto per adulti"
+            android:textColor="@color/adult_red"
+            android:textSize="14sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_create"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/primary"
+            android:text="Crea Personaggio"
+            android:textColor="@color/on_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+    </LinearLayout>
+
+</ScrollView>

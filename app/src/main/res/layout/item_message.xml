@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/message_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <!-- Username -->
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#80FFFFFF"
+        android:paddingBottom="2dp"
+        android:paddingHorizontal="4dp" />
+
+    <!-- Message Bubble -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="4dp">
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:lineSpacingExtra="4dp"
+            android:textColor="#E8E8F0"
+            android:padding="14dp"
+            android:maxWidth="300dp"
+            android:background="@drawable/message_bubble_bg" />
+
+        <!-- Message Image -->
+        <ImageView
+            android:id="@+id/message_image"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edittext_bg" />
+
+        <!-- Action Icons Row -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical">
+
+            <!-- Timestamp -->
+            <TextView
+                android:id="@+id/timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="#60FFFFFF"
+                android:paddingEnd="8dp" />
+
+            <!-- Provider Info -->
+            <TextView
+                android:id="@+id/provider_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="#40FFFFFF"
+                android:visibility="gone"
+                android:paddingEnd="8dp" />
+
+            <!-- Play Audio -->
+            <ImageButton
+                android:id="@+id/play_audio"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@android:drawable/ic_media_play"
+                android:contentDescription="Ascolta"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:visibility="gone"
+                android:padding="2dp" />
+
+            <!-- Copy Button -->
+            <ImageButton
+                android:id="@+id/btn_copy_message"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_share"
+                android:contentDescription="Copia"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:visibility="visible"
+                android:padding="2dp"
+                app:tint="#60FFFFFF" />
+
+            <!-- Report Button -->
+            <ImageButton
+                android:id="@+id/btn_report_message"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_info"
+                android:contentDescription="Segnala"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="centerInside"
+                android:visibility="visible"
+                android:padding="2dp"
+                android:layout_marginStart="4dp"
+                app:tint="#60FFFFFF" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

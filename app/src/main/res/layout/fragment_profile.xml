@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profilo"
+            android:textColor="@color/on_surface"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Preferiti -->
+        <TextView
+            android:id="@+id/prof_preferiti_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="I tuoi Preferiti"
+            android:textColor="@color/primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/prof_preferiti_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp"
+            android:paddingBottom="4dp"
+            android:visibility="gone" />
+
+        <!-- Per Te -->
+        <TextView
+            android:id="@+id/prof_perte_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Per Te"
+            android:textColor="@color/primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/prof_perte_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp"
+            android:paddingBottom="4dp"
+            android:visibility="gone" />
+
+        <!-- Nickname -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Nickname"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/field_nickname"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_bg"
+                android:hint="Il tuo nickname"
+                android:padding="12dp"
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/on_surface_dim"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@color/primary"
+                android:text="Salva"
+                android:textColor="@color/on_primary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/nickname_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <!-- Server URL -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Server URL"
+            android:textColor="@color/on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/field_server_url"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_bg"
+                android:hint="http://server:5000"
+                android:inputType="textUri"
+                android:padding="12dp"
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/on_surface_dim"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_server"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@color/primary"
+                android:text="Salva"
+                android:textColor="@color/on_primary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/server_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/outline" />
+
+        <!-- MevaCoin Balance Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@color/primary"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MevaCoin (MVC)"
+                android:textColor="@color/on_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/mevacoins_balance_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="0 MVC"
+                android:textColor="@color/on_primary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⭐"
+                android:textSize="24sp"
+                android:layout_marginTop="4dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_ricarica"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="4dp"
+                    android:backgroundTint="@color/on_primary"
+                    android:text="Ricarica"
+                    android:textColor="@color/primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_guadagna"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="4dp"
+                    android:backgroundTint="@color/primary_light"
+                    android:text="Guadagna MVC"
+                    android:textColor="@color/on_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Codice Referral -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/card_bg">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Invita amici e guadagna"
+                android:textColor="@color/on_surface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Il tuo codice personale:"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/referral_code_text"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@drawable/edittext_bg"
+                    android:text="..."
+                    android:textColor="@color/primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_copy_referral"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:backgroundTint="@color/primary"
+                    android:text="Copia"
+                    android:textColor="@color/on_primary"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Tu guadagni 100 MVC, il tuo amico 50 MVC. Se invia il primo messaggio, guadagni altri 100 MVC!"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="12sp"
+                android:lineSpacingExtra="4dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_share_referral"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/primary"
+                android:text="Invita amici"
+                android:textColor="@color/on_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Condividi e guadagna -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/card_bg">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Condividi sui social"
+                android:textColor="@color/on_surface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Condividi l'app e guadagna 30 MVC per ogni condivisione (max 3 al giorno)"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="13sp"
+                android:lineSpacingExtra="4dp" />
+
+            <TextView
+                android:id="@+id/share_status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/status_connected"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_social_share"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/primary_light"
+                android:text="Condividi e guadagna 30 MVC"
+                android:textColor="@color/on_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Preferenze section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Le tue preferenze"
+            android:textColor="@color/on_surface"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Modifica i tuoi interessi per ricevere suggerimenti migliori"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="13sp"
+            android:lineSpacingExtra="4dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_edit_preferences"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/primary"
+            android:text="Modifica preferenze"
+            android:textColor="@color/on_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Contenuti adulti -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:background="@drawable/card_bg">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mostra contenuti adulti"
+                    android:textColor="@color/on_surface"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Mostra categorie Flirt, Relazioni, Confessioni, Seduzione"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_adult_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textOn=""
+                android:textOff="" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/outline" />
+
+        <!-- Reset -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Memoria AI"
+            android:textColor="@color/on_surface"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="I personaggi ricordano le tue conversazioni. Puoi resettare la memoria in qualsiasi momento."
+            android:textColor="@color/on_surface_variant"
+            android:textSize="13sp"
+            android:lineSpacingExtra="4dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_reset_all"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/error_container"
+            android:text="Resetta tutta la cronologia"
+            android:textColor="@color/error"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/reset_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <!-- Admin Section -->
+        <View
+            android:id="@+id/admin_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/outline"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/admin_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Amministrazione"
+                android:textColor="@color/on_surface"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Gestisci l'importazione dei personaggi e il database"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="13sp"
+                android:lineSpacingExtra="4dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_import_manage"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/primary"
+                android:text="Gestisci Importazione"
+                android:textColor="@color/on_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,194 @@
+RELAZIONE TECNICA
+App ChatAI (roleplay chat con Ollama locale)
+Analisi di due difetti riscontrati in fase d'uso — 5 luglio 2026
+
+================================================================
+1. SOMMARIO
+================================================================
+
+Sono stati individuati due problemi distinti nel progetto, entrambi
+con causa identificata a livello di codice:
+
+  - Il personaggio risponde sempre con la stessa frase generica,
+    invece di una risposta generata dall'AI.
+  - Sull'app Android, il campo di testo per scrivere i messaggi
+    risulta difficile da usare perché coperto da elementi
+    dell'interfaccia di sistema.
+
+Di seguito la descrizione tecnica di ciascun problema, con
+riferimento preciso a file e righe di codice, per facilitare
+l'intervento del tecnico.
+
+
+================================================================
+2. PROBLEMA 1 — Risposte del personaggio sempre uguali
+================================================================
+
+--- 2.1 Sintomo osservato ---
+
+Indipendentemente dal messaggio inviato dall'utente, il personaggio
+(es. "Elena") risponde ripetutamente con la stessa frase fissa, es.
+«Elena annuisce. «Raccontami di più.»», anche quando il messaggio
+dell'utente cambia completamente (vedi screenshot allegato: "ciao" e
+"strinza" producono entrambi la stessa risposta successiva).
+
+--- 2.2 Causa identificata ---
+
+Quella frase non viene generata dal modello AI: e' una risposta di
+riserva ("fallback") scritta staticamente nel codice, usata solo
+quando la chiamata al modello AI fallisce o non restituisce nulla.
+
+File: backend/server.py — funzione process_message()
+
+    ai_text = get_ai_response(messages, user_id=user_id)
+    if not ai_text:
+        ai_text = _fallback_response(character, emotion)
+
+File: backend/server.py — funzione _fallback_response()
+
+    return fb.get(emotion, f"{name} annuisce. «Raccontami di piu.'»")
+
+Questo conferma che, nell'uso reale, get_ai_response() restituisce
+None ad ogni messaggio: il modello Ollama non sta effettivamente
+producendo una risposta valida, e l'app mostra sempre il testo di
+riserva al suo posto.
+
+--- 2.3 Dove cercare la causa a monte ---
+
+Il modulo che gestisce la chiamata a Ollama e':
+
+File: backend/ai_engine.py — funzione _ollama_generate()
+
+    def _ollama_generate(messages, model):
+        if not _ensure_ollama():
+            return None
+        try:
+            resp = requests.post(
+                OLLAMA_URL,
+                json={"model": model, "messages": messages,
+                      "options": OLLAMA_OPTIONS, "stream": False},
+                timeout=120
+            )
+            if resp.status_code == 200:
+                return resp.json()["message"]["content"]
+            logger.error(f"Ollama error: {resp.status_code} {resp.text}")
+            return None
+        except Exception as e:
+            logger.error(f"Ollama request failed: {e}")
+            return None
+
+Qualunque errore (modello non installato, Ollama non raggiungibile,
+timeout superato) viene solo scritto nei log (logger.error) e la
+funzione restituisce None in silenzio: l'utente non vede mai il vero
+errore, solo la frase di riserva.
+
+Punti da verificare sul posto:
+
+  - Controllare i log del backend Python (output della console dove
+    gira server.py) mentre si invia un messaggio: dovrebbe comparire
+    una riga "Ollama error" o "Ollama request failed" con il motivo
+    esatto.
+  - Verificare con "ollama list" quali modelli sono realmente
+    scaricati sul dispositivo/server dove gira Ollama, e confrontarli
+    con l'elenco atteso in ai_engine.py (OLLAMA_MODELS, righe
+    147-156: llama3.1:8b, llama3.2:3b, llama3.2:1b, mistral:7b,
+    qwen2.5:7b, gemma2:9b, dolphin-llama3:8b, mixtral:8x7b).
+  - Se nessuno di questi modelli e' installato, init_provider() in
+    ai_engine.py potrebbe selezionare un modello di default
+    (llama3.2:3b) che pero' non e' mai stato scaricato con "ollama
+    pull", causando l'errore ad ogni richiesta.
+  - Verificare che il backend Python riesca a raggiungere
+    http://localhost:11434 (o l'indirizzo configurato) — se Ollama
+    gira su una macchina diversa da quella del backend, l'URL fisso
+    in OLLAMA_URL/OLLAMA_BASE (ai_engine.py, righe 92-93) andrebbe
+    reso configurabile.
+  - Controllare il timeout di 120 secondi (ai_engine.py, riga 187):
+    su hardware lento con modelli grandi (es. mixtral:8x7b, 26GB) la
+    generazione potrebbe superarlo.
+
+
+================================================================
+3. PROBLEMA 2 — Difficolta' a scrivere nel campo messaggio (Android)
+================================================================
+
+--- 3.1 Sintomo osservato ---
+
+Nello screenshot allegato, in corrispondenza del campo "Scrivi un
+messaggio..." sono visibili sovrapposte delle icone (barra tre
+pulsanti: indietro, home, recenti). Il campo di testo risulta
+coperto/disturbato da elementi dell'interfaccia di sistema, rendendo
+la scrittura difficoltosa.
+
+--- 3.2 Causa identificata ---
+
+Il progetto Android e' configurato con compileSdk/targetSdkVersion 35
+(Android 15):
+
+File: app/build.gradle
+
+    compileSdk 35
+    defaultConfig {
+        ...
+        targetSdkVersion 35
+    }
+
+A partire da targetSdkVersion 35, Android forza di default la
+modalita' "edge-to-edge": l'app disegna i propri contenuti anche
+dietro alla barra di navigazione di sistema. Se il layout non
+gestisce esplicitamente i "window insets" (lo spazio occupato dalle
+barre di sistema/tastiera), i contenuti in fondo allo schermo — in
+questo caso il campo di input del messaggio — possono finire
+disegnati sotto la barra di navigazione, che li ricopre parzialmente.
+
+Nel codice del progetto non e' presente alcuna gestione dei window
+insets:
+
+  - Nessun utilizzo di ViewCompat.setOnApplyWindowInsetsListener o
+    WindowCompat in MainActivity.java.
+  - Nessun android:fitsSystemWindows nei layout XML
+    (activity_main.xml, fragment_main.xml).
+
+File: app/src/main/res/layout/fragment_main.xml — area di input
+
+    <EditText
+            android:id="@+id/message_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/prompt_message"
+            android:imeOptions="actionSend"
+            android:inputType="text"
+            android:maxLines="3"
+            android:padding="14dp"
+            android:background="@drawable/edittext_bg"/>
+
+Nel manifest e' gia' impostato android:windowSoftInputMode="adjustResize"
+sull'activity principale, il che esclude che il problema sia legato
+alla tastiera che non fa spazio al contenuto — e' coerente invece con
+la barra di navigazione di sistema che si sovrappone al contenuto per
+mancata gestione degli insets, tipica di app con targetSdk 35 non
+aggiornate per l'edge-to-edge.
+
+Punti da verificare / intervento suggerito:
+
+  - Aggiungere in MainActivity.java la gestione dei window insets
+    (es. tramite ViewCompat.setOnApplyWindowInsetsListener) per
+    applicare un padding inferiore corretto alla barra di input dei
+    messaggi.
+  - In alternativa, come verifica rapida, provare
+    android:fitsSystemWindows="true" sul layout radice di
+    fragment_main.xml / activity_main.xml.
+  - Da testare su piu' dispositivi: il problema puo' variare a seconda
+    che il telefono usi navigazione a 3 pulsanti (come nello
+    screenshot) o gesture, e a seconda del produttore.
+
+
+================================================================
+4. MATERIALE ALLEGATO
+================================================================
+
+  - Screenshot dell'app (Screenshot_20260705_101355_AI_Roleplay_Chat.jpg)
+    che mostra entrambi i sintomi: risposta ripetuta del personaggio
+    e sovrapposizione della barra di navigazione sul campo di testo.
+  - Backup completo del progetto (chatai_backup_tar.gz) fornito al
+    tecnico per l'analisi diretta del codice.
