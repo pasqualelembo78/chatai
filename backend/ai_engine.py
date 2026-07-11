@@ -505,6 +505,7 @@ def _stream_openai_compatible(url, headers, payload, model, timeout=120):
     payload = {**payload, "stream": True, "model": model}
     try:
         resp = requests.post(url, headers=headers, json=payload, stream=True, timeout=timeout)
+        resp.encoding = "utf-8"
         if resp.status_code != 200:
             logger.error(f"Stream error {resp.status_code}: {resp.text[:200]}")
             return
@@ -550,6 +551,7 @@ def _gemini_generate_stream(messages, model, user_id=None):
             f"https://generativelanguage.googleapis.com/v1beta/models/{model}:streamGenerateContent?key={key}&alt=sse",
             json=body, stream=True, timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code != 200:
             logger.error(f"Gemini stream error {resp.status_code}: {resp.text[:200]}")
             return
@@ -597,6 +599,7 @@ def _anthropic_generate_stream(messages, model, user_id=None):
             },
             json=body, stream=True, timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code != 200:
             logger.error(f"Anthropic stream error {resp.status_code}: {resp.text[:200]}")
             return
@@ -627,6 +630,7 @@ def _ollama_generate_stream(messages, model, user_id=None):
             json={"model": model, "messages": messages, "options": OLLAMA_STREAM_OPTIONS, "stream": True},
             stream=True, timeout=120
         )
+        resp.encoding = "utf-8"
         if resp.status_code != 200:
             logger.error(f"Ollama stream error {resp.status_code}: {resp.text[:200]}")
             return
@@ -842,6 +846,7 @@ def _ollama_generate(messages, model, user_id=None):
             json={"model": model, "messages": messages, "options": OLLAMA_OPTIONS, "stream": False},
             timeout=120
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["message"]["content"]
         logger.error(f"Ollama error: {resp.status_code} {resp.text}")
@@ -897,6 +902,7 @@ def _openai_generate(messages, model, user_id=None):
             json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
             timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["choices"][0]["message"]["content"]
         logger.error(f"OpenAI error: {resp.status_code} {resp.text}")
@@ -983,6 +989,7 @@ def _anthropic_generate(messages, model, user_id=None):
             json=body,
             timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["content"][0]["text"]
         logger.error(f"Anthropic error: {resp.status_code} {resp.text}")
@@ -1052,6 +1059,7 @@ def _gemini_generate(messages, model, user_id=None):
             json=body,
             timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             candidates = resp.json().get("candidates", [])
             if candidates:
@@ -1109,6 +1117,7 @@ def _groq_generate(messages, model, user_id=None):
             json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
             timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["choices"][0]["message"]["content"]
         logger.error(f"Groq error: {resp.status_code} {resp.text}")
@@ -1186,6 +1195,7 @@ def _openrouter_generate(messages, model, user_id=None):
             json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
             timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["choices"][0]["message"]["content"]
         logger.error(f"OpenRouter error: {resp.status_code} {resp.text}")
@@ -1256,6 +1266,7 @@ def _huggingface_generate(messages, model, user_id=None):
             json={"model": model, "messages": messages, "max_tokens": 500, "temperature": 0.9},
             timeout=120
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             data = resp.json()
             if "choices" in data and data["choices"]:
@@ -1312,6 +1323,7 @@ def _mistral_generate(messages, model, user_id=None):
             json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
             timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["choices"][0]["message"]["content"]
         logger.error(f"Mistral error: {resp.status_code} {resp.text[:200]}")
@@ -1378,6 +1390,7 @@ def _github_generate(messages, model, user_id=None):
             json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
             timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["choices"][0]["message"]["content"]
         logger.error(f"GitHub Models error: {resp.status_code} {resp.text[:200]}")
@@ -1440,6 +1453,7 @@ def _make_openai_provider(pid, name, desc, base_url, env_key, models, free=True,
                 json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
                 timeout=60
             )
+            resp.encoding = "utf-8"
             if resp.status_code == 200:
                 return resp.json()["choices"][0]["message"]["content"]
             logger.error(f"{name} error: {resp.status_code} {resp.text[:200]}")
@@ -1541,6 +1555,7 @@ def _cloudflare_generate(messages, model, uid=None):
             json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
             timeout=60
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["choices"][0]["message"]["content"]
         logger.error(f"Cloudflare error: {resp.status_code} {resp.text[:200]}")
@@ -1726,6 +1741,7 @@ def _llamacpp_generate(messages, model, uid=None):
             },
             timeout=120
         )
+        resp.encoding = "utf-8"
         if resp.status_code == 200:
             return resp.json()["choices"][0]["message"]["content"]
         logger.error(f"llama.cpp error: {resp.status_code} {resp.text[:200]}")

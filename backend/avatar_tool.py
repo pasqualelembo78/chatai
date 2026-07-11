@@ -535,6 +535,7 @@ Importante:
             "https://api.groq.com/openai/v1/chat/completions",
             headers=headers, json=payload, timeout=30
         )
+        resp.encoding = "utf-8"
         if resp.status_code != 200:
             print(f"  Errore Groq {resp.status_code}: {resp.text[:200]}")
             return None
@@ -619,6 +620,7 @@ Importante:
             "https://api.groq.com/openai/v1/chat/completions",
             headers=headers, json=payload, timeout=20
         )
+        resp.encoding = "utf-8"
         if resp.status_code != 200:
             print(f"  Errore Groq {resp.status_code}: {resp.text[:200]}")
             return None
