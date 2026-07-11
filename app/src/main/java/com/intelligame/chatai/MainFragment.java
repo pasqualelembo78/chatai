@@ -859,13 +859,16 @@ public class MainFragment extends Fragment {
         if (mHeaderAvatar == null || mHeaderAvatarEmoji == null) return;
 
         if (mCharacterAvatarImage != null && !mCharacterAvatarImage.isEmpty()) {
-            int resId = getResources().getIdentifier("char_" + mCharacterAvatarImage, "drawable", getActivity().getPackageName());
-            if (resId != 0) {
-                mHeaderAvatar.setImageResource(resId);
-                mHeaderAvatar.setVisibility(View.VISIBLE);
-                mHeaderAvatarEmoji.setVisibility(View.GONE);
-                return;
-            }
+            String url = mPrefs.getServerUrl() + "/avatars/" + mCharacterAvatarImage;
+            com.bumptech.glide.Glide.with(this)
+                .load(url)
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .placeholder(android.R.color.transparent)
+                .error(android.R.color.transparent)
+                .into(mHeaderAvatar);
+            mHeaderAvatar.setVisibility(View.VISIBLE);
+            mHeaderAvatarEmoji.setVisibility(View.GONE);
+            return;
         }
 
         // Fallback: emoji

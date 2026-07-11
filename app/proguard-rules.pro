@@ -19,6 +19,16 @@
     @android.webkit.JavascriptInterface <methods>;
 }
 
+# Keep Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep class * extends com.bumptech.glide.module.AppGlideModule { <init>(...); }
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+-keep public class * extends com.bumptech.glide.GeneratedAppGlideModule
+-dontwarn com.bumptech.glide.**
+
 # Remove debug logs in release
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(java.lang.String, int);

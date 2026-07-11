@@ -54,14 +54,8 @@ MODELS = {
     "dicebear": "free",  # DiceBear Avatars
 }
 
-ANDROID_SIZES = {
-    "drawable-mdpi": 96,
-    "drawable-hdpi": 144,
-    "drawable-xhdpi": 192,
-    "drawable-xxhdpi": 288,
-    "drawable-xxxhdpi": 384,
-    "drawable-nodpi": 512,
-}
+# ANDROID_SIZES rimosso: gli avatar vengono caricati dal server a runtime tramite Glide.
+# Le cartelle drawable-* non servono più.
 
 
 # ─── Generazione immagini gratuite ────────────────────────────────
@@ -989,14 +983,6 @@ def save_avatar(char_id, category, image_data):
     )
     print(f"  Server: static/avatars/{category}/{char_id}.png")
 
-    if os.path.isdir(DRAWABLE_DIR):
-        for density, size in ANDROID_SIZES.items():
-            dir_path = os.path.join(DRAWABLE_DIR, density)
-            os.makedirs(dir_path, exist_ok=True)
-            resized = square.resize((size, size), Image.LANCZOS)
-            resized.save(os.path.join(dir_path, f"char_{char_id}.png"), "PNG")
-        print(f"  Android drawables: char_{char_id}.png")
-
 
 def update_characters_py(char_id):
     with open(CHARACTERS_FILE) as f:
@@ -1397,14 +1383,6 @@ def cmd_generate_category_icons(args):
                 os.path.join(CATEGORY_ICONS_DIR, f"{cat_id}.png"), "PNG"
             )
             print(f"  ✅ {cat_id}.png salvato")
-
-            if os.path.isdir(DRAWABLE_DIR):
-                for density, size in ANDROID_SIZES.items():
-                    dir_path = os.path.join(DRAWABLE_DIR, density)
-                    os.makedirs(dir_path, exist_ok=True)
-                    resized = square.resize((size, size), Image.LANCZOS)
-                    resized.save(os.path.join(dir_path, f"cat_{cat_id}.png"), "PNG")
-                print(f"  ✅ Android drawables: cat_{cat_id}.png")
         except Exception as e:
             print(f"  ERRORE: {e}")
 

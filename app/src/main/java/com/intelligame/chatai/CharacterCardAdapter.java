@@ -81,24 +81,13 @@ public class CharacterCardAdapter extends RecyclerView.Adapter<CharacterCardAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         HomeFragment.CharacterItem character = characters.get(position);
 
-        if (character.avatarImage != null) {
-            int resId = holder.itemView.getContext().getResources()
-                .getIdentifier("char_" + character.avatarImage, "drawable",
-                    holder.itemView.getContext().getPackageName());
-            if (resId != 0) {
-                holder.avatarImage.setImageResource(resId);
-                holder.avatarImage.setVisibility(View.VISIBLE);
-                holder.avatarEmoji.setVisibility(View.GONE);
-            } else {
-                holder.avatarImage.setVisibility(View.GONE);
-                holder.avatarEmoji.setVisibility(View.VISIBLE);
-                holder.avatarEmoji.setText(character.emoji);
-            }
-        } else {
-            holder.avatarImage.setVisibility(View.GONE);
-            holder.avatarEmoji.setVisibility(View.VISIBLE);
-            holder.avatarEmoji.setText(character.emoji);
-        }
+        AvatarLoader.loadAvatar(
+            holder.itemView.getContext(),
+            character.avatarImage,
+            holder.avatarImage,
+            holder.avatarEmoji,
+            character.emoji
+        );
 
         holder.name.setText(character.name);
         holder.description.setText(character.description);

@@ -428,22 +428,7 @@ public class CharacterDetailActivity extends AppCompatActivity {
         String avatarImageName = obj.optString("avatar_image", null);
         currentAvatarImage = avatarImageName;
         currentEmoji = emoji;
-        if (avatarImageName != null) {
-            int resId = getResources().getIdentifier("char_" + avatarImageName, "drawable", getPackageName());
-            if (resId != 0) {
-                avatarImage.setImageResource(resId);
-                avatarImage.setVisibility(View.VISIBLE);
-                avatarEmoji.setVisibility(View.GONE);
-            } else {
-                avatarImage.setVisibility(View.GONE);
-                avatarEmoji.setVisibility(View.VISIBLE);
-                avatarEmoji.setText(emoji);
-            }
-        } else {
-            avatarImage.setVisibility(View.GONE);
-            avatarEmoji.setVisibility(View.VISIBLE);
-            avatarEmoji.setText(emoji);
-        }
+        AvatarLoader.loadAvatar(this, avatarImageName, avatarImage, avatarEmoji, emoji);
 
         // Name and author
         name.setText(charName);
