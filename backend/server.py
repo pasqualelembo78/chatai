@@ -347,19 +347,17 @@ def api_characters():
         all_chars = list_characters()
         user_chars = get_all_user_characters()
         all_chars = all_chars + user_chars
-        chars = all_chars  # Default: all chars (sorting applied below)
         if user_id:
             prefs = get_user_preferences(user_id)
             interests = [t.lower() for t in prefs.get("interest_tags", [])]
             if interests:
-                interest_match = [c for c in all_chars if any(t.lower() in interests for t in c.get("tags", []))]
-                if interest_match:
-                    chars = interest_match
-                # else: keep all_chars, sorting below will prioritize matches
-        if not chars:
-            import random
-            random.seed(42)
-            chars = random.sample(all_chars, min(30, len(all_chars)))
+                matching = [c for c in all_chars if any(t.lower() in interests for t in c.get("tags", []))]
+                rest = [c for c in all_chars if c not in matching]
+                chars = matching + rest
+            else:
+                chars = all_chars
+        else:
+            chars = all_chars
     else:
         chars = get_characters_by_category(category) if category else list_characters()
 
