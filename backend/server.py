@@ -369,8 +369,13 @@ def api_characters():
         try:
             prefs = get_user_preferences(user_id)
             gender = prefs.get("gender_interest", "")
-            if gender:
-                chars = filter_characters_by_gender(chars, gender)
+            if gender and gender != "non binario":
+                # Sort: matching characters first, then the rest
+                from characters import infer_character_sex
+                matching = [c for c in chars if infer_character_sex(c) == gender]
+                unknown = [c for c in chars if infer_character_sex(c) == ""]
+                rest = [c for c in chars if infer_character_sex(c) not in (gender, "")]
+                chars = matching + unknown + rest
         except Exception:
             pass
     return jsonify(chars)
@@ -424,8 +429,12 @@ def api_search_characters():
         try:
             prefs = get_user_preferences(user_id)
             gender = prefs.get("gender_interest", "")
-            if gender:
-                results = filter_characters_by_gender(results, gender)
+            if gender and gender != "non binario":
+                from characters import infer_character_sex
+                matching = [c for c in results if infer_character_sex(c) == gender]
+                unknown = [c for c in results if infer_character_sex(c) == ""]
+                rest = [c for c in results if infer_character_sex(c) not in (gender, "")]
+                results = matching + unknown + rest
         except Exception:
             pass
     return jsonify(results)
@@ -441,6 +450,17 @@ def api_adult_characters():
     cats = get_categories()
     cat_cost = {c["id"]: c.get("mvc_cost", 0) for c in cats}
     chars = [c for c in chars if not cat_cost.get(c.get("category"), 0) or c["category"] in unlocks]
+    try:
+        prefs = get_user_preferences(user_id)
+        gender = prefs.get("gender_interest", "")
+        if gender and gender != "non binario":
+            from characters import infer_character_sex
+            matching = [c for c in chars if infer_character_sex(c) == gender]
+            unknown = [c for c in chars if infer_character_sex(c) == ""]
+            rest = [c for c in chars if infer_character_sex(c) not in (gender, "")]
+            chars = matching + unknown + rest
+    except Exception:
+        pass
     return jsonify(chars)
 
 @app.route("/characters", methods=["POST"])
