@@ -31,7 +31,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
+            android:value="ca-app-pub-2572171530354182~3524563603"/>
 
         <activity
             android:name="com.intelligame.chatai.LoginActivity"

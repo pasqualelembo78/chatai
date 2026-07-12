@@ -100,6 +100,7 @@ public class MainFragment extends Fragment {
     private AuthManager mAuth;
     private LocalDatabaseHelper mLocalDb;
     private FrameLayout mBannerAdContainer;
+    private AdManager mAdManager;
     private ImageButton mMicButton;
     private ImageButton mImageAttachButton;
     private ImageView mImagePreview;
@@ -169,6 +170,10 @@ public class MainFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        // Clean up banner ad
+        if (mAdManager != null) {
+            mAdManager.destroyBanner();
+        }
         mSocket.off(Socket.EVENT_CONNECT, onConnect);
         mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
         mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -204,7 +209,15 @@ public class MainFragment extends Fragment {
         mHeaderAvatarEmoji = (TextView) view.findViewById(R.id.header_avatar_emoji);
 
         mBannerAdContainer = (FrameLayout) view.findViewById(R.id.banner_ad_container);
-        mBannerAdContainer.setVisibility(View.GONE);
+
+        // Show banner ad if not premium
+        ChatApplication app = (ChatApplication) requireActivity().getApplication();
+        mAdManager = app.getAdManager();
+        if (!app.getPremiumManager().isPremium()) {
+            mAdManager.showBanner(requireActivity(), mBannerAdContainer);
+        } else {
+            mBannerAdContainer.setVisibility(View.GONE);
+        }
 
         Bundle args = getArguments();
         if (args != null) {
@@ -1026,6 +1039,11 @@ public class MainFragment extends Fragment {
         mStreaming = true;
         showStreamStopButton(true);
         mSocket.emit("stream message", payload);
+
+        // Show interstitial every 8 messages (if not premium)
+        if (getActivity() != null && !((ChatApplication) requireActivity().getApplication()).getPremiumManager().isPremium()) {
+            mAdManager.onMessageSent(getActivity());
+        }
 
         clearPendingImage();
 

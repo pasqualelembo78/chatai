@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navView;
     private View fragmentContainer;
     private AuthManager mAuth;
+    private AdManager mAdManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         ChatApplication app = (ChatApplication) getApplication();
         mAuth = app.getAuthManager();
+        mAdManager = app.getAdManager();
 
         if (!mAuth.isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -33,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
             return;
+        }
+
+        // Show app open ad on launch (if not premium)
+        if (!app.getPremiumManager().isPremium()) {
+            mAdManager.showAppOpenIfReady(this);
         }
 
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -185,6 +192,11 @@ public class MainActivity extends AppCompatActivity {
                 navView.setVisibility(View.VISIBLE);
             }
         } else {
+            // Show interstitial before closing (if not premium)
+            ChatApplication app = (ChatApplication) getApplication();
+            if (!app.getPremiumManager().isPremium()) {
+                mAdManager.showInterstitialIfReady(this);
+            }
             super.onBackPressed();
         }
     }

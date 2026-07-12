@@ -35,6 +35,7 @@ public class MvcEarnActivity extends AppCompatActivity {
     private TextView balanceText;
     private TextView checkinStatusText;
     private MaterialButton btnCheckin;
+    private MaterialButton btnWatchAd;
     private LinearLayout transactionsContainer;
     private TextView transactionsEmpty;
 
@@ -55,10 +56,15 @@ public class MvcEarnActivity extends AppCompatActivity {
         balanceText = findViewById(R.id.earn_balance_text);
         checkinStatusText = findViewById(R.id.checkin_status_text);
         btnCheckin = findViewById(R.id.btn_do_checkin);
+        btnWatchAd = findViewById(R.id.btn_watch_ad);
         transactionsContainer = findViewById(R.id.transactions_container);
         transactionsEmpty = findViewById(R.id.transactions_empty);
 
         btnCheckin.setOnClickListener(v -> doCheckin());
+
+        // Rewarded video button
+        btnWatchAd.setOnClickListener(v -> showRewardedAd());
+        updateRewardedButton();
 
         for (int day : BONUS_DAYS) {
             int resId = getResources().getIdentifier("btn_claim_bonus_" + day, "id", getPackageName());
@@ -213,6 +219,7 @@ public class MvcEarnActivity extends AppCompatActivity {
             case "bonus_nuovo_utente_giorno_2": return "Bonus nuovo utente - Giorno 2";
             case "bonus_nuovo_utente_giorno_3": return "Bonus nuovo utente - Giorno 3";
             case "bonus_nuovo_utente_giorno_4": return "Bonus nuovo utente - Giorno 4";
+            case "admob_rewarded": return "Video rewarded";
             default: return reason.replace("_", " ");
         }
     }
@@ -226,6 +233,90 @@ public class MvcEarnActivity extends AppCompatActivity {
         } catch (Exception e) {
             return isoDate.length() > 10 ? isoDate.substring(0, 10) : isoDate;
         }
+    }
+
+    private void updateRewardedButton() {
+        ChatApplication app = (ChatApplication) getApplication();
+        AdManager adManager = app.getAdManager();
+        if (adManager.isRewardedReady()) {
+            btnWatchAd.setEnabled(true);
+            btnWatchAd.setText("Guarda video +5 MVC");
+        } else {
+            btnWatchAd.setEnabled(false);
+            btnWatchAd.setText("Video non disponibile");
+        }
+    }
+
+    private void showRewardedAd() {
+        ChatApplication app = (ChatApplication) getApplication();
+        AdManager adManager = app.getAdManager();
+
+        btnWatchAd.setEnabled(false);
+        btnWatchAd.setText("Caricamento...");
+
+        adManager.showRewarded(this, new AdManager.RewardedCallback() {
+            @Override
+            public void onRewardEarned(int amount) {
+                // Credit MVC via backend API
+                creditReward(amount > 0 ? amount : 5);
+            }
+
+            @Override
+            public void onRewardedFailed() {
+                mainHandler.post(() -> {
+                    updateRewardedButton();
+                    Snackbar.make(findViewById(android.R.id.content), "Video non disponibile", Snackbar.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void creditReward(int amount) {
+        executor.execute(() -> {
+            try {
+                String token = mAuth.getAccessToken();
+                URL url = new URL(baseUrl + "/user/mevacoins/share");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setConnectTimeout(5000);
+
+                JSONObject body = new JSONObject();
+                body.put("platform", "admob_rewarded");
+                OutputStream os = conn.getOutputStream();
+                os.write(body.toString().getBytes());
+                os.close();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder resp = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) resp.append(line);
+                reader.close();
+                conn.disconnect();
+
+                JSONObject result = new JSONObject(resp.toString());
+                boolean success = result.optBoolean("success", false);
+                int earned = result.optInt("earned", amount);
+
+                mainHandler.post(() -> {
+                    if (success) {
+                        Snackbar.make(findViewById(android.R.id.content), "+" + earned + " MVC!", Snackbar.LENGTH_SHORT).show();
+                        loadBalance();
+                        loadTransactions();
+                    } else {
+                        Snackbar.make(findViewById(android.R.id.content), "Errore credito MVC", Snackbar.LENGTH_SHORT).show();
+                    }
+                    updateRewardedButton();
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    updateRewardedButton();
+                    Snackbar.make(findViewById(android.R.id.content), "Errore: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     private void doCheckin() {

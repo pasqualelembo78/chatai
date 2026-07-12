@@ -26,6 +26,15 @@ public class ChatApplication extends Application {
         mLocalDb = new LocalDatabaseHelper(this);
         mPremiumManager = new PremiumManager(this);
         mPremiumManager.init(this);
+
+        // Initialize AdManager singleton
+        AdManager.getInstance().init(this);
+
+        // If premium, disable ads
+        if (mPremiumManager.isPremium()) {
+            AdManager.getInstance().setAdsEnabled(false);
+        }
+
         mCurrentUrl = mPrefs.getServerUrl();
         // Il socket NON viene connesso qui — va connesso dopo login
     }
@@ -36,6 +45,10 @@ public class ChatApplication extends Application {
 
     public PremiumManager getPremiumManager() {
         return mPremiumManager;
+    }
+
+    public AdManager getAdManager() {
+        return AdManager.getInstance();
     }
 
     public AuthManager getAuthManager() {
