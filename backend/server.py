@@ -1126,6 +1126,9 @@ def on_stream_message(data):
     user_memory = data.get("user_memory")
     history = memory_context if memory_context is not None else get_recent_messages(user_id, character_id, limit=20)
     shifts = get_recent_shifts(user_id, character_id)
+    user_prefs = get_user_preferences(user_id)
+    user_gender = user_prefs.get("user_gender") or None
+    user_age = user_prefs.get("user_age") or None
 
     image_desc = None
     if image_b64:
@@ -1229,7 +1232,8 @@ def on_stream_message(data):
         character, {"emotion": emotion, "intensity": intensity},
         relationship, personality, world_state, text, user_id, history,
         shifts, username, user_memory=user_memory, summaries=summaries,
-        evolution=evo, is_favorite=user_is_favorite, total_messages=_total_msgs
+        evolution=evo, is_favorite=user_is_favorite, total_messages=_total_msgs,
+        user_gender=user_gender, user_age=user_age
     )
 
     emit("stream start", {
@@ -1620,6 +1624,9 @@ def process_message(user_id, character_id, text, username="Utente",
         summaries = get_memories(user_id, character_id, limit=5)
 
     world_state = get_world_state()
+    user_prefs = get_user_preferences(user_id)
+    user_gender = user_prefs.get("user_gender") or None
+    user_age = user_prefs.get("user_age") or None
 
     if not client_storage:
         is_first = count_all_user_messages(user_id) == 0
@@ -1778,7 +1785,8 @@ def process_message(user_id, character_id, text, username="Utente",
         character, {"emotion": emotion, "intensity": intensity},
         relationship, personality, world_state, text, user_id, history,
         shifts, username, user_memory=user_memory, summaries=summaries,
-        evolution=evo, is_favorite=is_favorite, total_messages=_total_msgs
+        evolution=evo, is_favorite=is_favorite, total_messages=_total_msgs,
+        user_gender=user_gender, user_age=user_age
     )
 
     ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
@@ -1933,7 +1941,13 @@ def _generate_greeting(character, character_name, username=None, user_id=None):
     rel = get_relationship("new_user", character["id"])
     pers = get_personality(character["id"], character["core_traits"])
     ws = get_world_state()
-    sp = build_system_prompt(character, {"emotion": "neutral", "intensity": 0}, rel, pers, ws, username=username)
+    user_gender = None
+    user_age = None
+    if user_id:
+        prefs = get_user_preferences(user_id)
+        user_gender = prefs.get("user_gender") or None
+        user_age = prefs.get("user_age") or None
+    sp = build_system_prompt(character, {"emotion": "neutral", "intensity": 0}, rel, pers, ws, username=username, user_gender=user_gender, user_age=user_age)
     prompt = "Inizia la conversazione presentandoti in modo naturale e coinvolgente, come faresti nella vita reale. Non usare frasi fatte. Sii creativo e coerente con il tuo personaggio."
     if username:
         prompt = f"La persona con cui parli si chiama {username}. {prompt}"

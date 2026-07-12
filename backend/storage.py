@@ -294,6 +294,14 @@ def init_db():
         conn.execute("ALTER TABLE relationships ADD COLUMN pressure_level REAL DEFAULT 0")
     except sqlite3.OperationalError:
         pass
+    try:
+        conn.execute("ALTER TABLE user_preferences ADD COLUMN user_gender TEXT DEFAULT ''")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        conn.execute("ALTER TABLE user_preferences ADD COLUMN user_age INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
     conn.commit()
     conn.close()
 
@@ -974,8 +982,10 @@ def get_user_preferences(user_id):
             "age_range": row["age_range"],
             "interest_tags": json.loads(row["interest_tags"] or "[]"),
             "show_adult": bool(row["show_adult"]) if "show_adult" in row.keys() else False,
+            "user_gender": row["user_gender"] if "user_gender" in row.keys() else "",
+            "user_age": row["user_age"] if "user_age" in row.keys() else 0,
         }
-    return {"gender_interest": "", "age_range": "", "interest_tags": [], "show_adult": False}
+    return {"gender_interest": "", "age_range": "", "interest_tags": [], "show_adult": False, "user_gender": "", "user_age": 0}
 
 
 def save_user_preferences(user_id, data):
@@ -983,13 +993,15 @@ def save_user_preferences(user_id, data):
     interests = data.get("interest_tags") or data.get("interests", [])
     conn.execute(
         """INSERT OR REPLACE INTO user_preferences
-           (user_id, gender_interest, age_range, interest_tags, show_adult, updated_at)
-           VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
+           (user_id, gender_interest, age_range, interest_tags, show_adult, user_gender, user_age, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
         (user_id,
          data.get("gender_interest", ""),
          data.get("age_range", ""),
          json.dumps(interests),
-         1 if data.get("show_adult") else 0)
+         1 if data.get("show_adult") else 0,
+         data.get("user_gender", ""),
+         data.get("user_age", 0))
     )
     conn.commit()
     conn.close()

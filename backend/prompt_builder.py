@@ -3,7 +3,7 @@ MAX_HISTORY_MESSAGES = 20
 from scenario_engine import classify_character, get_opening_scenario, DEFERRED_INTRO, STATIC_INTRO
 
 
-def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0):
+def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None):
     intimacy = relationship.get("intimacy", 0)
     config = character.get("intimacy_config", {})
     name = character["name"]
@@ -37,7 +37,7 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
             prompt += "\n\n" + DEFERRED_INTRO.format(threshold=threshold)
         else:
             # Soglia raggiunta: attiva scenario RP
-            scenario = get_opening_scenario(character, total_messages)
+            scenario = get_opening_scenario(character, total_messages, user_gender=user_gender, user_age=user_age)
             if scenario:
                 prompt += "\n\n" + scenario
             prompt += (
@@ -46,7 +46,7 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                 f"lasciar spazio a roleplay e confidenze. Non forzare, ma segui il flusso naturale."
             )
     else:  # immediate
-        scenario = get_opening_scenario(character, total_messages)
+        scenario = get_opening_scenario(character, total_messages, user_gender=user_gender, user_age=user_age)
         if scenario:
             prompt += "\n\n" + scenario
 
@@ -343,10 +343,11 @@ def _build_enhanced_prompt(character, interlocutor):
     return "\n".join(parts)
 
 
-def build_messages(character, emotion, relationship, personality, world_state, user_text, user_id, history, shifts=None, username=None, user_memory=None, summaries=None, evolution=None, is_favorite=False, total_messages=0):
+def build_messages(character, emotion, relationship, personality, world_state, user_text, user_id, history, shifts=None, username=None, user_memory=None, summaries=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None):
     system_prompt = build_system_prompt(
         character, emotion, relationship, personality, world_state,
-        shifts, username, user_id, user_memory, evolution, is_favorite, total_messages
+        shifts, username, user_id, user_memory, evolution, is_favorite, total_messages,
+        user_gender=user_gender, user_age=user_age
     )
     messages = [{"role": "system", "content": system_prompt}]
 
