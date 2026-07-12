@@ -337,6 +337,104 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+
+        # ─── Phase 2: Per-user personality ───────────────────────────
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_personality (
+                user_id TEXT NOT NULL,
+                character_id TEXT NOT NULL,
+                warmth REAL DEFAULT 5,
+                strictness REAL DEFAULT 5,
+                patience REAL DEFAULT 5,
+                sarcasm REAL DEFAULT 0,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (user_id, character_id)
+            )
+        """)
+
+        # ─── Phase 2: Per-user world state ──────────────────────────
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_world_state (
+                user_id TEXT PRIMARY KEY,
+                scene TEXT DEFAULT 'default',
+                events TEXT DEFAULT '[]',
+                flags TEXT DEFAULT '{}',
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # ─── Phase 3: Enhanced user memory with importance + decay ───
+        cur.execute("""
+            ALTER TABLE user_memory ADD COLUMN IF NOT EXISTS memory_version INTEGER DEFAULT 1
+        """)
+
+        # ─── Phase 5: Conversation session tracking ──────────────────
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS conversation_sessions (
+                id SERIAL PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                character_id TEXT NOT NULL,
+                started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                message_count INTEGER DEFAULT 0,
+                topic_summary TEXT DEFAULT ''
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_sessions_user_char ON conversation_sessions(user_id, character_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_sessions_last_msg ON conversation_sessions(last_message_at)")
+
+        # ─── Phase 7: Cross-character shared memory ──────────────────
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS shared_memory (
+                user_id TEXT NOT NULL,
+                fact_key TEXT NOT NULL,
+                fact_value TEXT NOT NULL,
+                source_characters TEXT DEFAULT '[]',
+                importance REAL DEFAULT 0.5,
+                mentions INTEGER DEFAULT 1,
+                last_mentioned TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (user_id, fact_key)
+            )
+        """)
+
+        # ─── Phase 8: Conversation topics ────────────────────────────
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS conversation_topics (
+                id SERIAL PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                character_id TEXT NOT NULL,
+                topic TEXT NOT NULL,
+                message_count INTEGER DEFAULT 1,
+                last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE (user_id, character_id, topic)
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_topics_user_char ON conversation_topics(user_id, character_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_topics_last_seen ON conversation_topics(last_seen)")
+
+        # ─── Phase 4: Semantic memory (pgvector) ─────────────────────
+        # Will be created separately if pgvector is available
+        try:
+            cur.execute("CREATE EXTENSION IF NOT EXISTS vector")
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS memory_embeddings (
+                    id SERIAL PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    character_id TEXT NOT NULL,
+                    content TEXT NOT NULL,
+                    content_type TEXT NOT NULL DEFAULT 'message',
+                    embedding vector(384),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_emb_user_char ON memory_embeddings(user_id, character_id)")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_emb_user ON memory_embeddings(user_id)")
+            logger.info("pgvector extension loaded, semantic search available")
+        except Exception as e:
+            logger.warning(f"pgvector not available, semantic search disabled: {e}")
+
         conn.commit()
     finally:
         put_conn(conn)
@@ -1789,5 +1887,618 @@ def get_time_events(event_type=None, limit=50):
             d["data"] = json.loads(d.get("data", "{}"))
             result.append(d)
         return result
+    finally:
+        put_conn(conn)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Phase 2: Per-User Personality
+# ═══════════════════════════════════════════════════════════════════
+
+def get_user_personality(user_id, character_id, core_traits=None):
+    """Get personality for a specific user+character pair. Falls back to shared personality."""
+    core_traits = core_traits or {}
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT warmth, strictness, patience, sarcasm FROM user_personality WHERE user_id=%s AND character_id=%s",
+            (user_id, character_id)
+        )
+        row = cur.fetchone()
+        if row:
+            return dict(row)
+        # Fallback: copy shared personality as starting point
+        shared = get_personality(character_id, core_traits)
+        conn2 = get_conn()
+        try:
+            cur2 = conn2.cursor()
+            cur2.execute(
+                """INSERT INTO user_personality (user_id, character_id, warmth, strictness, patience, sarcasm)
+                   VALUES (%s, %s, %s, %s, %s, %s)
+                   ON CONFLICT (user_id, character_id) DO NOTHING""",
+                (user_id, character_id, shared.get("warmth", 5), shared.get("strictness", 5),
+                 shared.get("patience", 5), shared.get("sarcasm", 0))
+            )
+            conn2.commit()
+        finally:
+            put_conn(conn2)
+        return shared
+    finally:
+        put_conn(conn)
+
+
+def update_user_personality(user_id, character_id, deltas):
+    """Update per-user personality with deltas (dict of trait->delta)."""
+    current = get_user_personality(user_id, character_id)
+    for trait, delta in deltas.items():
+        if trait in current:
+            current[trait] = max(0, min(10, current.get(trait, 5) + delta))
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO user_personality (user_id, character_id, warmth, strictness, patience, sarcasm, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+            ON CONFLICT (user_id, character_id) DO UPDATE SET
+            warmth=EXCLUDED.warmth, strictness=EXCLUDED.strictness,
+            patience=EXCLUDED.patience, sarcasm=EXCLUDED.sarcasm, updated_at=EXCLUDED.updated_at
+        """, (user_id, character_id, current["warmth"], current["strictness"],
+              current["patience"], current["sarcasm"]))
+        conn.commit()
+    finally:
+        put_conn(conn)
+    return current
+
+
+def set_user_personality(user_id, character_id, personality):
+    """Set full personality for a user+character pair."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO user_personality (user_id, character_id, warmth, strictness, patience, sarcasm, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+            ON CONFLICT (user_id, character_id) DO UPDATE SET
+            warmth=EXCLUDED.warmth, strictness=EXCLUDED.strictness,
+            patience=EXCLUDED.patience, sarcasm=EXCLUDED.sarcasm, updated_at=EXCLUDED.updated_at
+        """, (user_id, character_id, personality.get("warmth", 5), personality.get("strictness", 5),
+              personality.get("patience", 5), personality.get("sarcasm", 0)))
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Phase 2: Per-User World State
+# ═══════════════════════════════════════════════════════════════════
+
+def get_user_world_state(user_id):
+    """Get world state for a specific user."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT scene, events, flags FROM user_world_state WHERE user_id=%s", (user_id,))
+        row = cur.fetchone()
+        if row:
+            return {"scene": row["scene"], "events": json.loads(row["events"]), "flags": json.loads(row["flags"])}
+        # Initialize from global world state as fallback
+        ws = get_world_state()
+        save_user_world_state(user_id, ws)
+        return ws
+    finally:
+        put_conn(conn)
+
+
+def save_user_world_state(user_id, world_state):
+    """Save world state for a specific user."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO user_world_state (user_id, scene, events, flags, updated_at)
+            VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP)
+            ON CONFLICT (user_id) DO UPDATE SET
+            scene=EXCLUDED.scene, events=EXCLUDED.events, flags=EXCLUDED.flags, updated_at=EXCLUDED.updated_at
+        """, (user_id, world_state.get("scene", "default"),
+              json.dumps(world_state.get("events", [])),
+              json.dumps(world_state.get("flags", {}))))
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Phase 3: Enhanced User Memory with Importance + Decay
+# ═══════════════════════════════════════════════════════════════════
+
+def update_user_memory_enhanced(user_id, new_facts, source_character=None, source_name=None):
+    """Enhanced memory update with importance scoring and deduplication."""
+    existing = get_user_memory(user_id)
+    memory = existing["memory"]
+    now = datetime.now().isoformat()
+
+    for key, value in new_facts.items():
+        val_str = value["value"] if isinstance(value, dict) and "value" in value else str(value)
+        src = source_name or (value.get("source_name", "") if isinstance(value, dict) else "")
+
+        if key in memory:
+            existing_fact = memory[key]
+            if isinstance(existing_fact, dict):
+                # Deduplication: if same value, just bump mentions
+                if existing_fact.get("value", "").lower().strip() == val_str.lower().strip():
+                    existing_fact["mentions"] = existing_fact.get("mentions", 1) + 1
+                    existing_fact["last_mentioned"] = now
+                    # Boost importance with each mention (capped at 1.0)
+                    existing_fact["importance"] = min(1.0, existing_fact.get("importance", 0.5) + 0.05)
+                else:
+                    # Conflict: user said something different. Keep newer, mark old as superseded.
+                    existing_fact["previous"] = existing_fact.get("value", "")
+                    existing_fact["value"] = val_str
+                    existing_fact["mentions"] = 1
+                    existing_fact["last_mentioned"] = now
+                    existing_fact["importance"] = 0.7  # New info gets moderate importance
+                    existing_fact["source_name"] = src
+            else:
+                memory[key] = {
+                    "value": val_str,
+                    "source_name": src,
+                    "mentions": 1,
+                    "last_mentioned": now,
+                    "importance": 0.5,
+                }
+        else:
+            memory[key] = {
+                "value": val_str,
+                "source_name": src,
+                "mentions": 1,
+                "last_mentioned": now,
+                "importance": 0.5,
+            }
+
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """INSERT INTO user_memory (user_id, memory_data, created_at, updated_at)
+               VALUES (%s, %s, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+               ON CONFLICT (user_id) DO UPDATE SET
+               memory_data=EXCLUDED.memory_data, updated_at=EXCLUDED.updated_at""",
+            (user_id, json.dumps(memory))
+        )
+        conn.commit()
+    finally:
+        put_conn(conn)
+    return memory
+
+
+def decay_user_memory(user_id, decay_days=30, min_importance=0.1):
+    """Apply temporal decay to user memory facts. Call periodically."""
+    existing = get_user_memory(user_id)
+    memory = existing["memory"]
+    now = datetime.now()
+    changed = False
+
+    for key in list(memory.keys()):
+        fact = memory[key]
+        if not isinstance(fact, dict):
+            continue
+        last = fact.get("last_mentioned", "")
+        if last:
+            try:
+                last_dt = datetime.fromisoformat(last)
+                days_since = (now - last_dt).days
+                if days_since > decay_days:
+                    # Decay importance over time
+                    decay_factor = max(0, 1.0 - (days_since - decay_days) / 90)
+                    fact["importance"] = max(min_importance, fact.get("importance", 0.5) * decay_factor)
+                    changed = True
+                    # Remove facts below threshold and not mentioned much
+                    if fact["importance"] <= min_importance and fact.get("mentions", 1) <= 1:
+                        del memory[key]
+                        changed = True
+            except Exception:
+                pass
+
+    if changed:
+        conn = get_conn()
+        try:
+            cur = conn.cursor()
+            cur.execute(
+                """UPDATE user_memory SET memory_data=%s, updated_at=CURRENT_TIMESTAMP WHERE user_id=%s""",
+                (json.dumps(memory), user_id)
+            )
+            conn.commit()
+        finally:
+            put_conn(conn)
+
+
+def get_relevant_memories(user_id, context_hint=None, limit=10):
+    """Get user memories sorted by importance + recency. Optionally filtered by context."""
+    existing = get_user_memory(user_id)
+    memory = existing["memory"]
+    facts = []
+    for key, value in memory.items():
+        if not isinstance(value, dict):
+            facts.append({"key": key, "value": str(value), "importance": 0.5, "mentions": 1})
+            continue
+        score = value.get("importance", 0.5) * 0.6 + min(1.0, value.get("mentions", 1) / 5) * 0.4
+        # Recency bonus
+        last = value.get("last_mentioned", "")
+        if last:
+            try:
+                days = (datetime.now() - datetime.fromisoformat(last)).days
+                recency_bonus = max(0, 1.0 - days / 90) * 0.3
+                score += recency_bonus
+            except Exception:
+                pass
+        facts.append({
+            "key": key,
+            "value": value.get("value", ""),
+            "source_name": value.get("source_name", ""),
+            "importance": value.get("importance", 0.5),
+            "mentions": value.get("mentions", 1),
+            "score": score,
+        })
+
+    # Sort by score descending
+    facts.sort(key=lambda x: x.get("score", 0), reverse=True)
+    return facts[:limit]
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Phase 5: Conversation Sessions + Temporal Context
+# ═══════════════════════════════════════════════════════════════════
+
+def start_conversation_session(user_id, character_id):
+    """Create or update a conversation session."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        # Check if there's a recent session (within 2 hours)
+        cur.execute("""
+            SELECT id FROM conversation_sessions
+            WHERE user_id=%s AND character_id=%s
+            AND last_message_at > CURRENT_TIMESTAMP - INTERVAL '2 hours'
+            ORDER BY last_message_at DESC LIMIT 1
+        """, (user_id, character_id))
+        row = cur.fetchone()
+        if row:
+            # Update existing session
+            cur.execute("""
+                UPDATE conversation_sessions SET last_message_at=CURRENT_TIMESTAMP,
+                message_count=message_count+1 WHERE id=%s
+            """, (row["id"],))
+            conn.commit()
+            return row["id"]
+        else:
+            # Create new session
+            cur.execute("""
+                INSERT INTO conversation_sessions (user_id, character_id, message_count)
+                VALUES (%s, %s, 1) RETURNING id
+            """, (user_id, character_id))
+            session_id = cur.fetchone()["id"]
+            conn.commit()
+            return session_id
+    finally:
+        put_conn(conn)
+
+
+def get_last_conversation_time(user_id, character_id):
+    """Get the timestamp of the last conversation with a character."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT last_message_at FROM conversation_sessions
+            WHERE user_id=%s AND character_id=%s
+            ORDER BY last_message_at DESC LIMIT 1
+        """, (user_id, character_id))
+        row = cur.fetchone()
+        return row["last_message_at"] if row else None
+    finally:
+        put_conn(conn)
+
+
+def get_temporal_context(user_id, character_id):
+    """Build temporal context for the prompt."""
+    last_time = get_last_conversation_time(user_id, character_id)
+    context = {}
+    if last_time:
+        try:
+            now = datetime.now()
+            if isinstance(last_time, str):
+                last_dt = datetime.fromisoformat(last_time)
+            else:
+                last_dt = last_time
+            diff = now - last_dt
+            hours = diff.total_seconds() / 3600
+            if hours < 1:
+                context["time_gap"] = "pochi minuti fa"
+            elif hours < 24:
+                context["time_gap"] = f"{int(hours)} ore fa"
+            else:
+                days = diff.days
+                context["time_gap"] = f"{days} {'giorno' if days == 1 else 'giorni'} fa"
+            context["last_conversation"] = last_dt.isoformat()
+        except Exception:
+            pass
+
+    # Total sessions count
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT COUNT(*) as cnt, SUM(message_count) as total_msgs
+            FROM conversation_sessions WHERE user_id=%s AND character_id=%s
+        """, (user_id, character_id))
+        row = cur.fetchone()
+        if row:
+            context["total_sessions"] = row["cnt"]
+            context["total_messages"] = row["total_msgs"]
+    finally:
+        put_conn(conn)
+
+    return context
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Phase 7: Cross-Character Shared Memory
+# ═══════════════════════════════════════════════════════════════════
+
+def share_memory_across_characters(user_id, fact_key, fact_value, source_character, source_name=""):
+    """Share a memory fact across all characters for a user."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO shared_memory (user_id, fact_key, fact_value, source_characters, importance, last_mentioned)
+            VALUES (%s, %s, %s, %s, 0.7, CURRENT_TIMESTAMP)
+            ON CONFLICT (user_id, fact_key) DO UPDATE SET
+            fact_value=EXCLUDED.fact_value,
+            source_characters=(
+                SELECT jsonb_agg(DISTINCT elem)
+                FROM jsonb_array_elements_text(shared_memory.source_characters || EXCLUDED.source_characters) AS elem
+            ),
+            importance=GREATEST(shared_memory.importance, 0.7),
+            last_mentioned=CURRENT_TIMESTAMP
+        """, (user_id, fact_key, fact_value, json.dumps([source_character])))
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+def get_shared_memories(user_id, limit=20):
+    """Get all shared memories for a user (cross-character)."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT fact_key, fact_value, source_characters, importance, mentions, last_mentioned
+            FROM shared_memory WHERE user_id=%s
+            ORDER BY importance DESC, last_mentioned DESC LIMIT %s
+        """, (user_id, limit))
+        rows = cur.fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        put_conn(conn)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Phase 8: Topic Modeling
+# ═══════════════════════════════════════════════════════════════════
+
+TOPIC_KEYWORDS = {
+    "musica": ["musica", "canzone", "chitarra", "pianoforte", "batteria", "cantare", "suonare", "nota", "melodia", "concerto"],
+    "cucina": ["cucina", "ricetta", "cibo", "dolce", "pasta", "cuocere", "ingrediente", "piatto", "ristorante"],
+    "tecnologia": ["computer", "programmazione", "tecnologia", "codice", "software", "hardware", "internet", "app", "smartphone"],
+    "storia": ["storia", "passato", "antico", "guerra", "re", "impero", "medievale", "romano", "civiltà"],
+    "scienza": ["scienza", "fisica", "chimica", "biologia", "matematica", "formula", "esperimento", "universo"],
+    "arte": ["arte", "dipinto", "scultura", "museo", "colore", "pennello", "artistico", "mostra"],
+    "sport": ["sport", "palestra", "allenamento", "correre", "nuoto", "calcio", "basket", "fitness"],
+    "moda": ["moda", "vestito", "stile", "abbigliamento", "trend", "elegante", "outfit"],
+    "viaggi": ["viaggio", "turismo", "meta", "vacanza", "esplorare", "paese", "città", "aeroporto"],
+    "filosofia": ["filosofia", "pensiero", "esistenza", "senso", "verità", "morale", "etica"],
+    "medicina": ["medicina", "salute", "dottore", "farmaco", "malattia", "corpo", "diagnosi"],
+    "natura": ["natura", "pianta", "animale", "foresta", "montagna", "mare", "ecologia"],
+    "lavoro": ["lavoro", "ufficio", "collega", "reunione", "progetto", "carriera", "impiego"],
+    "relazioni": ["amore", "fidanzato", "relazione", "coppia", "sentimento", "gelosia", "fiducia"],
+    "famiglia": ["famiglia", "genitore", "fratello", "sorella", "mamma", "papà", "nonno", "figlio"],
+}
+
+
+def detect_message_topics(text):
+    """Detect topics in a user message using keyword matching."""
+    text_lower = text.lower()
+    detected = []
+    for topic, keywords in TOPIC_KEYWORDS.items():
+        score = sum(1 for kw in keywords if kw in text_lower)
+        if score >= 1:
+            detected.append({"topic": topic, "relevance": min(1.0, score / 3)})
+    return detected
+
+
+def update_conversation_topics(user_id, character_id, text):
+    """Update topic tracking for a conversation."""
+    topics = detect_message_topics(text)
+    if not topics:
+        return
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        for t in topics:
+            cur.execute("""
+                INSERT INTO conversation_topics (user_id, character_id, topic, message_count, last_seen)
+                VALUES (%s, %s, %s, 1, CURRENT_TIMESTAMP)
+                ON CONFLICT (user_id, character_id, topic) DO UPDATE SET
+                message_count=conversation_topics.message_count + 1,
+                last_seen=CURRENT_TIMESTAMP
+            """, (user_id, character_id, t["topic"]))
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+def get_recent_topics(user_id, character_id, days=7, limit=10):
+    """Get recent topics discussed in a conversation."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT topic, message_count, last_seen
+            FROM conversation_topics
+            WHERE user_id=%s AND character_id=%s
+            AND last_seen > CURRENT_TIMESTAMP - INTERVAL '%s days'
+            ORDER BY message_count DESC, last_seen DESC LIMIT %s
+        """, (user_id, character_id, days, limit))
+        rows = cur.fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        put_conn(conn)
+
+
+def get_character_recent_topics(character_id, days=7, limit=20):
+    """Get most discussed topics for a character across all users."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT topic, SUM(message_count) as total_count
+            FROM conversation_topics
+            WHERE character_id=%s
+            AND last_seen > CURRENT_TIMESTAMP - INTERVAL '%s days'
+            GROUP BY topic ORDER BY total_count DESC LIMIT %s
+        """, (character_id, days, limit))
+        rows = cur.fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        put_conn(conn)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Phase 6: Memory Consolidation
+# ═══════════════════════════════════════════════════════════════════
+
+def consolidate_user_memory(user_id, target_count=15):
+    """Compress user memory to keep only the most important facts."""
+    existing = get_user_memory(user_id)
+    memory = existing["memory"]
+    if len(memory) <= target_count:
+        return  # Nothing to consolidate
+
+    # Score and sort
+    scored = []
+    for key, value in memory.items():
+        if not isinstance(value, dict):
+            scored.append({"key": key, "score": 0.5, "data": value})
+            continue
+        score = value.get("importance", 0.5) * 0.5 + min(1.0, value.get("mentions", 1) / 5) * 0.3
+        # Recency bonus
+        last = value.get("last_mentioned", "")
+        if last:
+            try:
+                days = (datetime.now() - datetime.fromisoformat(last)).days
+                score += max(0, 1.0 - days / 90) * 0.2
+            except Exception:
+                pass
+        scored.append({"key": key, "score": score, "data": value})
+
+    scored.sort(key=lambda x: x["score"], reverse=True)
+    consolidated = {item["key"]: item["data"] for item in scored[:target_count]}
+
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """UPDATE user_memory SET memory_data=%s, updated_at=CURRENT_TIMESTAMP,
+               memory_version=COALESCE(memory_version, 1) + 1 WHERE user_id=%s""",
+            (json.dumps(consolidated), user_id)
+        )
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Phase 4: Semantic Search (pgvector)
+# ═══════════════════════════════════════════════════════════════════
+
+_pgvector_available = None
+
+def _check_pgvector():
+    global _pgvector_available
+    if _pgvector_available is not None:
+        return _pgvector_available
+    try:
+        conn = get_conn()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT 1 FROM pg_extension WHERE extname='vector'")
+            _pgvector_available = cur.fetchone() is not None
+        finally:
+            put_conn(conn)
+    except Exception:
+        _pgvector_available = False
+    return _pgvector_available
+
+
+def store_embedding(user_id, character_id, content, content_type="message", embedding=None):
+    """Store a text embedding for semantic search."""
+    if not _check_pgvector() or embedding is None:
+        return
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        # Convert embedding to pgvector format
+        vec_str = "[" + ",".join(str(x) for x in embedding) + "]"
+        cur.execute("""
+            INSERT INTO memory_embeddings (user_id, character_id, content, content_type, embedding)
+            VALUES (%s, %s, %s, %s, %s::vector)
+        """, (user_id, character_id, content, content_type, vec_str))
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+def search_similar_memories(user_id, query_embedding, character_id=None, limit=5):
+    """Search for semantically similar content using cosine similarity."""
+    if not _check_pgvector() or query_embedding is None:
+        return []
+    vec_str = "[" + ",".join(str(x) for x in query_embedding) + "]"
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        if character_id:
+            cur.execute("""
+                SELECT content, content_type, created_at,
+                       1 - (embedding <=> %s::vector) as similarity
+                FROM memory_embeddings
+                WHERE user_id=%s AND character_id=%s
+                ORDER BY embedding <=> %s::vector LIMIT %s
+            """, (vec_str, user_id, character_id, vec_str, limit))
+        else:
+            cur.execute("""
+                SELECT content, content_type, character_id, created_at,
+                       1 - (embedding <=> %s::vector) as similarity
+                FROM memory_embeddings
+                WHERE user_id=%s
+                ORDER BY embedding <=> %s::vector LIMIT %s
+            """, (vec_str, user_id, vec_str, limit))
+        rows = cur.fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        put_conn(conn)
+
+
+def get_embedding_count(user_id):
+    """Count stored embeddings for a user."""
+    if not _check_pgvector():
+        return 0
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) as cnt FROM memory_embeddings WHERE user_id=%s", (user_id,))
+        row = cur.fetchone()
+        return row["cnt"] if row else 0
     finally:
         put_conn(conn)

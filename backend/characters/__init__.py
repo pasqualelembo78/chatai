@@ -1,86 +1,58 @@
-# Auto-generated - Package characters
+# Character data loader — loads from JSON files at import time
 
+import os
+import json
 import random
 import logging
 
 logger = logging.getLogger(__name__)
 
-from .categorical import CATEGORIES
+_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
-from .amicizia import CHARACTERS_AMICIZIA
-from .anime import CHARACTERS_ANIME
-from .business import CHARACTERS_BUSINESS
-from .confessioni import CHARACTERS_CONFESSIONI
-from .creativi import CHARACTERS_CREATIVI
-from .cucina import CHARACTERS_CUCINA
-from .detective import CHARACTERS_DETECTIVE
-from .esperti import CHARACTERS_ESPERTI
-from .fantasy import CHARACTERS_FANTASY
-from .flirt import CHARACTERS_FLIRT
-from .gamer import CHARACTERS_GAMER
-from .horror import CHARACTERS_HORROR
-from .intrattenimento import CHARACTERS_INTRATTENIMENTO
-from .medicina import CHARACTERS_MEDICINA
-from .motivazione import CHARACTERS_MOTIVAZIONE
-from .premium import CHARACTERS_PREMIUM
-from .quotidiano import CHARACTERS_QUOTIDIANO
-from .relazioni import CHARACTERS_RELAZIONI
-from .romantici import CHARACTERS_ROMANTICI
-from .sci_fi import CHARACTERS_SCI_FI
-from .scuola import CHARACTERS_SCUOLA
-from .seduzione import CHARACTERS_SEDUZIONE
-from .sopravvivenza import CHARACTERS_SOPRAVVIVENZA
-from .speciale import CHARACTERS_SPECIALE
-from .sport import CHARACTERS_SPORT
-from .storia import CHARACTERS_STORIA
-from .supereroi import CHARACTERS_SUPEREROI
-from .tecnici import CHARACTERS_TECNICI
-from .tecnologia import CHARACTERS_TECNOLOGIA
-from .viaggi import CHARACTERS_VIAGGI
+_CHAR_FILES = [
+    "amicizia", "anime", "business", "confessioni", "creativi", "cucina",
+    "detective", "esperti", "fantasy", "flirt", "gamer", "horror",
+    "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
+    "relazioni", "romantici", "sci_fi", "scuola", "seduzione",
+    "sopravvivenza", "speciale", "sport", "storia", "supereroi",
+    "tecnici", "tecnologia", "viaggi",
+]
 
-CHARACTERS = []
-CHARACTERS.extend(CHARACTERS_AMICIZIA)
-CHARACTERS.extend(CHARACTERS_ANIME)
-CHARACTERS.extend(CHARACTERS_BUSINESS)
-CHARACTERS.extend(CHARACTERS_CONFESSIONI)
-CHARACTERS.extend(CHARACTERS_CREATIVI)
-CHARACTERS.extend(CHARACTERS_CUCINA)
-CHARACTERS.extend(CHARACTERS_DETECTIVE)
-CHARACTERS.extend(CHARACTERS_ESPERTI)
-CHARACTERS.extend(CHARACTERS_FANTASY)
-CHARACTERS.extend(CHARACTERS_FLIRT)
-CHARACTERS.extend(CHARACTERS_GAMER)
-CHARACTERS.extend(CHARACTERS_HORROR)
-CHARACTERS.extend(CHARACTERS_INTRATTENIMENTO)
-CHARACTERS.extend(CHARACTERS_MEDICINA)
-CHARACTERS.extend(CHARACTERS_MOTIVAZIONE)
-CHARACTERS.extend(CHARACTERS_PREMIUM)
-CHARACTERS.extend(CHARACTERS_QUOTIDIANO)
-CHARACTERS.extend(CHARACTERS_RELAZIONI)
-CHARACTERS.extend(CHARACTERS_ROMANTICI)
-CHARACTERS.extend(CHARACTERS_SCI_FI)
-CHARACTERS.extend(CHARACTERS_SCUOLA)
-CHARACTERS.extend(CHARACTERS_SEDUZIONE)
-CHARACTERS.extend(CHARACTERS_SOPRAVVIVENZA)
-CHARACTERS.extend(CHARACTERS_SPECIALE)
-CHARACTERS.extend(CHARACTERS_SPORT)
-CHARACTERS.extend(CHARACTERS_STORIA)
-CHARACTERS.extend(CHARACTERS_SUPEREROI)
-CHARACTERS.extend(CHARACTERS_TECNICI)
-CHARACTERS.extend(CHARACTERS_TECNOLOGIA)
-CHARACTERS.extend(CHARACTERS_VIAGGI)
 
-CHARACTER_MAP = {c['id']: c for c in CHARACTERS}
-CATEGORY_MAP = {c['id']: c['name'] for c in CATEGORIES}
+def _load_all():
+    """Load categories and all character JSON files."""
+    categories = []
+    cat_path = os.path.join(_DATA_DIR, "categories.json")
+    if os.path.exists(cat_path):
+        with open(cat_path, encoding="utf-8") as f:
+            categories = json.load(f)
+
+    chars = []
+    for name in _CHAR_FILES:
+        path = os.path.join(_DATA_DIR, f"{name}.json")
+        if not os.path.exists(path):
+            logger.warning(f"Character data file not found: {path}")
+            continue
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+            chars.extend(data)
+        except Exception as e:
+            logger.error(f"Failed to load {path}: {e}")
+
+    return chars, categories
+
+
+CHARACTERS, CATEGORIES = _load_all()
+CHARACTER_MAP = {c["id"]: c for c in CHARACTERS}
+CATEGORY_MAP = {c["id"]: c["name"] for c in CATEGORIES}
+
 
 from .functions import (
     _is_english, _quick_translate_desc, _quick_translate_essence,
     _MALE_NAMES, _FEMALE_NAMES, _FEMALE_KEYWORDS, _MALE_KEYWORDS,
     _DEFAULT_EVOLUTION_STAGES, _DEFAULT_EVOLUTION_MILESTONES,
 )
-
-
-# ── Funzioni che dipendono da CHARACTERS/CATEGORIES/CHARACTER_MAP ──────
 
 
 def infer_character_sex(character):
@@ -157,7 +129,6 @@ def _enrich(c):
     if essence and _is_english(essence):
         enriched["essence"] = _quick_translate_essence(essence, enriched.get("name", ""))
 
-    # Lazy-load ALL demographics in one query (not N+1)
     _demo_cache = getattr(_enrich, "_demo_cache", None)
     if _demo_cache is None:
         _enrich._demo_cache = {}

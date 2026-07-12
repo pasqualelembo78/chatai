@@ -3,7 +3,7 @@ MAX_HISTORY_MESSAGES = 20
 from scenario_engine import classify_character, get_opening_scenario, DEFERRED_INTRO, STATIC_INTRO
 
 
-def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None):
+def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None):
     intimacy = relationship.get("intimacy", 0)
     config = character.get("intimacy_config", {})
     name = character["name"]
@@ -162,6 +162,29 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         if flags.get("backstory_profonda") or flags.get("backstory_base") or flags.get("backstory_viaggi") or flags.get("backstory_arte"):
             if backstory and "backstory" not in str(extra):
                 extra.append(f"Puoi condividere il tuo passato con {interlocutor}: {backstory}")
+
+    # ── Phase 5: Temporal context ──
+    if temporal_context:
+        time_gap = temporal_context.get("time_gap")
+        if time_gap:
+            extra.append(f"L'ultima volta che hai parlato con {interlocutor} era {time_gap}.")
+        total_sessions = temporal_context.get("total_sessions", 0)
+        if total_sessions and total_sessions > 1:
+            extra.append(f"Avete parlato {total_sessions} volte in passato.")
+
+    # ── Phase 8: Recent topics ──
+    if recent_topics:
+        topic_names = [t["topic"] for t in recent_topics[:4]]
+        if topic_names:
+            extra.append(f"Argomenti recenti con {interlocutor}: {', '.join(topic_names)}.")
+
+    # ── Phase 7: Shared memories (cross-character) ──
+    if shared_memories:
+        shared_facts = []
+        for sm in shared_memories[:3]:
+            shared_facts.append(f"- {sm['fact_key']}: {sm['fact_value']}")
+        if shared_facts:
+            extra.append(f"Cose che sai su {interlocutor} (da altre conversazioni):\n" + "\n".join(shared_facts))
 
     if extra:
         prompt += "\n\n" + "\n".join(extra)
@@ -361,11 +384,13 @@ def _build_enhanced_prompt(character, interlocutor):
     return "\n".join(parts)
 
 
-def build_messages(character, emotion, relationship, personality, world_state, user_text, user_id, history, shifts=None, username=None, user_memory=None, summaries=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None):
+def build_messages(character, emotion, relationship, personality, world_state, user_text, user_id, history, shifts=None, username=None, user_memory=None, summaries=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None):
     system_prompt = build_system_prompt(
         character, emotion, relationship, personality, world_state,
         shifts, username, user_id, user_memory, evolution, is_favorite, total_messages,
-        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation
+        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation,
+        temporal_context=temporal_context, recent_topics=recent_topics,
+        shared_memories=shared_memories,
     )
     messages = [{"role": "system", "content": system_prompt}]
 

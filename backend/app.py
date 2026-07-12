@@ -58,6 +58,15 @@ from storage import (
     get_or_create_referral_code, get_referrer_by_code, claim_referral_bonus,
     credit_referral_first_message, get_daily_share_count, add_social_share,
     get_checkin_streak, claim_streak_milestone, count_all_user_messages,
+    # Phase 2-8: Per-user memory
+    get_user_personality, update_user_personality as update_user_personality_db,
+    set_user_personality,
+    get_user_world_state, save_user_world_state,
+    update_user_memory_enhanced, decay_user_memory, get_relevant_memories,
+    start_conversation_session, get_temporal_context,
+    share_memory_across_characters, get_shared_memories,
+    detect_message_topics, update_conversation_topics, get_recent_topics,
+    consolidate_user_memory, get_character_recent_topics,
 )
 from evolution_engine import evaluate_evolution
 from prompt_builder import build_messages
@@ -1634,13 +1643,18 @@ def process_message(user_id, character_id, text, username="Utente",
         summaries = client_state.get("summaries", [])
     else:
         relationship = get_relationship(user_id, character_id)
-        personality = get_personality(character_id, character.get("core_traits", {}))
+        # Phase 2: Use per-user personality (falls back to shared if not yet personalized)
+        personality = get_user_personality(user_id, character_id, character.get("core_traits", {}))
         history = memory_context if memory_context is not None else get_recent_messages(user_id, character_id, limit=20)
         shifts = get_recent_shifts(user_id, character_id)
         evo = get_evolution(user_id, character_id)
         summaries = get_memories(user_id, character_id, limit=5)
 
-    world_state = get_world_state()
+    # Phase 2: Per-user world state
+    if client_storage:
+        world_state = get_world_state()
+    else:
+        world_state = get_user_world_state(user_id)
     user_prefs = get_user_preferences(user_id)
     user_gender = user_prefs.get("user_gender") or None
     user_age = user_prefs.get("user_age") or None
@@ -1651,6 +1665,10 @@ def process_message(user_id, character_id, text, username="Utente",
         add_message(user_id, character_id, "user", text)
         if is_first:
             credit_referral_first_message(user_id)
+        # Phase 5: Track conversation session
+        start_conversation_session(user_id, character_id)
+        # Phase 8: Track conversation topics
+        update_conversation_topics(user_id, character_id, text)
 
     evo_updates = evaluate_evolution(user_id, character_id, character, text, emotion, evo)
 
@@ -1661,20 +1679,16 @@ def process_message(user_id, character_id, text, username="Utente",
         if reward:
             add_mevacoins(user_id, reward, f"milestone:{character_id}")
         if evo_updates["trait_modifiers"]:
-            pers = get_personality(character_id, character.get("core_traits", {}))
-            for trait, delta in evo_updates["trait_modifiers"].items():
-                pers[trait] = max(0, min(10, pers.get(trait, 5) + delta))
-            update_personality(character_id, pers)
+            # Phase 2: Update per-user personality
+            update_user_personality_db(user_id, character_id, evo_updates["trait_modifiers"])
         if not character.get("evolution"):
             rel_deltas = _compute_relationship_deltas(emotion, intensity)
             if any(v != 0 for v in rel_deltas.values()):
                 update_relationship(user_id, character_id, rel_deltas)
             pers_deltas = _compute_personality_deltas(emotion, intensity, relationship)
             if any(v != 0 for v in pers_deltas.values()):
-                pers = get_personality(character_id, character.get("core_traits", {}))
-                for trait, delta in pers_deltas.items():
-                    pers[trait] = max(0, min(10, pers.get(trait, 5) + delta))
-                update_personality(character_id, pers)
+                # Phase 2: Update per-user personality
+                update_user_personality_db(user_id, character_id, pers_deltas)
         update_evolution(user_id, character_id, evo)
 
     learned = evo.setdefault("learned", {"topics": [], "personality_drift": {}, "new_skills": []})
@@ -1763,21 +1777,50 @@ def process_message(user_id, character_id, text, username="Utente",
             wrapped = {}
             for key, val in memory_updates.items():
                 wrapped[key] = {"value": val, "source": character_id, "source_name": character["name"]}
-            update_user_memory(user_id, wrapped)
+            # Phase 3: Use enhanced memory update with importance scoring
+            update_user_memory_enhanced(user_id, wrapped, source_character=character_id, source_name=character["name"])
+            # Phase 7: Share important facts across all characters
+            for key, val in memory_updates.items():
+                val_str = val if isinstance(val, str) else val.get("value", str(val)) if isinstance(val, dict) else str(val)
+                if len(val_str) > 3:
+                    share_memory_across_characters(user_id, key, val_str, character_id, character["name"])
+        # Phase 3: Apply temporal decay (run periodically, cheap check)
+        import random
+        if random.random() < 0.05:  # 5% chance per message
+            try:
+                decay_user_memory(user_id)
+            except Exception as e:
+                logger.warning(f"Memory decay failed: {e}")
         stored = get_user_memory(user_id).get("memory", {})
         if stored:
+            # Phase 3: Get most relevant memories, not all
             user_memory = stored
 
     evo["dialog_hints"] = evo_updates.get("dialog_hints", [])
     evo["_just_unlocked"] = evo_updates.get("unlocked", [])
 
     _total_msgs = count_messages(user_id, character_id)
+
+    # Phase 5: Get temporal context for prompt
+    temporal_context = {}
+    recent_topics = []
+    shared_mems = []
+    if not client_storage:
+        try:
+            temporal_context = get_temporal_context(user_id, character_id)
+            recent_topics = get_recent_topics(user_id, character_id, days=7, limit=5)
+            shared_mems = get_shared_memories(user_id, limit=5)
+        except Exception as e:
+            logger.warning(f"Memory context failed: {e}")
+
     messages = build_messages(
         character, {"emotion": emotion, "intensity": intensity},
         relationship, personality, world_state, text, user_id, history,
         shifts, username, user_memory=user_memory, summaries=summaries,
         evolution=evo, is_favorite=is_favorite, total_messages=_total_msgs,
-        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation
+        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation,
+        temporal_context=temporal_context, recent_topics=recent_topics,
+        shared_memories=shared_mems,
     )
 
     ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
@@ -1967,11 +2010,29 @@ def _extract_teaching_topic(user_text):
             return w
     return None
 
+def _mentions_personal_info(text):
+    """Gatekeeper: returns True only if the message likely contains personal info worth extracting."""
+    text_lower = text.lower()
+    # Direct personal statements
+    direct = any(kw in text_lower for kw in _MEMORY_KEYWORDS)
+    if direct:
+        return True
+    # Broader patterns: "io sono", "a me piace", "il mio lavoro", etc.
+    broad_patterns = [
+        "io sono", "a me ", "per me ", "il mio ", "la mia ", "i miei ", "le mie ",
+        "mi chiamo", "ho bisogno", "vivo a", "abito a", "studio a", "lavoro a",
+        "mi piace", "mi piaceva", "adoro ", "detesto ", "odio ",
+        "sono di ", "vengo da", "parlo ", "conosco ",
+    ]
+    return any(p in text_lower for p in broad_patterns)
+
 def _extract_user_facts(user_id, user_text, character_name):
+    """Extract personal facts from user message via LLM. Called only when _mentions_personal_info() is True."""
     prompt = (
         f"L'utente ha detto a {character_name}: \"{user_text}\"\n\n"
         "Estrai eventuali informazioni personali sull'utente e restituiscile come JSON con chiavi in italiano. "
-        "Se non ci sono informazioni personali, restituisci solo {}.\n"
+        "Ogni valore deve essere una stringa concisa. Se non ci sono informazioni personali, restituisci solo {}.\n"
+        "Esempio: {\"hobby\": \"gioca a pallone\", \"lavoro\": \"insegnante\"}\n"
         "Restituisci SOLO il JSON, nient'altro."
     )
     msgs = [
@@ -1990,6 +2051,9 @@ def _extract_user_facts(user_id, user_text, character_name):
         return {}
 
 def _extract_memory_updates(user_id, user_text, character, character_id=None):
+    """Phase 1: Only call LLM extraction if message likely contains personal info."""
+    if not _mentions_personal_info(user_text):
+        return {}
     return _extract_user_facts(user_id, user_text, character["name"])
 
 # ─── Image/Video generation ──────────────────────────────────────
