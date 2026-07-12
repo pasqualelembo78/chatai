@@ -1030,18 +1030,24 @@ def get_user_preferences(user_id):
 
 def save_user_preferences(user_id, data):
     conn = get_conn()
-    interests = data.get("interest_tags") or data.get("interests", [])
+    existing = conn.execute("SELECT * FROM user_preferences WHERE user_id=?", (user_id,)).fetchone()
+    old = dict(existing) if existing else {}
+
+    interests = data.get("interest_tags") or data.get("interests") or old.get("interest_tags", [])
+    if isinstance(interests, str):
+        interests = json.loads(interests) if interests else []
+
     conn.execute(
         """INSERT OR REPLACE INTO user_preferences
            (user_id, gender_interest, age_range, interest_tags, show_adult, user_gender, user_age, updated_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)""",
         (user_id,
-         data.get("gender_interest", ""),
-         data.get("age_range", ""),
+         data.get("gender_interest") or old.get("gender_interest", ""),
+         data.get("age_range") or old.get("age_range", ""),
          json.dumps(interests),
-         1 if data.get("show_adult") else 0,
-         data.get("user_gender", ""),
-         data.get("user_age", 0))
+         data["show_adult"] if "show_adult" in data else old.get("show_adult", 0),
+         data.get("user_gender") or old.get("user_gender", ""),
+         data.get("user_age") or old.get("user_age", 0))
     )
     conn.commit()
     conn.close()
