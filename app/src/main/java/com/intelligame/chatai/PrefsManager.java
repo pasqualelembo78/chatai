@@ -21,7 +21,7 @@ public class PrefsManager {
     private static final String KEY_SHOW_ADULT = "show_adult";
     private static final String KEY_API_KEY_PREFIX = "api_key_";
 
-    private static final String DEFAULT_SERVER_URL = "http://mevacoin.com";
+    private static final String DEFAULT_SERVER_URL = "https://mevacoin.com";
 
     private final SharedPreferences prefs;
 
