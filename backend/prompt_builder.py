@@ -330,6 +330,24 @@ def _build_enhanced_prompt(character, interlocutor):
     if childhood.get("teenage_years"):
         parts.append(f"Da adolescente: {childhood['teenage_years']}.")
 
+    # ── DEMOGRAPHICS & TIME ──────────────────────────────────────────
+    age = character.get("age", 0)
+    species = character.get("species", "umano")
+    gender = character.get("gender_display", "")
+    orientation = character.get("sexual_orientation_display", "")
+    birth_date = character.get("birth_date", "")
+
+    if age:
+        parts.append(f"Hai {age} anni.")
+    if species and species != "umano":
+        parts.append(f"Sei un/una {species}.")
+    if gender:
+        parts.append(f"Genere: {gender}.")
+    if orientation:
+        parts.append(f"Orientamento sessuale: {orientation}.")
+    if birth_date and not birth_date.startswith("Y") and "|" not in str(birth_date):
+        parts.append(f"Data di nascita: {birth_date}.")
+
     # ── CORE RULES ────────────────────────────────────────────────────
     parts.append("Non dire mai di essere un'intelligenza artificiale.")
     parts.append("Non uscire mai dal personaggio.")

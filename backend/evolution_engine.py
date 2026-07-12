@@ -87,4 +87,59 @@ def _check_condition(milestone, user_text, emotion, evo):
             for c in sub_conditions
         ]
         return all(results) if op == "AND" else any(results)
+    # ── Time-based conditions ──
+    if ctype == "birthday_today":
+        char_id = evo.get("character_id", "")
+        try:
+            from storage import get_character_demographics
+            demo = get_character_demographics(char_id)
+            if demo and demo.get("birth_date"):
+                from datetime import date
+                bd = demo["birth_date"]
+                if bd and not bd.startswith("Y") and "|" not in str(bd):
+                    parts = bd.split("-")
+                    today = date.today()
+                    if int(parts[1]) == today.month and int(parts[2]) == today.day:
+                        return True
+        except:
+            pass
+        return False
+    if ctype == "days_since_first_message":
+        threshold = cond.get("value", 30)
+        first_msg = evo.get("first_message_date")
+        if first_msg:
+            from datetime import datetime
+            try:
+                if isinstance(first_msg, str):
+                    first = datetime.fromisoformat(first_msg)
+                else:
+                    first = first_msg
+                days = (datetime.now() - first).days
+                return days >= threshold
+            except:
+                pass
+        return False
+    if ctype == "anniversary":
+        months = cond.get("value", 1)
+        first_msg = evo.get("first_message_date")
+        if first_msg:
+            from datetime import datetime
+            try:
+                if isinstance(first_msg, str):
+                    first = datetime.fromisoformat(first_msg)
+                else:
+                    first = first_msg
+                days = (datetime.now() - first).days
+                return days >= months * 30
+            except:
+                pass
+        return False
+    if ctype == "age_reached":
+        target_age = cond.get("value", 0)
+        char_age = evo.get("character_age", 0)
+        return char_age >= target_age
+    if ctype == "species_is":
+        target = cond.get("value", "")
+        char_species = evo.get("character_species", "")
+        return char_species == target
     return False

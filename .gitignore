@@ -6,7 +6,15 @@
 .DS_Store
 /build
 *.iml
+__pycache__/
 backend/__pycache__/
+backend/characters/__pycache__/
 backend/roleplay_data.db
+backend/characters.py.bak
+backend/characters_old.py
+backend/split_characters.py
+backend/migrate_characters.py
+backend/migrate_demographics.py
 *.keystore
 backend/venv/
+=3.5.0

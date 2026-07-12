@@ -738,3 +738,58 @@ def enhance_system_prompt(character, username="l'utente"):
     prompt_parts.append("Rispondi in modo conciso: massimo 3-4 frasi, a meno che non ti venga chiesto di approfondire.")
 
     return "\n".join(prompt_parts)
+
+
+def generate_demographics(name, age=0, role=""):
+    """Genera demografiche automatiche per un nuovo personaggio."""
+    import random
+    from characters import _MALE_NAMES, _FEMALE_NAMES, _FEMALE_KEYWORDS, _MALE_KEYWORDS
+
+    first = name.lower().split()[0] if name else ""
+
+    gender = "NB"
+    gender_display = "non binario"
+    if first in _MALE_NAMES:
+        gender, gender_display = "M", "maschile"
+    elif first in _FEMALE_NAMES:
+        gender, gender_display = "F", "femminile"
+    elif first:
+        if first.endswith("a") and first not in ("luca", "nicola", "andrea"):
+            gender, gender_display = "F", "femminile"
+        elif first.endswith("o") or first.endswith("e"):
+            gender, gender_display = "M", "maschile"
+
+    if age > 5000:
+        species = "entita"
+    elif age > 1000:
+        species = "maga"
+    elif age > 100:
+        species = "elfo"
+    else:
+        species = "umano"
+
+    from datetime import date
+    today = date(2025, 1, 1)
+    birth_year = today.year - max(age, 1)
+    month = (age * 7 % 12) + 1
+    day = (age * 13 % 28) + 1
+    if birth_year < 1:
+        birth_date = f"{birth_year:05d}-{month:02d}-{day:02d}"
+    else:
+        birth_date = f"{birth_year:04d}-{month:02d}-{day:02d}"
+
+    orientations = ["etero"] * 80 + ["bi"] * 10 + ["gay"] * 5 + ["pan"] * 3 + ["ace"] * 2
+    orientation = random.choice(orientations)
+    orientation_map = {
+        "etero": "eterosessuale", "gay": "omosessuale", "bi": "bisessuale",
+        "pan": "pansessuale", "ace": "asessuale",
+    }
+
+    return {
+        "gender": gender,
+        "gender_display": gender_display,
+        "sexual_orientation": orientation,
+        "sexual_orientation_display": orientation_map.get(orientation, "eterosessuale"),
+        "birth_date": birth_date,
+        "species": species,
+    }

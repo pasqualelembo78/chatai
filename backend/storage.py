@@ -302,6 +302,41 @@ def init_db():
         conn.execute("ALTER TABLE user_preferences ADD COLUMN user_age INTEGER DEFAULT 0")
     except sqlite3.OperationalError:
         pass
+    # Tabella demografici personaggi
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS character_demographics (
+            character_id TEXT PRIMARY KEY,
+            gender TEXT DEFAULT '',
+            gender_display TEXT DEFAULT '',
+            sexual_orientation TEXT DEFAULT 'etero',
+            sexual_orientation_display TEXT DEFAULT 'eterosessuale',
+            birth_date TEXT DEFAULT '',
+            birth_place TEXT DEFAULT '',
+            species TEXT DEFAULT 'umano',
+            age_static INTEGER DEFAULT 0
+        )
+    """)
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_demo_gender ON character_demographics(gender)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_demo_species ON character_demographics(species)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_demo_orientation ON character_demographics(sexual_orientation)")
+    # Tabella compleanni personaggi
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS character_birthdays (
+            character_id TEXT PRIMARY KEY,
+            last_notified TEXT DEFAULT ''
+        )
+    """)
+    # Tabella eventi temporali
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS time_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_type TEXT NOT NULL,
+            character_id TEXT,
+            user_id TEXT,
+            data TEXT DEFAULT '{}',
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -1383,3 +1418,118 @@ def claim_streak_milestone(user_id, milestone):
 
 
 import time
+
+
+# ── Character Demographics ──────────────────────────────────────────────
+
+def get_character_demographics(character_id):
+    conn = get_conn()
+    row = conn.execute("SELECT * FROM character_demographics WHERE character_id=?", (character_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_character_demographics(character_id, **kwargs):
+    conn = get_conn()
+    existing = conn.execute("SELECT * FROM character_demographics WHERE character_id=?", (character_id,)).fetchone()
+    if existing:
+        sets = ", ".join(f"{k}=?" for k in kwargs)
+        conn.execute(f"UPDATE character_demographics SET {sets} WHERE character_id=?",
+                     list(kwargs.values()) + [character_id])
+    else:
+        kwargs["character_id"] = character_id
+        cols = ", ".join(kwargs.keys())
+        phs = ", ".join("?" * len(kwargs))
+        conn.execute(f"INSERT INTO character_demographics ({cols}) VALUES ({phs})", list(kwargs.values()))
+    conn.commit()
+    conn.close()
+
+
+def get_characters_by_species(species):
+    conn = get_conn()
+    rows = conn.execute("SELECT * FROM character_demographics WHERE species=?", (species,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_characters_by_gender(gender):
+    conn = get_conn()
+    rows = conn.execute("SELECT * FROM character_demographics WHERE gender=?", (gender,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_characters_by_orientation(orientation):
+    conn = get_conn()
+    rows = conn.execute("SELECT * FROM character_demographics WHERE sexual_orientation=?", (orientation,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_upcoming_birthdays(days=7):
+    from datetime import date, timedelta
+    conn = get_conn()
+    rows = conn.execute("SELECT * FROM character_demographics WHERE birth_date != ''").fetchall()
+    conn.close()
+    result = []
+    today = date.today()
+    for r in rows:
+        bd = r["birth_date"]
+        if not bd or bd.startswith("Y") or "|" in bd:
+            continue
+        try:
+            parts = bd.split("-")
+            bday = date(int(parts[0]), int(parts[1]), int(parts[2]))
+            this_year = bday.replace(year=today.year)
+            if this_year < today:
+                this_year = bday.replace(year=today.year + 1)
+            diff = (this_year - today).days
+            if 0 <= diff <= days:
+                result.append({"character_id": r["character_id"], "birthday": bd, "days_until": diff})
+        except:
+            pass
+    return sorted(result, key=lambda x: x["days_until"])
+
+
+def register_character_birthday(character_id):
+    conn = get_conn()
+    conn.execute("INSERT OR IGNORE INTO character_birthdays (character_id) VALUES (?)", (character_id,))
+    conn.commit()
+    conn.close()
+
+
+def mark_birthday_notified(character_id):
+    from datetime import datetime
+    conn = get_conn()
+    conn.execute("UPDATE character_birthdays SET last_notified=? WHERE character_id=?",
+                 (datetime.now().isoformat(), character_id))
+    conn.commit()
+    conn.close()
+
+
+# ── Time Events ──────────────────────────────────────────────────────
+
+def add_time_event(event_type, character_id=None, user_id=None, data=None):
+    import json
+    conn = get_conn()
+    conn.execute("INSERT INTO time_events (event_type, character_id, user_id, data) VALUES (?, ?, ?, ?)",
+                 (event_type, character_id, user_id, json.dumps(data or {})))
+    conn.commit()
+    conn.close()
+
+
+def get_time_events(event_type=None, limit=50):
+    import json
+    conn = get_conn()
+    if event_type:
+        rows = conn.execute("SELECT * FROM time_events WHERE event_type=? ORDER BY created_at DESC LIMIT ?",
+                            (event_type, limit)).fetchall()
+    else:
+        rows = conn.execute("SELECT * FROM time_events ORDER BY created_at DESC LIMIT ?", (limit,)).fetchall()
+    conn.close()
+    result = []
+    for r in rows:
+        d = dict(r)
+        d["data"] = json.loads(d.get("data", "{}"))
+        result.append(d)
+    return result
