@@ -347,17 +347,19 @@ def api_characters():
         all_chars = list_characters()
         user_chars = get_all_user_characters()
         all_chars = all_chars + user_chars
+        chars = all_chars  # Default: all chars (sorting applied below)
         if user_id:
             prefs = get_user_preferences(user_id)
             interests = [t.lower() for t in prefs.get("interest_tags", [])]
             if interests:
-                chars = [c for c in all_chars if any(t.lower() in interests for t in c.get("tags", []))]
-                if chars:
-                    return jsonify(chars)
-        # No interests or no matches: return popular selection
-        import random
-        random.seed(42)  # Consistent selection
-        chars = random.sample(all_chars, min(30, len(all_chars)))
+                interest_match = [c for c in all_chars if any(t.lower() in interests for t in c.get("tags", []))]
+                if interest_match:
+                    chars = interest_match
+                # else: keep all_chars, sorting below will prioritize matches
+        if not chars:
+            import random
+            random.seed(42)
+            chars = random.sample(all_chars, min(30, len(all_chars)))
     else:
         chars = get_characters_by_category(category) if category else list_characters()
 
@@ -369,13 +371,59 @@ def api_characters():
         try:
             prefs = get_user_preferences(user_id)
             gender = prefs.get("gender_interest", "")
-            if gender and gender != "non binario":
-                # Sort: matching characters first, then the rest
+            age_range = prefs.get("age_range", "")
+
+            # Parse age range
+            age_min = 0
+            age_max = 999
+            if age_range:
+                if "+" in age_range:
+                    age_min = int(age_range.replace("+", ""))
+                elif "-" in age_range:
+                    parts = age_range.split("-")
+                    age_min = int(parts[0])
+                    age_max = int(parts[1])
+
+            has_gender = gender and gender != "non binario"
+            has_age = bool(age_range)
+
+            if has_age or has_gender:
                 from characters import infer_character_sex
-                matching = [c for c in chars if infer_character_sex(c) == gender]
-                unknown = [c for c in chars if infer_character_sex(c) == ""]
-                rest = [c for c in chars if infer_character_sex(c) not in (gender, "")]
-                chars = matching + unknown + rest
+
+                def _age_match(c):
+                    age = c.get("age", 0)
+                    return age_min <= age <= age_max
+
+                def _gender_match(c):
+                    return infer_character_sex(c) == gender
+
+                def _unknown_gender(c):
+                    return infer_character_sex(c) == ""
+
+                # Priority ordering:
+                # 1. age + gender match
+                # 2. age only match
+                # 3. gender only match
+                # 4. unknown gender + age
+                # 5. unknown gender
+                # 6. rest
+                if has_age and has_gender:
+                    p1 = [c for c in chars if _age_match(c) and _gender_match(c)]
+                    p2 = [c for c in chars if _age_match(c) and not _gender_match(c)]
+                    p3 = [c for c in chars if not _age_match(c) and _gender_match(c)]
+                    p4 = [c for c in chars if _age_match(c) and _unknown_gender(c)]
+                    p5 = [c for c in chars if not _age_match(c) and _unknown_gender(c)]
+                    p6 = [c for c in chars if not _age_match(c) and not _gender_match(c) and not _unknown_gender(c)]
+                    chars = p1 + p2 + p3 + p4 + p5 + p6
+                elif has_age:
+                    p1 = [c for c in chars if _age_match(c)]
+                    p2 = [c for c in chars if not _age_match(c)]
+                    chars = p1 + p2
+                elif has_gender:
+                    matching = [c for c in chars if _gender_match(c)]
+                    unknown = [c for c in chars if _unknown_gender(c)]
+                    rest = [c for c in chars if not _gender_match(c) and not _unknown_gender(c)]
+                    chars = matching + unknown + rest
         except Exception:
             pass
     return jsonify(chars)
