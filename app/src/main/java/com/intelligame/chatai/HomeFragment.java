@@ -301,6 +301,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadCharacters(String categoryId) {
+        mainHandler.post(() -> searchProgress.setVisibility(View.VISIBLE));
         executor.execute(() -> {
             try {
                 String json = httpGet(baseUrl + "/characters?category=" + URLEncoder.encode(categoryId, "UTF-8"));
@@ -320,6 +321,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 mainHandler.post(() -> {
+                    searchProgress.setVisibility(View.GONE);
                     characters.clear();
                     characters.addAll(list);
                     Cache.characters = new ArrayList<>(list);
@@ -327,7 +329,10 @@ public class HomeFragment extends Fragment {
                     sectionTitle.setText("Personaggi");
                 });
             } catch (Exception e) {
-                mainHandler.post(this::loadOfflineCharacters);
+                mainHandler.post(() -> {
+                    searchProgress.setVisibility(View.GONE);
+                    loadOfflineCharacters();
+                });
             }
         });
     }

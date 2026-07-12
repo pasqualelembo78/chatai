@@ -157,26 +157,24 @@ def _enrich(c):
     if essence and _is_english(essence):
         enriched["essence"] = _quick_translate_essence(essence, enriched.get("name", ""))
 
+    # Lazy-load ALL demographics in one query (not N+1)
     _demo_cache = getattr(_enrich, "_demo_cache", None)
     if _demo_cache is None:
         _enrich._demo_cache = {}
         _demo_cache = _enrich._demo_cache
-
-    char_id = enriched.get("id", "")
-    if char_id and char_id not in _demo_cache:
         try:
             from storage import get_conn
             conn = get_conn()
-            row = conn.execute(
-                "SELECT * FROM character_demographics WHERE character_id=?",
-                (char_id,)
-            ).fetchone()
+            rows = conn.execute("SELECT * FROM character_demographics").fetchall()
             conn.close()
-            _demo_cache[char_id] = dict(row) if row else None
+            for row in rows:
+                _demo_cache[row["character_id"]] = dict(row)
         except:
-            _demo_cache[char_id] = None
+            pass
 
+    char_id = enriched.get("id", "")
     db_demo = _demo_cache.get(char_id)
+
     if db_demo:
         enriched["gender"] = db_demo.get("gender", "")
         enriched["gender_display"] = db_demo.get("gender_display", "")
