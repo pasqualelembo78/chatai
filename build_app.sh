@@ -190,7 +190,7 @@ if [ "$SKIP_PY" = false ]; then
     # Verifica file Python
     python3 -c "
 import py_compile, sys, os
-files = ['characters.py', 'emotion_engine.py', 'storage.py', 'ai_engine.py', 'prompt_builder.py', 'server.py', 'auth.py', 'audio_utils.py', 'image_utils.py', 'avatar_tool.py']
+files = ['app.py', 'auth_fastapi.py', 'storage.py', 'db.py', 'ai_engine.py', 'prompt_builder.py', 'evolution_engine.py', 'audio_utils.py', 'image_utils.py', 'avatar_tool.py', 'security_utils.py', 'characters.py']
 for f in files:
     if os.path.exists(f):
         py_compile.compile(f, doraise=True)
@@ -206,20 +206,9 @@ print('    All Python files OK')
     $SUDO chmod -R g+rx "$ROOT_DIR/backend" 2>/dev/null || true
     $SUDO chmod 750 "$ROOT_DIR/backend/venv" 2>/dev/null || true
     $SUDO chmod 640 "$ROOT_DIR/backend/.env" 2>/dev/null || true
-    $SUDO chmod 640 "$ROOT_DIR/backend/roleplay_data.db" 2>/dev/null || true
-    $SUDO chown chatai:chatai "$ROOT_DIR/backend/roleplay_data.db" 2>/dev/null || true
-
-    # Fix: SQLite necessita di scrittura sulla directory per i file journal/WAL
     $SUDO chmod g+w "$ROOT_DIR/backend" 2>/dev/null || true
 
-    # Fix: assicura timeout e WAL mode a storage.py (idempotente)
-    if ! grep -q "check_same_thread" "$ROOT_DIR/backend/storage.py" 2>/dev/null; then
-        $SUDO sed -i 's/conn = sqlite3.connect(DB_PATH)/conn = sqlite3.connect(DB_PATH, timeout=30, check_same_thread=False)/' "$ROOT_DIR/backend/storage.py"
-        $SUDO sed -i '/conn.row_factory = sqlite3.Row/a\    conn.execute("PRAGMA journal_mode=WAL")\n    conn.execute("PRAGMA busy_timeout=30000")\n    conn.execute("PRAGMA synchronous=NORMAL")' "$ROOT_DIR/backend/storage.py"
-        echo -e "    ${GREEN}storage.py: SQLite timeout/WAL fix applicato.${NC}"
-    else
-        echo -e "    ${GREEN}storage.py: timeout/WAL già presente.${NC}"
-    fi
+    echo -e "    ${GREEN}Backend permissions set.${NC}"
 fi
 
 # ══════════════════════════════════════════════════════════════════
@@ -791,7 +780,7 @@ Type=simple
 User=chatai
 Group=chatai
 WorkingDirectory=$ROOT_DIR/backend
-ExecStart=$ROOT_DIR/backend/venv/bin/python3 server.py
+ExecStart=$ROOT_DIR/backend/venv/bin/python3 -m uvicorn app:app --host 127.0.0.1 --port 5000 --workers 1
 Restart=on-failure
 RestartSec=10
 StartLimitIntervalSec=60
@@ -817,7 +806,7 @@ echo -e "    ${GREEN}Service file: $SERVICE_FILE${NC}"
 # ══════════════════════════════════════════════════════════════════
 if [ "$SKIP_APK" = false ]; then
     echo ""
-    echo -e "${YELLOW}>>> Building Android APK...${NC}"
+    echo -e "${YELLOW}>>> Building Android AAB + APK (Play Store + direct install)...${NC}"
 
     if [ ! -f gradlew ]; then
         echo -e "${RED}ERROR: gradlew not found${NC}"
@@ -846,59 +835,39 @@ if [ "$SKIP_APK" = false ]; then
     echo -e "    Java: $(java -version 2>&1 | head -1)"
     echo ""
 
-    ./gradlew assembleRelease --no-daemon --console=plain 
-    UNSIGNED_APK="$ROOT_DIR/app/build/outputs/apk/release/app-release-unsigned.apk"
-    if [ -f "$UNSIGNED_APK" ]; then
-        echo ""
-        echo -e "    ${GREEN}Build OK. Signing APK...${NC}"
+    # Build AAB (Play Store)
+    echo -e "    ${YELLOW}Building AAB...${NC}"
+    ./gradlew bundleRelease --no-daemon --console=plain
+    AAB_FILE="$ROOT_DIR/app/build/outputs/bundle/release/app-release.aab"
 
-        KEYSTORE="$ROOT_DIR/debug.keystore"
-        if [ ! -f "$KEYSTORE" ]; then
-            keytool -genkey -v -keystore "$KEYSTORE" -alias debug \
-                -keyalg RSA -keysize 2048 -validity 10000 \
-                -storepass android -keypass android \
-                -dname "CN=Debug, OU=Dev, O=Org, L=City, S=State, C=US" 2>/dev/null
-        fi
+    # Build APK (direct install)
+    echo -e "    ${YELLOW}Building APK...${NC}"
+    ./gradlew assembleRelease --no-daemon --console=plain
+    APK_FILE="$ROOT_DIR/app/build/outputs/apk/release/app-release.apk"
 
-        # Verifica keystore valido (rigenera se corrotto)
-        if ! keytool -list -keystore "$KEYSTORE" -storepass android 2>/dev/null | grep -q "debug"; then
-            echo -e "    ${YELLOW}Keystore corrotto, rigenero...${NC}"
-            rm -f "$KEYSTORE"
-            keytool -genkey -v -keystore "$KEYSTORE" -alias debug \
-                -keyalg RSA -keysize 2048 -validity 10000 \
-                -storepass android -keypass android \
-                -dname "CN=Debug, OU=Dev, O=Org, L=City, S=State, C=US" 2>/dev/null
-        fi
-
-        APKSIGNER="$ANDROID_HOME/build-tools/34.0.0/apksigner"
-        if [ -f "$APKSIGNER" ]; then
-            "$APKSIGNER" sign --ks "$KEYSTORE" --ks-pass pass:android \
-                --ks-key-alias debug "$UNSIGNED_APK"
-        else
-            jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
-                -keystore "$KEYSTORE" -storepass android -keypass android \
-                "$UNSIGNED_APK" debug 2>/dev/null
-        fi
-
-        FINAL_APK="$ROOT_DIR/app/build/outputs/apk/release/app-release.apk"
-        cp "$UNSIGNED_APK" "$FINAL_APK"
-
-        SIZE=$(stat -c%s "$FINAL_APK" 2>/dev/null || stat -f%z "$FINAL_APK" 2>/dev/null)
-        SIZE_MB=$(echo "scale=1; $SIZE/1048576" | bc)
-
-        echo ""
-        echo -e "${GREEN}==================================================${NC}"
-        echo -e "${GREEN} BUILD SUCCESSFUL${NC}"
-        echo -e "${GREEN} APK: $FINAL_APK${NC}"
-        echo -e "${GREEN} Size: ${SIZE_MB}MB${NC}"
-        echo -e "${GREEN}==================================================${NC}"
+    if [ -f "$AAB_FILE" ]; then
+        AAB_SIZE=$(stat -c%s "$AAB_FILE" 2>/dev/null || stat -f%z "$AAB_FILE" 2>/dev/null)
+        AAB_SIZE_MB=$(echo "scale=1; $AAB_SIZE/1048576" | bc)
+        echo -e "    ${GREEN}AAB: $AAB_FILE (${AAB_SIZE_MB}MB)${NC}"
     else
-        echo ""
-        echo -e "${RED}==================================================${NC}"
-        echo -e "${RED} BUILD FAILED - check output above${NC}"
-        echo -e "${RED}==================================================${NC}"
+        echo -e "${RED}AAB build failed!${NC}"
         exit 1
     fi
+
+    if [ -f "$APK_FILE" ]; then
+        APK_SIZE=$(stat -c%s "$APK_FILE" 2>/dev/null || stat -f%z "$APK_FILE" 2>/dev/null)
+        APK_SIZE_MB=$(echo "scale=1; $APK_SIZE/1048576" | bc)
+        echo -e "    ${GREEN}APK: $APK_FILE (${APK_SIZE_MB}MB)${NC}"
+    else
+        echo -e "    ${YELLOW}APK build failed (AAB OK).${NC}"
+    fi
+
+    echo ""
+    echo -e "${GREEN}==================================================${NC}"
+    echo -e "${GREEN} BUILD SUCCESSFUL${NC}"
+    echo -e "${GREEN} AAB → Google Play Console: $AAB_FILE${NC}"
+    [ -f "$APK_FILE" ] && echo -e "${GREEN} APK → Direct install:     $APK_FILE${NC}"
+    echo -e "${GREEN}==================================================${NC}"
 fi
 
 # ══════════════════════════════════════════════════════════════════
