@@ -163,10 +163,14 @@ def _enrich(c):
         _enrich._demo_cache = {}
         _demo_cache = _enrich._demo_cache
         try:
-            from storage import get_conn
+            from db import get_conn, put_conn
             conn = get_conn()
-            rows = conn.execute("SELECT * FROM character_demographics").fetchall()
-            conn.close()
+            try:
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM character_demographics")
+                rows = cur.fetchall()
+            finally:
+                put_conn(conn)
             for row in rows:
                 _demo_cache[row["character_id"]] = dict(row)
         except:

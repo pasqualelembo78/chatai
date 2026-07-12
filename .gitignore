@@ -17,4 +17,8 @@ backend/migrate_characters.py
 backend/migrate_demographics.py
 *.keystore
 backend/venv/
+.env
+backend/.env
+*.env
+*.hf_token
 =3.5.0

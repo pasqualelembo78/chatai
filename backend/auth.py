@@ -14,6 +14,10 @@ from flask_limiter.util import get_remote_address
 import os
 import threading
 
+import psycopg2.errors
+
+from db import get_conn, put_conn
+
 logger = logging.getLogger(__name__)
 auth_bp = Blueprint('auth', __name__)
 
@@ -31,44 +35,36 @@ REFRESH_TOKEN_EXPIRE = 604800   # 7 giorni
 _token_blacklist = set()
 _blacklist_lock = threading.Lock()
 
-def _add_column_if_not_exists(conn, table, column, col_type):
-    cursor = conn.execute(f"PRAGMA table_info({table})")
-    cols = [row[1] for row in cursor.fetchall()]
-    if column not in cols:
-        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}")
-        logger.info(f"Colonna {column} aggiunta a {table}")
-
 # ─── Inizializzazione tabella utenti ──────────────────────────────
 def init_auth_db():
-    from storage import get_conn
     conn = get_conn()
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            username TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL DEFAULT '',
-            role TEXT NOT NULL DEFAULT 'user',
-            google_id TEXT UNIQUE,
-            email TEXT DEFAULT '',
-            banned_until TIMESTAMP NULL,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            last_login TIMESTAMP NULL
-        )
-    """)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS refresh_tokens (
-            id TEXT PRIMARY KEY,
-            user_id TEXT NOT NULL REFERENCES users(id),
-            token_hash TEXT NOT NULL,
-            expires_at TIMESTAMP NOT NULL,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    # Migrazione per tabella esistente senza google_id/email
-    _add_column_if_not_exists(conn, "users", "google_id", "TEXT UNIQUE")
-    _add_column_if_not_exists(conn, "users", "email", "TEXT DEFAULT ''")
-    conn.commit()
-    conn.close()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL DEFAULT '',
+                role TEXT NOT NULL DEFAULT 'user',
+                google_id TEXT UNIQUE,
+                email TEXT DEFAULT '',
+                banned_until TIMESTAMP NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                last_login TIMESTAMP NULL
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS refresh_tokens (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL REFERENCES users(id),
+                token_hash TEXT NOT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        conn.commit()
+    finally:
+        put_conn(conn)
 
 # ─── JWT helper ──────────────────────────────────────────────────
 def _get_jwt_secret():
@@ -132,25 +128,30 @@ def create_tokens(user_id, role="user"):
     }
     access_token = _create_jwt(access_payload)
     refresh_token = _create_jwt(refresh_payload)
-    from storage import get_conn
     conn = get_conn()
-    token_hash = hashlib.sha256(refresh_token.encode()).hexdigest()
-    expires_at = datetime.fromtimestamp(now + REFRESH_TOKEN_EXPIRE, tz=timezone.utc)
-    conn.execute(
-        "INSERT OR REPLACE INTO refresh_tokens (id, user_id, token_hash, expires_at) VALUES (?, ?, ?, ?)",
-        (refresh_jti, user_id, token_hash, expires_at)
-    )
-    conn.commit()
-    conn.close()
+    try:
+        cur = conn.cursor()
+        token_hash = hashlib.sha256(refresh_token.encode()).hexdigest()
+        expires_at = datetime.fromtimestamp(now + REFRESH_TOKEN_EXPIRE, tz=timezone.utc)
+        cur.execute(
+            "INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at) VALUES (%s, %s, %s, %s) "
+            "ON CONFLICT (id) DO UPDATE SET token_hash=EXCLUDED.token_hash, expires_at=EXCLUDED.expires_at",
+            (refresh_jti, user_id, token_hash, expires_at)
+        )
+        conn.commit()
+    finally:
+        put_conn(conn)
     return access_token, refresh_token
 
 def revoke_refresh_token(refresh_token):
     token_hash = hashlib.sha256(refresh_token.encode()).hexdigest()
-    from storage import get_conn
     conn = get_conn()
-    conn.execute("DELETE FROM refresh_tokens WHERE token_hash = ?", (token_hash,))
-    conn.commit()
-    conn.close()
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM refresh_tokens WHERE token_hash = %s", (token_hash,))
+        conn.commit()
+    finally:
+        put_conn(conn)
 
 # ─── Decorator JWT ───────────────────────────────────────────────
 def jwt_required(f):
@@ -169,13 +170,16 @@ def jwt_required(f):
             return jsonify({"error": "Refresh token non permesso qui"}), 401
         g.user_id = payload["user_id"]
         g.user_role = payload.get("role", "user")
-        from storage import get_conn
         conn = get_conn()
-        row = conn.execute("SELECT banned_until FROM users WHERE id = ?", (g.user_id,)).fetchone()
-        conn.close()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT banned_until FROM users WHERE id = %s", (g.user_id,))
+            row = cur.fetchone()
+        finally:
+            put_conn(conn)
         if row and row["banned_until"]:
             try:
-                ban_time = datetime.fromisoformat(row["banned_until"])
+                ban_time = row["banned_until"] if isinstance(row["banned_until"], datetime) else datetime.fromisoformat(row["banned_until"])
                 if ban_time > datetime.now(timezone.utc):
                     return jsonify({"error": "Account sospeso"}), 403
             except Exception:
@@ -220,13 +224,16 @@ def admin_required(f):
             return jsonify({"error": "Permessi insufficienti"}), 403
         g.user_id = payload["user_id"]
         g.user_role = payload.get("role", "user")
-        from storage import get_conn
         conn = get_conn()
-        row = conn.execute("SELECT banned_until FROM users WHERE id = ?", (g.user_id,)).fetchone()
-        conn.close()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT banned_until FROM users WHERE id = %s", (g.user_id,))
+            row = cur.fetchone()
+        finally:
+            put_conn(conn)
         if row and row["banned_until"]:
             try:
-                ban_time = datetime.fromisoformat(row["banned_until"])
+                ban_time = row["banned_until"] if isinstance(row["banned_until"], datetime) else datetime.fromisoformat(row["banned_until"])
                 if ban_time > datetime.now(timezone.utc):
                     return jsonify({"error": "Account sospeso"}), 403
             except Exception:
@@ -240,13 +247,16 @@ def socket_authenticate(token):
     payload = _verify_jwt(token)
     if not payload or payload.get("token_type") == "refresh":
         return None
-    from storage import get_conn
     conn = get_conn()
-    row = conn.execute("SELECT banned_until FROM users WHERE id = ?", (payload["user_id"],)).fetchone()
-    conn.close()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT banned_until FROM users WHERE id = %s", (payload["user_id"],))
+        row = cur.fetchone()
+    finally:
+        put_conn(conn)
     if row and row["banned_until"]:
         try:
-            ban_time = datetime.fromisoformat(row["banned_until"])
+            ban_time = row["banned_until"] if isinstance(row["banned_until"], datetime) else datetime.fromisoformat(row["banned_until"])
             if ban_time > datetime.now(timezone.utc):
                 return None
         except Exception:
@@ -293,61 +303,65 @@ def google_login():
     email = info.get("email", "")
     name = info.get("name", email.split("@")[0] if email else "Utente")
 
-    from storage import get_conn, claim_referral_bonus
     conn = get_conn()
-    row = conn.execute("SELECT id, role, banned_until, username FROM users WHERE google_id = ?", (google_id,)).fetchone()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, role, banned_until, username FROM users WHERE google_id = %s", (google_id,))
+        row = cur.fetchone()
 
-    if row:
-        if row["banned_until"]:
+        if row:
+            if row["banned_until"]:
+                try:
+                    ban_time = row["banned_until"] if isinstance(row["banned_until"], datetime) else datetime.fromisoformat(row["banned_until"])
+                    if ban_time > datetime.now(timezone.utc):
+                        return jsonify({"error": "Account sospeso"}), 403
+                except Exception:
+                    pass
+            user_id = row["id"]
+            role = row["role"]
+            username = row["username"]
+            cur.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP, email = %s WHERE id = %s", (email, user_id))
+            conn.commit()
             try:
-                ban_time = datetime.fromisoformat(row["banned_until"])
-                if ban_time > datetime.now(timezone.utc):
-                    conn.close()
-                    return jsonify({"error": "Account sospeso"}), 403
+                from storage import audit_log
+                audit_log(user_id, "auth.google_login", f"{username} ({email})")
             except Exception:
                 pass
-        user_id = row["id"]
-        role = row["role"]
-        username = row["username"]
-        conn.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP, email = ? WHERE id = ?", (email, user_id))
-        conn.commit()
-        conn.close()
-        try:
-            from storage import audit_log
-            audit_log(user_id, "auth.google_login", f"{username} ({email})")
-        except Exception:
-            pass
-        logger.info(f"Google login: {username} ({email})")
-    else:
-        user_id = str(uuid.uuid4())
-        username = name
-        base_name = username
-        suffix = 1
-        while conn.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone():
-            username = f"{base_name}{suffix}"
-            suffix += 1
-        conn.execute(
-            "INSERT INTO users (id, username, password_hash, role, google_id, email) VALUES (?, ?, '', 'user', ?, ?)",
-            (user_id, username, google_id, email)
-        )
-        conn.commit()
-        conn.close()
+            logger.info(f"Google login: {username} ({email})")
+        else:
+            user_id = str(uuid.uuid4())
+            username = name
+            base_name = username
+            suffix = 1
+            cur.execute("SELECT id FROM users WHERE username = %s", (username,))
+            while cur.fetchone():
+                username = f"{base_name}{suffix}"
+                suffix += 1
+                cur.execute("SELECT id FROM users WHERE username = %s", (username,))
+            cur.execute(
+                "INSERT INTO users (id, username, password_hash, role, google_id, email) VALUES (%s, %s, '', 'user', %s, %s)",
+                (user_id, username, google_id, email)
+            )
+            conn.commit()
 
-        if referral_code:
-            ok, msg = claim_referral_bonus(user_id, referral_code)
-            if ok:
-                logger.info(f"Referral riscattato: {username} con codice {referral_code}")
-            else:
-                logger.info(f"Referral non riscattato per {username}, codice {referral_code}: {msg}")
+            if referral_code:
+                from storage import claim_referral_bonus
+                ok, msg = claim_referral_bonus(user_id, referral_code)
+                if ok:
+                    logger.info(f"Referral riscattato: {username} con codice {referral_code}")
+                else:
+                    logger.info(f"Referral non riscattato per {username}, codice {referral_code}: {msg}")
 
-        try:
-            from storage import init_new_user_bonus
-            init_new_user_bonus(user_id)
-            from storage import audit_log
-            audit_log(user_id, "auth.google_register", f"{username} ({email})")
-        except Exception:
-            pass
-        logger.info(f"Nuovo utente Google: {username} ({email})")
+            try:
+                from storage import init_new_user_bonus
+                init_new_user_bonus(user_id)
+                from storage import audit_log
+                audit_log(user_id, "auth.google_register", f"{username} ({email})")
+            except Exception:
+                pass
+            logger.info(f"Nuovo utente Google: {username} ({email})")
+    finally:
+        put_conn(conn)
 
     access_token, refresh_token = create_tokens(user_id, role if row else "user")
     return jsonify({
@@ -379,23 +393,26 @@ def register():
     if not re.match(r"^[a-zA-Z0-9_]+$", username):
         return jsonify({"error": "Username solo lettere, numeri e underscore"}), 400
 
-    from storage import get_conn, claim_referral_bonus
     conn = get_conn()
-    existing = conn.execute("SELECT id FROM users WHERE username = ?", (username,)).fetchone()
-    if existing:
-        conn.close()
-        return jsonify({"error": "Username già in uso"}), 409
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM users WHERE username = %s", (username,))
+        existing = cur.fetchone()
+        if existing:
+            return jsonify({"error": "Username già in uso"}), 409
 
-    user_id = str(uuid.uuid4())
-    password_hash = generate_password_hash(password, method="scrypt")
-    conn.execute(
-        "INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, 'user')",
-        (user_id, username, password_hash)
-    )
-    conn.commit()
-    conn.close()
+        user_id = str(uuid.uuid4())
+        password_hash = generate_password_hash(password, method="scrypt")
+        cur.execute(
+            "INSERT INTO users (id, username, password_hash, role) VALUES (%s, %s, %s, 'user')",
+            (user_id, username, password_hash)
+        )
+        conn.commit()
+    finally:
+        put_conn(conn)
 
     if referral_code:
+        from storage import claim_referral_bonus
         ok, msg = claim_referral_bonus(user_id, referral_code)
         if ok:
             logger.info(f"Referral riscattato: {username} con codice {referral_code}")
@@ -429,13 +446,16 @@ def login():
     if not username or not password:
         return jsonify({"error": "Username e password richiesti"}), 400
 
-    from storage import get_conn
     conn = get_conn()
-    row = conn.execute(
-        "SELECT id, password_hash, role, banned_until FROM users WHERE username = ?",
-        (username,)
-    ).fetchone()
-    conn.close()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, password_hash, role, banned_until FROM users WHERE username = %s",
+            (username,)
+        )
+        row = cur.fetchone()
+    finally:
+        put_conn(conn)
 
     if not row:
         return jsonify({"error": "Credenziali non valide"}), 401
@@ -445,9 +465,9 @@ def login():
 
     if row["banned_until"]:
         try:
-            ban_time = datetime.fromisoformat(row["banned_until"])
+            ban_time = row["banned_until"] if isinstance(row["banned_until"], datetime) else datetime.fromisoformat(row["banned_until"])
             if ban_time > datetime.now(timezone.utc):
-                return jsonify({"error": "Account sospeso fino al " + row["banned_until"]}), 403
+                return jsonify({"error": "Account sospeso fino al " + str(row["banned_until"])}), 403
         except Exception:
             pass
 
@@ -455,10 +475,13 @@ def login():
         return jsonify({"error": "Credenziali non valide"}), 401
 
     access_token, refresh_token = create_tokens(row["id"], row["role"])
-    conn = get_conn()
-    conn.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?", (row["id"],))
-    conn.commit()
-    conn.close()
+    conn2 = get_conn()
+    try:
+        cur2 = conn2.cursor()
+        cur2.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = %s", (row["id"],))
+        conn2.commit()
+    finally:
+        put_conn(conn2)
     try:
         from storage import audit_log
         audit_log(row["id"], "auth.login", username)
@@ -485,42 +508,44 @@ def local_login():
     if len(username) < 1 or len(username) > 30:
         return jsonify({"error": "Username 1-30 caratteri"}), 400
 
-    from storage import get_conn, claim_referral_bonus
     conn = get_conn()
-    row = conn.execute("SELECT id, role, banned_until FROM users WHERE username = ?", (username,)).fetchone()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, role, banned_until FROM users WHERE username = %s", (username,))
+        row = cur.fetchone()
 
-    if row:
-        if row["banned_until"]:
-            try:
-                ban_time = datetime.fromisoformat(row["banned_until"])
-                if ban_time > datetime.now(timezone.utc):
-                    conn.close()
-                    return jsonify({"error": "Account sospeso"}), 403
-            except Exception:
-                pass
-        user_id = row["id"]
-        role = row["role"]
-        conn.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?", (user_id,))
-        conn.commit()
-    else:
-        user_id = str(uuid.uuid4())
-        conn.execute(
-            "INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, '', 'user')",
-            (user_id, username)
-        )
-        conn.commit()
+        if row:
+            if row["banned_until"]:
+                try:
+                    ban_time = row["banned_until"] if isinstance(row["banned_until"], datetime) else datetime.fromisoformat(row["banned_until"])
+                    if ban_time > datetime.now(timezone.utc):
+                        return jsonify({"error": "Account sospeso"}), 403
+                except Exception:
+                    pass
+            user_id = row["id"]
+            role = row["role"]
+            cur.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = %s", (user_id,))
+            conn.commit()
+        else:
+            user_id = str(uuid.uuid4())
+            cur.execute(
+                "INSERT INTO users (id, username, password_hash, role) VALUES (%s, %s, '', 'user')",
+                (user_id, username)
+            )
+            conn.commit()
 
-        if referral_code:
-            ok, msg = claim_referral_bonus(user_id, referral_code)
-            if ok:
-                logger.info(f"Referral riscattato: {username} con codice {referral_code}")
-            else:
-                logger.info(f"Referral non riscattato per {username}, codice {referral_code}: {msg}")
+            if referral_code:
+                from storage import claim_referral_bonus
+                ok, msg = claim_referral_bonus(user_id, referral_code)
+                if ok:
+                    logger.info(f"Referral riscattato: {username} con codice {referral_code}")
+                else:
+                    logger.info(f"Referral non riscattato per {username}, codice {referral_code}: {msg}")
 
-        from storage import init_new_user_bonus
-        init_new_user_bonus(user_id)
-
-    conn.close()
+            from storage import init_new_user_bonus
+            init_new_user_bonus(user_id)
+    finally:
+        put_conn(conn)
 
     access_token, refresh_token = create_tokens(user_id, role if row else "user")
     try:
@@ -549,31 +574,33 @@ def refresh():
         return jsonify({"error": "Refresh token richiesto"}), 400
 
     token_hash = hashlib.sha256(refresh_token.encode()).hexdigest()
-    from storage import get_conn
     conn = get_conn()
-    row = conn.execute(
-        "SELECT user_id, expires_at FROM refresh_tokens WHERE token_hash = ?", (token_hash,)
-    ).fetchone()
-    if not row:
-        conn.close()
-        return jsonify({"error": "Refresh token non valido"}), 401
-
     try:
-        expires = row["expires_at"] if isinstance(row["expires_at"], datetime) else datetime.fromisoformat(row["expires_at"])
-        if expires < datetime.now(timezone.utc):
-            conn.execute("DELETE FROM refresh_tokens WHERE token_hash = ?", (token_hash,))
-            conn.commit()
-            conn.close()
-            return jsonify({"error": "Refresh token scaduto"}), 401
-    except Exception:
-        pass
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT user_id, expires_at FROM refresh_tokens WHERE token_hash = %s", (token_hash,)
+        )
+        row = cur.fetchone()
+        if not row:
+            return jsonify({"error": "Refresh token non valido"}), 401
 
-    conn.execute("DELETE FROM refresh_tokens WHERE token_hash = ?", (token_hash,))
-    conn.commit()
+        try:
+            expires = row["expires_at"] if isinstance(row["expires_at"], datetime) else datetime.fromisoformat(row["expires_at"])
+            if expires < datetime.now(timezone.utc):
+                cur.execute("DELETE FROM refresh_tokens WHERE token_hash = %s", (token_hash,))
+                conn.commit()
+                return jsonify({"error": "Refresh token scaduto"}), 401
+        except Exception:
+            pass
 
-    user_row = conn.execute("SELECT role FROM users WHERE id = ?", (row["user_id"],)).fetchone()
-    conn.close()
-    role = user_row["role"] if user_row else "user"
+        cur.execute("DELETE FROM refresh_tokens WHERE token_hash = %s", (token_hash,))
+        conn.commit()
+
+        cur.execute("SELECT role FROM users WHERE id = %s", (row["user_id"],))
+        user_row = cur.fetchone()
+        role = user_row["role"] if user_row else "user"
+    finally:
+        put_conn(conn)
 
     new_access, new_refresh = create_tokens(row["user_id"], role)
     return jsonify({
@@ -603,14 +630,16 @@ def logout():
 
 # Pulizia token scaduti ogni ora
 def _cleanup_expired_tokens():
-    from storage import get_conn
     while True:
         time.sleep(3600)
         try:
             conn = get_conn()
-            conn.execute("DELETE FROM refresh_tokens WHERE expires_at < datetime('now')")
-            conn.commit()
-            conn.close()
-            logger.info("Pulizia refresh token scaduti completata")
+            try:
+                cur = conn.cursor()
+                cur.execute("DELETE FROM refresh_tokens WHERE expires_at < CURRENT_TIMESTAMP")
+                conn.commit()
+                logger.info("Pulizia refresh token scaduti completata")
+            finally:
+                put_conn(conn)
         except Exception as e:
             logger.warning(f"Errore pulizia token: {e}")

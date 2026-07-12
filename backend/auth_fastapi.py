@@ -1,0 +1,264 @@
+import uuid
+import time
+import hashlib
+import hmac
+import json
+import re
+import logging
+from datetime import datetime, timedelta, timezone
+from typing import Optional
+from fastapi import Request, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN
+from werkzeug.security import generate_password_hash, check_password_hash
+import os
+import threading
+
+import psycopg2.errors
+
+from db import get_conn, put_conn
+
+logger = logging.getLogger(__name__)
+
+security = HTTPBearer(auto_error=False)
+
+JWT_ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE = 900       # 15 minuti
+REFRESH_TOKEN_EXPIRE = 604800   # 7 giorni
+
+_token_blacklist = set()
+_blacklist_lock = threading.Lock()
+
+# ─── Inizializzazione tabella utenti ──────────────────────────────
+def init_auth_db():
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL DEFAULT '',
+                role TEXT NOT NULL DEFAULT 'user',
+                google_id TEXT UNIQUE,
+                email TEXT DEFAULT '',
+                banned_until TIMESTAMP NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                last_login TIMESTAMP NULL
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS refresh_tokens (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL REFERENCES users(id),
+                token_hash TEXT NOT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+# ─── JWT helpers ──────────────────────────────────────────────────
+def _get_jwt_secret():
+    secret = os.environ.get("JWT_SECRET", "")
+    if not secret:
+        secret = hashlib.sha256(str(uuid.uuid4()).encode()).hexdigest()
+        os.environ["JWT_SECRET"] = secret
+    return secret
+
+def _base64url_encode(data):
+    return data.hex()
+
+def _base64url_decode(s):
+    return bytes.fromhex(s)
+
+def _create_jwt(payload):
+    header = {"alg": JWT_ALGORITHM, "typ": "JWT"}
+    header_b64 = _base64url_encode(json.dumps(header, separators=(",", ":")).encode())
+    payload_b64 = _base64url_encode(json.dumps(payload, separators=(",", ":")).encode())
+    secret = _get_jwt_secret()
+    signature = hmac.new(secret.encode(), f"{header_b64}.{payload_b64}".encode(), hashlib.sha256).hexdigest()
+    return f"{header_b64}.{payload_b64}.{signature}"
+
+def _verify_jwt(token):
+    try:
+        parts = token.split(".")
+        if len(parts) != 3:
+            return None
+        header_b64, payload_b64, signature = parts
+        secret = _get_jwt_secret()
+        expected = hmac.new(secret.encode(), f"{header_b64}.{payload_b64}".encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(expected, signature):
+            return None
+        payload = json.loads(_base64url_decode(payload_b64))
+        if payload.get("exp", 0) < time.time():
+            return None
+        with _blacklist_lock:
+            if payload.get("jti") in _token_blacklist:
+                return None
+        return payload
+    except Exception:
+        return None
+
+def create_tokens(user_id, role="user"):
+    now = time.time()
+    jti = str(uuid.uuid4())
+    access_payload = {
+        "user_id": user_id,
+        "role": role,
+        "jti": jti,
+        "exp": now + ACCESS_TOKEN_EXPIRE,
+        "iat": now,
+    }
+    refresh_jti = str(uuid.uuid4())
+    refresh_payload = {
+        "user_id": user_id,
+        "token_type": "refresh",
+        "jti": refresh_jti,
+        "exp": now + REFRESH_TOKEN_EXPIRE,
+        "iat": now,
+    }
+    access_token = _create_jwt(access_payload)
+    refresh_token = _create_jwt(refresh_payload)
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        token_hash = hashlib.sha256(refresh_token.encode()).hexdigest()
+        expires_at = datetime.fromtimestamp(now + REFRESH_TOKEN_EXPIRE, tz=timezone.utc)
+        cur.execute(
+            "INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at) VALUES (%s, %s, %s, %s) "
+            "ON CONFLICT (id) DO UPDATE SET token_hash=EXCLUDED.token_hash, expires_at=EXCLUDED.expires_at",
+            (refresh_jti, user_id, token_hash, expires_at)
+        )
+        conn.commit()
+    finally:
+        put_conn(conn)
+    return access_token, refresh_token
+
+def revoke_refresh_token(refresh_token):
+    token_hash = hashlib.sha256(refresh_token.encode()).hexdigest()
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM refresh_tokens WHERE token_hash = %s", (token_hash,))
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+def socket_authenticate(token):
+    if not token:
+        return None
+    payload = _verify_jwt(token)
+    if not payload or payload.get("token_type") == "refresh":
+        return None
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT banned_until FROM users WHERE id = %s", (payload["user_id"],))
+        row = cur.fetchone()
+    finally:
+        put_conn(conn)
+    if row and row["banned_until"]:
+        try:
+            ban_time = row["banned_until"] if isinstance(row["banned_until"], datetime) else datetime.fromisoformat(str(row["banned_until"]))
+            if ban_time > datetime.now(timezone.utc):
+                return None
+        except Exception:
+            pass
+    return payload
+
+# ─── FastAPI Dependencies ─────────────────────────────────────────
+class AuthUser:
+    def __init__(self, user_id: str, role: str = "user"):
+        self.user_id = user_id
+        self.role = role
+
+def _extract_token(request: Request) -> Optional[str]:
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        return auth_header[7:]
+    return None
+
+def _check_banned(user_id: str):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT banned_until FROM users WHERE id = %s", (user_id,))
+        row = cur.fetchone()
+    finally:
+        put_conn(conn)
+    if row and row["banned_until"]:
+        try:
+            ban_time = row["banned_until"] if isinstance(row["banned_until"], datetime) else datetime.fromisoformat(str(row["banned_until"]))
+            if ban_time > datetime.now(timezone.utc):
+                raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Account sospeso")
+        except HTTPException:
+            raise
+        except Exception:
+            pass
+
+async def jwt_required(request: Request) -> AuthUser:
+    token = _extract_token(request)
+    if not token:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Token mancante")
+    payload = _verify_jwt(token)
+    if not payload:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Token non valido o scaduto")
+    if payload.get("token_type") == "refresh":
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Refresh token non permesso qui")
+    _check_banned(payload["user_id"])
+    return AuthUser(user_id=payload["user_id"], role=payload.get("role", "user"))
+
+async def jwt_optional(request: Request) -> Optional[AuthUser]:
+    token = _extract_token(request)
+    if not token:
+        return None
+    payload = _verify_jwt(token)
+    if not payload or payload.get("token_type") == "refresh":
+        return None
+    return AuthUser(user_id=payload["user_id"], role=payload.get("role", "user"))
+
+async def admin_required(request: Request) -> AuthUser:
+    token = _extract_token(request)
+    if not token:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Token mancante")
+    payload = _verify_jwt(token)
+    if not payload:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Token non valido o scaduto")
+    if payload.get("role") not in ("admin", "moderator"):
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Permessi insufficienti")
+    _check_banned(payload["user_id"])
+    return AuthUser(user_id=payload["user_id"], role=payload.get("role", "user"))
+
+# ─── Pulizia token scaduti ────────────────────────────────────────
+def _cleanup_expired_tokens():
+    while True:
+        time.sleep(3600)
+        try:
+            conn = get_conn()
+            try:
+                cur = conn.cursor()
+                cur.execute("DELETE FROM refresh_tokens WHERE expires_at < CURRENT_TIMESTAMP")
+                conn.commit()
+                logger.info("Pulizia refresh token scaduti completata")
+            finally:
+                put_conn(conn)
+        except Exception as e:
+            logger.warning(f"Errore pulizia token: {e}")
+
+# ─── Google Sign-In ──────────────────────────────────────────────
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
+
+def _verify_google_token(token):
+    try:
+        from google.oauth2 import id_token as google_id_token
+        from google.auth.transport import requests
+        info = google_id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
+        if info.get("aud") != GOOGLE_CLIENT_ID:
+            return None
+        return info
+    except Exception as e:
+        logger.warning(f"Google token verification failed: {e}")
+        return None

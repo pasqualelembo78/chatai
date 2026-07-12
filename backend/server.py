@@ -612,14 +612,18 @@ def admin_prune():
 @app.route("/admin/logs", methods=["GET"])
 @admin_required
 def admin_logs():
-    from storage import get_conn
+    from db import get_conn, put_conn
     conn = get_conn()
-    limit = min(int(request.args.get("limit", 100)), 1000)
-    rows = conn.execute(
-        "SELECT * FROM audit_log ORDER BY id DESC LIMIT ?", (limit,)
-    ).fetchall()
-    conn.close()
-    return jsonify([dict(r) for r in rows])
+    try:
+        limit = min(int(request.args.get("limit", 100)), 1000)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT * FROM audit_log ORDER BY id DESC LIMIT %s", (limit,)
+        )
+        rows = cur.fetchall()
+        return jsonify([dict(r) for r in rows])
+    finally:
+        put_conn(conn)
 
 @app.route("/user/report", methods=["POST"])
 @jwt_required
@@ -707,13 +711,17 @@ def admin_clean_duplicates():
 @app.route("/conversations")
 @jwt_required
 def api_get_conversations():
-    from storage import get_conn
+    from db import get_conn, put_conn
     conn = get_conn()
-    rows = conn.execute(
-        "SELECT character_id, COUNT(*) as msg_count, MAX(timestamp) as last_active FROM messages WHERE user_id=? GROUP BY character_id ORDER BY last_active DESC",
-        (g.user_id,)
-    ).fetchall()
-    conn.close()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT character_id, COUNT(*) as msg_count, MAX(timestamp) as last_active FROM messages WHERE user_id=%s GROUP BY character_id ORDER BY last_active DESC",
+            (g.user_id,)
+        )
+        rows = cur.fetchall()
+    finally:
+        put_conn(conn)
     result = []
     for r in rows:
         char = get_character(r["character_id"])
