@@ -1129,6 +1129,7 @@ def on_stream_message(data):
     user_prefs = get_user_preferences(user_id)
     user_gender = user_prefs.get("user_gender") or None
     user_age = user_prefs.get("user_age") or None
+    sexual_orientation = user_prefs.get("sexual_orientation") or None
 
     image_desc = None
     if image_b64:
@@ -1233,7 +1234,7 @@ def on_stream_message(data):
         relationship, personality, world_state, text, user_id, history,
         shifts, username, user_memory=user_memory, summaries=summaries,
         evolution=evo, is_favorite=user_is_favorite, total_messages=_total_msgs,
-        user_gender=user_gender, user_age=user_age
+        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation
     )
 
     emit("stream start", {
@@ -1627,6 +1628,7 @@ def process_message(user_id, character_id, text, username="Utente",
     user_prefs = get_user_preferences(user_id)
     user_gender = user_prefs.get("user_gender") or None
     user_age = user_prefs.get("user_age") or None
+    sexual_orientation = user_prefs.get("sexual_orientation") or None
 
     if not client_storage:
         is_first = count_all_user_messages(user_id) == 0
@@ -1786,7 +1788,7 @@ def process_message(user_id, character_id, text, username="Utente",
         relationship, personality, world_state, text, user_id, history,
         shifts, username, user_memory=user_memory, summaries=summaries,
         evolution=evo, is_favorite=is_favorite, total_messages=_total_msgs,
-        user_gender=user_gender, user_age=user_age
+        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation
     )
 
     ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
@@ -1943,11 +1945,13 @@ def _generate_greeting(character, character_name, username=None, user_id=None):
     ws = get_world_state()
     user_gender = None
     user_age = None
+    sexual_orientation = None
     if user_id:
         prefs = get_user_preferences(user_id)
         user_gender = prefs.get("user_gender") or None
         user_age = prefs.get("user_age") or None
-    sp = build_system_prompt(character, {"emotion": "neutral", "intensity": 0}, rel, pers, ws, username=username, user_gender=user_gender, user_age=user_age)
+        sexual_orientation = prefs.get("sexual_orientation") or None
+    sp = build_system_prompt(character, {"emotion": "neutral", "intensity": 0}, rel, pers, ws, username=username, user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation)
     prompt = "Inizia la conversazione presentandoti in modo naturale e coinvolgente, come faresti nella vita reale. Non usare frasi fatte. Sii creativo e coerente con il tuo personaggio."
     if username:
         prompt = f"La persona con cui parli si chiama {username}. {prompt}"

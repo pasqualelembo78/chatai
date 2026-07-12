@@ -115,7 +115,7 @@ def classify_character(character):
     return CATEGORY_MODE.get(cat, "deferred")
 
 
-def get_opening_scenario(character, total_messages, user_gender=None, user_age=None):
+def get_opening_scenario(character, total_messages, user_gender=None, user_age=None, sexual_orientation=None):
     """
     Ritorna una stringa scenario da prependare al system prompt.
     - "" se static o se deferred non ancora attivo
@@ -138,10 +138,10 @@ def get_opening_scenario(character, total_messages, user_gender=None, user_age=N
         if total_messages < threshold:
             return ""  # fase di presentazione, niente scenario
         # soglia raggiunta → passa alla fase RP
-        return _generate_scenario(character, active=True, user_gender=user_gender, user_age=user_age)
+        return _generate_scenario(character, active=True, user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation)
 
     # immediate
-    return _generate_scenario(character, active=True, user_gender=user_gender, user_age=user_age)
+    return _generate_scenario(character, active=True, user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation)
 
 
 def _user_age_range(age):
@@ -192,7 +192,7 @@ def _select_variant(variants, user_gender, user_age):
     return variants.get("unknown")
 
 
-def _format_variant(variant, user_gender, user_age):
+def _format_variant(variant, user_gender, user_age, sexual_orientation=None):
     """Formatta una variante con le variabili del template."""
     gender_map = {"male": "maschile", "female": "femminile"}
     gender_text = gender_map.get(user_gender, "")
@@ -203,12 +203,13 @@ def _format_variant(variant, user_gender, user_age):
             user_gender_text=gender_text,
             user_age=user_age or "",
             user_age_range=age_range,
+            sexual_orientation=sexual_orientation or "",
         )
     except (KeyError, IndexError):
         return variant
 
 
-def _default_adaptive(character, user_gender, user_age):
+def _default_adaptive(character, user_gender, user_age, sexual_orientation=None):
     """Genera un testo adaptivo di default quando non ci sono varianti."""
     name = character.get("name", "il personaggio")
     role = character.get("role", "")
@@ -217,15 +218,17 @@ def _default_adaptive(character, user_gender, user_age):
     age_range = _user_age_range(user_age)
     parts = []
     if gender_text:
-        parts.append(f"L'utente è di genere {gender_text}")
+        parts.append(f"L'utente è {gender_text}")
     if user_age:
         parts.append(f"di {user_age} anni ({age_range})")
+    if sexual_orientation:
+        parts.append(f"orientamento {sexual_orientation}")
     if parts:
         return f"{name} accoglie l'utente ({', '.join(parts)}) in modo professionale."
     return ""
 
 
-def _generate_scenario(character, active=True, user_gender=None, user_age=None):
+def _generate_scenario(character, active=True, user_gender=None, user_age=None, sexual_orientation=None):
     """
     Genera uno scenario testuale. Se il personaggio ne ha uno esplicito,
     lo usa (con possibile formattazione variabili). Se ci sono varianti
@@ -239,19 +242,19 @@ def _generate_scenario(character, active=True, user_gender=None, user_age=None):
     if variants and explicit and "{scenario_adaptive}" in explicit:
         variant = _select_variant(variants, user_gender, user_age)
         if variant:
-            adaptive_text = _format_variant(variant, user_gender, user_age)
+            adaptive_text = _format_variant(variant, user_gender, user_age, sexual_orientation)
         else:
-            adaptive_text = _default_adaptive(character, user_gender, user_age)
+            adaptive_text = _default_adaptive(character, user_gender, user_age, sexual_orientation)
         explicit = explicit.replace("{scenario_adaptive}", adaptive_text)
 
     # Se ci sono solo varianti (senza template), usa direttamente la variante
     elif variants:
         variant = _select_variant(variants, user_gender, user_age)
         if variant:
-            return _format_variant(variant, user_gender, user_age)
+            return _format_variant(variant, user_gender, user_age, sexual_orientation)
 
     if explicit:
-        # Supporta template variables: {user_gender}, {user_age}, {user_age_range}
+        # Supporta template variables: {user_gender}, {user_age}, {user_age_range}, {sexual_orientation}
         gender_map = {"male": "maschile", "female": "femminile"}
         gender_text = gender_map.get(user_gender, "")
         age_range = _user_age_range(user_age)
@@ -261,6 +264,7 @@ def _generate_scenario(character, active=True, user_gender=None, user_age=None):
                 user_gender_text=gender_text,
                 user_age=user_age or "",
                 user_age_range=age_range,
+                sexual_orientation=sexual_orientation or "",
             )
         except (KeyError, IndexError):
             return explicit

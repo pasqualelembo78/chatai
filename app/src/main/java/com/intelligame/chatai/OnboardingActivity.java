@@ -14,6 +14,8 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,9 +26,13 @@ public class OnboardingActivity extends Activity {
 
     private String selectedGender;
     private String selectedAge;
+    private String userGender;
+    private int userAge = 0;
     private final List<String> selectedInterests = new ArrayList<>();
 
     private Button genderM, genderF, genderNB;
+    private Button userGenderF, userGenderM, userGenderNB;
+    private android.widget.EditText userAgeInput;
     private Button age18_24, age25_34, age35_44, age45_plus;
     private Button confirmButton;
     private TextView interestCounter;
@@ -47,6 +53,11 @@ public class OnboardingActivity extends Activity {
         genderF = findViewById(R.id.gender_chip_f);
         genderNB = findViewById(R.id.gender_chip_nb);
 
+        userGenderF = findViewById(R.id.user_gender_f);
+        userGenderM = findViewById(R.id.user_gender_m);
+        userGenderNB = findViewById(R.id.user_gender_nb);
+        userAgeInput = findViewById(R.id.user_age_input);
+
         age18_24 = findViewById(R.id.age_18_24);
         age25_34 = findViewById(R.id.age_25_34);
         age35_44 = findViewById(R.id.age_35_44);
@@ -54,6 +65,13 @@ public class OnboardingActivity extends Activity {
 
         confirmButton = findViewById(R.id.btn_onboarding_confirm);
         interestCounter = findViewById(R.id.interest_counter);
+
+        // If editing, change button text and load existing preferences
+        boolean isEditing = getIntent().getBooleanExtra("editing", false);
+        if (isEditing) {
+            confirmButton.setText("Salva modifiche");
+            loadExistingPreferences();
+        }
 
         tagButtons.add(findViewById(R.id.tag_anime));
         tagButtons.add(findViewById(R.id.tag_mafia));
@@ -94,6 +112,19 @@ public class OnboardingActivity extends Activity {
         genderM.setOnClickListener(genderListener);
         genderF.setOnClickListener(genderListener);
         genderNB.setOnClickListener(genderListener);
+
+        // User gender listeners (single select)
+        View.OnClickListener userGenderListener = v -> {
+            resetUserGenderSelection();
+            selectChip((Button) v);
+            if (v == userGenderF) userGender = "female";
+            else if (v == userGenderM) userGender = "male";
+            else if (v == userGenderNB) userGender = "non-binary";
+            updateConfirmButton();
+        };
+        userGenderF.setOnClickListener(userGenderListener);
+        userGenderM.setOnClickListener(userGenderListener);
+        userGenderNB.setOnClickListener(userGenderListener);
 
         // Age listeners (single select)
         View.OnClickListener ageListener = v -> {
@@ -142,6 +173,13 @@ public class OnboardingActivity extends Activity {
         selectedGender = null;
     }
 
+    private void resetUserGenderSelection() {
+        deselectChip(userGenderF);
+        deselectChip(userGenderM);
+        deselectChip(userGenderNB);
+        userGender = null;
+    }
+
     private void resetAgeSelection() {
         deselectChip(age18_24);
         deselectChip(age25_34);
@@ -169,7 +207,95 @@ public class OnboardingActivity extends Activity {
     }
 
     private void updateConfirmButton() {
-        confirmButton.setEnabled(selectedGender != null);
+        confirmButton.setEnabled(selectedGender != null && userGender != null);
+    }
+
+    private void loadExistingPreferences() {
+        new Thread(() -> {
+            try {
+                String token = mAuth.getAccessToken();
+                String baseUrl = ((ChatApplication) getApplication()).getCurrentUrl();
+                String apiUrl = baseUrl.replace("/chat", "") + "/user/preferences";
+                URL url = new URL(apiUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+
+                int code = conn.getResponseCode();
+                if (code == 200) {
+                    java.io.InputStream is = conn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) sb.append(line);
+                    reader.close();
+                    String resp = sb.toString();
+                    JSONObject prefs = new JSONObject(resp);
+
+                    String savedGenderInterest = prefs.optString("gender_interest", "");
+                    String savedAgeRange = prefs.optString("age_range", "");
+                    String savedUserGender = prefs.optString("user_gender", "");
+                    int savedUserAge = prefs.optInt("user_age", 0);
+
+                    runOnUiThread(() -> {
+                        // Restore gender_interest selection
+                        if ("maschile".equals(savedGenderInterest)) {
+                            selectChip(genderM); selectedGender = "maschile";
+                        } else if ("femminile".equals(savedGenderInterest)) {
+                            selectChip(genderF); selectedGender = "femminile";
+                        } else if ("non binario".equals(savedGenderInterest)) {
+                            selectChip(genderNB); selectedGender = "non binario";
+                        }
+
+                        // Restore user_gender selection
+                        if ("female".equals(savedUserGender)) {
+                            selectChip(userGenderF); userGender = "female";
+                        } else if ("male".equals(savedUserGender)) {
+                            selectChip(userGenderM); userGender = "male";
+                        } else if ("non-binary".equals(savedUserGender)) {
+                            selectChip(userGenderNB); userGender = "non-binary";
+                        }
+
+                        // Restore user_age
+                        if (savedUserAge > 0) {
+                            userAgeInput.setText(String.valueOf(savedUserAge));
+                        }
+
+                        // Restore age_range selection
+                        if ("18-24".equals(savedAgeRange)) {
+                            selectChip(age18_24); selectedAge = "18-24";
+                        } else if ("25-34".equals(savedAgeRange)) {
+                            selectChip(age25_34); selectedAge = "25-34";
+                        } else if ("35-44".equals(savedAgeRange)) {
+                            selectChip(age35_44); selectedAge = "35-44";
+                        } else if ("45+".equals(savedAgeRange)) {
+                            selectChip(age45_plus); selectedAge = "45+";
+                        }
+
+                        // Restore interest tags
+                        JSONArray tags = prefs.optJSONArray("interest_tags");
+                        if (tags != null) {
+                            for (int i = 0; i < tags.length(); i++) {
+                                String tag = tags.optString(i);
+                                for (Button btn : tagButtons) {
+                                    if (btn.getText().toString().equals(tag)) {
+                                        selectChip(btn);
+                                        selectedInterests.add(tag);
+                                        break;
+                                    }
+                                }
+                            }
+                            updateInterestCounter();
+                        }
+                    });
+                }
+                conn.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void submitOnboarding() {
@@ -195,6 +321,18 @@ public class OnboardingActivity extends Activity {
                 body.put("gender_interest", selectedGender);
                 if (selectedAge != null) {
                     body.put("age_range", selectedAge);
+                }
+                if (userGender != null) {
+                    body.put("user_gender", userGender);
+                }
+                String ageText = userAgeInput.getText().toString().trim();
+                if (!ageText.isEmpty()) {
+                    try {
+                        int age = Integer.parseInt(ageText);
+                        if (age >= 13 && age <= 100) {
+                            body.put("user_age", age);
+                        }
+                    } catch (NumberFormatException ignored) {}
                 }
                 JSONArray interestsArr = new JSONArray();
                 for (String s : selectedInterests) {

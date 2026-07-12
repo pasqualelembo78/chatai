@@ -977,15 +977,20 @@ def get_user_preferences(user_id):
     row = conn.execute("SELECT * FROM user_preferences WHERE user_id=?", (user_id,)).fetchone()
     conn.close()
     if row:
+        user_gender = row["user_gender"] if "user_gender" in row.keys() else ""
+        user_age = row["user_age"] if "user_age" in row.keys() else 0
+        gender_interest = row["gender_interest"]
+        orientation = derive_sexual_orientation(user_gender, gender_interest)
         return {
-            "gender_interest": row["gender_interest"],
+            "gender_interest": gender_interest,
             "age_range": row["age_range"],
             "interest_tags": json.loads(row["interest_tags"] or "[]"),
             "show_adult": bool(row["show_adult"]) if "show_adult" in row.keys() else False,
-            "user_gender": row["user_gender"] if "user_gender" in row.keys() else "",
-            "user_age": row["user_age"] if "user_age" in row.keys() else 0,
+            "user_gender": user_gender,
+            "user_age": user_age,
+            "sexual_orientation": orientation,
         }
-    return {"gender_interest": "", "age_range": "", "interest_tags": [], "show_adult": False, "user_gender": "", "user_age": 0}
+    return {"gender_interest": "", "age_range": "", "interest_tags": [], "show_adult": False, "user_gender": "", "user_age": 0, "sexual_orientation": ""}
 
 
 def save_user_preferences(user_id, data):
@@ -1005,6 +1010,40 @@ def save_user_preferences(user_id, data):
     )
     conn.commit()
     conn.close()
+
+
+def derive_sexual_orientation(user_gender, gender_interest):
+    """
+    Deriva l'orientamento sessuale dal genere dell'utente e dal genere cercato.
+    Restituisce una stringa descrittiva.
+
+    Esempi:
+    - female + femminile = lesbica
+    - male + maschile = gay
+    - female + maschile = etero
+    - male + femminile = etero
+    - non-binary + * = bisessuale/pansessuale
+    """
+    if not user_gender or not gender_interest:
+        return ""
+    g = user_gender.lower()
+    gi = gender_interest.lower()
+
+    if g == "non-binary":
+        return "bisessuale"
+
+    if g == "female" and gi == "femminile":
+        return "lesbica"
+    if g == "male" and gi == "maschile":
+        return "gay"
+    if g == "female" and gi == "maschile":
+        return "etero"
+    if g == "male" and gi == "femminile":
+        return "etero"
+    if "non binario" in gi or "non-binary" in gi:
+        return "bisessuale"
+
+    return ""
 
 
 def get_mevacoins_balance(user_id):
