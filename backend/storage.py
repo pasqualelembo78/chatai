@@ -1497,7 +1497,7 @@ def init_new_user_bonus(user_id):
         cur.execute(
             "SELECT COUNT(*) FROM new_user_bonus WHERE user_id=%s", (user_id,)
         )
-        existing = cur.fetchone()[0]
+        existing = cur.fetchone()['count']
         if existing == 0:
             for day in range(1, 5):
                 cur.execute(
