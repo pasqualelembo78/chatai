@@ -245,9 +245,11 @@ public class MainActivity extends AppCompatActivity {
     public void hideLoading() {
         FrameLayout overlay = findViewById(R.id.loading_overlay);
         if (overlay != null) {
-            VideoView video = findViewById(R.id.loading_video);
-            if (video != null) video.stopPlayback();
             overlay.setVisibility(View.GONE);
+            try {
+                VideoView video = findViewById(R.id.loading_video);
+                if (video != null) video.stopPlayback();
+            } catch (Exception ignored) {}
         }
     }
 
