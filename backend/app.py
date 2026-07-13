@@ -108,7 +108,7 @@ sio = socketio_lib.AsyncServer(
 user_sessions = {}
 user_rooms = {}
 user_names = {}
-greeted_users = {}
+greeted_users = set()
 socket_auth_map = {}
 
 SUMMARY_INTERVAL = 30
@@ -2271,36 +2271,39 @@ async def on_add_user(sid, data):
     if greet_key in greeted_users:
         return
     greeted_users.add(greet_key)
-    if count_messages(user_id, character_id) > 0:
-        return
 
     from scenario_engine import get_opening_scenario, classify_character
-    from prompt_builder import build_system_prompt
-    mode = classify_character(character)
     total_msgs = count_messages(user_id, character_id)
 
-    user_gender = user_age = sexual_orientation = None
-    if user_id:
-        prefs = get_user_preferences(user_id)
-        user_gender = prefs.get("user_gender") or None
-        user_age = prefs.get("user_age") or None
-        sexual_orientation = prefs.get("sexual_orientation") or None
+    has_scenario = any(
+        m["role"] == "system"
+        for m in get_recent_messages(user_id, character_id, limit=5)
+    )
 
-    scenario_text = get_opening_scenario(character, total_msgs,
-                                          user_gender=user_gender,
-                                          user_age=user_age,
-                                          sexual_orientation=sexual_orientation)
-    if scenario_text:
-        add_message(user_id, character_id, "system", scenario_text)
+    if not has_scenario:
+        user_gender = user_age = sexual_orientation = None
+        if user_id:
+            prefs = get_user_preferences(user_id)
+            user_gender = prefs.get("user_gender") or None
+            user_age = prefs.get("user_age") or None
+            sexual_orientation = prefs.get("sexual_orientation") or None
+
+        scenario_text = get_opening_scenario(character, total_msgs,
+                                              user_gender=user_gender,
+                                              user_age=user_age,
+                                              sexual_orientation=sexual_orientation)
+        if scenario_text:
+            add_message(user_id, character_id, "system", scenario_text)
+            await sio.emit("new message", {
+                "username": "system", "message": scenario_text, "is_roleplay": False, "is_scenario": True
+            }, room=sid)
+
+    if total_msgs == 0:
+        greeting = _generate_greeting(character, character_name, username, user_id=user_id)
+        add_message(user_id, character_id, "assistant", greeting)
         await sio.emit("new message", {
-            "username": "system", "message": scenario_text, "is_roleplay": False, "is_scenario": True
+            "username": character_name, "message": greeting, "is_roleplay": True
         }, room=sid)
-
-    greeting = _generate_greeting(character, character_name, username, user_id=user_id)
-    add_message(user_id, character_id, "assistant", greeting)
-    await sio.emit("new message", {
-        "username": character_name, "message": greeting, "is_roleplay": True
-    }, room=sid)
 
 @sio.on("new message")
 async def on_new_message(sid, data):

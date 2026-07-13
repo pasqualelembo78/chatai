@@ -39,23 +39,21 @@ CATEGORY_MODE = {
     "seduzione":      "immediate",
     "relazioni":      "immediate",
     "confessioni":    "immediate",
-    # Differito — professionisti/consulenti
-    "scuola":         "deferred",
-    "medicina":       "deferred",
-    "business":       "deferred",
-    "motivazione":    "deferred",
-    "tecnologia":     "deferred",
-    "tecnici":        "deferred",
-    "cucina":         "deferred",
-    "sport":          "deferred",
-    "esperti":        "deferred",
-    "premium":        "deferred",
-    # Statico — assistenti
-    "quotidiano":     "static",
-    "per_te":         "static",
-    "speciale":       "static",
-    # Sconosciuto / fallback
-    "amicizia":       "deferred",   # amici si presentano, poi RPCON calma
+    # Tutte le categorie ora usano immediate
+    "scuola":         "immediate",
+    "medicina":       "immediate",
+    "business":       "immediate",
+    "motivazione":    "immediate",
+    "tecnologia":     "immediate",
+    "tecnici":        "immediate",
+    "cucina":         "immediate",
+    "sport":          "immediate",
+    "esperti":        "immediate",
+    "premium":        "immediate",
+    "quotidiano":     "immediate",
+    "per_te":         "immediate",
+    "speciale":       "immediate",
+    "amicizia":       "immediate",
 }
 
 
