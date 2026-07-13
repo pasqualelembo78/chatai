@@ -301,6 +301,15 @@ def init_db():
                 PRIMARY KEY (user_id, milestone)
             )
         """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS streak_30days (
+                user_id TEXT NOT NULL,
+                day_number INTEGER NOT NULL,
+                claimed INTEGER DEFAULT 0,
+                claimed_at TIMESTAMP,
+                PRIMARY KEY (user_id, day_number)
+            )
+        """)
         cur.execute("CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_log(timestamp)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_log(user_id)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp)")
@@ -1738,6 +1747,109 @@ def claim_streak_milestone(user_id, milestone):
     except Exception:
         conn.rollback()
         return False
+    finally:
+        put_conn(conn)
+
+
+def calculate_streak_reward(day):
+    """Calculate MVC reward for a given day (1-30). Day 30 = super bonus."""
+    if day >= 30:
+        return 100
+    return 10 + (day - 1) * 2
+
+
+def get_streak_30_status(user_id):
+    """Get the user's 30-day streak status."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT day_number, claimed FROM streak_30days WHERE user_id=%s ORDER BY day_number",
+            (user_id,)
+        )
+        rows = cur.fetchall()
+        claimed_days = {row["day_number"]: row["claimed"] for row in rows}
+        
+        current_day = 1
+        for day in range(1, 31):
+            if claimed_days.get(day, 0) == 0:
+                current_day = day
+                break
+        else:
+            current_day = 30
+        
+        from datetime import datetime, timezone
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        
+        already_claimed_today = False
+        cur.execute(
+            "SELECT claimed_at FROM streak_30days WHERE user_id=%s AND day_number=%s AND claimed=1",
+            (user_id, current_day)
+        )
+        row = cur.fetchone()
+        if row and row["claimed_at"]:
+            claimed_date = row["claimed_at"].strftime("%Y-%m-%d") if hasattr(row["claimed_at"], 'strftime') else str(row["claimed_at"])[:10]
+            if claimed_date == today:
+                already_claimed_today = True
+        
+        return {
+            "current_day": current_day,
+            "already_claimed_today": already_claimed_today,
+            "reward": calculate_streak_reward(current_day),
+            "total_earned": sum(calculate_streak_reward(d) for d in range(1, 31) if claimed_days.get(d, 0) == 1)
+        }
+    except Exception as e:
+        return {"current_day": 1, "already_claimed_today": False, "reward": 10, "total_earned": 0}
+    finally:
+        put_conn(conn)
+
+
+def claim_streak_30_day(user_id, day=None):
+    """Claim the daily streak reward. Returns (success, earned, message)."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        
+        if day is None or day <= 0:
+            status = get_streak_30_status(user_id)
+            day = status.get("current_day", 1)
+        
+        if day < 1 or day > 30:
+            return False, 0, "giorno_non_valido"
+        
+        cur.execute(
+            "SELECT claimed FROM streak_30days WHERE user_id=%s AND day_number=%s",
+            (user_id, day)
+        )
+        row = cur.fetchone()
+        if row and row["claimed"] == 1:
+            return False, 0, "gia_riscosso"
+        
+        earned = calculate_streak_reward(day)
+        
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
+        
+        if row:
+            cur.execute(
+                "UPDATE streak_30days SET claimed=1, claimed_at=%s WHERE user_id=%s AND day_number=%s",
+                (now, user_id, day)
+            )
+        else:
+            cur.execute(
+                "INSERT INTO streak_30days (user_id, day_number, claimed, claimed_at) VALUES (%s, %s, 1, %s)",
+                (user_id, day, now)
+            )
+        
+        conn.commit()
+        
+        reason = f"streak_giorno_{day}" + ("_super" if day == 30 else "")
+        add_mevacoins(user_id, earned, reason)
+        
+        return True, earned, "ok"
+    except Exception as e:
+        conn.rollback()
+        return False, 0, str(e)
     finally:
         put_conn(conn)
 

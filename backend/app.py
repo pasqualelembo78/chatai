@@ -58,6 +58,7 @@ from storage import (
     get_or_create_referral_code, get_referrer_by_code, claim_referral_bonus,
     credit_referral_first_message, get_daily_share_count, add_social_share,
     get_checkin_streak, claim_streak_milestone, count_all_user_messages,
+    get_streak_30_status, claim_streak_30_day, calculate_streak_reward,
     # Phase 2-8: Per-user memory
     get_user_personality, update_user_personality as update_user_personality_db,
     set_user_personality,
@@ -1209,8 +1210,21 @@ async def api_share_status(user: AuthUser = Depends(jwt_required)):
     return {"today_count": count, "max_daily": 3}
 
 @app.get("/user/mevacoins/streak")
-async def api_streak(user: AuthUser = Depends(jwt_required)):
-    return {"streak": get_checkin_streak(user.user_id)}
+async def api_streak_30(user: AuthUser = Depends(jwt_required)):
+    return get_streak_30_status(user.user_id)
+
+@app.post("/user/mevacoins/streak/claim")
+async def api_streak_30_claim(request: Request, user: AuthUser = Depends(jwt_required)):
+    success, earned, msg = claim_streak_30_day(user.user_id)
+    if not success:
+        if msg == "gia_riscosso":
+            raise HTTPException(400, "Già riscosso oggi")
+        raise HTTPException(500, msg)
+    from storage import audit_log
+    audit_log(user.user_id, "mevacoins.streak_claim", f"day={earned}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"earned": earned, "success": True}
 
 @app.post("/chat/suggestion")
 async def api_chat_suggestion(body: SuggestionRequest, user: Optional[AuthUser] = Depends(jwt_optional)):
