@@ -448,51 +448,22 @@ public class ImportActivity extends AppCompatActivity {
     private String httpGet(String urlStr) {
         try {
             AuthManager auth = ((ChatApplication) getApplication()).getAuthManager();
-            String token = auth.getAccessToken();
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            if (token != null) conn.setRequestProperty("Authorization", "Bearer " + token);
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(30000);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) sb.append(line);
-            reader.close();
-            conn.disconnect();
-            return sb.toString();
+            AuthManager.HttpResponse httpResp = auth.requestWithRefresh(urlStr, "GET", null, 30000);
+            if (httpResp.statusCode == 200) return httpResp.body;
         } catch (Exception e) {
             return null;
         }
+        return null;
     }
 
     private String httpPost(String urlStr, String body) {
         try {
             AuthManager auth = ((ChatApplication) getApplication()).getAuthManager();
-            String token = auth.getAccessToken();
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            if (token != null) conn.setRequestProperty("Authorization", "Bearer " + token);
-            conn.setDoOutput(true);
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(60000);
-            OutputStream os = conn.getOutputStream();
-            os.write(body.getBytes("UTF-8"));
-            os.close();
-            int code = conn.getResponseCode();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                code >= 400 ? conn.getErrorStream() : conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) sb.append(line);
-            reader.close();
-            conn.disconnect();
-            if (code >= 400) return null;
-            return sb.toString();
+            AuthManager.HttpResponse httpResp = auth.requestWithRefresh(urlStr, "POST", body, 60000);
+            if (httpResp.statusCode >= 200 && httpResp.statusCode < 300) return httpResp.body;
         } catch (Exception e) {
             return null;
         }
+        return null;
     }
 }

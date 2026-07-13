@@ -213,26 +213,12 @@ public class OnboardingActivity extends Activity {
     private void loadExistingPreferences() {
         new Thread(() -> {
             try {
-                String token = mAuth.getAccessToken();
                 String baseUrl = ((ChatApplication) getApplication()).getCurrentUrl();
                 String apiUrl = baseUrl.replace("/chat", "") + "/user/preferences";
-                URL url = new URL(apiUrl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setConnectTimeout(10000);
-                conn.setReadTimeout(10000);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
+                AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(apiUrl, "GET", null, 10000);
 
-                int code = conn.getResponseCode();
-                if (code == 200) {
-                    java.io.InputStream is = conn.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) sb.append(line);
-                    reader.close();
-                    String resp = sb.toString();
-                    JSONObject prefs = new JSONObject(resp);
+                if (httpResp.statusCode == 200) {
+                    JSONObject prefs = new JSONObject(httpResp.body);
 
                     String savedGenderInterest = prefs.optString("gender_interest", "");
                     String savedAgeRange = prefs.optString("age_range", "");
@@ -304,18 +290,8 @@ public class OnboardingActivity extends Activity {
 
         new Thread(() -> {
             try {
-                String token = mAuth.getAccessToken();
                 String baseUrl = ((ChatApplication) getApplication()).getCurrentUrl();
                 String apiUrl = baseUrl.replace("/chat", "") + "/user/preferences";
-
-                URL url = new URL(apiUrl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("PUT");
-                conn.setConnectTimeout(15000);
-                conn.setReadTimeout(15000);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setDoOutput(true);
 
                 JSONObject body = new JSONObject();
                 body.put("gender_interest", selectedGender);
@@ -340,15 +316,10 @@ public class OnboardingActivity extends Activity {
                 }
                 body.put("interests", interestsArr);
 
-                OutputStream os = conn.getOutputStream();
-                os.write(body.toString().getBytes());
-                os.close();
-
-                int code = conn.getResponseCode();
-                conn.disconnect();
+                AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(apiUrl, "PUT", body.toString(), 15000);
 
                 runOnUiThread(() -> {
-                    if (code == 200 || code == 201 || code == 204) {
+                    if (httpResp.statusCode == 200 || httpResp.statusCode == 201 || httpResp.statusCode == 204) {
                         Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -356,7 +327,7 @@ public class OnboardingActivity extends Activity {
                     } else {
                         confirmButton.setEnabled(true);
                         confirmButton.setText("Entra in Aria");
-                        Toast.makeText(this, "Errore salvataggio preferenze (" + code + ")", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Errore salvataggio preferenze (" + httpResp.statusCode + ")", Toast.LENGTH_LONG).show();
                     }
                 });
             } catch (Exception e) {

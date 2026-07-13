@@ -419,44 +419,32 @@ public class MainFragment extends Fragment {
 
             new Thread(() -> {
                 try {
-                    String token = mAuth.getAccessToken();
-                    URL url = new URL(mPrefs.getServerUrl() + "/chat/suggestion");
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Authorization", "Bearer " + token);
-                    conn.setRequestProperty("Content-Type", "application/json");
-                    conn.setDoOutput(true);
-                    conn.setConnectTimeout(8000);
-
                     JSONObject body = new JSONObject();
                     body.put("character_id", mCharacterId);
+                    AuthManager.HttpResponse httpResp = httpWithRefresh(mPrefs.getServerUrl() + "/chat/suggestion", "POST", body.toString(), 8000);
 
-                    java.io.OutputStream os = conn.getOutputStream();
-                    os.write(body.toString().getBytes());
-                    os.close();
+                    if (httpResp.statusCode == 200) {
+                        JSONObject result = new JSONObject(httpResp.body);
+                        String suggestion = result.optString("suggestion", "");
 
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder resp = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) resp.append(line);
-                    reader.close();
-                    conn.disconnect();
-
-                    JSONObject result = new JSONObject(resp.toString());
-                    String suggestion = result.optString("suggestion", "");
-
-                    safeRunOnUiThread(() -> {
-                        suggestionButton.setAlpha(1.0f);
-                        suggestionButton.setEnabled(true);
-                        if (!suggestion.isEmpty()) {
-                            mInputMessageView.setText(suggestion);
-                            mInputMessageView.setSelection(suggestion.length());
-                            mInputMessageView.requestFocus();
-                        } else {
-                            if (!isAdded()) return;
-                            Toast.makeText(getActivity(), "Nessun suggerimento disponibile", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                        safeRunOnUiThread(() -> {
+                            suggestionButton.setAlpha(1.0f);
+                            suggestionButton.setEnabled(true);
+                            if (!suggestion.isEmpty()) {
+                                mInputMessageView.setText(suggestion);
+                                mInputMessageView.setSelection(suggestion.length());
+                                mInputMessageView.requestFocus();
+                            } else {
+                                if (!isAdded()) return;
+                                Toast.makeText(getActivity(), "Nessun suggerimento disponibile", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        safeRunOnUiThread(() -> {
+                            suggestionButton.setAlpha(1.0f);
+                            suggestionButton.setEnabled(true);
+                        });
+                    }
                 } catch (Exception e) {
                     safeRunOnUiThread(() -> {
                         suggestionButton.setAlpha(1.0f);
@@ -1055,6 +1043,17 @@ public class MainFragment extends Fragment {
         String header = mAuth != null ? mAuth.getAuthorizationHeader() : "";
         if (!header.isEmpty()) {
             conn.setRequestProperty("Authorization", header);
+        }
+    }
+
+    private AuthManager.HttpResponse httpWithRefresh(String urlStr, String method, String jsonBody, int timeout) {
+        try {
+            return mAuth.requestWithRefresh(urlStr, method, jsonBody, timeout);
+        } catch (Exception e) {
+            AuthManager.HttpResponse err = new AuthManager.HttpResponse();
+            err.statusCode = -1;
+            err.body = e.getMessage();
+            return err;
         }
     }
 

@@ -582,12 +582,12 @@ public class HomeFragment extends Fragment {
                 body.put("content_type", "category");
                 body.put("content_id", category.id);
                 body.put("amount", category.mvcCost);
-                String resp = httpPostWithAuth(baseUrl + "/user/mevacoins/spend", body.toString());
-                if (resp == null) {
+                AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/spend", "POST", body.toString(), 8000);
+                if (httpResp.statusCode != 200) {
                     mainHandler.post(() -> showSnackbar("Errore nello sblocco"));
                     return;
                 }
-                JSONObject obj = new JSONObject(resp);
+                JSONObject obj = new JSONObject(httpResp.body);
                 if (obj.optBoolean("unlocked", false)) {
                     mainHandler.post(() -> {
                         showSnackbar("Categoria sbloccata!");

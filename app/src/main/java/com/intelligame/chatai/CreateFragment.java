@@ -45,6 +45,7 @@ public class CreateFragment extends Fragment {
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private AuthManager mAuth;
 
     private List<String> categoryIds = new ArrayList<>();
     private List<String> categoryNames = new ArrayList<>();
@@ -57,6 +58,7 @@ public class CreateFragment extends Fragment {
 
         ChatApplication app = (ChatApplication) requireActivity().getApplication();
         PrefsManager prefs = app.getPrefs();
+        mAuth = app.getAuthManager();
         baseUrl = prefs.getServerUrl().replace("/chat", "");
 
         fieldName = view.findViewById(R.id.field_name);
@@ -243,44 +245,21 @@ public class CreateFragment extends Fragment {
 
     private String httpGet(String urlStr) {
         try {
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) sb.append(line);
-            reader.close();
-            return sb.toString();
+            AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(urlStr, "GET", null, 5000);
+            if (httpResp.statusCode == 200) return httpResp.body;
         } catch (Exception e) {
             return null;
         }
+        return null;
     }
 
     private String httpPost(String urlStr, String body) {
         try {
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setDoOutput(true);
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
-            OutputStream os = conn.getOutputStream();
-            os.write(body.getBytes("UTF-8"));
-            os.close();
-            int code = conn.getResponseCode();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                code >= 400 ? conn.getErrorStream() : conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) sb.append(line);
-            reader.close();
-            if (code >= 400) return null;
-            return sb.toString();
+            AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(urlStr, "POST", body, 10000);
+            if (httpResp.statusCode >= 200 && httpResp.statusCode < 300) return httpResp.body;
         } catch (Exception e) {
             return null;
         }
+        return null;
     }
 }

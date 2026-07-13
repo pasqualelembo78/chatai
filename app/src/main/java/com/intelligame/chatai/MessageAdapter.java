@@ -338,7 +338,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 try {
                     ChatApplication app = (ChatApplication) ctx.getApplicationContext();
                     String baseUrl = app.getPrefs().getServerUrl();
-                    String token = app.getAuthManager().getAccessToken();
                     String userId = app.getPrefs().getUsername();
 
                     org.json.JSONObject body = new org.json.JSONObject();
@@ -347,26 +346,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     body.put("message_text", message.getMessage() != null ? message.getMessage() : "");
                     body.put("reported_user", message.getUsername() != null ? message.getUsername() : "");
 
-                    URL url = new URL(baseUrl.replace("/chat", "") + "/user/report");
-                    java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Authorization", "Bearer " + token);
-                    conn.setRequestProperty("Content-Type", "application/json");
-                    conn.setDoOutput(true);
-                    conn.setConnectTimeout(5000);
-                    java.io.OutputStream os = conn.getOutputStream();
-                    os.write(body.toString().getBytes());
-                    os.close();
-                    int code = conn.getResponseCode();
-                    conn.disconnect();
+                    AuthManager.HttpResponse httpResp = app.getAuthManager().requestWithRefresh(
+                        baseUrl.replace("/chat", "") + "/user/report", "POST", body.toString(), 5000);
 
                     if (mReportButton != null) {
                         mReportButton.post(() -> {
-                            if (code == 200 || code == 201) {
+                            if (httpResp.statusCode == 200 || httpResp.statusCode == 201) {
                                 android.widget.Toast.makeText(ctx,
                                     "Segnalazione inviata. Grazie.", android.widget.Toast.LENGTH_SHORT).show();
-                            } else {
-                                // Silenzioso — non mostrare errori all'utente
                             }
                         });
                     }

@@ -35,6 +35,7 @@ public class ChatListFragment extends Fragment {
     private String baseUrl;
     private String userId;
     private ChatConversationAdapter adapter;
+    private AuthManager mAuth;
 
     @Nullable
     @Override
@@ -43,6 +44,7 @@ public class ChatListFragment extends Fragment {
 
         ChatApplication app = (ChatApplication) requireActivity().getApplication();
         PrefsManager prefs = app.getPrefs();
+        mAuth = app.getAuthManager();
         baseUrl = prefs.getServerUrl().replace("/chat", "");
         userId = prefs.getUsername();
 
@@ -96,19 +98,12 @@ public class ChatListFragment extends Fragment {
 
     private String httpGet(String urlStr) {
         try {
-            URL url = new URL(urlStr);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) sb.append(line);
-            reader.close();
-            return sb.toString();
+            AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(urlStr, "GET", null, 5000);
+            if (httpResp.statusCode == 200) return httpResp.body;
         } catch (Exception e) {
             return null;
         }
+        return null;
     }
 
     @Override

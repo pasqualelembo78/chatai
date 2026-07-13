@@ -382,23 +382,22 @@ public class LoginActivity extends Activity {
     private void checkAndRedirect(String serverUrl) {
         new Thread(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(serverUrl.replace("/chat", "") + "/user/preferences");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setConnectTimeout(5000);
-                String json = readStream(conn.getInputStream());
-                conn.disconnect();
-                JSONObject obj = new JSONObject(json);
-                String gender = obj.optString("gender_interest", "");
-                runOnUiThread(() -> {
-                    if (gender.isEmpty()) {
-                        Intent i = new Intent(LoginActivity.this, OnboardingActivity.class);
-                        startActivity(i);
-                    } else {
-                        startMainActivity();
-                    }
-                });
+                String apiUrl = serverUrl.replace("/chat", "") + "/user/preferences";
+                AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(apiUrl, "GET", null, 5000);
+                if (httpResp.statusCode == 200) {
+                    JSONObject obj = new JSONObject(httpResp.body);
+                    String gender = obj.optString("gender_interest", "");
+                    runOnUiThread(() -> {
+                        if (gender.isEmpty()) {
+                            Intent i = new Intent(LoginActivity.this, OnboardingActivity.class);
+                            startActivity(i);
+                        } else {
+                            startMainActivity();
+                        }
+                    });
+                } else {
+                    runOnUiThread(this::startMainActivity);
+                }
             } catch (Exception e) {
                 runOnUiThread(() -> startMainActivity());
             }

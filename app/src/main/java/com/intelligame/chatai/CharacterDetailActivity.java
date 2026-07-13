@@ -63,6 +63,7 @@ public class CharacterDetailActivity extends AppCompatActivity {
 
     private ChatApplication app;
     private LocalDatabaseHelper mLocalDb;
+    private AuthManager mAuth;
     private String characterId;
     private String baseUrl;
     private String characterName;
@@ -92,6 +93,7 @@ public class CharacterDetailActivity extends AppCompatActivity {
 
         app = (ChatApplication) getApplication();
         mLocalDb = app.getLocalDb();
+        mAuth = app.getAuthManager();
         baseUrl = app.getPrefs().getServerUrl();
 
         characterId = getIntent().getStringExtra("character_id");
@@ -629,28 +631,13 @@ public class CharacterDetailActivity extends AppCompatActivity {
     }
 
     private String httpGet(String urlString) {
-        HttpURLConnection conn = null;
         try {
-            URL url = new URL(urlString);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(8000);
-            conn.setReadTimeout(8000);
-            conn.setRequestProperty("Accept", "application/json");
-            int code = conn.getResponseCode();
-            if (code != 200) return null;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            reader.close();
-            return response.toString();
+            AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(urlString, "GET", null, 8000);
+            if (httpResp.statusCode == 200) return httpResp.body;
         } catch (Exception e) {
             return null;
-        } finally {
-            if (conn != null) conn.disconnect();
         }
+        return null;
     }
 
     @Override

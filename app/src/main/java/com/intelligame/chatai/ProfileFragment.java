@@ -198,24 +198,16 @@ public class ProfileFragment extends Fragment {
     private void loadMevacoins() {
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/mevacoins");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setConnectTimeout(5000);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
-                JSONObject obj = new JSONObject(resp.toString());
-                int balance = obj.optInt("balance", 0);
-                mainHandler.post(() -> {
-                    if (mevacoinsBalance != null) {
-                        mevacoinsBalance.setText(balance + " MVC");
-                    }
-                });
+                AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins", "GET", null, 5000);
+                if (httpResp.statusCode == 200) {
+                    JSONObject obj = new JSONObject(httpResp.body);
+                    int balance = obj.optInt("balance", 0);
+                    mainHandler.post(() -> {
+                        if (mevacoinsBalance != null) {
+                            mevacoinsBalance.setText(balance + " MVC");
+                        }
+                    });
+                }
             } catch (Exception ignored) {}
         });
     }
@@ -223,24 +215,16 @@ public class ProfileFragment extends Fragment {
     private void loadReferralCode() {
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/referral/code");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setConnectTimeout(5000);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
-                JSONObject obj = new JSONObject(resp.toString());
-                String code = obj.optString("code", "");
-                mainHandler.post(() -> {
-                    if (referralCodeText != null) {
-                        referralCodeText.setText(code);
-                    }
-                });
+                AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(baseUrl + "/user/referral/code", "GET", null, 5000);
+                if (httpResp.statusCode == 200) {
+                    JSONObject obj = new JSONObject(httpResp.body);
+                    String code = obj.optString("code", "");
+                    mainHandler.post(() -> {
+                        if (referralCodeText != null) {
+                            referralCodeText.setText(code);
+                        }
+                    });
+                }
             } catch (Exception ignored) {}
         });
     }
@@ -282,39 +266,28 @@ public class ProfileFragment extends Fragment {
     private void reportSocialShare() {
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/mevacoins/share");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setConnectTimeout(5000);
-
                 JSONObject body = new JSONObject();
                 body.put("platform", "android_share");
-                OutputStream os = conn.getOutputStream();
-                os.write(body.toString().getBytes());
-                os.close();
+                AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/share", "POST", body.toString(), 5000);
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
-
-                JSONObject obj = new JSONObject(resp.toString());
-                if (obj.optString("status", "").equals("ok")) {
-                    int earned = obj.optInt("earned", 30);
+                if (httpResp.statusCode == 200) {
+                    JSONObject obj = new JSONObject(httpResp.body);
+                    if (obj.optString("status", "").equals("ok")) {
+                        int earned = obj.optInt("earned", 30);
+                        mainHandler.post(() -> {
+                            shareStatusText.setText("+" + earned + " MVC guadagnati!");
+                            shareStatusText.setVisibility(View.VISIBLE);
+                            loadMevacoins();
+                        });
+                    } else if (obj.optString("error", "").equals("limite_giornaliero")) {
+                        mainHandler.post(() -> {
+                            shareStatusText.setText("Hai raggiunto il limite giornaliero (3/3)");
+                            shareStatusText.setVisibility(View.VISIBLE);
+                        });
+                    }
+                } else {
                     mainHandler.post(() -> {
-                        shareStatusText.setText("+" + earned + " MVC guadagnati!");
-                        shareStatusText.setVisibility(View.VISIBLE);
-                        loadMevacoins();
-                    });
-                } else if (obj.optString("error", "").equals("limite_giornaliero")) {
-                    mainHandler.post(() -> {
-                        shareStatusText.setText("Hai raggiunto il limite giornaliero (3/3)");
+                        shareStatusText.setText("Errore: riprova più tardi");
                         shareStatusText.setVisibility(View.VISIBLE);
                     });
                 }
@@ -330,26 +303,9 @@ public class ProfileFragment extends Fragment {
     private void saveAdultPreference(boolean showAdult) {
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                if (token == null || token.isEmpty()) return;
-
-                URL url = new URL(baseUrl + "/user/preferences");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("PUT");
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setDoOutput(true);
-                conn.setConnectTimeout(5000);
-
                 JSONObject body = new JSONObject();
                 body.put("show_adult", showAdult);
-
-                java.io.OutputStream os = conn.getOutputStream();
-                os.write(body.toString().getBytes());
-                os.close();
-
-                conn.getResponseCode();
-                conn.disconnect();
+                mAuth.requestWithRefresh(baseUrl + "/user/preferences", "PUT", body.toString(), 5000);
             } catch (Exception ignored) {}
         });
     }
@@ -449,30 +405,15 @@ public class ProfileFragment extends Fragment {
     }
 
     private String httpGetWithAuth(String urlString) {
-        HttpURLConnection conn = null;
         try {
-            URL url = new URL(urlString);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(8000);
-            conn.setReadTimeout(8000);
-            conn.setRequestProperty("Accept", "application/json");
-            String token = mAuth.getAccessToken();
-            if (token != null && !token.isEmpty()) {
-                conn.setRequestProperty("Authorization", "Bearer " + token);
+            AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(urlString, "GET", null, 8000);
+            if (httpResp.statusCode == 200) {
+                return httpResp.body;
             }
-            int code = conn.getResponseCode();
-            if (code != 200) return null;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) response.append(line);
-            reader.close();
-            return response.toString();
         } catch (Exception e) {
             return null;
-        } finally {
-            if (conn != null) conn.disconnect();
         }
+        return null;
     }
 
     private void loadPreferiti() {
