@@ -1128,9 +1128,16 @@ async def api_mevacoins_tx(user: AuthUser = Depends(jwt_required)):
 
 @app.post("/user/mevacoins/checkin")
 async def api_daily_checkin(request: Request, user: AuthUser = Depends(jwt_required)):
-    success, earned, msg = claim_streak_30_day(user.user_id)
-    from storage import audit_log
+    import logging
+    log = logging.getLogger(__name__)
+    try:
+        success, earned, msg = claim_streak_30_day(user.user_id)
+        log.info(f"checkin user={user.user_id} success={success} earned={earned} msg={msg}")
+    except Exception as e:
+        log.error(f"checkin FAILED user={user.user_id} error={e}")
+        raise HTTPException(500, f"checkin error: {e}")
     if success:
+        from storage import audit_log
         audit_log(user.user_id, "mevacoins.checkin", f"streak day earned={earned}",
                   request.client.host if request.client else "",
                   request.headers.get("User-Agent", ""))

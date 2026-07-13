@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -513,26 +514,36 @@ public class MvcEarnActivity extends AppCompatActivity {
                 conn.setDoOutput(true);
                 conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setRequestProperty("Content-Type", "application/json");
-                conn.setConnectTimeout(5000);
+                conn.setConnectTimeout(10000);
 
                 OutputStream os = conn.getOutputStream();
                 os.write("{}".getBytes());
                 os.close();
 
                 int responseCode = conn.getResponseCode();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(
-                        responseCode >= 200 && responseCode < 300 ? conn.getInputStream() : conn.getErrorStream()));
+                InputStream is = responseCode >= 200 && responseCode < 300
+                        ? conn.getInputStream() : conn.getErrorStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
                 StringBuilder resp = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) resp.append(line);
                 reader.close();
                 conn.disconnect();
 
+                if (responseCode < 200 || responseCode >= 300) {
+                    final String errMsg = resp.length() > 0 ? resp.toString() : "HTTP " + responseCode;
+                    mainHandler.post(() -> {
+                        btnCheckin.setText("Check-in");
+                        btnCheckin.setEnabled(true);
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Errore check-in: " + errMsg, Snackbar.LENGTH_LONG).show();
+                    });
+                    return;
+                }
+
                 JSONObject result = new JSONObject(resp.toString());
                 boolean alreadyChecked = result.optBoolean("already_checked", false);
-                int rawEarned = result.optInt("earned", 0);
-                int dayNumber = result.optInt("day", 0);
-                final int earned = rawEarned > 0 ? rawEarned : calculateReward(dayNumber > 0 ? dayNumber : 1);
+                final int earned = result.optInt("earned", 0);
 
                 mainHandler.post(() -> {
                     if (alreadyChecked) {

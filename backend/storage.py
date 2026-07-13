@@ -1383,6 +1383,11 @@ def add_mevacoins(user_id, amount, reason):
         row = cur.fetchone()
         conn.commit()
         return row["balance"] if row else amount
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"add_mevacoins FAILED: user={user_id} amount={amount} reason={reason} error={e}")
+        conn.rollback()
+        raise
     finally:
         put_conn(conn)
 
@@ -1810,6 +1815,8 @@ def get_streak_30_status(user_id):
 
 def claim_streak_30_day(user_id, day=None):
     """Claim the daily streak reward. Returns (success, earned, message)."""
+    import logging
+    log = logging.getLogger(__name__)
     conn = get_conn()
     try:
         cur = conn.cursor()
@@ -1846,6 +1853,7 @@ def claim_streak_30_day(user_id, day=None):
             day = target_day
 
         if day < 1 or day > 30:
+            log.warning(f"claim_streak_30: user={user_id} invalid day={day}")
             return False, 0, "giorno_non_valido"
 
         cur.execute(
@@ -1854,6 +1862,7 @@ def claim_streak_30_day(user_id, day=None):
         )
         row = cur.fetchone()
         if row and row["claimed"] == 1:
+            log.info(f"claim_streak_30: user={user_id} day={day} already claimed")
             return False, 0, "gia_riscosso"
 
         earned = calculate_streak_reward(day)
@@ -1871,13 +1880,26 @@ def claim_streak_30_day(user_id, day=None):
                 (user_id, day, now)
             )
 
-        conn.commit()
-
         reason = f"streak_giorno_{day}" + ("_super" if day == 30 else "")
-        add_mevacoins(user_id, earned, reason)
+        cur.execute(
+            "INSERT INTO mevacoins (user_id, balance, total_earned, updated_at) VALUES (%s, %s, %s, CURRENT_TIMESTAMP) "
+            "ON CONFLICT(user_id) DO UPDATE SET "
+            "balance = mevacoins.balance + EXCLUDED.balance, "
+            "total_earned = mevacoins.total_earned + EXCLUDED.total_earned, "
+            "updated_at = CURRENT_TIMESTAMP",
+            (user_id, earned, earned)
+        )
+        cur.execute(
+            "INSERT INTO mevacoins_transactions (user_id, amount, reason) VALUES (%s, %s, %s)",
+            (user_id, earned, reason)
+        )
+
+        conn.commit()
+        log.info(f"claim_streak_30: user={user_id} day={day} earned={earned} SUCCESS")
 
         return True, earned, "ok"
     except Exception as e:
+        log.error(f"claim_streak_30: user={user_id} ERROR: {e}")
         conn.rollback()
         return False, 0, str(e)
     finally:
