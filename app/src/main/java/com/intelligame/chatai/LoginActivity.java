@@ -113,12 +113,10 @@ public class LoginActivity extends Activity {
             mLoginButton.setText("REGISTRATI");
             mToggleAuthMode.setText("Hai già account? Accedi");
             mEmailView.setVisibility(View.VISIBLE);
-            mPasswordView.setVisibility(View.VISIBLE);
         } else {
             mLoginButton.setText("ACCEDI");
             mToggleAuthMode.setText("Non hai account? Registrati");
             mEmailView.setVisibility(View.GONE);
-            mPasswordView.setVisibility(View.GONE);
         }
     }
 
@@ -132,59 +130,43 @@ public class LoginActivity extends Activity {
             return;
         }
 
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError("Inserisci la password");
+            mPasswordView.requestFocus();
+            setLoading(false);
+            return;
+        }
+
+        if (password.length() < 8) {
+            mPasswordView.setError("Minimo 8 caratteri");
+            mPasswordView.requestFocus();
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         final String serverUrl = getEffectiveServerUrl();
         final String referralCode = mReferralCodeView.getText().toString().trim();
 
-        if (TextUtils.isEmpty(password)) {
-            mAuth.loginLocal(username, serverUrl, referralCode.isEmpty() ? null : referralCode, new AuthManager.AuthCallback() {
-                @Override
-                public void onSuccess(String accessToken, String refreshToken,
-                                      String userId, String username, String role, String email) {
-                    runOnUiThread(() -> {
-                        setLoading(false);
-                        saveServerUrl(serverUrl);
-                        checkAndRedirect(serverUrl);
-                    });
-                }
-
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() -> {
-                        mAuth.createLocalSession(username);
-                        saveServerUrl(serverUrl);
-                        setLoading(false);
-                        checkAndRedirect(serverUrl);
-                    });
-                }
-            });
-        } else {
-            if (password.length() < 8) {
-                mPasswordView.setError("Minimo 8 caratteri");
-                mPasswordView.requestFocus();
-                setLoading(false);
-                return;
+        mAuth.login(username, password, serverUrl, new AuthManager.AuthCallback() {
+            @Override
+            public void onSuccess(String accessToken, String refreshToken,
+                                  String userId, String username, String role, String email) {
+                runOnUiThread(() -> {
+                    setLoading(false);
+                    saveServerUrl(serverUrl);
+                    checkAndRedirect(serverUrl);
+                });
             }
-            mAuth.login(username, password, serverUrl, new AuthManager.AuthCallback() {
-                @Override
-                public void onSuccess(String accessToken, String refreshToken,
-                                      String userId, String username, String role, String email) {
-                    runOnUiThread(() -> {
-                        setLoading(false);
-                        saveServerUrl(serverUrl);
-                        checkAndRedirect(serverUrl);
-                    });
-                }
 
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() -> {
-                        setLoading(false);
-                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
-                    });
-                }
-            });
-        }
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    setLoading(false);
+                    Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                });
+            }
+        });
     }
 
     private void attemptRegister() {
