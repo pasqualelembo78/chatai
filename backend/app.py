@@ -828,6 +828,8 @@ async def api_avatar(char_id: str):
 @app.get("/characters")
 async def api_characters(
     category: Optional[str] = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
     user: Optional[AuthUser] = Depends(jwt_optional),
 ):
     user_id = user.user_id if user else None
@@ -893,7 +895,7 @@ async def api_characters(
                              [c for c in chars if not _gender_match(c) and not _unknown_gender(c)])
         except Exception:
             pass
-    return chars
+    return chars[offset:offset + limit]
 
 @app.get("/characters/{char_id}")
 async def api_character_detail(char_id: str):

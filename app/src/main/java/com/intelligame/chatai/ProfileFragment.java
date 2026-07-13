@@ -425,7 +425,7 @@ public class ProfileFragment extends Fragment {
                     return;
                 }
                 String chatBase = prefs.getServerUrl();
-                String json = httpGetWithAuth(chatBase + "/characters?category=all");
+                String json = httpGetWithAuth(chatBase + "/characters?category=all&limit=500");
                 if (json == null) {
                     mainHandler.post(this::hidePreferiti);
                     return;
@@ -466,7 +466,7 @@ public class ProfileFragment extends Fragment {
         executor.execute(() -> {
             try {
                 String chatBase = prefs.getServerUrl();
-                String json = httpGetWithAuth(chatBase + "/characters?category=per_te");
+                String json = httpGetWithAuth(chatBase + "/characters?category=per_te&limit=500");
                 if (json == null) {
                     mainHandler.post(this::hidePerTe);
                     return;

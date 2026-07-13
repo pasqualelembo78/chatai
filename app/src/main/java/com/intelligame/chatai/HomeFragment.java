@@ -79,6 +79,10 @@ public class HomeFragment extends Fragment {
     private boolean isSearching = false;
     private String selectedSearchFilterId = null;
     private List<CharacterItem> allSearchResults = new ArrayList<>();
+    private static final int PAGE_SIZE = 50;
+    private int charactersOffset = 0;
+    private boolean hasMoreCharacters = true;
+    private boolean isLoadingMore = false;
 
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
@@ -123,6 +127,13 @@ public class HomeFragment extends Fragment {
                     fabScrollTop.setVisibility(View.VISIBLE);
                 } else {
                     fabScrollTop.setVisibility(View.GONE);
+                }
+                if (!isSearching && hasMoreCharacters && !isLoadingMore && dy > 0) {
+                    LinearLayoutManager lm = (LinearLayoutManager) rv.getLayoutManager();
+                    if (lm != null && lm.findLastVisibleItemPosition() >= characters.size() - 10) {
+                        isLoadingMore = true;
+                        loadCharactersPage(selectedCategoryId, charactersOffset, false);
+                    }
                 }
             }
         });
@@ -364,14 +375,26 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadCharacters(String categoryId) {
-        mainHandler.post(() -> {
-            searchProgress.setVisibility(View.VISIBLE);
-            showLoadingOverlay("Caricamento personaggi…");
-            updateLoadingProgress(2, 3, "Caricamento personaggi…");
-        });
+        charactersOffset = 0;
+        hasMoreCharacters = true;
+        characters.clear();
+        characterAdapter.notifyDataSetChanged();
+        loadCharactersPage(categoryId, 0, true);
+    }
+
+    private void loadCharactersPage(String categoryId, int offset, boolean initial) {
+        if (initial) {
+            mainHandler.post(() -> {
+                searchProgress.setVisibility(View.VISIBLE);
+                showLoadingOverlay("Caricamento personaggi…");
+                updateLoadingProgress(2, 3, "Caricamento personaggi…");
+            });
+        }
         executor.execute(() -> {
             try {
-                String json = httpGetWithAuthRefresh(baseUrl + "/characters?category=" + URLEncoder.encode(categoryId, "UTF-8"));
+                String url = baseUrl + "/characters?category=" + URLEncoder.encode(categoryId, "UTF-8")
+                    + "&limit=" + PAGE_SIZE + "&offset=" + offset;
+                String json = httpGetWithAuthRefresh(url);
                 List<CharacterItem> list = new ArrayList<>();
                 if (json != null) {
                     JSONArray arr = new JSONArray(json);
@@ -379,29 +402,42 @@ public class HomeFragment extends Fragment {
                         list.add(CharacterItem.fromJson(arr.getJSONObject(i)));
                     }
                 }
-                ChatApplication app = (ChatApplication) requireActivity().getApplication();
-                JSONArray localChars = app.getLocalDb().getAllUserCharacters();
-                for (int i = 0; i < localChars.length(); i++) {
-                    JSONObject lc = localChars.getJSONObject(i);
-                    if (lc.optString("category", "").equals(categoryId)) {
-                        list.add(CharacterItem.fromJson(lc));
+                if (initial) {
+                    ChatApplication app = (ChatApplication) requireActivity().getApplication();
+                    JSONArray localChars = app.getLocalDb().getAllUserCharacters();
+                    for (int i = 0; i < localChars.length(); i++) {
+                        JSONObject lc = localChars.getJSONObject(i);
+                        if (lc.optString("category", "").equals(categoryId)) {
+                            list.add(CharacterItem.fromJson(lc));
+                        }
                     }
                 }
+                final boolean hasMore = list.size() >= PAGE_SIZE;
                 mainHandler.post(() -> {
                     searchProgress.setVisibility(View.GONE);
-                    characters.clear();
+                    if (initial) {
+                        characters.clear();
+                    }
                     characters.addAll(list);
-                    Cache.characters = new ArrayList<>(list);
+                    hasMoreCharacters = hasMore;
+                    charactersOffset = offset + list.size();
+                    isLoadingMore = false;
+                    Cache.characters = new ArrayList<>(characters);
                     characterAdapter.notifyDataSetChanged();
                     sectionTitle.setText("Personaggi");
-                    updateLoadingProgress(3, 3, "Caricamento completato");
-                    hideLoadingOverlay();
+                    if (initial) {
+                        updateLoadingProgress(3, 3, "Caricamento completato");
+                        hideLoadingOverlay();
+                    }
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> {
                     searchProgress.setVisibility(View.GONE);
-                    loadOfflineCharacters();
-                    hideLoadingOverlay();
+                    if (initial) {
+                        loadOfflineCharacters();
+                        hideLoadingOverlay();
+                    }
+                    isLoadingMore = false;
                 });
             }
         });
