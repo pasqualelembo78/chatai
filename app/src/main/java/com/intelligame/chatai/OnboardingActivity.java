@@ -277,7 +277,6 @@ public class OnboardingActivity extends Activity {
                         }
                     });
                 }
-                conn.disconnect();
             } catch (Exception e) {
                 e.printStackTrace();
             }
