@@ -323,6 +323,7 @@ class GoogleLoginRequest(BaseModel):
 
 class RegisterRequest(BaseModel):
     username: str = ""
+    email: str = ""
     password: str = ""
     referral_code: str = ""
 
@@ -555,6 +556,7 @@ async def google_login(body: GoogleLoginRequest):
 async def register(request: Request, body: RegisterRequest):
     username = body.username.strip()
     password = body.password
+    email = body.email.strip().lower()
     referral_code = body.referral_code.strip()
     if not username or not password:
         raise HTTPException(400, "Username e password richiesti")
@@ -564,6 +566,8 @@ async def register(request: Request, body: RegisterRequest):
         raise HTTPException(400, "Password minima 8 caratteri")
     if not re.match(r"^[a-zA-Z0-9_]+$", username):
         raise HTTPException(400, "Username solo lettere, numeri e underscore")
+    if email and not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        raise HTTPException(400, "Email non valida")
 
     conn = get_conn()
     try:
@@ -571,10 +575,14 @@ async def register(request: Request, body: RegisterRequest):
         cur.execute("SELECT id FROM users WHERE username = %s", (username,))
         if cur.fetchone():
             raise HTTPException(409, "Username già in uso")
+        if email:
+            cur.execute("SELECT id FROM users WHERE email = %s AND email != ''", (email,))
+            if cur.fetchone():
+                raise HTTPException(409, "Email già registrata")
         user_id = str(uuid.uuid4())
         password_hash = generate_password_hash(password, method="scrypt")
-        cur.execute("INSERT INTO users (id, username, password_hash, role) VALUES (%s, %s, %s, 'user')",
-                    (user_id, username, password_hash))
+        cur.execute("INSERT INTO users (id, username, password_hash, email, role) VALUES (%s, %s, %s, %s, 'user')",
+                    (user_id, username, password_hash, email))
         conn.commit()
     finally:
         put_conn(conn)
@@ -594,7 +602,7 @@ async def register(request: Request, body: RegisterRequest):
         content={
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "user": {"id": user_id, "username": username, "role": "user"}
+            "user": {"id": user_id, "username": username, "role": "user", "email": email}
         }
     )
 

@@ -313,6 +313,66 @@ public class AuthManager {
         }).start();
     }
 
+    public void register(String username, String email, String password, String serverUrl, String referralCode, AuthCallback callback) {
+        final String urlStr = serverUrl + "/auth/register";
+        new Thread(() -> {
+            HttpURLConnection conn = null;
+            try {
+                URL url = new URL(urlStr);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setConnectTimeout(15000);
+                conn.setReadTimeout(15000);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+
+                JSONObject body = new JSONObject();
+                body.put("username", username);
+                body.put("password", password);
+                if (email != null && !email.isEmpty()) {
+                    body.put("email", email);
+                }
+                if (referralCode != null && !referralCode.isEmpty()) {
+                    body.put("referral_code", referralCode);
+                }
+
+                OutputStream os = conn.getOutputStream();
+                os.write(body.toString().getBytes());
+                os.close();
+
+                int code = conn.getResponseCode();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        code >= 400 ? conn.getErrorStream() : conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) response.append(line);
+                reader.close();
+
+                if (code == 201) {
+                    JSONObject json = new JSONObject(response.toString());
+                    String accessToken = json.getString("access_token");
+                    String refreshToken = json.getString("refresh_token");
+                    JSONObject user = json.getJSONObject("user");
+                    String userId = user.getString("id");
+                    String role = user.optString("role", "user");
+                    String userEmail = user.optString("email", "");
+
+                    saveTokens(accessToken, refreshToken, userId, username, role, userEmail);
+                    callback.onSuccess(accessToken, refreshToken, userId, username, role, userEmail);
+                } else {
+                    JSONObject err = new JSONObject(response.toString());
+                    String msg = err.optString("detail", "Errore registrazione");
+                    callback.onError(msg);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Register error", e);
+                callback.onError("Errore di connessione: " + e.getMessage());
+            } finally {
+                if (conn != null) conn.disconnect();
+            }
+        }).start();
+    }
+
     public void refreshToken(String serverUrl, final RefreshCallback callback) {
         final String refreshTok = getRefreshToken();
         if (refreshTok.isEmpty()) {

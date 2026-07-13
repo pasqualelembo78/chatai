@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,15 +34,19 @@ public class LoginActivity extends Activity {
 
     private SignInButton mGoogleSignInButton;
     private EditText mUsernameView;
+    private EditText mEmailView;
+    private EditText mPasswordView;
     private EditText mServerUrlView;
     private EditText mReferralCodeView;
     private Button mLoginButton;
+    private TextView mToggleAuthMode;
     private ProgressBar mProgressBar;
 
     private AuthManager mAuth;
     private PrefsManager mPrefs;
     private GoogleSignInClient mGoogleSignInClient;
     private String mGoogleClientId;
+    private boolean mIsSignupMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +74,23 @@ public class LoginActivity extends Activity {
         mGoogleSignInButton.setVisibility(View.GONE);
 
         mUsernameView = findViewById(R.id.username_input);
+        mEmailView = findViewById(R.id.email_input);
+        mPasswordView = findViewById(R.id.password_input);
         mServerUrlView = findViewById(R.id.server_url_input);
         mReferralCodeView = findViewById(R.id.referral_code_input);
         mLoginButton = findViewById(R.id.login_button);
         mProgressBar = findViewById(R.id.auth_progress);
+        mToggleAuthMode = findViewById(R.id.toggle_auth_mode);
 
-        mLoginButton.setOnClickListener(v -> attemptLocalLogin());
+        mLoginButton.setOnClickListener(v -> {
+            if (mIsSignupMode) {
+                attemptRegister();
+            } else {
+                attemptLogin();
+            }
+        });
+
+        mToggleAuthMode.setOnClickListener(v -> toggleAuthMode());
 
         findViewById(R.id.server_url_toggle).setOnClickListener(v -> {
             mServerUrlView.setVisibility(
@@ -88,6 +105,145 @@ public class LoginActivity extends Activity {
         }
 
         fetchGoogleClientId();
+    }
+
+    private void toggleAuthMode() {
+        mIsSignupMode = !mIsSignupMode;
+        if (mIsSignupMode) {
+            mLoginButton.setText("REGISTRATI");
+            mToggleAuthMode.setText("Hai già account? Accedi");
+            mEmailView.setVisibility(View.VISIBLE);
+            mPasswordView.setVisibility(View.VISIBLE);
+        } else {
+            mLoginButton.setText("ACCEDI");
+            mToggleAuthMode.setText("Non hai account? Registrati");
+            mEmailView.setVisibility(View.GONE);
+            mPasswordView.setVisibility(View.GONE);
+        }
+    }
+
+    private void attemptLogin() {
+        String username = mUsernameView.getText().toString().trim();
+        String password = mPasswordView.getText().toString();
+
+        if (TextUtils.isEmpty(username)) {
+            mUsernameView.setError("Inserisci un username");
+            mUsernameView.requestFocus();
+            return;
+        }
+
+        setLoading(true);
+        final String serverUrl = getEffectiveServerUrl();
+        final String referralCode = mReferralCodeView.getText().toString().trim();
+
+        if (TextUtils.isEmpty(password)) {
+            mAuth.loginLocal(username, serverUrl, referralCode.isEmpty() ? null : referralCode, new AuthManager.AuthCallback() {
+                @Override
+                public void onSuccess(String accessToken, String refreshToken,
+                                      String userId, String username, String role, String email) {
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        saveServerUrl(serverUrl);
+                        checkAndRedirect(serverUrl);
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        mAuth.createLocalSession(username);
+                        saveServerUrl(serverUrl);
+                        setLoading(false);
+                        checkAndRedirect(serverUrl);
+                    });
+                }
+            });
+        } else {
+            if (password.length() < 8) {
+                mPasswordView.setError("Minimo 8 caratteri");
+                mPasswordView.requestFocus();
+                setLoading(false);
+                return;
+            }
+            mAuth.login(username, password, serverUrl, new AuthManager.AuthCallback() {
+                @Override
+                public void onSuccess(String accessToken, String refreshToken,
+                                      String userId, String username, String role, String email) {
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        saveServerUrl(serverUrl);
+                        checkAndRedirect(serverUrl);
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
+        }
+    }
+
+    private void attemptRegister() {
+        String username = mUsernameView.getText().toString().trim();
+        String email = mEmailView.getText().toString().trim();
+        String password = mPasswordView.getText().toString();
+        String referralCode = mReferralCodeView.getText().toString().trim();
+
+        if (TextUtils.isEmpty(username)) {
+            mUsernameView.setError("Inserisci un username");
+            mUsernameView.requestFocus();
+            return;
+        }
+        if (username.length() < 3) {
+            mUsernameView.setError("Minimo 3 caratteri");
+            mUsernameView.requestFocus();
+            return;
+        }
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError("Inserisci una password");
+            mPasswordView.requestFocus();
+            return;
+        }
+        if (password.length() < 8) {
+            mPasswordView.setError("Minimo 8 caratteri");
+            mPasswordView.requestFocus();
+            return;
+        }
+        if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            mEmailView.setError("Email non valida");
+            mEmailView.requestFocus();
+            return;
+        }
+
+        setLoading(true);
+        final String serverUrl = getEffectiveServerUrl();
+        mAuth.register(username, email, password, serverUrl,
+                referralCode.isEmpty() ? null : referralCode,
+                new AuthManager.AuthCallback() {
+                    @Override
+                    public void onSuccess(String accessToken, String refreshToken,
+                                          String userId, String username, String role, String email) {
+                        runOnUiThread(() -> {
+                            setLoading(false);
+                            saveServerUrl(serverUrl);
+                            Toast.makeText(LoginActivity.this,
+                                    "Benvenuto, " + username + "!", Toast.LENGTH_SHORT).show();
+                            checkAndRedirect(serverUrl);
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            setLoading(false);
+                            Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                        });
+                    }
+                });
     }
 
     private void fetchGoogleClientId() {
@@ -116,41 +272,6 @@ public class LoginActivity extends Activity {
                 }
             } catch (Exception ignored) {}
         }).start();
-    }
-
-    private void attemptLocalLogin() {
-        String username = mUsernameView.getText().toString().trim();
-        if (TextUtils.isEmpty(username)) {
-            mUsernameView.setError("Inserisci un username");
-            mUsernameView.requestFocus();
-            return;
-        }
-
-        setLoading(true);
-        final String serverUrl = getEffectiveServerUrl();
-        final String referralCode = mReferralCodeView.getText().toString().trim();
-        mAuth.loginLocal(username, serverUrl, referralCode.isEmpty() ? null : referralCode, new AuthManager.AuthCallback() {
-            @Override
-            public void onSuccess(String accessToken, String refreshToken,
-                                  String userId, String username, String role, String email) {
-                runOnUiThread(() -> {
-                    setLoading(false);
-                    saveServerUrl(serverUrl);
-                    checkAndRedirect(serverUrl);
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> {
-                    // Fallback: offline local session
-                    mAuth.createLocalSession(username);
-                    saveServerUrl(serverUrl);
-                    setLoading(false);
-                    checkAndRedirect(serverUrl);
-                });
-            }
-        });
     }
 
     private void signInWithGoogle() {
