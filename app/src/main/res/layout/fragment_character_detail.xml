@@ -149,7 +149,7 @@
                             android:layout_height="wrap_content"
                             android:text="interazioni"
                             android:textColor="@color/on_surface_dim"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
 
                     </LinearLayout>
 
@@ -177,7 +177,7 @@
                             android:layout_height="wrap_content"
                             android:text="mi piace"
                             android:textColor="@color/on_surface_dim"
-                            android:textSize="10sp" />
+                            android:textSize="11sp" />
 
                     </LinearLayout>
 
@@ -279,8 +279,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_info"
                 app:tint="@color/on_surface_dim" />
 
@@ -290,7 +290,7 @@
                 android:layout_marginTop="2dp"
                 android:text="Dettagli"
                 android:textColor="@color/on_surface_dim"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
 
             <View
                 android:id="@+id/tab_indicator_details"
@@ -313,8 +313,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_chat_bubble"
                 app:tint="@color/on_surface_dim" />
 
@@ -324,7 +324,7 @@
                 android:layout_marginTop="2dp"
                 android:text="Domande"
                 android:textColor="@color/on_surface_dim"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
 
             <View
                 android:id="@+id/tab_indicator_questions"
@@ -348,8 +348,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:src="@drawable/ic_movie"
                 app:tint="@color/on_surface_dim" />
 
@@ -359,7 +359,7 @@
                 android:layout_marginTop="2dp"
                 android:text="Scene"
                 android:textColor="@color/on_surface_dim"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
 
             <View
                 android:id="@+id/tab_indicator_scenes"
@@ -433,7 +433,7 @@
                     android:textSize="12sp"
                     android:visibility="gone" />
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/detail_backstory_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -471,7 +471,7 @@
 
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <TextView
                     android:id="@+id/detail_hobbies_label"
@@ -528,7 +528,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
-                <androidx.cardview.widget.CardView
+                <com.google.android.material.card.MaterialCardView
                     android:id="@+id/detail_evolution_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -632,7 +632,7 @@
                             android:visibility="gone" />
 
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
                 <!-- Disclaimer immagini -->
                 <TextView

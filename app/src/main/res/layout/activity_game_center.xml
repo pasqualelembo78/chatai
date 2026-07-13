@@ -78,7 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Mini-giochi interattivi con i tuoi personaggi"
-                    android:textColor="#B0FFFFFF"
+                    android:textColor="@color/text_over_image_dim"
                     android:textSize="14sp"
                     android:gravity="center"
                     android:layout_marginTop="8dp" />
@@ -130,7 +130,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Interpreta un personaggio in scenari unici"
-                        android:textColor="#80FFFFFF"
+                        android:textColor="@color/text_game_subtitle"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />
 
@@ -140,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Prossimamente"
-                    android:textColor="#80FFFFFF"
+                    android:textColor="@color/text_game_subtitle"
                     android:textSize="11sp"
                     android:background="@drawable/tab_icon_bg"
                     android:paddingHorizontal="8dp"
@@ -183,7 +183,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Quanto conosci il tuo personaggio?"
-                        android:textColor="#80FFFFFF"
+                        android:textColor="@color/text_game_subtitle"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />
 
@@ -193,7 +193,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Prossimamente"
-                    android:textColor="#80FFFFFF"
+                    android:textColor="@color/text_game_subtitle"
                     android:textSize="11sp"
                     android:background="@drawable/tab_icon_bg"
                     android:paddingHorizontal="8dp"
@@ -236,7 +236,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Esplora mondi e risolvi enigmi"
-                        android:textColor="#80FFFFFF"
+                        android:textColor="@color/text_game_subtitle"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />
 
@@ -246,7 +246,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Prossimamente"
-                    android:textColor="#80FFFFFF"
+                    android:textColor="@color/text_game_subtitle"
                     android:textSize="11sp"
                     android:background="@drawable/tab_icon_bg"
                     android:paddingHorizontal="8dp"
@@ -289,7 +289,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Il tuo personaggio predice il futuro"
-                        android:textColor="#80FFFFFF"
+                        android:textColor="@color/text_game_subtitle"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />
 
@@ -299,7 +299,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Prossimamente"
-                    android:textColor="#80FFFFFF"
+                    android:textColor="@color/text_game_subtitle"
                     android:textSize="11sp"
                     android:background="@drawable/tab_icon_bg"
                     android:paddingHorizontal="8dp"

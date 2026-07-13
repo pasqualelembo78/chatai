@@ -1,9 +1,62 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing">16dp</dimen>
+    <dimen name="spacing_lg">20dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
+    <dimen name="spacing_xxl">32dp</dimen>
+
+    <!-- Activity margins -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="spacing">8dp</dimen>
+    <!-- Card -->
+    <dimen name="card_margin_small">6dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_corner_small">16dp</dimen>
+    <dimen name="card_corner_large">24dp</dimen>
 
+    <!-- Button -->
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="button_height_small">40dp</dimen>
+    <dimen name="button_corner">22dp</dimen>
+
+    <!-- Touch targets -->
+    <dimen name="touch_target_min">48dp</dimen>
+    <dimen name="touch_target_icon">40dp</dimen>
+
+    <!-- Avatar -->
+    <dimen name="avatar_small">36dp</dimen>
+    <dimen name="avatar_medium">48dp</dimen>
+    <dimen name="avatar_large">80dp</dimen>
+
+    <!-- Header -->
+    <dimen name="header_height">56dp</dimen>
+
+    <!-- Input area -->
     <dimen name="input_area_extra_padding">4dp</dimen>
+    <dimen name="input_bar_padding">12dp</dimen>
+
+    <!-- Typography sizes -->
+    <dimen name="text_size_headline">24sp</dimen>
+    <dimen name="text_size_title_large">20sp</dimen>
+    <dimen name="text_size_title">18sp</dimen>
+    <dimen name="text_size_subtitle">16sp</dimen>
+    <dimen name="text_size_body">15sp</dimen>
+    <dimen name="text_size_body_small">14sp</dimen>
+    <dimen name="text_size_label">12sp</dimen>
+    <dimen name="text_size_caption">11sp</dimen>
+    <dimen name="text_size_small">10sp</dimen>
+
+    <!-- Message -->
+    <dimen name="message_bubble_padding">14dp</dimen>
+    <dimen name="message_max_width">300dp</dimen>
+    <dimen name="message_spacing_vertical">4dp</dimen>
+
+    <!-- Tab bar -->
+    <dimen name="tab_icon_size">24dp</dimen>
+    <dimen name="tab_height">56dp</dimen>
 </resources>

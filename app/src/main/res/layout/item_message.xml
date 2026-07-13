@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="#80FFFFFF"
+        android:textColor="@color/text_provider"
         android:paddingBottom="2dp"
         android:paddingHorizontal="4dp" />
 
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:lineSpacingExtra="4dp"
-            android:textColor="#FF000000"
+            android:textColor="@color/chat_text_ai"
             android:padding="14dp"
             android:maxWidth="300dp"
             android:background="@drawable/message_bubble_bg" />
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="10sp"
-                android:textColor="#60FFFFFF"
+                android:textColor="@color/text_timestamp"
                 android:paddingEnd="8dp" />
 
             <!-- Provider Info -->
@@ -70,48 +70,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="10sp"
-                android:textColor="#40FFFFFF"
+                android:textColor="@color/text_provider"
                 android:visibility="gone"
                 android:paddingEnd="8dp" />
 
             <!-- Play Audio -->
             <ImageButton
                 android:id="@+id/play_audio"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@android:drawable/ic_media_play"
                 android:contentDescription="Ascolta"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerInside"
                 android:visibility="gone"
-                android:padding="2dp" />
+                android:padding="8dp" />
 
             <!-- Copy Button -->
             <ImageButton
                 android:id="@+id/btn_copy_message"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_share"
                 android:contentDescription="Copia"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerInside"
                 android:visibility="visible"
-                android:padding="2dp"
-                app:tint="#60FFFFFF" />
+                android:padding="8dp"
+                app:tint="@color/text_provider" />
 
             <!-- Report Button -->
             <ImageButton
                 android:id="@+id/btn_report_message"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_info"
                 android:contentDescription="Segnala"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerInside"
                 android:visibility="visible"
-                android:padding="2dp"
+                android:padding="8dp"
                 android:layout_marginStart="4dp"
-                app:tint="#60FFFFFF" />
+                app:tint="@color/text_provider" />
 
         </LinearLayout>
 

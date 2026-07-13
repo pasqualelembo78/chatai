@@ -81,7 +81,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="10sp"
-                    android:textColor="#4CAF50" />
+                    android:textColor="@color/status_connected" />
 
             </LinearLayout>
 
@@ -135,7 +135,7 @@
                 android:gravity="center"
                 android:text="@string/prompt_welcome"
                 android:textSize="16sp"
-                android:textColor="#B0FFFFFF"
+                android:textColor="@color/text_empty_state"
                 android:visibility="gone"
                 android:padding="32dp"
                 android:lineSpacingExtra="6dp" />
@@ -151,7 +151,7 @@
                 android:requiresFadingEdge="vertical"
                 android:fadingEdgeLength="32dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/stream_stop_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -159,8 +159,7 @@
                 android:visibility="gone"
                 android:layout_gravity="center_horizontal|bottom"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/edittext_bg"
-                android:textColor="@color/status_disconnected"
+                style="@style/Widget.ChatAI.MaterialButton.Stop"
                 android:textSize="14sp"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp" />
@@ -184,7 +183,7 @@
             android:paddingHorizontal="12dp"
             android:paddingVertical="8dp"
             android:visibility="gone"
-            android:background="#80000000">
+            android:background="@color/overlay_image_preview">
 
             <ImageView
                 android:id="@+id/image_preview"
@@ -235,7 +234,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Manda messaggio..."
-                android:textColorHint="#80FFFFFF"
+                android:textColorHint="@color/text_hint_on_dark"
                 android:textColor="@android:color/white"
                 android:imeActionId="@+id/send"
                 android:imeActionLabel="@string/action_send"

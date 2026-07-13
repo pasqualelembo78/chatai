@@ -57,7 +57,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:shadowColor="#80000000"
+                    android:shadowColor="@color/overlay_scrim"
                     android:shadowDx="0"
                     android:shadowDy="1"
                     android:shadowRadius="4"
@@ -70,9 +70,9 @@
                     android:layout_marginTop="2dp"
                     android:lines="2"
                     android:ellipsize="end"
-                    android:textColor="#E0FFFFFF"
+                    android:textColor="@color/text_over_image"
                     android:textSize="11sp"
-                    android:shadowColor="#80000000"
+                    android:shadowColor="@color/overlay_scrim"
                     android:shadowDx="0"
                     android:shadowDy="1"
                     android:shadowRadius="4" />
@@ -85,7 +85,7 @@
                     android:lines="1"
                     android:ellipsize="end"
                     android:textColor="@color/primary_light"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
 
             </LinearLayout>
 
@@ -104,8 +104,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/on_surface_dim"
-                android:textSize="10sp" />
+android:textColor="@color/on_surface_dim"
+                    android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/card_online_dot"
@@ -119,8 +119,8 @@
 
         <ImageButton
             android:id="@+id/card_favorite_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="top|end"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
@@ -128,7 +128,7 @@
             android:contentDescription="Aggiungi ai preferiti"
             android:src="@drawable/ic_favorite_border"
             android:scaleType="centerInside"
-            android:padding="4dp"
+            android:padding="10dp"
             app:tint="@color/on_surface_dim" />
 
     </FrameLayout>

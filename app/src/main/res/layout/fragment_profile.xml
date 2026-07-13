@@ -219,7 +219,7 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
                     android:backgroundTint="@color/on_primary"
                     android:text="Ricarica"
                     android:textColor="@color/primary"
@@ -231,7 +231,7 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginStart="4dp"
                     android:backgroundTint="@color/primary_light"
                     android:text="Guadagna MVC"
                     android:textColor="@color/on_primary"
@@ -432,7 +432,7 @@
 
             </LinearLayout>
 
-            <androidx.appcompat.widget.SwitchCompat
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switch_adult_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
