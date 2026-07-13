@@ -668,8 +668,15 @@ public class HomeFragment extends Fragment {
             os.write(jsonBody.getBytes("UTF-8"));
             os.close();
             int code = conn.getResponseCode();
+            java.io.InputStream is;
+            if (code < 400) {
+                is = conn.getInputStream();
+            } else {
+                is = conn.getErrorStream();
+                if (is == null) is = conn.getInputStream();
+            }
             BufferedReader reader = new BufferedReader(new InputStreamReader(
-                code >= 400 ? conn.getErrorStream() : conn.getInputStream()));
+                is != null ? is : new java.io.ByteArrayInputStream(new byte[0])));
             StringBuilder response = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
