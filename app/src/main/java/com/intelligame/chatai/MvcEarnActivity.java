@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
@@ -35,6 +36,15 @@ public class MvcEarnActivity extends AppCompatActivity {
     private TextView transactionsEmpty;
     private GridLayout streakGrid;
 
+    private MaterialButton btnUnlockCategories;
+    private MaterialButton btnUnlockImageGen;
+    private MaterialButton btnUnlockVideoGen;
+    private MaterialButton btnUnlockPremiumVoice;
+    private MaterialButton btnUnlockExtendedMemory;
+
+    private int currentBalance = 0;
+    private java.util.Set<String> unlockedFeatures = new java.util.HashSet<>();
+
     private String baseUrl;
     private AuthManager mAuth;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -57,9 +67,21 @@ public class MvcEarnActivity extends AppCompatActivity {
         transactionsEmpty = findViewById(R.id.transactions_empty);
         streakGrid = findViewById(R.id.streak_grid);
 
+        btnUnlockCategories = findViewById(R.id.btn_unlock_categories);
+        btnUnlockImageGen = findViewById(R.id.btn_unlock_image_gen);
+        btnUnlockVideoGen = findViewById(R.id.btn_unlock_video_gen);
+        btnUnlockPremiumVoice = findViewById(R.id.btn_unlock_premium_voice);
+        btnUnlockExtendedMemory = findViewById(R.id.btn_unlock_extended_memory);
+
         btnCheckin.setOnClickListener(v -> doCheckin());
         btnWatchAd.setOnClickListener(v -> showRewardedAd());
         updateRewardedButton();
+
+        btnUnlockCategories.setOnClickListener(v -> showCategoryDialog());
+        btnUnlockImageGen.setOnClickListener(v -> attemptUnlockFeature("image_gen", 50, "Generazione Immagini"));
+        btnUnlockVideoGen.setOnClickListener(v -> attemptUnlockFeature("video_gen", 100, "Generazione Video"));
+        btnUnlockPremiumVoice.setOnClickListener(v -> attemptUnlockFeature("premium_voice", 30, "Messaggi Vocali Premium"));
+        btnUnlockExtendedMemory.setOnClickListener(v -> attemptUnlockFeature("extended_memory", 80, "Memoria Estesa"));
 
         populateStreakGrid();
         loadAllData();
@@ -80,6 +102,7 @@ public class MvcEarnActivity extends AppCompatActivity {
         loadBalance();
         loadBonusStatus();
         loadTransactions();
+        loadUnlockStatus();
     }
 
     private void loadBalance() {
@@ -88,6 +111,7 @@ public class MvcEarnActivity extends AppCompatActivity {
                 AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins", "GET", null, 5000);
                 JSONObject obj = new JSONObject(resp.body);
                 int balance = obj.optInt("balance", 0);
+                currentBalance = balance;
                 mainHandler.post(() -> balanceText.setText(String.valueOf(balance)));
             } catch (Exception e) {
                 mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
@@ -419,6 +443,191 @@ public class MvcEarnActivity extends AppCompatActivity {
                     Snackbar.make(findViewById(android.R.id.content),
                             "Errore: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                 });
+            }
+        });
+    }
+
+    private void loadUnlockStatus() {
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/unlocks", "GET", null, 5000);
+                JSONObject obj = new JSONObject(resp.body);
+                JSONArray features = obj.optJSONArray("features");
+                unlockedFeatures.clear();
+                if (features != null) {
+                    for (int i = 0; i < features.length(); i++) {
+                        unlockedFeatures.add(features.getString(i));
+                    }
+                }
+                JSONArray categories = obj.optJSONArray("categories");
+                final java.util.List<String> unlockedCats = new java.util.ArrayList<>();
+                if (categories != null) {
+                    for (int i = 0; i < categories.length(); i++) {
+                        unlockedCats.add(categories.getString(i));
+                    }
+                }
+                mainHandler.post(() -> {
+                    updateFeatureButtons();
+                    btnUnlockCategories.setText(unlockedCats.isEmpty() ? "Vedi" : "Vedi (" + unlockedCats.size() + " sbloccate)");
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                        "Errore caricamento sblochi", Snackbar.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private void updateFeatureButtons() {
+        updateOneButton(btnUnlockImageGen, "image_gen", 50);
+        updateOneButton(btnUnlockVideoGen, "video_gen", 100);
+        updateOneButton(btnUnlockPremiumVoice, "premium_voice", 30);
+        updateOneButton(btnUnlockExtendedMemory, "extended_memory", 80);
+    }
+
+    private void updateOneButton(MaterialButton btn, String featureId, int cost) {
+        if (unlockedFeatures.contains(featureId)) {
+            btn.setText("✓ Sbloccato");
+            btn.setEnabled(false);
+            btn.setBackgroundColor(0xFF4CAF50);
+        } else {
+            btn.setText(cost + " MVC");
+            btn.setEnabled(true);
+            btn.setBackgroundColor(getResources().getColor(R.color.primary));
+        }
+    }
+
+    private void attemptUnlockFeature(String featureId, int cost, String featureName) {
+        if (unlockedFeatures.contains(featureId)) {
+            Snackbar.make(findViewById(android.R.id.content), featureName + " già sbloccata", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        if (currentBalance < cost) {
+            Snackbar.make(findViewById(android.R.id.content),
+                    "Saldo insufficiente. Servono " + cost + " MVC (hai " + currentBalance + ")",
+                    Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Sblocca " + featureName)
+                .setMessage("Vuoi spendere " + cost + " MVC per sbloccare \"" + featureName + "\"?\n\nSaldo attuale: " + currentBalance + " MVC")
+                .setPositiveButton("Sblocca (" + cost + " MVC)", (d, w) -> doUnlockFeature(featureId, cost, featureName))
+                .setNegativeButton("Annulla", null)
+                .show();
+    }
+
+    private void doUnlockFeature(String featureId, int cost, String featureName) {
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("content_type", "feature");
+                body.put("content_id", featureId);
+                body.put("amount", cost);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/spend", "POST", body.toString(), 10000);
+
+                if (resp.statusCode == 200) {
+                    JSONObject result = new JSONObject(resp.body);
+                    if (result.optBoolean("already_unlocked", false)) {
+                        unlockedFeatures.add(featureId);
+                        mainHandler.post(() -> {
+                            updateFeatureButtons();
+                            Snackbar.make(findViewById(android.R.id.content),
+                                    featureName + " già sbloccata!", Snackbar.LENGTH_SHORT).show();
+                        });
+                        return;
+                    }
+                    unlockedFeatures.add(featureId);
+                    mainHandler.post(() -> {
+                        updateFeatureButtons();
+                        loadBalance();
+                        loadTransactions();
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "✓ " + featureName + " sbloccata! -" + cost + " MVC", Snackbar.LENGTH_LONG).show();
+                    });
+                } else if (resp.statusCode == 400 && resp.body.contains("saldo")) {
+                    mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                            "Saldo insufficiente", Snackbar.LENGTH_SHORT).show());
+                } else {
+                    mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                            "Errore: " + resp.body, Snackbar.LENGTH_LONG).show());
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                        "Errore: " + e.getMessage(), Snackbar.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private void showCategoryDialog() {
+        String[][] cats = {
+                {"horror", "Horror", "200"},
+                {"flirt", "Flirt", "300"},
+                {"relazioni", "Relazioni", "300"},
+                {"confessioni", "Confessioni", "300"},
+                {"seduzione", "Seduzione", "500"}
+        };
+        StringBuilder msg = new StringBuilder("Scegli quale categoria sbloccare:\n\n");
+        for (String[] c : cats) {
+            msg.append(c[1]).append(" - ").append(c[2]).append(" MVC\n");
+        }
+        msg.append("\nSaldo attuale: ").append(currentBalance).append(" MVC");
+        String[] items = new String[cats.length];
+        for (int i = 0; i < cats.length; i++) {
+            items[i] = cats[i][1] + " (" + cats[i][2] + " MVC)";
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Sblocca Categorie Hot")
+                .setMessage(msg.toString())
+                .setItems(items, (d, which) -> {
+                    String catId = cats[which][0];
+                    String catName = cats[which][1];
+                    int catCost = Integer.parseInt(cats[which][2]);
+                    if (currentBalance < catCost) {
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Saldo insufficiente. Servono " + catCost + " MVC (hai " + currentBalance + ")",
+                                Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+                    new AlertDialog.Builder(this)
+                            .setTitle("Sblocca " + catName)
+                            .setMessage("Spendere " + catCost + " MVC per sbloccare la categoria \"" + catName + "\"?")
+                            .setPositiveButton("Sblocca", (dd, ww) -> doUnlockCategory(catId, catCost, catName))
+                            .setNegativeButton("Annulla", null)
+                            .show();
+                })
+                .setNegativeButton("Chiudi", null)
+                .show();
+    }
+
+    private void doUnlockCategory(String catId, int cost, String catName) {
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("content_type", "category");
+                body.put("content_id", catId);
+                body.put("amount", cost);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/spend", "POST", body.toString(), 10000);
+
+                if (resp.statusCode == 200) {
+                    mainHandler.post(() -> {
+                        loadBalance();
+                        loadUnlockStatus();
+                        loadTransactions();
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "✓ " + catName + " sbloccata! -" + cost + " MVC", Snackbar.LENGTH_LONG).show();
+                    });
+                } else {
+                    final String errMsg;
+                    if (resp.statusCode == 400 && resp.body.contains("saldo")) {
+                        errMsg = "Saldo insufficiente";
+                    } else {
+                        errMsg = "Errore: " + resp.body;
+                    }
+                    mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                            errMsg, Snackbar.LENGTH_LONG).show());
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                        "Errore: " + e.getMessage(), Snackbar.LENGTH_SHORT).show());
             }
         });
     }

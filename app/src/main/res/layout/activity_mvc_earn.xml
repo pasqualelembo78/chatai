@@ -233,13 +233,16 @@
 
             <!-- Feature 1: Hot Categories -->
             <LinearLayout
+                android:id="@+id/feature_card_categories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="12dp"
                 android:background="@color/surface_card"
                 android:layout_marginBottom="8dp"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -271,13 +274,14 @@
 
                 </LinearLayout>
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_unlock_categories"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="200-500 MVC"
-                    android:textColor="@color/primary"
+                    android:layout_height="40dp"
+                    android:text="Vedi"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/on_primary" />
 
             </LinearLayout>
 
@@ -321,13 +325,14 @@
 
                 </LinearLayout>
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_unlock_image_gen"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:text="50 MVC"
-                    android:textColor="@color/primary"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/on_primary" />
 
             </LinearLayout>
 
@@ -371,13 +376,14 @@
 
                 </LinearLayout>
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_unlock_video_gen"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:text="100 MVC"
-                    android:textColor="@color/primary"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/on_primary" />
 
             </LinearLayout>
 
@@ -421,13 +427,14 @@
 
                 </LinearLayout>
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_unlock_premium_voice"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:text="30 MVC"
-                    android:textColor="@color/primary"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/on_primary" />
 
             </LinearLayout>
 
@@ -471,13 +478,14 @@
 
                 </LinearLayout>
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_unlock_extended_memory"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:text="80 MVC"
-                    android:textColor="@color/primary"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:backgroundTint="@color/primary"
+                    android:textColor="@color/on_primary" />
 
             </LinearLayout>
 

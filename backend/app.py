@@ -115,6 +115,14 @@ SUMMARY_INTERVAL = 30
 
 MEDIA_COOLDOWNS = {}
 MEDIA_COOLDOWN_SECONDS = 600
+
+FEATURES = {
+    "image_gen": {"name": "Generazione Immagini", "mvc_cost": 50},
+    "video_gen": {"name": "Generazione Video", "mvc_cost": 100},
+    "premium_voice": {"name": "Messaggi Vocali Premium", "mvc_cost": 30},
+    "extended_memory": {"name": "Memoria Estesa", "mvc_cost": 80},
+}
+
 _CHAT_GEN_MODEL = "black-forest-labs/FLUX.1-schnell"
 _CHAT_GEN_API_URL = "https://router.huggingface.co/hf-inference/models/"
 
@@ -1122,6 +1130,17 @@ async def api_save_preferences(request: Request, user: AuthUser = Depends(jwt_re
 async def api_mevacoins_balance(user: AuthUser = Depends(jwt_required)):
     return {"balance": get_mevacoins_balance(user.user_id)}
 
+@app.get("/user/mevacoins/unlocks")
+async def api_mevacoins_unlocks(user: AuthUser = Depends(jwt_required)):
+    unlocks = get_user_unlocks(user.user_id)
+    unlocked_ids = {u["content_id"] for u in unlocks if u["content_type"] == "category"}
+    unlocked_features = {u["content_id"] for u in unlocks if u["content_type"] == "feature"}
+    return {
+        "categories": list(unlocked_ids),
+        "features": list(unlocked_features),
+        "all": unlocks,
+    }
+
 @app.get("/user/mevacoins/transactions")
 async def api_mevacoins_tx(user: AuthUser = Depends(jwt_required)):
     return get_mevacoins_transactions(user.user_id)
@@ -1158,6 +1177,14 @@ async def api_mevacoins_spend(request: Request, body: SpendRequest, user: AuthUs
         valid = any(c["id"] == body.content_id and c.get("mvc_cost", 0) == body.amount for c in get_categories())
         if not valid:
             raise HTTPException(400, "categoria o costo non valido")
+    elif body.content_type == "feature":
+        feat = FEATURES.get(body.content_id)
+        if not feat or feat["mvc_cost"] != body.amount:
+            raise HTTPException(400, "feature o costo non valido")
+    else:
+        raise HTTPException(400, "content_type non valido")
+    if is_content_unlocked(user.user_id, body.content_type, body.content_id):
+        return {"status": "ok", "unlocked": True, "already_unlocked": True}
     ok, msg = unlock_content(user.user_id, body.content_type, body.content_id, body.amount)
     if not ok:
         raise HTTPException(400 if msg == "saldo_insufficiente" else 500, msg)
@@ -1463,6 +1490,8 @@ async def api_transcribe(request: Request, audio: UploadFile = File(...), user: 
 async def api_tts(body: TtsRequest, user: AuthUser = Depends(jwt_required)):
     if not body.text:
         raise HTTPException(400, "text required")
+    if not is_content_unlocked(user.user_id, "feature", "premium_voice"):
+        raise HTTPException(403, "premium_voice_required")
     char = get_character(body.character_id) if body.character_id else None
     voice_profile = audio_utils.get_voice_profile(char) if char else {"model": "it_IT-riccardo-medium", "speed": 1.0, "pitch": 1.0}
     output_path = audio_utils.text_to_speech(body.text, voice_profile)
@@ -1586,6 +1615,16 @@ def process_message(user_id, character_id, text, username="Utente",
     stripped = text.strip()
     if stripped.startswith(GEN_PREFIX) or stripped.startswith(MOVE_PREFIX):
         is_video = stripped.startswith(MOVE_PREFIX)
+        feature_id = "video_gen" if is_video else "image_gen"
+        if not is_content_unlocked(user_id, "feature", feature_id):
+            feat = FEATURES[feature_id]
+            return {
+                "ai_text": f"🔒 Per usare {feat['name']} serve sbloccare la funzionalità ({feat['mvc_cost']} MVC). Vai nella sezione Guadagna MVC.",
+                "ai_provider": "system", "ai_model": "",
+                "is_fallback": False, "emotion": "neutro", "intensity": 0.0,
+                "character": character, "memory_updates": None,
+                "evo_updates": {"new_stage": None, "unlocked": []},
+            }
         cooldown_msg = _check_cooldown()
         if cooldown_msg:
             return {
@@ -1674,7 +1713,8 @@ def process_message(user_id, character_id, text, username="Utente",
         relationship = get_relationship(user_id, character_id)
         # Phase 2: Use per-user personality (falls back to shared if not yet personalized)
         personality = get_user_personality(user_id, character_id, character.get("core_traits", {}))
-        history = memory_context if memory_context is not None else get_recent_messages(user_id, character_id, limit=20)
+        _msg_limit = 50 if is_content_unlocked(user_id, "feature", "extended_memory") else 20
+        history = memory_context if memory_context is not None else get_recent_messages(user_id, character_id, limit=_msg_limit)
         shifts = get_recent_shifts(user_id, character_id)
         evo = get_evolution(user_id, character_id)
         summaries = get_memories(user_id, character_id, limit=5)
@@ -2350,7 +2390,8 @@ async def on_stream_message(sid, data):
     world_state = get_world_state()
     memory_context = data.get("memory_context")
     user_memory = data.get("user_memory")
-    history = memory_context if memory_context is not None else get_recent_messages(user_id, character_id, limit=20)
+    _msg_limit = 50 if is_content_unlocked(user_id, "feature", "extended_memory") else 20
+        history = memory_context if memory_context is not None else get_recent_messages(user_id, character_id, limit=_msg_limit)
     shifts = get_recent_shifts(user_id, character_id)
     user_prefs = get_user_preferences(user_id)
     user_gender = user_prefs.get("user_gender") or None
