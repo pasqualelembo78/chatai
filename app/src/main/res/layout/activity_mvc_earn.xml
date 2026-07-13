@@ -171,12 +171,12 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <!-- New User Bonus Section -->
+        <!-- Streak 30 Giorni Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Bonus Nuovo Utente"
+            android:text="Streak 30 Giorni"
             android:textColor="@color/on_surface"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -185,217 +185,299 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Riscuoti fino a 120 MVC nei primi 4 giorni"
+            android:text="Riscuoti ricompense progressive fino a 100 MVC"
             android:textColor="@color/on_surface_variant"
             android:textSize="13sp" />
 
-        <!-- Streak Calendar -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:scrollbars="horizontal"
+            android:overScrollMode="never"
+            android:fillViewport="true">
+
+            <GridLayout
+                android:id="@+id/streak_grid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:columnCount="5"
+                android:rowCount="6"
+                android:useDefaultMargins="true" />
+
+        </ScrollView>
+
+        <!-- MVC Features Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Cosa puoi sbloccare"
+            android:textColor="@color/on_surface"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Usa i MevaCoins per accedere a funzionalità esclusive"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="13sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:weightSum="4">
+            android:orientation="vertical">
 
+            <!-- Feature 1: Hot Categories -->
             <LinearLayout
-                android:id="@+id/bonus_day_1"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="4dp"
-                android:orientation="vertical"
-                android:gravity="center"
+                android:orientation="horizontal"
                 android:padding="12dp"
-                android:background="@color/surface_card">
+                android:background="@color/surface_card"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Giorno 1"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="11sp" />
+                    android:text="🔒"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Categorie Hot"
+                        android:textColor="@color/on_surface"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Flirt, Relazioni, Seduzione e altre categorie premium"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="+30"
-                    android:textColor="@color/on_surface"
-                    android:textSize="20sp"
+                    android:text="200-500 MVC"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/bonus_status_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Da ritirare"
-                    android:textSize="10sp"
-                    android:textColor="@color/status_connecting"
-                    android:gravity="center" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_claim_bonus_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/primary"
-                    android:text="Riscuoti"
-                    android:textColor="@color/on_primary"
-                    android:textSize="10sp"
-                    android:visibility="gone" />
 
             </LinearLayout>
 
+            <!-- Feature 2: Image Generation -->
             <LinearLayout
-                android:id="@+id/bonus_day_2"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:orientation="vertical"
-                android:gravity="center"
+                android:orientation="horizontal"
                 android:padding="12dp"
-                android:background="@color/surface_card">
+                android:background="@color/surface_card"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Giorno 2"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="11sp" />
+                    android:text="🎨"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Generazione Immagini"
+                        android:textColor="@color/on_surface"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Crea immagini AI dei personaggi con /genera"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="+30"
-                    android:textColor="@color/on_surface"
-                    android:textSize="20sp"
+                    android:text="50 MVC"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/bonus_status_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Bloccato"
-                    android:textSize="10sp"
-                    android:textColor="@color/on_surface_dim"
-                    android:gravity="center" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_claim_bonus_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/primary"
-                    android:text="Riscuoti"
-                    android:textColor="@color/on_primary"
-                    android:textSize="10sp"
-                    android:visibility="gone" />
 
             </LinearLayout>
 
+            <!-- Feature 3: Video Generation -->
             <LinearLayout
-                android:id="@+id/bonus_day_3"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:orientation="vertical"
-                android:gravity="center"
+                android:orientation="horizontal"
                 android:padding="12dp"
-                android:background="@color/surface_card">
+                android:background="@color/surface_card"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Giorno 3"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="11sp" />
+                    android:text="🎬"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Generazione Video"
+                        android:textColor="@color/on_surface"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Crea video animati con /muovi"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="+30"
-                    android:textColor="@color/on_surface"
-                    android:textSize="20sp"
+                    android:text="100 MVC"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/bonus_status_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Bloccato"
-                    android:textSize="10sp"
-                    android:textColor="@color/on_surface_dim"
-                    android:gravity="center" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_claim_bonus_3"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/primary"
-                    android:text="Riscuoti"
-                    android:textColor="@color/on_primary"
-                    android:textSize="10sp"
-                    android:visibility="gone" />
 
             </LinearLayout>
 
+            <!-- Feature 4: Voice Messages -->
             <LinearLayout
-                android:id="@+id/bonus_day_4"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="4dp"
-                android:orientation="vertical"
-                android:gravity="center"
+                android:orientation="horizontal"
                 android:padding="12dp"
-                android:background="@color/surface_card">
+                android:background="@color/surface_card"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Giorno 4"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="11sp" />
+                    android:text="🎙️"
+                    android:textSize="24sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Messaggi Vocali Premium"
+                        android:textColor="@color/on_surface"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Voci personalizzate per ogni personaggio"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="+30"
-                    android:textColor="@color/on_surface"
-                    android:textSize="20sp"
+                    android:text="30 MVC"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
 
+            </LinearLayout>
+
+            <!-- Feature 5: Extended Memory -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:background="@color/surface_card"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
+
                 <TextView
-                    android:id="@+id/bonus_status_4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Bloccato"
-                    android:textSize="10sp"
-                    android:textColor="@color/on_surface_dim"
-                    android:gravity="center" />
+                    android:text="🧠"
+                    android:textSize="24sp" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_claim_bonus_4"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="8dp"
-                    android:backgroundTint="@color/primary"
-                    android:text="Riscuoti"
-                    android:textColor="@color/on_primary"
-                    android:textSize="10sp"
-                    android:visibility="gone" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Memoria Estesa"
+                        android:textColor="@color/on_surface"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="I personaggi ricordano più conversazioni passate"
+                        android:textColor="@color/on_surface_variant"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="80 MVC"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

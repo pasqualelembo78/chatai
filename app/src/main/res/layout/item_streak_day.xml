@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="60dp"
+    android:layout_height="70dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/surface_card"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/streak_day_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="G1"
+        android:textColor="@color/on_surface_dim"
+        android:textSize="11sp" />
+
+    <TextView
+        android:id="@+id/streak_day_reward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="+10"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/streak_day_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text=""
+        android:textSize="12sp" />
+
+</LinearLayout>
