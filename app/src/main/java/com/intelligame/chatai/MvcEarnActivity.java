@@ -135,7 +135,7 @@ public class MvcEarnActivity extends AppCompatActivity {
 
                 JSONObject data = new JSONObject(resp.body);
                 int currentDay = data.optInt("current_day", 1);
-                boolean todayClaimed = data.optBoolean("today_claimed", false);
+                boolean todayClaimed = data.optBoolean("already_claimed_today", false);
                 JSONArray days = data.optJSONArray("days");
                 if (days == null) {
                     days = new JSONArray();
@@ -281,7 +281,7 @@ public class MvcEarnActivity extends AppCompatActivity {
                 }
 
                 JSONObject result = new JSONObject(resp.body);
-                boolean claimed = result.optBoolean("claimed", false);
+                boolean claimed = result.optBoolean("success", false);
                 int earned = result.optInt("earned", reward);
 
                 mainHandler.post(() -> {

@@ -14,11 +14,6 @@ import androidx.fragment.app.DialogFragment;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -62,25 +57,15 @@ public class DailyBonusDialog extends DialogFragment {
                 ChatApplication app = (ChatApplication) requireActivity().getApplication();
                 AuthManager auth = app.getAuthManager();
                 String baseUrl = app.getPrefs().getServerUrl().replace("/chat", "");
-                String token = auth.getAccessToken();
 
-                URL url = new URL(baseUrl + "/user/mevacoins/streak");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setConnectTimeout(5000);
-                
-                if (conn.getResponseCode() == 200) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder resp = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) resp.append(line);
-                    reader.close();
-                    
-                    JSONObject result = new JSONObject(resp.toString());
+                AuthManager.HttpResponse httpResp = auth.requestWithRefresh(baseUrl + "/user/mevacoins/streak", "GET", null, 5000);
+
+                if (httpResp.statusCode == 200) {
+                    JSONObject result = new JSONObject(httpResp.body);
                     int currentDay = result.optInt("current_day", 1);
                     boolean alreadyClaimed = result.optBoolean("already_claimed_today", false);
                     int reward = calculateReward(currentDay);
-                    
+
                     mainHandler.post(() -> {
                         if (isAdded()) {
                             if (alreadyClaimed) {
@@ -91,13 +76,12 @@ public class DailyBonusDialog extends DialogFragment {
                                 }
                             } else {
                                 rewardText.setText("+" + reward + " MVC");
-                                streakText.setText("Giorno " + currentDay + " di 30" + 
-                                    (currentDay == 30 ? "\n🎉 SUPER BONUS!" : ""));
+                                streakText.setText("Giorno " + currentDay + " di 30" +
+                                    (currentDay == 30 ? "\nSUPER BONUS!" : ""));
                             }
                         }
                     });
                 }
-                conn.disconnect();
             } catch (Exception e) {
                 mainHandler.post(() -> {
                     if (isAdded()) {
@@ -115,43 +99,39 @@ public class DailyBonusDialog extends DialogFragment {
                 ChatApplication app = (ChatApplication) requireActivity().getApplication();
                 AuthManager auth = app.getAuthManager();
                 String baseUrl = app.getPrefs().getServerUrl().replace("/chat", "");
-                String token = auth.getAccessToken();
-
-                URL url = new URL(baseUrl + "/user/mevacoins/streak/claim");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setConnectTimeout(5000);
 
                 JSONObject body = new JSONObject();
                 body.put("day", 0);
-                OutputStream os = conn.getOutputStream();
-                os.write(body.toString().getBytes());
-                os.close();
+                AuthManager.HttpResponse httpResp = auth.requestWithRefresh(baseUrl + "/user/mevacoins/streak/claim", "POST", body.toString(), 5000);
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
+                if (httpResp.statusCode >= 200 && httpResp.statusCode < 300) {
+                    JSONObject result = new JSONObject(httpResp.body);
+                    int earned = result.optInt("earned", 10);
 
-                JSONObject result = new JSONObject(resp.toString());
-                int earned = result.optInt("earned", 10);
-
-                mainHandler.post(() -> {
-                    if (isAdded()) {
-                        if (getDialog() != null) getDialog().dismiss();
-                        if (getActivity() != null) {
-                            com.google.android.material.snackbar.Snackbar.make(
-                                getActivity().findViewById(android.R.id.content),
-                                "+" + earned + " MVC riscossi!",
-                                com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show();
+                    mainHandler.post(() -> {
+                        if (isAdded()) {
+                            if (getDialog() != null) getDialog().dismiss();
+                            if (getActivity() != null) {
+                                com.google.android.material.snackbar.Snackbar.make(
+                                    getActivity().findViewById(android.R.id.content),
+                                    "+" + earned + " MVC riscossi!",
+                                    com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    mainHandler.post(() -> {
+                        if (isAdded()) {
+                            if (getDialog() != null) getDialog().dismiss();
+                            if (getActivity() != null) {
+                                com.google.android.material.snackbar.Snackbar.make(
+                                    getActivity().findViewById(android.R.id.content),
+                                    "Errore: riprova più tardi",
+                                    com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             } catch (Exception e) {
                 mainHandler.post(() -> {
                     if (isAdded() && getDialog() != null) getDialog().dismiss();
