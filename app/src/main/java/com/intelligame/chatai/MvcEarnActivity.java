@@ -530,8 +530,9 @@ public class MvcEarnActivity extends AppCompatActivity {
 
                 JSONObject result = new JSONObject(resp.toString());
                 boolean alreadyChecked = result.optBoolean("already_checked", false);
-                int earned = result.optInt("earned", 0);
+                int rawEarned = result.optInt("earned", 0);
                 int dayNumber = result.optInt("day", 0);
+                final int earned = rawEarned > 0 ? rawEarned : calculateReward(dayNumber > 0 ? dayNumber : 1);
 
                 mainHandler.post(() -> {
                     if (alreadyChecked) {
@@ -542,9 +543,6 @@ public class MvcEarnActivity extends AppCompatActivity {
                         Snackbar.make(findViewById(android.R.id.content),
                                 "Già registrato oggi!", Snackbar.LENGTH_SHORT).show();
                     } else {
-                        if (earned == 0) {
-                            earned = calculateReward(dayNumber > 0 ? dayNumber : 1);
-                        }
                         checkinStatusText.setText("Check-in effettuato! +" + earned + " MVC");
                         checkinStatusText.setTextColor(getResources().getColor(R.color.status_connected));
                         btnCheckin.setText("\u2713 Riscosso! +" + earned + " MVC");

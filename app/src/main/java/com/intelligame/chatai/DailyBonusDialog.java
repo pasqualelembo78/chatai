@@ -144,8 +144,11 @@ public class DailyBonusDialog extends DialogFragment {
                 mainHandler.post(() -> {
                     if (isAdded()) {
                         if (getDialog() != null) getDialog().dismiss();
-                        if (getActivity() instanceof MainActivity) {
-                            ((MainActivity) getActivity()).showBonusSnackbar(earned);
+                        if (getActivity() != null) {
+                            com.google.android.material.snackbar.Snackbar.make(
+                                getActivity().findViewById(android.R.id.content),
+                                "+" + earned + " MVC riscossi!",
+                                com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show();
                         }
                     }
                 });
