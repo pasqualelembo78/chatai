@@ -321,7 +321,7 @@ public class HomeFragment extends Fragment {
                     Cache.categories = new ArrayList<>(list);
                     categoryAdapter.notifyDataSetChanged();
                     swipeRefresh.setRefreshing(false);
-                    updateLoadingProgress(1, totalCategories, "Caricamento categorie…");
+                    updateLoadingProgress(1, 2, "Caricamento categorie…");
 
                     if (!categories.isEmpty()) {
                         selectedCategoryId = categories.get(0).id;
@@ -367,7 +367,7 @@ public class HomeFragment extends Fragment {
         mainHandler.post(() -> {
             searchProgress.setVisibility(View.VISIBLE);
             showLoadingOverlay("Caricamento personaggi…");
-            updateLoadingProgress(2, 2, "Caricamento personaggi…");
+            updateLoadingProgress(2, 3, "Caricamento personaggi…");
         });
         executor.execute(() -> {
             try {
@@ -394,6 +394,7 @@ public class HomeFragment extends Fragment {
                     Cache.characters = new ArrayList<>(list);
                     characterAdapter.notifyDataSetChanged();
                     sectionTitle.setText("Personaggi");
+                    updateLoadingProgress(3, 3, "Caricamento completato");
                     hideLoadingOverlay();
                 });
             } catch (Exception e) {
