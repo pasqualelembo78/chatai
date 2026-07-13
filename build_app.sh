@@ -77,6 +77,7 @@ SKIP_LETSENCRYPT=false
 SKIP_FIREWALL=false
 SKIP_REDIS=false
 SKIP_CLAMAV=false
+SKIP_PROMPTS=false
 ENV_ONLY=false
 SELECTED_MODELS=""
 DOMAIN=""
@@ -93,6 +94,7 @@ while [[ $# -gt 0 ]]; do
         --skip-firewall) SKIP_FIREWALL=true; shift;;
         --skip-redis) SKIP_REDIS=true; shift;;
         --skip-clamav) SKIP_CLAMAV=true; shift;;
+        --non-interactive) SKIP_PROMPTS=true; shift;;
         --models) SELECTED_MODELS="$2"; shift 2;;
         --env-only) ENV_ONLY=true; shift;;
         --domain) DOMAIN="$2"; shift 2;;
@@ -558,6 +560,10 @@ _prompt_key() {
     local current_val="${!var_name:-}"
     if [ -n "$current_val" ]; then
         echo -e "    ${GREEN}$display_name already configured.${NC}"
+        return
+    fi
+    if [ "$SKIP_PROMPTS" = true ]; then
+        echo -e "    ${YELLOW}$display_name not configured (skipped)${NC}"
         return
     fi
     echo -e "    ${YELLOW}$display_name not configured.${NC}"
