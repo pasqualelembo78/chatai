@@ -1128,23 +1128,20 @@ async def api_mevacoins_tx(user: AuthUser = Depends(jwt_required)):
 
 @app.post("/user/mevacoins/checkin")
 async def api_daily_checkin(request: Request, user: AuthUser = Depends(jwt_required)):
-    result = daily_checkin(user.user_id)
+    success, earned, msg = claim_streak_30_day(user.user_id)
     from storage import audit_log
-    if not result.get("already_checked"):
-        audit_log(user.user_id, "mevacoins.checkin", "daily checkin",
+    if success:
+        audit_log(user.user_id, "mevacoins.checkin", f"streak day earned={earned}",
                   request.client.host if request.client else "",
                   request.headers.get("User-Agent", ""))
-        streak = get_checkin_streak(user.user_id)
-        result["streak"] = streak
-        bonus_earned = 0
-        for milestone in [7, 30]:
-            if streak >= milestone:
-                if claim_streak_milestone(user.user_id, milestone):
-                    add_mevacoins(user.user_id, 100 if milestone == 7 else 500, f"streak_{milestone}")
-                    bonus_earned += 100 if milestone == 7 else 500
-        if bonus_earned:
-            result["streak_bonus"] = bonus_earned
-    return result
+    status = get_streak_30_status(user.user_id)
+    return {
+        "already_checked": not success,
+        "earned": earned if success else 0,
+        "streak": status["current_day"],
+        "reward": status["reward"],
+        "total_earned": status["total_earned"],
+    }
 
 @app.post("/user/mevacoins/spend")
 async def api_mevacoins_spend(request: Request, body: SpendRequest, user: AuthUser = Depends(jwt_required)):

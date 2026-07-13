@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Riscuoti 15 MVC ogni giorno"
+            android:text="Riscuoti ricompense progressive fino a 100 MVC"
             android:textColor="@color/on_surface_variant"
             android:textSize="13sp" />
 
@@ -123,7 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="+15 MVC"
+                    android:text="+10-100 MVC"
                     android:textColor="@color/secondary"
                     android:textSize="14sp"
                     android:textStyle="bold" />

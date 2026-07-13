@@ -2,8 +2,6 @@ package com.intelligame.chatai;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -111,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         handleIntent(getIntent());
-        checkDailyBonus();
     }
 
     @Override
@@ -240,22 +237,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkDailyBonus() {
-        AuthManager auth = ((ChatApplication) getApplication()).getAuthManager();
-        if (auth != null && auth.getAccessToken() != null && !auth.getAccessToken().isEmpty()) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                DailyBonusDialog dialog = new DailyBonusDialog();
-                dialog.show(getSupportFragmentManager(), "daily_bonus");
-            }, 1500);
-        }
-    }
-
-    public void showBonusSnackbar(int earned) {
-        View contentView = findViewById(android.R.id.content);
-        if (contentView != null) {
-            com.google.android.material.snackbar.Snackbar.make(contentView, 
-                "+" + earned + " MVC riscossi!", 
-                com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show();
-        }
-    }
 }

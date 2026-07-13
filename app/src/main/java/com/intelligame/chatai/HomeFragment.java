@@ -56,6 +56,7 @@ public class HomeFragment extends Fragment {
     private LinearLayout emptyState;
     private TextView emptyStateTitle;
     private TextView emptyStateSubtitle;
+    private TextView rewardIndicator;
     private RecyclerView searchFiltersRecycler;
 
     private CategoryAdapter categoryAdapter;
@@ -160,6 +161,13 @@ public class HomeFragment extends Fragment {
         });
         searchFiltersRecycler.setAdapter(searchFilterAdapter);
 
+        rewardIndicator = view.findViewById(R.id.reward_indicator);
+        rewardIndicator.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), MvcEarnActivity.class);
+            startActivity(intent);
+        });
+        loadRewardIndicator();
+
         searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -214,6 +222,50 @@ public class HomeFragment extends Fragment {
             showLoadingOverlay("Caricamento categorie…");
         }
         loadCategories();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadRewardIndicator();
+    }
+
+    private void loadRewardIndicator() {
+        if (rewardIndicator == null) return;
+        executor.execute(() -> {
+            try {
+                String json = httpGetWithAuth(baseUrl + "/user/mevacoins/streak");
+                if (json == null) {
+                    mainHandler.post(() -> rewardIndicator.setText("Guadagna MVC"));
+                    return;
+                }
+                JSONObject data = new JSONObject(json);
+                int currentDay = data.optInt("current_day", 1);
+                JSONArray days = data.optJSONArray("days");
+                int nextReward = 10;
+                if (days != null && currentDay <= days.length()) {
+                    JSONObject today = days.getJSONObject(currentDay - 1);
+                    nextReward = today.optInt("reward", 10);
+                }
+                boolean todayClaimed = false;
+                if (days != null && currentDay <= days.length()) {
+                    JSONObject today = days.getJSONObject(currentDay - 1);
+                    todayClaimed = "claimed".equals(today.optString("status"));
+                }
+                final int day = currentDay;
+                final int reward = nextReward;
+                final boolean claimed = todayClaimed;
+                mainHandler.post(() -> {
+                    if (claimed) {
+                        rewardIndicator.setText("\u2713 G" + day + " +" + reward);
+                    } else {
+                        rewardIndicator.setText("\uD83D\uDD25 G" + day + " +" + reward);
+                    }
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> rewardIndicator.setText("Guadagna MVC"));
+            }
+        });
     }
 
     private void refreshData() {

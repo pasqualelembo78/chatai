@@ -1759,28 +1759,32 @@ def calculate_streak_reward(day):
 
 
 def get_streak_30_status(user_id):
-    """Get the user's 30-day streak status."""
+    """Get the user's 30-day streak status based on registration date."""
     conn = get_conn()
     try:
         cur = conn.cursor()
+        today = datetime.now(timezone.utc).date()
+
+        cur.execute("SELECT created_at FROM users WHERE id=%s", (user_id,))
+        user_row = cur.fetchone()
+        reg_date = user_row["created_at"].date() if user_row and user_row["created_at"] else today
+
+        days_since_reg = (today - reg_date).days + 1
+        expected_day = min(days_since_reg, 30)
+
         cur.execute(
             "SELECT day_number, claimed FROM streak_30days WHERE user_id=%s ORDER BY day_number",
             (user_id,)
         )
         rows = cur.fetchall()
         claimed_days = {row["day_number"]: row["claimed"] for row in rows}
-        
-        current_day = 1
-        for day in range(1, 31):
-            if claimed_days.get(day, 0) == 0:
-                current_day = day
+
+        current_day = expected_day
+        for check_day in range(1, expected_day):
+            if check_day not in claimed_days or claimed_days[check_day] == 0:
+                current_day = check_day
                 break
-        else:
-            current_day = 30
-        
-        from datetime import datetime, timezone
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        
+
         already_claimed_today = False
         cur.execute(
             "SELECT claimed_at FROM streak_30days WHERE user_id=%s AND day_number=%s AND claimed=1",
@@ -1789,9 +1793,9 @@ def get_streak_30_status(user_id):
         row = cur.fetchone()
         if row and row["claimed_at"]:
             claimed_date = row["claimed_at"].strftime("%Y-%m-%d") if hasattr(row["claimed_at"], 'strftime') else str(row["claimed_at"])[:10]
-            if claimed_date == today:
+            if claimed_date == today.strftime("%Y-%m-%d"):
                 already_claimed_today = True
-        
+
         return {
             "current_day": current_day,
             "already_claimed_today": already_claimed_today,
@@ -1809,14 +1813,41 @@ def claim_streak_30_day(user_id, day=None):
     conn = get_conn()
     try:
         cur = conn.cursor()
-        
+
+        today = datetime.now(timezone.utc).date()
+
+        cur.execute("SELECT created_at FROM users WHERE id=%s", (user_id,))
+        user_row = cur.fetchone()
+        reg_date = user_row["created_at"].date() if user_row and user_row["created_at"] else today
+
+        days_since_reg = (today - reg_date).days + 1
+        expected_day = min(days_since_reg, 30)
+
+        cur.execute(
+            "SELECT day_number, claimed FROM streak_30days WHERE user_id=%s ORDER BY day_number",
+            (user_id,)
+        )
+        rows = cur.fetchall()
+        claimed_days = {row["day_number"]: row["claimed"] for row in rows}
+
+        broken = False
+        target_day = expected_day
+        for check_day in range(1, expected_day):
+            if check_day not in claimed_days or claimed_days[check_day] == 0:
+                broken = True
+                target_day = check_day
+                break
+
+        if broken and target_day < expected_day:
+            cur.execute("DELETE FROM streak_30days WHERE user_id=%s", (user_id,))
+            claimed_days = {}
+
         if day is None or day <= 0:
-            status = get_streak_30_status(user_id)
-            day = status.get("current_day", 1)
-        
+            day = target_day
+
         if day < 1 or day > 30:
             return False, 0, "giorno_non_valido"
-        
+
         cur.execute(
             "SELECT claimed FROM streak_30days WHERE user_id=%s AND day_number=%s",
             (user_id, day)
@@ -1824,12 +1855,11 @@ def claim_streak_30_day(user_id, day=None):
         row = cur.fetchone()
         if row and row["claimed"] == 1:
             return False, 0, "gia_riscosso"
-        
+
         earned = calculate_streak_reward(day)
-        
-        from datetime import datetime, timezone
+
         now = datetime.now(timezone.utc)
-        
+
         if row:
             cur.execute(
                 "UPDATE streak_30days SET claimed=1, claimed_at=%s WHERE user_id=%s AND day_number=%s",
@@ -1840,12 +1870,12 @@ def claim_streak_30_day(user_id, day=None):
                 "INSERT INTO streak_30days (user_id, day_number, claimed, claimed_at) VALUES (%s, %s, 1, %s)",
                 (user_id, day, now)
             )
-        
+
         conn.commit()
-        
+
         reason = f"streak_giorno_{day}" + ("_super" if day == 30 else "")
         add_mevacoins(user_id, earned, reason)
-        
+
         return True, earned, "ok"
     except Exception as e:
         conn.rollback()

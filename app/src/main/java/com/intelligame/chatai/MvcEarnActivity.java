@@ -123,8 +123,10 @@ public class MvcEarnActivity extends AppCompatActivity {
 
                 int responseCode = conn.getResponseCode();
                 if (responseCode == 404) {
-                    mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
-                            "Sistema streak non ancora disponibile", Snackbar.LENGTH_SHORT).show());
+                    mainHandler.post(() -> {
+                        checkinStatusText.setText("Sistema streak non ancora disponibile");
+                        btnCheckin.setText("Check-in +15 MVC");
+                    });
                     conn.disconnect();
                     return;
                 }
@@ -137,20 +139,46 @@ public class MvcEarnActivity extends AppCompatActivity {
                 conn.disconnect();
 
                 JSONObject data = new JSONObject(resp.toString());
+                int currentDay = data.optInt("current_day", 1);
+                boolean todayClaimed = data.optBoolean("today_claimed", false);
                 JSONArray days = data.optJSONArray("days");
                 if (days == null) {
                     days = new JSONArray();
                 }
 
+                int todayReward = calculateReward(currentDay);
                 for (int i = 0; i < days.length(); i++) {
                     JSONObject day = days.getJSONObject(i);
                     int dayNumber = day.optInt("day", i + 1);
                     String status = day.optString("status", "locked");
-                    updateBonusDayUI(dayNumber, status);
+                    if (dayNumber == currentDay && !todayClaimed) {
+                        status = "available";
+                    }
+                    int reward = day.optInt("reward", calculateReward(dayNumber));
+                    updateBonusDayUI(dayNumber, status, reward);
                 }
+
+                final boolean claimed = todayClaimed;
+                final int reward = todayReward;
+                final int day = currentDay;
+                mainHandler.post(() -> {
+                    if (claimed) {
+                        checkinStatusText.setText("Hai già fatto check-in oggi!");
+                        checkinStatusText.setTextColor(getResources().getColor(R.color.status_connected));
+                        btnCheckin.setText("\u2713 Riscosso! +" + reward + " MVC");
+                        btnCheckin.setEnabled(false);
+                    } else {
+                        checkinStatusText.setText("Giorno " + day + " - Prossima ricompensa:");
+                        btnCheckin.setText("Check-in +" + reward + " MVC");
+                        btnCheckin.setEnabled(true);
+                    }
+                });
             } catch (Exception e) {
-                mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
-                        "Errore caricamento streak", Snackbar.LENGTH_SHORT).show());
+                mainHandler.post(() -> {
+                    btnCheckin.setText("Check-in +15 MVC");
+                    Snackbar.make(findViewById(android.R.id.content),
+                            "Errore caricamento streak", Snackbar.LENGTH_SHORT).show();
+                });
             }
         });
     }
@@ -203,9 +231,18 @@ public class MvcEarnActivity extends AppCompatActivity {
     }
 
     private void updateBonusDayUI(int dayNumber, String status) {
+        updateBonusDayUI(dayNumber, status, calculateReward(dayNumber));
+    }
+
+    private void updateBonusDayUI(int dayNumber, String status, int reward) {
         mainHandler.post(() -> {
             LinearLayout card = streakGrid.findViewWithTag("streak_card_" + dayNumber);
             if (card == null) return;
+
+            TextView rewardView = card.findViewWithTag("day_reward_" + dayNumber);
+            if (rewardView != null) {
+                rewardView.setText("+" + reward);
+            }
 
             TextView statusIcon = card.findViewWithTag("day_status_" + dayNumber);
             if (statusIcon == null) return;
@@ -482,7 +519,9 @@ public class MvcEarnActivity extends AppCompatActivity {
                 os.write("{}".getBytes());
                 os.close();
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                int responseCode = conn.getResponseCode();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        responseCode >= 200 && responseCode < 300 ? conn.getInputStream() : conn.getErrorStream()));
                 StringBuilder resp = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) resp.append(line);
@@ -491,22 +530,27 @@ public class MvcEarnActivity extends AppCompatActivity {
 
                 JSONObject result = new JSONObject(resp.toString());
                 boolean alreadyChecked = result.optBoolean("already_checked", false);
+                int earned = result.optInt("earned", 0);
+                int dayNumber = result.optInt("day", 0);
 
                 mainHandler.post(() -> {
                     if (alreadyChecked) {
                         checkinStatusText.setText("Hai già fatto check-in oggi!");
                         checkinStatusText.setTextColor(getResources().getColor(R.color.status_connected));
-                        btnCheckin.setText("Fatto");
+                        btnCheckin.setText("\u2713 Riscosso");
                         btnCheckin.setEnabled(false);
                         Snackbar.make(findViewById(android.R.id.content),
                                 "Già registrato oggi!", Snackbar.LENGTH_SHORT).show();
                     } else {
-                        int earned = result.optInt("earned", 15);
+                        if (earned == 0) {
+                            earned = calculateReward(dayNumber > 0 ? dayNumber : 1);
+                        }
                         checkinStatusText.setText("Check-in effettuato! +" + earned + " MVC");
                         checkinStatusText.setTextColor(getResources().getColor(R.color.status_connected));
-                        btnCheckin.setText("Riscosso");
+                        btnCheckin.setText("\u2713 Riscosso! +" + earned + " MVC");
                         btnCheckin.setEnabled(false);
                         loadBalance();
+                        loadBonusStatus();
                         loadTransactions();
                         Snackbar.make(findViewById(android.R.id.content),
                                 "+" + earned + " MVC!", Snackbar.LENGTH_SHORT).show();
