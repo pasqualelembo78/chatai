@@ -339,8 +339,11 @@ public class HomeFragment extends Fragment {
     private void loadCharacters(String categoryId) {
         charactersOffset = 0;
         hasMoreCharacters = true;
+        isLoadingMore = false;
         characters.clear();
+        pagerAdapter.setShowLoading(false);
         pagerAdapter.notifyDataSetChanged();
+        hideEmptyState();
         loadCharactersPage(categoryId, 0, true);
     }
 
@@ -387,6 +390,7 @@ public class HomeFragment extends Fragment {
                     pagerAdapter.setShowLoading(false);
                     Cache.characters = new ArrayList<>(characters);
                     pagerAdapter.notifyDataSetChanged();
+                    charactersPager.setVisibility(View.VISIBLE);
                     if (initial) {
                         updateLoadingProgress(3, 3, "Caricamento completato");
                         hideLoadingOverlay();
