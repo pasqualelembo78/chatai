@@ -97,6 +97,9 @@ public class HomeFragment extends Fragment {
         localDb = new LocalDatabaseHelper(requireContext());
 
         charactersPager = view.findViewById(R.id.characters_pager);
+        charactersPager.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
+        charactersPager.setUserInputEnabled(true);
+        charactersPager.setOffscreenPageLimit(2);
         searchBar = view.findViewById(R.id.search_bar);
         searchProgress = view.findViewById(R.id.search_progress);
         emptyState = view.findViewById(R.id.empty_state);
