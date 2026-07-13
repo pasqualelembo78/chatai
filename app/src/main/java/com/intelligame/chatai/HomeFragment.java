@@ -73,6 +73,7 @@ public class HomeFragment extends Fragment {
     private String baseUrl;
     private String selectedCategoryId;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService rewardExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private boolean isSearching = false;
@@ -81,6 +82,7 @@ public class HomeFragment extends Fragment {
 
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
+    private final Runnable loadingSafetyTimeout = () -> hideLoadingOverlay();
 
     @Nullable
     @Override
@@ -232,9 +234,9 @@ public class HomeFragment extends Fragment {
 
     private void loadRewardIndicator() {
         if (rewardIndicator == null) return;
-        executor.execute(() -> {
+        rewardExecutor.execute(() -> {
             try {
-                String json = httpGetWithAuth(baseUrl + "/user/mevacoins/streak");
+                String json = httpGetWithAuthRefresh(baseUrl + "/user/mevacoins/streak");
                 if (json == null) {
                     mainHandler.post(() -> rewardIndicator.setText("Guadagna MVC"));
                     return;
@@ -280,7 +282,7 @@ public class HomeFragment extends Fragment {
     private void loadCategories() {
         executor.execute(() -> {
             try {
-                String json = httpGetWithAuth(baseUrl + "/categories");
+                String json = httpGetWithAuthRefresh(baseUrl + "/categories");
                 if (json == null) {
                     mainHandler.post(() -> {
                         swipeRefresh.setRefreshing(false);
@@ -369,7 +371,7 @@ public class HomeFragment extends Fragment {
         });
         executor.execute(() -> {
             try {
-                String json = httpGet(baseUrl + "/characters?category=" + URLEncoder.encode(categoryId, "UTF-8"));
+                String json = httpGetWithAuthRefresh(baseUrl + "/characters?category=" + URLEncoder.encode(categoryId, "UTF-8"));
                 List<CharacterItem> list = new ArrayList<>();
                 if (json != null) {
                     JSONArray arr = new JSONArray(json);
@@ -427,7 +429,7 @@ public class HomeFragment extends Fragment {
         executor.execute(() -> {
             try {
                 String encoded = URLEncoder.encode(query, "UTF-8");
-                String json = httpGet(baseUrl + "/characters/search?q=" + encoded);
+                String json = httpGetWithAuthRefresh(baseUrl + "/characters/search?q=" + encoded);
                 if (json == null) {
                     mainHandler.post(() -> {
                         hideSearchLoading();
@@ -521,6 +523,8 @@ public class HomeFragment extends Fragment {
     private void showLoadingOverlay(String message) {
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).showLoading(message);
+            mainHandler.removeCallbacks(loadingSafetyTimeout);
+            mainHandler.postDelayed(loadingSafetyTimeout, 15000);
         }
     }
 
@@ -531,6 +535,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void hideLoadingOverlay() {
+        mainHandler.removeCallbacks(loadingSafetyTimeout);
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).hideLoading();
         }
@@ -632,6 +637,18 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private String httpGetWithAuthRefresh(String urlString) {
+        try {
+            AuthManager.HttpResponse resp = mAuth.requestWithRefresh(urlString, "GET", null, 8000);
+            if (resp.statusCode == 200) {
+                return resp.body;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
     private String httpPostWithAuth(String urlString, String jsonBody) {
         HttpURLConnection conn = null;
         try {
@@ -671,6 +688,7 @@ public class HomeFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         executor.shutdown();
+        rewardExecutor.shutdown();
     }
 
     public static class Category {
