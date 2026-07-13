@@ -374,7 +374,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 }
-                final boolean hasMore = !initial && list.size() >= PAGE_SIZE;
+                final boolean hasMore = list.size() >= PAGE_SIZE;
                 mainHandler.post(() -> {
                     searchProgress.setVisibility(View.GONE);
                     if (initial) {
