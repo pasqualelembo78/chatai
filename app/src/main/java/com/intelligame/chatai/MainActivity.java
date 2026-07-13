@@ -7,6 +7,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.progressindicator.LinearProgressIndicator;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -206,18 +208,29 @@ public class MainActivity extends AppCompatActivity {
     public void showLoading(String message) {
         FrameLayout overlay = findViewById(R.id.loading_overlay);
         TextView loadingText = findViewById(R.id.loading_text);
+        LinearProgressIndicator progressBar = findViewById(R.id.loading_progress_bar);
         TextView loadingProgress = findViewById(R.id.loading_progress);
         if (overlay != null) {
             overlay.setVisibility(View.VISIBLE);
             if (loadingText != null) loadingText.setText(message);
+            if (progressBar != null) progressBar.setProgress(0);
             if (loadingProgress != null) loadingProgress.setText("");
         }
     }
 
-    public void showLoadingProgress(int current, int total) {
+    public void updateLoadingProgress(int current, int total, String phase) {
+        LinearProgressIndicator progressBar = findViewById(R.id.loading_progress_bar);
+        TextView loadingText = findViewById(R.id.loading_text);
         TextView loadingProgress = findViewById(R.id.loading_progress);
+        if (progressBar != null && total > 0) {
+            int percent = (int) ((current * 100f) / total);
+            progressBar.setProgress(percent);
+        }
+        if (loadingText != null && phase != null) {
+            loadingText.setText(phase);
+        }
         if (loadingProgress != null) {
-            loadingProgress.setText(String.format("Caricamento categorie… (%d di %d)", current, total));
+            loadingProgress.setText(String.format("%d di %d", current, total));
         }
     }
 
