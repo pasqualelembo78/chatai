@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.SpannableStringBuilder;
-import android.text.StyleSpan;
+import android.text.style.StyleSpan;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
