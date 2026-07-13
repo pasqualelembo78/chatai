@@ -286,6 +286,11 @@ public class MainFragment extends Fragment {
         updateHeaderAvatar();
         if (mAdapter instanceof MessageAdapter) {
             ((MessageAdapter) mAdapter).setCharacterId(mCharacterId);
+            ((MessageAdapter) mAdapter).setCharacterAvatar(mPrefs.getServerUrl(), mCharacterAvatarImage);
+            ((MessageAdapter) mAdapter).setCharacterName(mCharacterName);
+        }
+        if (mInputMessageView != null && mCharacterName != null) {
+            mInputMessageView.setHint("Manda messaggio a " + mCharacterName);
         }
         loadLocalMessages();
 
@@ -1908,6 +1913,8 @@ public class MainFragment extends Fragment {
                         mCharacterName = data.getString("character_name");
                         if (mAdapter instanceof MessageAdapter) {
                             ((MessageAdapter) mAdapter).setCharacterId(mCharacterId);
+                            ((MessageAdapter) mAdapter).setCharacterAvatar(mPrefs.getServerUrl(), mCharacterAvatarImage);
+                            ((MessageAdapter) mAdapter).setCharacterName(mCharacterName);
                         }
                         mRegistered = true;
                         mApiOnline = true;

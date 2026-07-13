@@ -14,7 +14,14 @@
         android:layout_height="match_parent"
         android:contentDescription="Sfondo chat"
         android:scaleType="centerCrop"
-        android:visibility="gone" />
+        android:visibility="visible" />
+
+    <!-- Dark Overlay -->
+    <View
+        android:id="@+id/chat_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/chat_overlay_bg" />
 
     <!-- Main Content -->
     <LinearLayout

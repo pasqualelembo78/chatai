@@ -72,6 +72,9 @@
     <color name="overlay_input_bar">#CC1A1A2E</color>
     <color name="overlay_image_preview">#80000000</color>
     <color name="overlay_scrim">#66000000</color>
+    <color name="chat_overlay_bg">#73000000</color>
+    <color name="bubble_ai_immersive">#99000000</color>
+    <color name="bubble_scenario">#B3000000</color>
 
     <!-- Icon / button surfaces -->
     <color name="icon_button_surface">#33FFFFFF</color>

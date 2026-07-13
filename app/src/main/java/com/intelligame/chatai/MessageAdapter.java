@@ -9,17 +9,21 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.util.Base64;
-import androidx.recyclerview.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,6 +41,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private int[] mUsernameColors;
     private Context mContext;
     private String mCharacterId;
+    private String mCharacterAvatarUrl;
+    private String mCharacterName;
 
     public MessageAdapter(Context context, List<Message> messages) {
         mMessages = messages;
@@ -48,21 +54,27 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         mCharacterId = characterId;
     }
 
+    public void setCharacterAvatar(String serverUrl, String avatarImage) {
+        if (serverUrl != null && avatarImage != null && !avatarImage.isEmpty()) {
+            mCharacterAvatarUrl = serverUrl + "/avatars/" + avatarImage;
+        } else {
+            mCharacterAvatarUrl = null;
+        }
+    }
+
+    public void setCharacterName(String name) {
+        mCharacterName = name;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layout;
         switch (viewType) {
-            case Message.TYPE_MESSAGE:
-                layout = R.layout.item_message;
-                break;
             case Message.TYPE_LOG:
                 layout = R.layout.item_log;
                 break;
             case Message.TYPE_ACTION:
                 layout = R.layout.item_action;
-                break;
-            case Message.TYPE_ROLEPLAY:
-                layout = R.layout.item_message;
                 break;
             default:
                 layout = R.layout.item_message;
@@ -77,17 +89,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         Message message = mMessages.get(position);
 
+        if (message.getType() == Message.TYPE_LOG) {
+            viewHolder.setLogMessage(message.getMessage());
+            return;
+        }
+
+        if (message.getType() == Message.TYPE_ACTION) {
+            viewHolder.setActionText(message.getActionText());
+            return;
+        }
+
         if (message.getType() == Message.TYPE_ROLEPLAY) {
             viewHolder.setRoleplayMessage(message.getMessage());
-        } else if (message.getType() == Message.TYPE_MESSAGE) {
-            viewHolder.setMessage(message.getMessage());
-        } else if (message.getType() == Message.TYPE_ACTION) {
-            viewHolder.setActionText(message.getActionText());
         } else {
-            viewHolder.setLogMessage(message.getMessage());
+            viewHolder.setMessage(message.getMessage());
         }
-        viewHolder.setUsername(message.getUsername());
-        viewHolder.setProviderInfo(message.getAiProvider(), message.getAiModel());
 
         String username = message.getUsername();
         Context ctx = viewHolder.itemView.getContext();
@@ -102,11 +118,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         boolean isRoleplay = message.getType() == Message.TYPE_ROLEPLAY;
 
         viewHolder.setBubbleStyle(isMine, isRoleplay);
+        viewHolder.setupAvatar(isMine, mCharacterAvatarUrl);
         viewHolder.setupPlayButton(message, isRoleplay, mCharacterId);
         viewHolder.setMessageImage(message.getImageBase64());
         viewHolder.setupVideoLink(message);
-        viewHolder.setupReportButton(message, mCharacterId);
-        viewHolder.setupCopyButton(message);
+        viewHolder.setupLongPress(message, isMine, isRoleplay, mCharacterId);
     }
 
     @Override
@@ -126,20 +142,39 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         private LinearLayout mContainer;
         private ImageButton mPlayButton;
         private ImageView mMessageImage;
+        private ImageView mAvatarView;
         private ImageButton mReportButton;
         private ImageButton mCopyButton;
+        private LinearLayout mActionRow;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            mUsernameView = (TextView) itemView.findViewById(R.id.username);
-            mMessageView = (TextView) itemView.findViewById(R.id.message);
-            mProviderInfoView = (TextView) itemView.findViewById(R.id.provider_info);
-            mContainer = (LinearLayout) itemView.findViewById(R.id.message_container);
-            mPlayButton = (ImageButton) itemView.findViewById(R.id.play_audio);
-            mMessageImage = (ImageView) itemView.findViewById(R.id.message_image);
-            mReportButton = (ImageButton) itemView.findViewById(R.id.btn_report_message);
-            mCopyButton = (ImageButton) itemView.findViewById(R.id.btn_copy_message);
+            mUsernameView = itemView.findViewById(R.id.username);
+            mMessageView = itemView.findViewById(R.id.message);
+            mProviderInfoView = itemView.findViewById(R.id.provider_info);
+            mContainer = itemView.findViewById(R.id.message_container);
+            mPlayButton = itemView.findViewById(R.id.play_audio);
+            mMessageImage = itemView.findViewById(R.id.message_image);
+            mAvatarView = itemView.findViewById(R.id.message_avatar);
+            mReportButton = itemView.findViewById(R.id.btn_report_message);
+            mCopyButton = itemView.findViewById(R.id.btn_copy_message);
+            mActionRow = itemView.findViewById(R.id.action_row);
+        }
+
+        public void setupAvatar(boolean isMine, String avatarUrl) {
+            if (mAvatarView == null) return;
+            if (isMine || avatarUrl == null || avatarUrl.isEmpty()) {
+                mAvatarView.setVisibility(View.GONE);
+                return;
+            }
+            mAvatarView.setVisibility(View.VISIBLE);
+            Glide.with(itemView.getContext())
+                .load(avatarUrl)
+                .apply(new RequestOptions().transform(new CircleCrop()))
+                .placeholder(android.R.color.transparent)
+                .error(android.R.color.transparent)
+                .into(mAvatarView);
         }
 
         public void setMessageImage(String imageBase64) {
@@ -168,15 +203,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     ChatApplication app = (ChatApplication) mContext.getApplicationContext();
                     fullUrl = app.getPrefs().getServerUrl() + videoUrl;
                 }
-                mMessageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        try {
-                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(fullUrl));
-                            mContext.startActivity(i);
-                        } catch (Exception e) {
-                            Toast.makeText(mContext, "Impossibile aprire il video", Toast.LENGTH_SHORT).show();
-                        }
+                mMessageView.setOnClickListener(v -> {
+                    try {
+                        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(fullUrl));
+                        mContext.startActivity(i);
+                    } catch (Exception e) {
+                        Toast.makeText(mContext, "Impossibile aprire il video", Toast.LENGTH_SHORT).show();
                     }
                 });
                 mMessageView.setText(message.getMessage() + "\n\n▶️ Tocca per guardare il video");
@@ -195,7 +227,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (null == mMessageView) return;
             mMessageView.setText(message);
             mMessageView.setTypeface(Typeface.DEFAULT);
-            mMessageView.setTextColor(0xFF000000);
+            mMessageView.setTextColor(0xFFFFFFFF);
         }
 
         public void setLogMessage(String message) {
@@ -217,7 +249,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public void setRoleplayMessage(String message) {
             if (null == mMessageView) return;
-            SpannableStringBuilder sb = new SpannableStringBuilder();
+            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder();
             Pattern pattern = Pattern.compile("\\*([^*]+)\\*");
             Matcher matcher = pattern.matcher(message);
             int lastEnd = 0;
@@ -231,7 +263,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             sb.append(message.substring(lastEnd));
             mMessageView.setText(sb);
             mMessageView.setTypeface(Typeface.DEFAULT);
-            mMessageView.setTextColor(0xFF000000);
+            mMessageView.setTextColor(0xFFFFFFFF);
         }
 
         public void setProviderInfo(String provider, String model) {
@@ -254,22 +286,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (mContainer == null || mMessageView == null) return;
 
             if (isMine) {
-                mContainer.setGravity(android.view.Gravity.END);
+                mContainer.setGravity(Gravity.END);
                 mMessageView.setBackgroundResource(R.drawable.bubble_user);
                 if (mUsernameView != null) {
-                    mUsernameView.setGravity(android.view.Gravity.END);
+                    mUsernameView.setVisibility(View.GONE);
                 }
-            } else if (isRoleplay) {
-                mContainer.setGravity(android.view.Gravity.START);
-                mMessageView.setBackgroundResource(R.drawable.bubble_ai);
-                if (mUsernameView != null) {
-                    mUsernameView.setGravity(android.view.Gravity.START);
+                if (mAvatarView != null) {
+                    mAvatarView.setVisibility(View.GONE);
                 }
             } else {
-                mContainer.setGravity(android.view.Gravity.START);
+                mContainer.setGravity(Gravity.START);
                 mMessageView.setBackgroundResource(R.drawable.bubble_ai);
                 if (mUsernameView != null) {
-                    mUsernameView.setGravity(android.view.Gravity.START);
+                    mUsernameView.setVisibility(View.GONE);
                 }
             }
         }
@@ -279,27 +308,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (isRoleplay && message.getMessage() != null && !message.getMessage().isEmpty()) {
                 mPlayButton.setVisibility(View.VISIBLE);
                 mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-                mPlayButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        v.setEnabled(false);
-                        mPlayButton.setImageResource(android.R.drawable.ic_menu_search);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final boolean success = playTts(message.getMessage(), characterId);
-                                if (mPlayButton != null) {
-                                    mPlayButton.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mPlayButton.setEnabled(true);
-                                            mPlayButton.setImageResource(android.R.drawable.ic_media_play);
-                                        }
-                                    });
-                                }
-                            }
-                        }).start();
-                    }
+                mPlayButton.setOnClickListener(v -> {
+                    v.setEnabled(false);
+                    mPlayButton.setImageResource(android.R.drawable.ic_menu_search);
+                    new Thread(() -> {
+                        final boolean success = playTts(message.getMessage(), characterId);
+                        if (mPlayButton != null) {
+                            mPlayButton.post(() -> {
+                                mPlayButton.setEnabled(true);
+                                mPlayButton.setImageResource(android.R.drawable.ic_media_play);
+                            });
+                        }
+                    }).start();
                 });
             } else {
                 mPlayButton.setVisibility(View.GONE);
@@ -307,30 +327,47 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             }
         }
 
-        public void setupReportButton(final Message message, final String characterId) {
-            if (mReportButton == null) return;
-            mReportButton.setOnClickListener(v -> {
-                Context ctx = mReportButton.getContext();
-                new androidx.appcompat.app.AlertDialog.Builder(ctx)
-                    .setTitle("Segnala messaggio")
-                    .setMessage("Vuoi segnalare questo messaggio come inappropriato?")
-                    .setPositiveButton("Segnala", (dialog, which) -> {
-                        reportMessage(ctx, message, characterId);
-                    })
-                    .setNegativeButton("Annulla", null)
-                    .show();
+        public void setupLongPress(final Message message, boolean isMine, boolean isRoleplay, final String characterId) {
+            if (mMessageView == null) return;
+            mMessageView.setOnLongClickListener(v -> {
+                showContextMenu(v, message, isMine, isRoleplay, characterId);
+                return true;
             });
         }
 
-        public void setupCopyButton(final Message message) {
-            if (mCopyButton == null) return;
-            mCopyButton.setOnClickListener(v -> {
-                Context ctx = mCopyButton.getContext();
-                ClipboardManager clipboard = (ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("message", message.getMessage());
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(ctx, "Messaggio copiato", Toast.LENGTH_SHORT).show();
+        private void showContextMenu(View anchor, final Message message, boolean isMine, boolean isRoleplay, final String characterId) {
+            PopupMenu popup = new PopupMenu(anchor.getContext(), anchor);
+            popup.getMenu().add(0, 1, 0, "Copia messaggio");
+            if (isRoleplay && message.getMessage() != null && !message.getMessage().isEmpty()) {
+                popup.getMenu().add(0, 2, 1, "Riproduci audio");
+            }
+            if (!isMine) {
+                popup.getMenu().add(0, 3, 2, "Segnala messaggio");
+            }
+
+            popup.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case 1:
+                        ClipboardManager clipboard = (ClipboardManager) anchor.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText("message", message.getMessage());
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(anchor.getContext(), "Messaggio copiato", Toast.LENGTH_SHORT).show();
+                        return true;
+                    case 2:
+                        new Thread(() -> playTts(message.getMessage(), characterId)).start();
+                        return true;
+                    case 3:
+                        new androidx.appcompat.app.AlertDialog.Builder(anchor.getContext())
+                            .setTitle("Segnala messaggio")
+                            .setMessage("Vuoi segnalare questo messaggio come inappropriato?")
+                            .setPositiveButton("Segnala", (dialog, which) -> reportMessage(anchor.getContext(), message, characterId))
+                            .setNegativeButton("Annulla", null)
+                            .show();
+                        return true;
+                }
+                return false;
             });
+            popup.show();
         }
 
         private void reportMessage(Context ctx, Message message, String characterId) {
@@ -349,13 +386,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     AuthManager.HttpResponse httpResp = app.getAuthManager().requestWithRefresh(
                         baseUrl.replace("/chat", "") + "/user/report", "POST", body.toString(), 5000);
 
-                    if (mReportButton != null) {
-                        mReportButton.post(() -> {
-                            if (httpResp.statusCode == 200 || httpResp.statusCode == 201) {
-                                android.widget.Toast.makeText(ctx,
-                                    "Segnalazione inviata. Grazie.", android.widget.Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                    if (httpResp.statusCode == 200 || httpResp.statusCode == 201) {
+                        mReportButton.post(() ->
+                            Toast.makeText(ctx, "Segnalazione inviata. Grazie.", Toast.LENGTH_SHORT).show()
+                        );
                     }
                 } catch (Exception ignored) {}
             }).start();
@@ -363,7 +397,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         private boolean playTts(String text, String characterId) {
             if (text == null || text.isEmpty()) return false;
-            Context ctx = mPlayButton.getContext();
+            Context ctx = itemView.getContext();
             try {
                 ChatApplication app = (ChatApplication) ctx.getApplicationContext();
                 String baseUrl = app.getPrefs().getServerUrl();
@@ -402,12 +436,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 mp.setDataSource(audioFile.getAbsolutePath());
                 mp.prepare();
                 mp.start();
-                mp.setOnCompletionListener(new android.media.MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(android.media.MediaPlayer mp) {
-                        mp.release();
-                        audioFile.delete();
-                    }
+                mp.setOnCompletionListener(mp1 -> {
+                    mp1.release();
+                    audioFile.delete();
                 });
                 return true;
             } catch (Exception e) {

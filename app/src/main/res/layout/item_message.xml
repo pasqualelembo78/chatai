@@ -4,28 +4,41 @@
     android:id="@+id/message_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingTop="4dp"
-    android:paddingBottom="4dp">
+    android:paddingBottom="4dp"
+    android:gravity="center_vertical">
 
-    <!-- Username -->
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:textColor="@color/text_provider"
-        android:paddingBottom="2dp"
-        android:paddingHorizontal="4dp" />
+    <!-- AI Avatar (circular, left side) -->
+    <ImageView
+        android:id="@+id/message_avatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="Avatar personaggio"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
 
-    <!-- Message Bubble -->
+    <!-- Right side: username + bubble -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="4dp">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
+        <!-- Username (hidden by default, shown for user messages) -->
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_provider"
+            android:paddingBottom="2dp"
+            android:paddingHorizontal="4dp"
+            android:visibility="gone" />
+
+        <!-- Message Bubble -->
         <TextView
             android:id="@+id/message"
             android:layout_width="wrap_content"
@@ -35,7 +48,7 @@
             android:textColor="@color/chat_text_ai"
             android:padding="14dp"
             android:maxWidth="300dp"
-            android:background="@drawable/message_bubble_bg" />
+            android:background="@drawable/bubble_ai" />
 
         <!-- Message Image -->
         <ImageView
@@ -48,15 +61,16 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/edittext_bg" />
 
-        <!-- Action Icons Row -->
+        <!-- Hidden action buttons (shown on long-press via popup menu) -->
         <LinearLayout
+            android:id="@+id/action_row"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="4dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:visibility="gone">
 
-            <!-- Timestamp -->
             <TextView
                 android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
@@ -65,7 +79,6 @@
                 android:textColor="@color/text_timestamp"
                 android:paddingEnd="8dp" />
 
-            <!-- Provider Info -->
             <TextView
                 android:id="@+id/provider_info"
                 android:layout_width="wrap_content"
@@ -75,44 +88,42 @@
                 android:visibility="gone"
                 android:paddingEnd="8dp" />
 
-            <!-- Play Audio -->
             <ImageButton
                 android:id="@+id/play_audio"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@android:drawable/ic_media_play"
                 android:contentDescription="Riproduci audio"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerInside"
                 android:visibility="gone"
-                android:padding="8dp" />
+                android:padding="6dp"
+                app:tint="@android:color/white" />
 
-            <!-- Copy Button -->
             <ImageButton
                 android:id="@+id/btn_copy_message"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_share"
                 android:contentDescription="Copia messaggio"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerInside"
-                android:visibility="visible"
-                android:padding="8dp"
-                app:tint="@color/text_provider" />
+                android:visibility="gone"
+                android:padding="6dp"
+                app:tint="@android:color/white" />
 
-            <!-- Report Button -->
             <ImageButton
                 android:id="@+id/btn_report_message"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_info"
                 android:contentDescription="Segnala messaggio"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerInside"
-                android:visibility="visible"
-                android:padding="8dp"
+                android:visibility="gone"
+                android:padding="6dp"
                 android:layout_marginStart="4dp"
-                app:tint="@color/text_provider" />
+                app:tint="@android:color/white" />
 
         </LinearLayout>
 
