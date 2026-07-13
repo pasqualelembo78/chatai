@@ -1,11 +1,13 @@
 package com.intelligame.chatai;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
@@ -211,6 +213,16 @@ public class MainActivity extends AppCompatActivity {
             if (loadingText != null) loadingText.setText(message);
             if (progressBar != null) progressBar.setProgress(0);
             if (loadingProgress != null) loadingProgress.setText("");
+            VideoView video = findViewById(R.id.loading_video);
+            if (video != null) {
+                String path = "android.resource://" + getPackageName() + "/" + R.raw.caricamento;
+                video.setVideoURI(Uri.parse(path));
+                video.setOnPreparedListener(mp -> {
+                    mp.setLooping(true);
+                    mp.setVolume(0f, 0f);
+                    video.start();
+                });
+            }
         }
     }
 
@@ -233,6 +245,8 @@ public class MainActivity extends AppCompatActivity {
     public void hideLoading() {
         FrameLayout overlay = findViewById(R.id.loading_overlay);
         if (overlay != null) {
+            VideoView video = findViewById(R.id.loading_video);
+            if (video != null) video.stopPlayback();
             overlay.setVisibility(View.GONE);
         }
     }

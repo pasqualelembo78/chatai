@@ -44,10 +44,10 @@
             android:orientation="vertical"
             android:gravity="center">
 
-            <ProgressBar
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:indeterminateTint="@color/primary" />
+            <VideoView
+                android:id="@+id/loading_video"
+                android:layout_width="240dp"
+                android:layout_height="240dp" />
 
             <TextView
                 android:id="@+id/loading_text"
@@ -55,14 +55,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/loading_characters"
                 android:textColor="@color/on_surface"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp" />
+                android:textSize="14sp"
+                android:layout_marginTop="12dp" />
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/loading_progress_bar"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 app:indicatorColor="@color/primary"
                 app:trackColor="@color/surface_container"
                 app:trackThickness="6dp"
