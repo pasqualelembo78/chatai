@@ -383,7 +383,16 @@ public class HomeFragment extends Fragment {
                     if (initial) {
                         characters.clear();
                     }
-                    characters.addAll(list);
+                    java.util.Set<String> existingIds = new java.util.HashSet<>();
+                    for (CharacterItem c : characters) {
+                        existingIds.add(c.id);
+                    }
+                    for (CharacterItem c : list) {
+                        if (!existingIds.contains(c.id)) {
+                            characters.add(c);
+                            existingIds.add(c.id);
+                        }
+                    }
                     hasMoreCharacters = hasMore;
                     charactersOffset = offset + list.size();
                     isLoadingMore = false;

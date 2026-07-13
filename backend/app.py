@@ -835,10 +835,7 @@ async def api_characters(
     user_id = user.user_id if user else None
     if category == "per_te":
         from characters import list_characters as _lc
-        from storage import get_all_user_characters as _guc
         all_chars = _lc()
-        user_chars = _guc()
-        all_chars = all_chars + user_chars
         if user_id:
             prefs = get_user_preferences(user_id)
             interests = [t.lower() for t in prefs.get("interest_tags", [])]
@@ -897,6 +894,33 @@ async def api_characters(
             pass
     return chars[offset:offset + limit]
 
+@app.get("/characters/search")
+async def api_search_characters(
+    q: str = Query(""),
+    category: Optional[str] = Query(None),
+    user: Optional[AuthUser] = Depends(jwt_optional),
+):
+    q = q.strip()
+    if not q:
+        return []
+    results = search_characters(q)
+    if category:
+        results = [c for c in results if c.get("category") == category]
+    user_id = user.user_id if user else None
+    if user_id:
+        try:
+            prefs = get_user_preferences(user_id)
+            gender = prefs.get("gender_interest", "")
+            if gender and gender != "non binario":
+                from characters import infer_character_sex
+                matching = [c for c in results if infer_character_sex(c) == gender]
+                unknown = [c for c in results if infer_character_sex(c) == ""]
+                rest = [c for c in results if infer_character_sex(c) not in (gender, "")]
+                results = matching + unknown + rest
+        except Exception:
+            pass
+    return results
+
 @app.get("/characters/{char_id}")
 async def api_character_detail(char_id: str):
     char = get_character(char_id)
@@ -928,33 +952,6 @@ async def api_character_core(char_id: str):
         "education", "occupation", "childhood", "system_prompt",
     ]
     return {k: char.get(k) for k in core_fields if k in char}
-
-@app.get("/characters/search")
-async def api_search_characters(
-    q: str = Query(""),
-    category: Optional[str] = Query(None),
-    user: Optional[AuthUser] = Depends(jwt_optional),
-):
-    q = q.strip()
-    if not q:
-        return []
-    results = search_characters(q)
-    if category:
-        results = [c for c in results if c.get("category") == category]
-    user_id = user.user_id if user else None
-    if user_id:
-        try:
-            prefs = get_user_preferences(user_id)
-            gender = prefs.get("gender_interest", "")
-            if gender and gender != "non binario":
-                from characters import infer_character_sex
-                matching = [c for c in results if infer_character_sex(c) == gender]
-                unknown = [c for c in results if infer_character_sex(c) == ""]
-                rest = [c for c in results if infer_character_sex(c) not in (gender, "")]
-                results = matching + unknown + rest
-        except Exception:
-            pass
-    return results
 
 @app.get("/characters/adult")
 async def api_adult_characters(user: Optional[AuthUser] = Depends(jwt_optional)):
