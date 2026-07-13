@@ -20,11 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.viewpager2.widget.ViewPager2;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,11 +44,8 @@ public class HomeFragment extends Fragment {
         static String selectedCategoryId = null;
     }
 
-    private SwipeRefreshLayout swipeRefresh;
-    private RecyclerView charactersRecycler;
+    private ViewPager2 charactersPager;
     private EditText searchBar;
-    private TextView sectionTitle;
-    private FloatingActionButton fabScrollTop;
     private ProgressBar searchProgress;
     private LinearLayout emptyState;
     private TextView emptyStateTitle;
@@ -59,8 +53,7 @@ public class HomeFragment extends Fragment {
     private TextView rewardIndicator;
     private RecyclerView searchFiltersRecycler;
 
-    private CategoryAdapter categoryAdapter;
-    private CharacterCardAdapter characterAdapter;
+    private CharacterPagerAdapter pagerAdapter;
     private SearchFilterAdapter searchFilterAdapter;
 
     private List<Category> categories = new ArrayList<>();
@@ -79,7 +72,7 @@ public class HomeFragment extends Fragment {
     private boolean isSearching = false;
     private String selectedSearchFilterId = null;
     private List<CharacterItem> allSearchResults = new ArrayList<>();
-    private static final int PAGE_SIZE = 50;
+    private static final int PAGE_SIZE = 1;
     private int charactersOffset = 0;
     private boolean hasMoreCharacters = true;
     private boolean isLoadingMore = false;
@@ -103,69 +96,46 @@ public class HomeFragment extends Fragment {
         mAuth = app.getAuthManager();
         localDb = new LocalDatabaseHelper(requireContext());
 
-        swipeRefresh = view.findViewById(R.id.swipe_refresh);
-        charactersRecycler = view.findViewById(R.id.characters_recycler);
+        charactersPager = view.findViewById(R.id.characters_pager);
         searchBar = view.findViewById(R.id.search_bar);
-        sectionTitle = view.findViewById(R.id.section_title);
-        fabScrollTop = view.findViewById(R.id.fab_scroll_top);
         searchProgress = view.findViewById(R.id.search_progress);
         emptyState = view.findViewById(R.id.empty_state);
         emptyStateTitle = view.findViewById(R.id.empty_state_title);
         emptyStateSubtitle = view.findViewById(R.id.empty_state_subtitle);
         searchFiltersRecycler = view.findViewById(R.id.search_filters_recycler);
 
-        swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.primary));
-        swipeRefresh.setProgressBackgroundColorSchemeColor(getResources().getColor(R.color.surface_container));
-        swipeRefresh.setOnRefreshListener(this::refreshData);
+        boolean ageVerified = app.getPrefs().getAdultBirthYear() > 0;
 
-        new LinearSnapHelper().attachToRecyclerView(charactersRecycler);
-
-        charactersRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        pagerAdapter = new CharacterPagerAdapter(characters, new CharacterPagerAdapter.OnPageClickListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
-                if (rv.canScrollVertically(-1)) {
-                    fabScrollTop.setVisibility(View.VISIBLE);
+            public void onCharacterClick(CharacterItem character) {
+                if (character.isAdult && !ageVerified) {
+                    AdultConfirmDialog dialog = new AdultConfirmDialog(() -> openCharacterDetail(character));
+                    dialog.show(getParentFragmentManager(), "adult_confirm");
                 } else {
-                    fabScrollTop.setVisibility(View.GONE);
+                    openCharacterDetail(character);
                 }
-                if (!isSearching && hasMoreCharacters && !isLoadingMore && dy > 0) {
-                    LinearLayoutManager lm = (LinearLayoutManager) rv.getLayoutManager();
-                    if (lm != null && lm.findLastVisibleItemPosition() >= characters.size() - 10) {
+            }
+
+            @Override
+            public void onFavoriteClick(CharacterItem character, boolean isFavorite) {
+                toggleFavorite(character, isFavorite);
+            }
+        });
+        charactersPager.setAdapter(pagerAdapter);
+
+        charactersPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                if (!isSearching && hasMoreCharacters && !isLoadingMore) {
+                    if (position >= characters.size() - 2) {
                         isLoadingMore = true;
+                        pagerAdapter.setShowLoading(true);
                         loadCharactersPage(selectedCategoryId, charactersOffset, false);
                     }
                 }
             }
         });
-        fabScrollTop.setOnClickListener(v -> charactersRecycler.smoothScrollToPosition(0));
-
-        categoryAdapter = new CategoryAdapter(categories, category -> {
-            if (category.locked) {
-                new AlertDialog.Builder(requireContext())
-                    .setTitle("\uD83D\uDD12 Categoria bloccata")
-                    .setMessage("Sblocca la categoria " + category.name + " con " + category.mvcCost + " MVC per accedere ai personaggi.")
-                    .setPositiveButton("Sblocca (" + category.mvcCost + " MVC)", (dialog, which) -> unlockCategory(category))
-                    .setNegativeButton("Annulla", null)
-                    .show();
-                return;
-            }
-            selectedCategoryId = category.id;
-            isSearching = false;
-            searchBar.setText("");
-            loadCharacters(category.id);
-        });
-
-        boolean ageVerified = app.getPrefs().getAdultBirthYear() > 0;
-
-        characterAdapter = new CharacterCardAdapter(characters, character -> {
-            if (character.isAdult && !ageVerified) {
-                AdultConfirmDialog dialog = new AdultConfirmDialog(() -> openCharacterDetail(character));
-                dialog.show(getParentFragmentManager(), "adult_confirm");
-            } else {
-                openCharacterDetail(character);
-            }
-        }, (character, isFavorite) -> toggleFavorite(character, isFavorite), true);
-        charactersRecycler.setAdapter(characterAdapter);
 
         searchFiltersRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         searchFilterAdapter = new SearchFilterAdapter(searchFilters, filter -> {
@@ -215,12 +185,10 @@ public class HomeFragment extends Fragment {
         if (Cache.categories != null && !Cache.categories.isEmpty()) {
             categories.clear();
             categories.addAll(Cache.categories);
-            categoryAdapter.notifyDataSetChanged();
             selectedCategoryId = Cache.selectedCategoryId;
             if (selectedCategoryId != null) {
                 for (int i = 0; i < categories.size(); i++) {
                     if (categories.get(i).id.equals(selectedCategoryId)) {
-                        categoryAdapter.setSelected(i);
                         break;
                     }
                 }
@@ -228,7 +196,7 @@ public class HomeFragment extends Fragment {
             if (Cache.characters != null) {
                 characters.clear();
                 characters.addAll(Cache.characters);
-                characterAdapter.notifyDataSetChanged();
+                pagerAdapter.notifyDataSetChanged();
             }
             hideLoadingOverlay();
         } else {
@@ -296,7 +264,6 @@ public class HomeFragment extends Fragment {
                 String json = httpGetWithAuthRefresh(baseUrl + "/categories");
                 if (json == null) {
                     mainHandler.post(() -> {
-                        swipeRefresh.setRefreshing(false);
                         loadOfflineCategories();
                         hideLoadingOverlay();
                     });
@@ -325,19 +292,15 @@ public class HomeFragment extends Fragment {
             if (perTeCategory != null) {
                 list.add(0, perTeCategory);
             }
-                final int totalCategories = list.size();
                 mainHandler.post(() -> {
                     categories.clear();
                     categories.addAll(list);
                     Cache.categories = new ArrayList<>(list);
-                    categoryAdapter.notifyDataSetChanged();
-                    swipeRefresh.setRefreshing(false);
                     updateLoadingProgress(1, 2, "Caricamento categorie…");
 
                     if (!categories.isEmpty()) {
                         selectedCategoryId = categories.get(0).id;
                         Cache.selectedCategoryId = selectedCategoryId;
-                        categoryAdapter.setSelected(0);
                         loadCharacters(selectedCategoryId);
                     } else {
                         hideLoadingOverlay();
@@ -345,7 +308,6 @@ public class HomeFragment extends Fragment {
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> {
-                    swipeRefresh.setRefreshing(false);
                     loadOfflineCategories();
                     hideLoadingOverlay();
                 });
@@ -364,21 +326,18 @@ public class HomeFragment extends Fragment {
         categories.add(new Category("horror", "Horror", "\uD83D\uDC7B"));
         categories.add(new Category("mystery", "Mistero", "\uD83D\uDD75\uFE0F"));
         Cache.categories = new ArrayList<>(categories);
-        categoryAdapter.notifyDataSetChanged();
         if (!categories.isEmpty()) {
             selectedCategoryId = categories.get(0).id;
             Cache.selectedCategoryId = selectedCategoryId;
-            categoryAdapter.setSelected(0);
         }
         loadOfflineCharacters();
-        swipeRefresh.setRefreshing(false);
     }
 
     private void loadCharacters(String categoryId) {
         charactersOffset = 0;
         hasMoreCharacters = true;
         characters.clear();
-        characterAdapter.notifyDataSetChanged();
+        pagerAdapter.notifyDataSetChanged();
         loadCharactersPage(categoryId, 0, true);
     }
 
@@ -412,7 +371,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 }
-                final boolean hasMore = list.size() >= PAGE_SIZE;
+                final boolean hasMore = !initial && list.size() >= PAGE_SIZE;
                 mainHandler.post(() -> {
                     searchProgress.setVisibility(View.GONE);
                     if (initial) {
@@ -422,12 +381,17 @@ public class HomeFragment extends Fragment {
                     hasMoreCharacters = hasMore;
                     charactersOffset = offset + list.size();
                     isLoadingMore = false;
+                    pagerAdapter.setShowLoading(false);
                     Cache.characters = new ArrayList<>(characters);
-                    characterAdapter.notifyDataSetChanged();
-                    sectionTitle.setText("Personaggi");
+                    pagerAdapter.notifyDataSetChanged();
                     if (initial) {
                         updateLoadingProgress(3, 3, "Caricamento completato");
                         hideLoadingOverlay();
+                    }
+                    if (characters.isEmpty()) {
+                        emptyState.setVisibility(View.VISIBLE);
+                        emptyStateTitle.setText("Nessun personaggio");
+                        emptyStateSubtitle.setText("Prova un'altra categoria");
                     }
                 });
             } catch (Exception e) {
@@ -438,6 +402,7 @@ public class HomeFragment extends Fragment {
                         hideLoadingOverlay();
                     }
                     isLoadingMore = false;
+                    pagerAdapter.setShowLoading(false);
                 });
             }
         });
@@ -458,8 +423,7 @@ public class HomeFragment extends Fragment {
             "Protettore delle terre dimenticate", new String[]{"cavaliere", "epico"},
             7600, "fantasy", false));
         Cache.characters = new ArrayList<>(characters);
-        characterAdapter.notifyDataSetChanged();
-        sectionTitle.setText("Personaggi");
+        pagerAdapter.notifyDataSetChanged();
     }
 
     private void searchCharacters(String query) {
@@ -535,26 +499,25 @@ public class HomeFragment extends Fragment {
 
         characters.clear();
         characters.addAll(filtered);
-        characterAdapter.notifyDataSetChanged();
+        pagerAdapter.setShowLoading(false);
+        pagerAdapter.notifyDataSetChanged();
 
         if (filtered.isEmpty()) {
             showEmptyState("Nessun risultato per questo filtro", "Prova con un altro filtro");
         } else {
             hideEmptyState();
-            sectionTitle.setText("Risultati: " + filtered.size());
         }
     }
 
     private void showSearchLoading() {
         searchProgress.setVisibility(View.VISIBLE);
-        charactersRecycler.setVisibility(View.GONE);
+        charactersPager.setVisibility(View.GONE);
         emptyState.setVisibility(View.GONE);
-        sectionTitle.setText("Ricerca...");
     }
 
     private void hideSearchLoading() {
         searchProgress.setVisibility(View.GONE);
-        charactersRecycler.setVisibility(View.VISIBLE);
+        charactersPager.setVisibility(View.VISIBLE);
     }
 
     private void showLoadingOverlay(String message) {
@@ -580,15 +543,14 @@ public class HomeFragment extends Fragment {
 
     private void showEmptyState(String title, String subtitle) {
         emptyState.setVisibility(View.VISIBLE);
-        charactersRecycler.setVisibility(View.GONE);
+        charactersPager.setVisibility(View.GONE);
         emptyStateTitle.setText(title);
         emptyStateSubtitle.setText(subtitle);
-        sectionTitle.setText("");
     }
 
     private void hideEmptyState() {
         emptyState.setVisibility(View.GONE);
-        charactersRecycler.setVisibility(View.VISIBLE);
+        charactersPager.setVisibility(View.VISIBLE);
     }
 
     private void toggleFavorite(CharacterItem character, boolean isFavorite) {
@@ -676,7 +638,7 @@ public class HomeFragment extends Fragment {
 
     private String httpGetWithAuthRefresh(String urlString) {
         try {
-            AuthManager.HttpResponse resp = mAuth.requestWithRefresh(urlString, "GET", null, 8000);
+            AuthManager.HttpResponse resp = mAuth.requestWithRefresh(urlString, "GET", null, 15000);
             if (resp.statusCode == 200) {
                 return resp.body;
             }
