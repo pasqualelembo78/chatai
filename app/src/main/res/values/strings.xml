@@ -266,7 +266,7 @@
     <string name="image_disclaimer">Le immagini dei personaggi sono fornite da Pexels (foto di fotografi indipendenti) e servizi gratuiti di generazione AI. Non rappresentano persone reali.</string>
 
     <!-- Login -->
-    <string name="privacy_notice">Premendo Connect accetti i Termini di Servizio e la Privacy Policy</string>
+    <string name="privacy_notice">Premendo Connect accetti i Termini di Servizio e la Privacy Policy. Hai bisogno di aiuto? Contattaci a lembopasquale78@gmail.com</string>
 
     <!-- Commands help -->
     <string name="commands_title">💬 Comandi Chat</string>
@@ -281,5 +281,11 @@
     <string name="commands_note_desc">Immagini e video generati non vengono salvati in cronologia. Sono visibili solo nella conversazione corrente.\n\nIl comando /muovi richiede ~30-60 secondi (elaborazione su GPU condivisa HF).</string>
     <string name="commands_dialog_title">Comandi Chat</string>
     <string name="action_help">Aiuto</string>
+
+    <!-- Support & Privacy -->
+    <string name="support_email">lembopasquale78@gmail.com</string>
+    <string name="privacy_url">https://www.mevacoin.com/privacy.html</string>
+    <string name="terms_url">https://www.mevacoin.com/terms.html</string>
+    <string name="support_url">https://www.mevacoin.com/support.html</string>
 
 </resources>

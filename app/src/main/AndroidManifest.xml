@@ -16,7 +16,7 @@
         <!-- Google Play richiede URL privacy policy nel manifest -->
         <meta-data
             android:name="android.privacy.POLICY_URL"
-            android:value="https://example.com/privacy"/>
+            android:value="https://www.mevacoin.com/privacy.html"/>
 
         <activity
             android:name="com.intelligame.chatai.MainActivity"
