@@ -4,6 +4,8 @@ import os
 import time
 import logging
 import shutil
+import threading
+import queue
 
 logger = logging.getLogger(__name__)
 
@@ -414,6 +416,118 @@ def _should_skip_heavy_model(model_id):
     return not _ram_ok_for_model(required)
 
 
+# ─── Ensemble Parallelo ──────────────────────────────────────────
+# Invia lo stesso prompt a più modelli contemporaneamente.
+# Il primo che completa la risposta vince.
+# Attivabile via env ENSEMBLE_ENABLED=1
+# Configurabile via env ENSEMBLE_MODELS (JSON array, default: Cerebras + Groq)
+
+ENSEMBLE_ENABLED = os.environ.get("ENSEMBLE_ENABLED", "1") == "1"
+
+ENSEMBLE_MODELS = [
+    ("cerebras", "gpt-oss-120b"),
+    ("groq", "llama-3.3-70b-versatile"),
+]
+try:
+    _env_models = os.environ.get("ENSEMBLE_MODELS", "")
+    if _env_models:
+        ENSEMBLE_MODELS = json.loads(_env_models)
+except (json.JSONDecodeError, TypeError):
+    pass
+
+
+def _ensemble_parallel_stream(messages, user_id=None):
+    """
+    Ensemble parallelo: invia lo stesso prompt a N modelli in thread separati.
+    Il primo che completa la risposta vince.
+    Yielda (token, provider_id, model) come get_ai_response_stream().
+    """
+    result_queue = queue.Queue()
+    stop_events = {}
+
+    def _run_provider(pid, model, evt):
+        """Esegue un provider in un thread separato, mette i token in coda."""
+        try:
+            provider = PROVIDERS.get(pid)
+            if not provider:
+                return
+            if not _provider_ready(pid):
+                return
+            stream_fn = provider.get("generate_stream") or provider.get("generate")
+            if not stream_fn:
+                return
+
+            if stream_fn == provider.get("generate"):
+                text = stream_fn(messages, model, user_id=user_id)
+                if text:
+                    result_queue.put(("token", pid, model, text))
+                    result_queue.put(("done", pid, model, None))
+                return
+
+            gen = stream_fn(messages, model, user_id=user_id)
+            for token in gen:
+                if evt.is_set():
+                    break
+                result_queue.put(("token", pid, model, token))
+            result_queue.put(("done", pid, model, None))
+        except Exception as e:
+            logger.warning(f"ensemble {pid}/{model} errore: {e}")
+            result_queue.put(("error", pid, model, str(e)))
+
+    ready_models = [(pid, m) for pid, m in ENSEMBLE_MODELS if _provider_ready(pid)]
+    if not ready_models:
+        logger.info("ensemble: nessun provider pronto, fallback alla catena")
+        return
+
+    logger.info(f"ensemble: avvio {len(ready_models)} modelli in parallelo: {[(p, m) for p, m in ready_models]}")
+
+    threads = []
+    for pid, model in ready_models:
+        evt = threading.Event()
+        stop_events[(pid, model)] = evt
+        t = threading.Thread(target=_run_provider, args=(pid, model, evt), daemon=True)
+        t.start()
+        threads.append(t)
+
+    winner = None
+
+    while True:
+        try:
+            msg_type, pid, model, data = result_queue.get(timeout=60)
+        except queue.Empty:
+            logger.warning("ensemble: timeout 60s, interrompo")
+            break
+
+        if msg_type == "token":
+            if winner is None:
+                winner = (pid, model)
+                logger.info(f"ensemble: vincitore {pid}/{model}")
+                for (wpid, wmodel), evt in stop_events.items():
+                    if (wpid, wmodel) != winner:
+                        evt.set()
+
+            if winner and pid == winner[0] and model == winner[1]:
+                yield data, pid, model
+
+        elif msg_type == "done":
+            if winner and pid == winner[0] and model == winner[1]:
+                break
+            if winner is None:
+                continue
+
+        elif msg_type == "error":
+            if winner is None:
+                continue
+
+    for t in threads:
+        t.join(timeout=5)
+
+    if winner:
+        logger.info(f"ensemble: completato da {winner[0]}/{winner[1]}")
+    else:
+        logger.warning("ensemble: tutti i provider falliti")
+
+
 def get_ai_response(messages, user_id=None):
     # ── Determina la catena di provider per le chat ──
     # Priorita: CHAT_PROVIDER env → preferenza utente → FORCE_LOCAL_FIRST → catena normale
@@ -661,6 +775,19 @@ def _stream_wrapper(gen_func):
 
 def get_ai_response_stream(messages, user_id=None):
     """Generator: tenta provider in catena con streaming, yielda (token, provider_id, model)."""
+
+    # 0. Ensemble parallelo (se abilitato)
+    if ENSEMBLE_ENABLED:
+        ensemble_gen = _ensemble_parallel_stream(messages, user_id=user_id)
+        first_token = None
+        for token, pid, model in ensemble_gen:
+            if first_token is None:
+                first_token = token
+                logger.info(f"Ensemble streaming response da {pid}/{model}")
+            yield token, pid, model
+        if first_token is not None:
+            return
+
     chain = []
 
     # 1. Se CHAT_PROVIDER=groq, prova Groq per primo con streaming
