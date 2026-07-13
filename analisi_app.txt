@@ -2,7 +2,7 @@
  ANALISI CHATAI — COSA MANCA PER UN'APP PROFESSIONALE
 ================================================================================
  Data: 07/07/2026
- Progetto: ChatAI — AI Roleplay Chat (Android + Python Flask Backend)
+ Progetto: Aria — AI Roleplay Immersive Adventure (Android + Python Flask Backend)
 ================================================================================
 
 

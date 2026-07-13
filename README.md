@@ -1,4 +1,4 @@
-# AI Roleplay Chat
+# AI Roleplay Immersive Adventure
 
 Chatta con personaggi virtuali realistici dotati di personalità, memoria e capacità di evoluzione. Supporta molteplici provider AI: locali (Ollama) e cloud (OpenAI, Anthropic, Google Gemini, Groq, OpenRouter).
 
