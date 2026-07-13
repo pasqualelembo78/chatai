@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
