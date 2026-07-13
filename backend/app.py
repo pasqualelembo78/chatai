@@ -2391,7 +2391,7 @@ async def on_stream_message(sid, data):
     memory_context = data.get("memory_context")
     user_memory = data.get("user_memory")
     _msg_limit = 50 if is_content_unlocked(user_id, "feature", "extended_memory") else 20
-        history = memory_context if memory_context is not None else get_recent_messages(user_id, character_id, limit=_msg_limit)
+    history = memory_context if memory_context is not None else get_recent_messages(user_id, character_id, limit=_msg_limit)
     shifts = get_recent_shifts(user_id, character_id)
     user_prefs = get_user_preferences(user_id)
     user_gender = user_prefs.get("user_gender") or None
