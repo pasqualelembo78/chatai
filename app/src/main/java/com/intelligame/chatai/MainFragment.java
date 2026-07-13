@@ -1978,8 +1978,12 @@ public class MainFragment extends Fragment {
             try {
                 String role = msg.getString("role");
                 String content = msg.getString("content");
-                boolean isAI = "assistant".equals(role);
-                addMessage(isAI ? mCharacterName : fallbackUser, content, isAI);
+                if ("system".equals(role)) {
+                    addLog(content);
+                } else {
+                    boolean isAI = "assistant".equals(role);
+                    addMessage(isAI ? mCharacterName : fallbackUser, content, isAI);
+                }
             } catch (Exception ignored) {}
         }
     }
@@ -2024,6 +2028,12 @@ public class MainFragment extends Fragment {
 
                     if (isFallback) {
                         addLog(getString(R.string.fallback_unavailable));
+                        return;
+                    }
+
+                    boolean isScenario = data.has("is_scenario") && data.optBoolean("is_scenario", false);
+                    if (isScenario) {
+                        addLog(message);
                         return;
                     }
 

@@ -2273,6 +2273,29 @@ async def on_add_user(sid, data):
     greeted_users.add(greet_key)
     if count_messages(user_id, character_id) > 0:
         return
+
+    from scenario_engine import get_opening_scenario, classify_character
+    from prompt_builder import build_system_prompt
+    mode = classify_character(character)
+    total_msgs = count_messages(user_id, character_id)
+
+    user_gender = user_age = sexual_orientation = None
+    if user_id:
+        prefs = get_user_preferences(user_id)
+        user_gender = prefs.get("user_gender") or None
+        user_age = prefs.get("user_age") or None
+        sexual_orientation = prefs.get("sexual_orientation") or None
+
+    scenario_text = get_opening_scenario(character, total_msgs,
+                                          user_gender=user_gender,
+                                          user_age=user_age,
+                                          sexual_orientation=sexual_orientation)
+    if scenario_text:
+        add_message(user_id, character_id, "system", scenario_text)
+        await sio.emit("new message", {
+            "username": "system", "message": scenario_text, "is_roleplay": False, "is_scenario": True
+        }, room=sid)
+
     greeting = _generate_greeting(character, character_name, username, user_id=user_id)
     add_message(user_id, character_id, "assistant", greeting)
     await sio.emit("new message", {
