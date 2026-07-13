@@ -457,6 +457,7 @@ public class AuthManager {
         conn.setRequestMethod(method);
         conn.setConnectTimeout(timeout);
         conn.setReadTimeout(timeout);
+        conn.setRequestProperty("Accept", "application/json");
         String token = getAccessToken();
         if (!token.isEmpty()) {
             conn.setRequestProperty("Authorization", "Bearer " + token);
@@ -469,8 +470,14 @@ public class AuthManager {
             os.close();
         }
         int code = conn.getResponseCode();
-        InputStream is = code >= 200 && code < 300 ? conn.getInputStream() : conn.getErrorStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        InputStream is;
+        if (code >= 200 && code < 300) {
+            is = conn.getInputStream();
+        } else {
+            is = conn.getErrorStream();
+            if (is == null) is = conn.getInputStream();
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is != null ? is : new java.io.ByteArrayInputStream(new byte[0])));
         StringBuilder resp = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) resp.append(line);
