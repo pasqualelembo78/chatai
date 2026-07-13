@@ -514,13 +514,20 @@ public class MainFragment extends Fragment {
     // ---------------------------------------------------------------
 
     private void loadCharacterBackground() {
-        if (mChatBackground == null || mCharacterImageUrl == null || mCharacterImageUrl.isEmpty()) {
-            return;
-        }
+        if (mChatBackground == null) return;
 
+        String bgUrl = null;
+        if (mCharacterImageUrl != null && !mCharacterImageUrl.isEmpty()) {
+            bgUrl = mCharacterImageUrl;
+        } else if (mCharacterAvatarImage != null && !mCharacterAvatarImage.isEmpty()) {
+            bgUrl = mPrefs.getServerUrl() + "/avatars/" + mCharacterAvatarImage;
+        }
+        if (bgUrl == null) return;
+
+        final String imageUrl = bgUrl;
         new Thread(() -> {
             try {
-                java.net.URL url = new java.net.URL(mCharacterImageUrl);
+                java.net.URL url = new java.net.URL(imageUrl);
                 java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(5000);
                 conn.setReadTimeout(5000);
