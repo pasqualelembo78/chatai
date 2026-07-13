@@ -2034,6 +2034,9 @@ public class MainFragment extends Fragment {
                     boolean isScenario = data.has("is_scenario") && data.optBoolean("is_scenario", false);
                     if (isScenario) {
                         addLog(message);
+                        if (mLocalDb != null) {
+                            mLocalDb.addMessage(mCharacterId, "system", message);
+                        }
                         return;
                     }
 
