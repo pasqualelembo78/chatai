@@ -32,8 +32,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -192,7 +192,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (executor != null) executor.shutdownNow();
     }
 
     private void loadMevacoins() {
@@ -361,23 +360,18 @@ public class ProfileFragment extends Fragment {
                 app.getLocalDb().resetAll();
 
                 try {
-                    URL url = new URL(baseUrl + "/user/reset?user_id=" + userId);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("POST");
-                    conn.setDoOutput(true);
-                    conn.setConnectTimeout(5000);
-                    conn.setReadTimeout(5000);
-                    conn.getResponseCode();
-                    conn.disconnect();
+                    AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(baseUrl + "/user/reset", "POST", null, 10000);
                 } catch (Exception ignored) {}
 
                 mainHandler.post(() -> {
+                    if (!isAdded()) return;
                     resetStatus.setText("\u2705 Dati resettati con successo");
                     btnResetAll.setEnabled(true);
                     Snackbar.make(requireView(), "Memoria AI cancellata", Snackbar.LENGTH_LONG).show();
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> {
+                    if (!isAdded()) return;
                     resetStatus.setText("\u274c Errore: " + e.getMessage());
                     btnResetAll.setEnabled(true);
                 });

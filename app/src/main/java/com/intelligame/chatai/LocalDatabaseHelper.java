@@ -435,6 +435,5 @@ public class LocalDatabaseHelper extends SQLiteOpenHelper {
         db.delete(TABLE_EVOLUTION, null, null);
         db.delete(TABLE_FAVORITES, null, null);
         db.delete(TABLE_FAVORITE_HISTORY, null, null);
-        db.close();
     }
 }
