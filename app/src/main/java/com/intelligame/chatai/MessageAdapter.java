@@ -8,8 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.text.SpannableStringBuilder;
+import android.text.StyleSpan;
 import android.util.Base64;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -249,7 +251,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public void setRoleplayMessage(String message) {
             if (null == mMessageView) return;
-            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder();
+            SpannableStringBuilder sb = new SpannableStringBuilder();
             Pattern pattern = Pattern.compile("\\*([^*]+)\\*");
             Matcher matcher = pattern.matcher(message);
             int lastEnd = 0;
