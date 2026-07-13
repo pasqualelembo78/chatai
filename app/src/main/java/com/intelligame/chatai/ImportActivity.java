@@ -106,6 +106,13 @@ public class ImportActivity extends AppCompatActivity {
         loadSources();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (executor != null) executor.shutdownNow();
+        mainHandler.removeCallbacksAndMessages(null);
+    }
+
     private void loadSources() {
         executor.execute(() -> {
             try {

@@ -13,6 +13,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Base64;
 import androidx.core.app.ActivityCompat;
@@ -87,7 +88,7 @@ public class MainFragment extends Fragment {
     private JSONObject mSessionMemory = new JSONObject();
     private RecyclerView.Adapter mAdapter;
     private boolean mTyping = false;
-    private Handler mTypingHandler = new Handler();
+    private Handler mTypingHandler = new Handler(Looper.getMainLooper());
     private String mUsername;
     private String mUserId;
     private String mCharacterId;
@@ -121,13 +122,18 @@ public class MainFragment extends Fragment {
     private String mLatencyText = "--";
 
     private String mConnStage = "";
-    private Handler mConnTimeoutHandler = new Handler();
+    private Handler mConnTimeoutHandler = new Handler(Looper.getMainLooper());
     private Message mStreamingMessage;
     private int mStreamingPosition = -1;
     private boolean mStreaming = false;
 
     public MainFragment() {
         super();
+    }
+
+    private void safeRunOnUiThread(Runnable action) {
+        if (getActivity() == null || !isAdded()) return;
+        getActivity().runOnUiThread(action);
     }
 
     @Override
@@ -141,6 +147,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        if (getActivity() == null) return;
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket = app.getSocket();
         mPrefs = app.getPrefs();
@@ -402,6 +409,7 @@ public class MainFragment extends Fragment {
 
         suggestionButton.setOnClickListener(v -> {
             if (mCharacterId == null || mCharacterId.isEmpty()) {
+                if (!isAdded()) return;
                 Toast.makeText(getActivity(), "Nessun personaggio selezionato", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -437,7 +445,7 @@ public class MainFragment extends Fragment {
                     JSONObject result = new JSONObject(resp.toString());
                     String suggestion = result.optString("suggestion", "");
 
-                    getActivity().runOnUiThread(() -> {
+                    safeRunOnUiThread(() -> {
                         suggestionButton.setAlpha(1.0f);
                         suggestionButton.setEnabled(true);
                         if (!suggestion.isEmpty()) {
@@ -445,13 +453,15 @@ public class MainFragment extends Fragment {
                             mInputMessageView.setSelection(suggestion.length());
                             mInputMessageView.requestFocus();
                         } else {
+                            if (!isAdded()) return;
                             Toast.makeText(getActivity(), "Nessun suggerimento disponibile", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (Exception e) {
-                    getActivity().runOnUiThread(() -> {
+                    safeRunOnUiThread(() -> {
                         suggestionButton.setAlpha(1.0f);
                         suggestionButton.setEnabled(true);
+                        if (!isAdded()) return;
                         Toast.makeText(getActivity(), "Errore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
                 }
@@ -481,6 +491,7 @@ public class MainFragment extends Fragment {
                         } catch (JSONException e) {}
                         mSocket.emit("stream stop", payload);
                         showStreamStopButton(false);
+                        if (!isAdded()) return;
                         Toast.makeText(getActivity(), "Generazione interrotta", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -526,7 +537,7 @@ public class MainFragment extends Fragment {
                 conn.disconnect();
 
                 if (bmp != null && getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
+                    safeRunOnUiThread(() -> {
                         mChatBackground.setImageBitmap(bmp);
                         mChatBackground.setVisibility(View.VISIBLE);
                     });
@@ -565,15 +576,19 @@ public class MainFragment extends Fragment {
                     confirmDeleteChat();
                     break;
                 case 3: // Gioco
-                    openGameCenter();
+                    if (!isAdded()) return;
+                    Toast.makeText(getActivity(), "Game Center in arrivo", Toast.LENGTH_SHORT).show();
                     break;
                 case 4: // AvatarMix
+                    if (!isAdded()) return;
                     Toast.makeText(getActivity(), "AvatarMix in arrivo", Toast.LENGTH_SHORT).show();
                     break;
                 case 5: // Bobine
+                    if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Bobine in arrivo", Toast.LENGTH_SHORT).show();
                     break;
                 case 6: // Canzone
+                    if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Canzone in arrivo", Toast.LENGTH_SHORT).show();
                     break;
             }
@@ -593,6 +608,7 @@ public class MainFragment extends Fragment {
                 mMessages.clear();
                 mAdapter.notifyDataSetChanged();
                 updateEmptyState();
+                if (!isAdded()) return;
                 Toast.makeText(getActivity(), "Chat ricominciata", Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton("No", null)
@@ -601,6 +617,7 @@ public class MainFragment extends Fragment {
 
     private void showChatHistory() {
         if (mLocalDb == null) {
+            if (!isAdded()) return;
             Toast.makeText(getActivity(), "Storia non disponibile", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -617,6 +634,7 @@ public class MainFragment extends Fragment {
         }
 
         if (sb.length() == 0) {
+            if (!isAdded()) return;
             Toast.makeText(getActivity(), "Nessun messaggio", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -639,6 +657,7 @@ public class MainFragment extends Fragment {
                 mMessages.clear();
                 mAdapter.notifyDataSetChanged();
                 updateEmptyState();
+                if (!isAdded()) return;
                 Toast.makeText(getActivity(), "Chat eliminata", Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton("Annulla", null)
@@ -873,6 +892,7 @@ public class MainFragment extends Fragment {
             mEmptyChat.setVisibility(View.VISIBLE);
         }
 
+        if (getActivity() == null) return;
         ChatApplication app = (ChatApplication) getActivity().getApplication();
         mSocket.disconnect();
         mSocket.off();
@@ -1126,6 +1146,7 @@ public class MainFragment extends Fragment {
     private static final int REQUEST_RECORD_AUDIO = 100;
 
     private void startRecording() {
+        if (getActivity() == null) return;
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
@@ -1145,9 +1166,11 @@ public class MainFragment extends Fragment {
             mRecorder.start();
             mIsRecording = true;
             mMicButton.setColorFilter(getResources().getColor(R.color.status_disconnected));
+            if (!isAdded()) return;
             Toast.makeText(getActivity(), "Registrazione in corso...", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Log.e(TAG, "Failed to start recording", e);
+            if (!isAdded()) return;
             Toast.makeText(getActivity(), "Errore avvio registrazione", Toast.LENGTH_SHORT).show();
         }
     }
@@ -1172,6 +1195,7 @@ public class MainFragment extends Fragment {
 
     private void uploadAudioAndTranscribe(final String filePath) {
         final String baseUrl = mPrefs.getServerUrl();
+        if (!isAdded()) return;
         Toast.makeText(getActivity(), "Trascrizione in corso...", Toast.LENGTH_LONG).show();
         new Thread(new Runnable() {
             @Override
@@ -1206,34 +1230,38 @@ public class MainFragment extends Fragment {
                         reader.close();
                         final String text = new org.json.JSONObject(response.toString()).optString("text", "");
                         if (!text.isEmpty()) {
-                            getActivity().runOnUiThread(new Runnable() {
+                            safeRunOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     mInputMessageView.setText(text);
+                                    if (!isAdded()) return;
                                     Toast.makeText(getActivity(), "Testo riconosciuto", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         } else {
-                            getActivity().runOnUiThread(new Runnable() {
+                            safeRunOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if (!isAdded()) return;
                                     Toast.makeText(getActivity(), "Nessun testo riconosciuto", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
                     } else {
-                        getActivity().runOnUiThread(new Runnable() {
+                        safeRunOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (!isAdded()) return;
                                 Toast.makeText(getActivity(), "Errore trascrizione (codice " + code + ")", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "Upload/transcribe error", e);
-                    getActivity().runOnUiThread(new Runnable() {
+                    safeRunOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (!isAdded()) return;
                             Toast.makeText(getActivity(), "Errore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -1251,6 +1279,7 @@ public class MainFragment extends Fragment {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startRecording();
             } else {
+                if (!isAdded()) return;
                 Toast.makeText(getActivity(), "Permesso microfono negato", Toast.LENGTH_SHORT).show();
             }
         }
@@ -1259,7 +1288,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_PICK_IMAGE && resultCode == getActivity().RESULT_OK && data != null) {
+        if (requestCode == REQUEST_PICK_IMAGE && getActivity() != null && data != null
+                && resultCode == getActivity().RESULT_OK) {
             Uri imageUri = data.getData();
             if (imageUri != null) {
                 processPickedImage(imageUri);
@@ -1268,6 +1298,7 @@ public class MainFragment extends Fragment {
     }
 
     private void processPickedImage(Uri imageUri) {
+        if (getActivity() == null || imageUri == null) return;
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
 
@@ -1293,9 +1324,11 @@ public class MainFragment extends Fragment {
                 if (container != null) container.setVisibility(View.VISIBLE);
             }
 
+            if (!isAdded()) return;
             Toast.makeText(getActivity(), "Immagine allegata", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Log.e(TAG, "Failed to process image", e);
+            if (!isAdded()) return;
             Toast.makeText(getActivity(), "Errore elaborazione immagine", Toast.LENGTH_SHORT).show();
         }
     }
@@ -1326,10 +1359,12 @@ public class MainFragment extends Fragment {
             }
         }
 
+        if (getActivity() == null) return;
         ClipboardManager clipboard = (ClipboardManager)
                 getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("chat", sb.toString().trim());
         clipboard.setPrimaryClip(clip);
+        if (!isAdded()) return;
         Toast.makeText(getActivity(), "Conversazione copiata negli appunti", Toast.LENGTH_SHORT).show();
     }
 
@@ -1397,6 +1432,7 @@ public class MainFragment extends Fragment {
                 if (providerId != null && !providerId.equals("auto")) {
                     testProviderConnection(providerId);
                 } else {
+                    if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Seleziona un provider specifico", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -1500,7 +1536,7 @@ public class MainFragment extends Fragment {
                         providerModels.put(pid, modelList);
                     }
 
-                    getActivity().runOnUiThread(new Runnable() {
+                    safeRunOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             mProviderIds = providerIds;
@@ -1528,7 +1564,7 @@ public class MainFragment extends Fragment {
 
     private void setFallbackProviders(final Spinner providerSpinner, final Spinner modelSpinner,
                                        final String savedProvider, final String savedModel) {
-        getActivity().runOnUiThread(new Runnable() {
+        safeRunOnUiThread(new Runnable() {
             @Override
             public void run() {
                 List<String> ids = new ArrayList<>();
@@ -1556,6 +1592,7 @@ public class MainFragment extends Fragment {
                 providerSpinner.setAdapter(adapter);
                 int idx = savedProvider != null ? ids.indexOf(savedProvider) : 0;
                 providerSpinner.setSelection(idx < 0 ? 0 : idx);
+                if (!isAdded()) return;
                 Toast.makeText(getActivity(), "Server non raggiungibile, lista offline", Toast.LENGTH_SHORT).show();
             }
         });
@@ -1575,7 +1612,7 @@ public class MainFragment extends Fragment {
             modelIds = new ArrayList<>();
         }
         final List<String> finalModelIds = modelIds;
-        getActivity().runOnUiThread(new Runnable() {
+        safeRunOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -1598,6 +1635,7 @@ public class MainFragment extends Fragment {
 
     private void refreshModelsFromServer(final Spinner providerSpinner, final Spinner modelSpinner, final String savedModel) {
         final String baseUrl = mPrefs.getServerUrl();
+        if (!isAdded()) return;
         Toast.makeText(getActivity(), "Aggiorno modelli...", Toast.LENGTH_SHORT).show();
         new Thread(new Runnable() {
             @Override
@@ -1621,24 +1659,26 @@ public class MainFragment extends Fragment {
                         reader.close();
                         JSONObject result = new JSONObject(response.toString());
                         final String chain = result.optString("chain", "");
-                        getActivity().runOnUiThread(new Runnable() {
+                        safeRunOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (!isAdded()) return;
                                 Toast.makeText(getActivity(), "Modelli aggiornati: " + chain, Toast.LENGTH_LONG).show();
                                 loadProvidersIntoSpinner(providerSpinner, modelSpinner,
                                         mPrefs.getProvider(), mPrefs.getModel());
                             }
                         });
                     } else {
-                        getActivity().runOnUiThread(new Runnable() {
+                        safeRunOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (!isAdded()) return;
                                 Toast.makeText(getActivity(), "Errore aggiornamento modelli", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 } catch (Exception e) {
-                    getActivity().runOnUiThread(new Runnable() {
+                    safeRunOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(getActivity(), "Errore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -1686,6 +1726,7 @@ public class MainFragment extends Fragment {
 
     private void testProviderConnection(final String providerId) {
         final String baseUrl = mPrefs.getServerUrl();
+        if (!isAdded()) return;
         Toast.makeText(getActivity(), "Test " + providerId + "...", Toast.LENGTH_SHORT).show();
         new Thread(new Runnable() {
             @Override
@@ -1715,26 +1756,29 @@ public class MainFragment extends Fragment {
                         JSONObject result = new JSONObject(response.toString());
                         final boolean success = result.optBoolean("success", false);
                         final String message = result.optString("message", "");
-                        getActivity().runOnUiThread(new Runnable() {
+                        safeRunOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (!isAdded()) return;
                                 Toast.makeText(getActivity(),
                                         (success ? "OK: " : "Errore: ") + message,
                                         Toast.LENGTH_LONG).show();
                             }
                         });
                     } else {
-                        getActivity().runOnUiThread(new Runnable() {
+                        safeRunOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (!isAdded()) return;
                                 Toast.makeText(getActivity(), "Errore connessione server", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
                 } catch (Exception e) {
-                    getActivity().runOnUiThread(new Runnable() {
+                    safeRunOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (!isAdded()) return;
                             Toast.makeText(getActivity(), "Errore: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -1752,7 +1796,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mSocketConnected = true;
@@ -1795,7 +1839,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onDisconnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Log.i(TAG, "disconnected");
@@ -1816,7 +1860,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onConnectError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     String detail = "Impossibile raggiungere il server";
@@ -1854,7 +1898,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onAutoLogin = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
@@ -1882,7 +1926,7 @@ public class MainFragment extends Fragment {
                         updateConnectionStatus();
 
                         if (mPrefs.getProvider().equals("auto") && mMessages.isEmpty()) {
-                            new Handler().postDelayed(new Runnable() {
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     showModelSelectionPrompt();
@@ -1914,7 +1958,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onPong = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (mPingStartTime > 0) {
@@ -1944,7 +1988,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
@@ -2045,7 +2089,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onStreamStart = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     removeTyping(mCharacterName != null ? mCharacterName : "AI");
@@ -2065,7 +2109,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onStreamToken = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
@@ -2086,7 +2130,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onStreamComplete = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
@@ -2133,7 +2177,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onStreamError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     removeTyping(mCharacterName != null ? mCharacterName : "AI");
@@ -2150,6 +2194,7 @@ public class MainFragment extends Fragment {
                         mAdapter.notifyItemChanged(mStreamingPosition);
                     }
 
+                    if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Errore stream: " + error, Toast.LENGTH_LONG).show();
 
                     mStreamingMessage = null;
@@ -2164,7 +2209,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onTyping = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
@@ -2184,7 +2229,7 @@ public class MainFragment extends Fragment {
     private Emitter.Listener onStopTyping = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
+            safeRunOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];

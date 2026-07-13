@@ -75,6 +75,12 @@ public class MvcEarnActivity extends AppCompatActivity {
         loadAllData();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (executor != null) executor.shutdownNow();
+    }
+
     private void loadAllData() {
         loadBalance();
         loadBonusStatus();

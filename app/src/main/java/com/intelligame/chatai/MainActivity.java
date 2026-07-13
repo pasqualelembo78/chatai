@@ -84,9 +84,6 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_create) {
                 fragment = new CreateFragment();
                 tag = "create";
-            } else if (itemId == R.id.nav_notifications) {
-                fragment = new NotificationsFragment();
-                tag = "notifications";
             } else if (itemId == R.id.nav_profile) {
                 fragment = new ProfileFragment();
                 tag = "profile";
@@ -107,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
             int currentId = R.id.nav_home;
             if (current instanceof ChatListFragment) currentId = R.id.nav_chat;
             else if (current instanceof CreateFragment) currentId = R.id.nav_create;
-            else if (current instanceof NotificationsFragment) currentId = R.id.nav_notifications;
             else if (current instanceof ProfileFragment) currentId = R.id.nav_profile;
             navView.setSelectedItemId(currentId);
         }

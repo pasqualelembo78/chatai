@@ -83,6 +83,12 @@ public class CreateFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (executor != null) executor.shutdownNow();
+    }
+
     private void loadCategories() {
         executor.execute(() -> {
             try {

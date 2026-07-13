@@ -189,6 +189,12 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (executor != null) executor.shutdownNow();
+    }
+
     private void loadMevacoins() {
         executor.execute(() -> {
             try {

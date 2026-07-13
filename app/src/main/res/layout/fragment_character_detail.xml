@@ -80,6 +80,7 @@
                     android:id="@+id/detail_avatar_image"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:contentDescription="Avatar personaggio"
                     android:scaleType="centerCrop"
                     android:visibility="gone"
                     app:shapeAppearanceOverlay="@style/AvatarSquare" />
@@ -281,6 +282,7 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
+                android:contentDescription="Dettagli"
                 android:src="@drawable/ic_info"
                 app:tint="@color/on_surface_dim" />
 
@@ -315,6 +317,7 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
+                android:contentDescription="Domande"
                 android:src="@drawable/ic_chat_bubble"
                 app:tint="@color/on_surface_dim" />
 
@@ -350,6 +353,7 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
+                android:contentDescription="Scene"
                 android:src="@drawable/ic_movie"
                 app:tint="@color/on_surface_dim" />
 
@@ -698,6 +702,7 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                android:contentDescription="Nessuna scena"
                 android:src="@drawable/ic_movie"
                 app:tint="@color/on_surface_dim"
                 android:alpha="0.5" />

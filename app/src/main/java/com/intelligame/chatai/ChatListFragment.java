@@ -111,6 +111,12 @@ public class ChatListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (executor != null) executor.shutdownNow();
+    }
+
     static class ConversationItem {
         String characterId;
         String characterName;

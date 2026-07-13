@@ -12,6 +12,7 @@
         android:id="@+id/chat_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="Sfondo chat"
         android:scaleType="centerCrop"
         android:visibility="gone" />
 
@@ -34,8 +35,8 @@
 
             <ImageButton
                 android:id="@+id/back_button"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_arrow_back"
                 android:contentDescription="Indietro"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -48,6 +49,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="4dp"
+                android:contentDescription="Avatar personaggio"
                 android:scaleType="centerCrop"
                 android:visibility="gone" />
 
@@ -87,8 +89,8 @@
 
             <ImageButton
                 android:id="@+id/copy_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_share"
                 android:contentDescription="Condividi"
                 android:background="@drawable/tab_icon_bg"
@@ -99,8 +101,8 @@
 
             <ImageButton
                 android:id="@+id/help_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_info"
                 android:contentDescription="Info"
                 android:background="@drawable/tab_icon_bg"
@@ -111,8 +113,8 @@
 
             <ImageButton
                 android:id="@+id/settings_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_more_vert"
                 android:contentDescription="Menu"
                 android:background="@drawable/tab_icon_bg"
@@ -189,6 +191,7 @@
                 android:id="@+id/image_preview"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:contentDescription="Anteprima immagine"
                 android:scaleType="centerCrop"
                 android:background="@drawable/edittext_bg" />
 
@@ -196,6 +199,7 @@
                 android:id="@+id/image_preview_remove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="Rimuovi immagine"
                 android:text="X"
                 android:textSize="12sp"
                 android:background="?attr/selectableItemBackgroundBorderless"
@@ -218,8 +222,8 @@
             <!-- Extra options button -->
             <ImageButton
                 android:id="@+id/extra_options_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_settings"
                 android:contentDescription="Opzioni"
                 android:background="@drawable/tab_icon_bg"
@@ -247,8 +251,8 @@
 
             <ImageButton
                 android:id="@+id/suggestion_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_magic_wand"
                 android:contentDescription="Suggerimenti"
                 android:background="@drawable/tab_icon_bg"
@@ -259,8 +263,8 @@
 
             <ImageButton
                 android:id="@+id/image_attach_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_image"
                 android:contentDescription="Allega immagine"
                 android:background="@drawable/tab_icon_bg"
@@ -271,8 +275,8 @@
 
             <ImageButton
                 android:id="@+id/mic_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_mic"
                 android:contentDescription="Audio"
                 android:background="@drawable/tab_icon_bg"
