@@ -159,7 +159,7 @@
                 android:visibility="gone"
                 android:layout_gravity="center_horizontal|bottom"
                 android:layout_marginBottom="8dp"
-                style="@style/Widget.ChatAI.MaterialButton.Stop"
+                style="@style/Widget.Aria.MaterialButton.Stop"
                 android:textSize="14sp"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp" />

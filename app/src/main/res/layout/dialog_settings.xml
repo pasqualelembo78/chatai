@@ -63,7 +63,7 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/dialog_refresh_models"
-                style="@style/Widget.ChatAI.Button.Tonal"
+                style="@style/Widget.Aria.Button.Tonal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -72,7 +72,7 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/dialog_test_model"
-                style="@style/Widget.ChatAI.Button.Tonal"
+                style="@style/Widget.Aria.Button.Tonal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

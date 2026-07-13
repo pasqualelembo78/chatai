@@ -355,14 +355,14 @@ public class OnboardingActivity extends Activity {
                         finish();
                     } else {
                         confirmButton.setEnabled(true);
-                        confirmButton.setText("Entra in ChatAI");
+                        confirmButton.setText("Entra in Aria");
                         Toast.makeText(this, "Errore salvataggio preferenze (" + code + ")", Toast.LENGTH_LONG).show();
                     }
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     confirmButton.setEnabled(true);
-                    confirmButton.setText("Entra in ChatAI");
+                    confirmButton.setText("Entra in Aria");
                     Toast.makeText(this, "Errore di rete: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }

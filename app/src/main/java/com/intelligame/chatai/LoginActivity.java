@@ -341,7 +341,7 @@ public class LoginActivity extends Activity {
         new android.app.AlertDialog.Builder(this)
                 .setTitle("Privacy Policy")
                 .setMessage(
-                        "ChatAI raccoglie i seguenti dati:\n\n"
+                        "Aria raccoglie i seguenti dati:\n\n"
                         + "• Username — scelto all'accesso\n"
                         + "• Email — solo se utilizzi Google Sign-In\n"
                         + "• Messaggi di chat — testo delle conversazioni\n"

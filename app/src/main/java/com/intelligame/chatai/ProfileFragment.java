@@ -251,7 +251,7 @@ public class ProfileFragment extends Fragment {
     private void shareReferral() {
         String code = referralCodeText.getText().toString();
         if (code.isEmpty() || code.equals("...")) return;
-        String text = "Unisciti a me su ChatAI! Inserisci il mio codice referral " + code + " e ricevi 50 MVC gratis. Scarica l'app: " + baseUrl.replace("/chat", "");
+        String text = "Unisciti a me su Aria! Inserisci il mio codice referral " + code + " e ricevi 50 MVC gratis. Scarica l'app: " + baseUrl.replace("/chat", "");
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
         share.putExtra(Intent.EXTRA_TEXT, text);
@@ -259,7 +259,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void doSocialShare() {
-        String text = "Sto chattando con personaggi incredibili su ChatAI! 💬 Unisciti anche tu e crea il tuo personaggio AI! 🚀";
+        String text = "Sto chattando con personaggi incredibili su Aria! 💬 Unisciti anche tu e crea il tuo personaggio AI! 🚀";
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
         share.putExtra(Intent.EXTRA_TEXT, text);
