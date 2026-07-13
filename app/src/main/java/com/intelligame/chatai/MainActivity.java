@@ -3,6 +3,8 @@ package com.intelligame.chatai;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -198,6 +200,31 @@ public class MainActivity extends AppCompatActivity {
                 mAdManager.showInterstitialIfReady(this);
             }
             super.onBackPressed();
+        }
+    }
+
+    public void showLoading(String message) {
+        FrameLayout overlay = findViewById(R.id.loading_overlay);
+        TextView loadingText = findViewById(R.id.loading_text);
+        TextView loadingProgress = findViewById(R.id.loading_progress);
+        if (overlay != null) {
+            overlay.setVisibility(View.VISIBLE);
+            if (loadingText != null) loadingText.setText(message);
+            if (loadingProgress != null) loadingProgress.setText("");
+        }
+    }
+
+    public void showLoadingProgress(int current, int total) {
+        TextView loadingProgress = findViewById(R.id.loading_progress);
+        if (loadingProgress != null) {
+            loadingProgress.setText(String.format("Caricamento categorie… (%d di %d)", current, total));
+        }
+    }
+
+    public void hideLoading() {
+        FrameLayout overlay = findViewById(R.id.loading_overlay);
+        if (overlay != null) {
+            overlay.setVisibility(View.GONE);
         }
     }
 }

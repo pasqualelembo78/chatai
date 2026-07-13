@@ -209,6 +209,9 @@ public class HomeFragment extends Fragment {
                 characters.addAll(Cache.characters);
                 characterAdapter.notifyDataSetChanged();
             }
+            hideLoadingOverlay();
+        } else {
+            showLoadingOverlay("Caricamento categorie…");
         }
         loadCategories();
     }
@@ -230,6 +233,7 @@ public class HomeFragment extends Fragment {
                     mainHandler.post(() -> {
                         swipeRefresh.setRefreshing(false);
                         loadOfflineCategories();
+                        hideLoadingOverlay();
                     });
                     return;
                 }
@@ -256,24 +260,29 @@ public class HomeFragment extends Fragment {
             if (perTeCategory != null) {
                 list.add(0, perTeCategory);
             }
+                final int totalCategories = list.size();
                 mainHandler.post(() -> {
                     categories.clear();
                     categories.addAll(list);
                     Cache.categories = new ArrayList<>(list);
                     categoryAdapter.notifyDataSetChanged();
                     swipeRefresh.setRefreshing(false);
+                    updateLoadingProgress(1, totalCategories);
 
                     if (!categories.isEmpty()) {
                         selectedCategoryId = categories.get(0).id;
                         Cache.selectedCategoryId = selectedCategoryId;
                         categoryAdapter.setSelected(0);
                         loadCharacters(selectedCategoryId);
+                    } else {
+                        hideLoadingOverlay();
                     }
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> {
                     swipeRefresh.setRefreshing(false);
                     loadOfflineCategories();
+                    hideLoadingOverlay();
                 });
             }
         });
@@ -301,7 +310,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadCharacters(String categoryId) {
-        mainHandler.post(() -> searchProgress.setVisibility(View.VISIBLE));
+        mainHandler.post(() -> {
+            searchProgress.setVisibility(View.VISIBLE);
+            showLoadingOverlay("Caricamento personaggi…");
+        });
         executor.execute(() -> {
             try {
                 String json = httpGet(baseUrl + "/characters?category=" + URLEncoder.encode(categoryId, "UTF-8"));
@@ -327,11 +339,13 @@ public class HomeFragment extends Fragment {
                     Cache.characters = new ArrayList<>(list);
                     characterAdapter.notifyDataSetChanged();
                     sectionTitle.setText("Personaggi");
+                    hideLoadingOverlay();
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> {
                     searchProgress.setVisibility(View.GONE);
                     loadOfflineCharacters();
+                    hideLoadingOverlay();
                 });
             }
         });
@@ -449,6 +463,24 @@ public class HomeFragment extends Fragment {
     private void hideSearchLoading() {
         searchProgress.setVisibility(View.GONE);
         charactersRecycler.setVisibility(View.VISIBLE);
+    }
+
+    private void showLoadingOverlay(String message) {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showLoading(message);
+        }
+    }
+
+    private void updateLoadingProgress(int current, int total) {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showLoadingProgress(current, total);
+        }
+    }
+
+    private void hideLoadingOverlay() {
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).hideLoading();
+        }
     }
 
     private void showEmptyState(String title, String subtitle) {
