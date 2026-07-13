@@ -4,8 +4,12 @@ import os
 import json
 import random
 import logging
+import time
 
 logger = logging.getLogger(__name__)
+
+_ENRICH_CACHE = {}
+_ENRICH_CACHE_TTL = 300  # 5 minutes
 
 _DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
@@ -118,6 +122,12 @@ def _generate_birth_date_from_age(age, reference_date=None):
 
 
 def _enrich(c):
+    char_id = c.get("id", "")
+    now = time.time()
+    cached = _ENRICH_CACHE.get(char_id)
+    if cached and now - cached["ts"] < _ENRICH_CACHE_TTL:
+        return cached["data"]
+
     enriched = dict(c)
     enriched["category_name"] = CATEGORY_MAP.get(c["category"], c["category"])
     if enriched.get("avatar_url"):
@@ -147,7 +157,6 @@ def _enrich(c):
         except:
             pass
 
-    char_id = enriched.get("id", "")
     db_demo = _demo_cache.get(char_id)
 
     if db_demo:
@@ -178,7 +187,9 @@ def _enrich(c):
         if not enriched.get("birth_date"):
             enriched["birth_date"] = _generate_birth_date_from_age(enriched.get("age", 0))
 
-    return ensure_evolution_config(enriched)
+    result = ensure_evolution_config(enriched)
+    _ENRICH_CACHE[char_id] = {"data": result, "ts": now}
+    return result
 
 
 def get_character(char_id):
@@ -192,21 +203,41 @@ def get_character(char_id):
     return uchar
 
 
+_LIST_CACHE = {"data": None, "ts": 0}
+_LIST_CACHE_TTL = 60  # 1 minute
+
+
 def list_characters():
+    now = time.time()
+    if _LIST_CACHE["data"] and now - _LIST_CACHE["ts"] < _LIST_CACHE_TTL:
+        return _LIST_CACHE["data"]
     from storage import get_all_user_characters
     uchars = get_all_user_characters()
-    return [_enrich(c) for c in CHARACTERS] + uchars
+    result = [_enrich(c) for c in CHARACTERS] + uchars
+    _LIST_CACHE["data"] = result
+    _LIST_CACHE["ts"] = now
+    return result
 
 
 def get_categories():
     return CATEGORIES
 
 
+_CAT_CACHE = {}
+_CAT_CACHE_TTL = 60
+
+
 def get_characters_by_category(category_id):
+    now = time.time()
+    cached = _CAT_CACHE.get(category_id)
+    if cached and now - cached["ts"] < _CAT_CACHE_TTL:
+        return cached["data"]
     from storage import get_all_user_characters
     predefined = [_enrich(c) for c in CHARACTERS if c["category"] == category_id]
     user_chars = [c for c in get_all_user_characters() if c.get("category") == category_id]
-    return predefined + user_chars
+    result = predefined + user_chars
+    _CAT_CACHE[category_id] = {"data": result, "ts": now}
+    return result
 
 
 def search_characters(query):

@@ -81,6 +81,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             viewHolder.setRoleplayMessage(message.getMessage());
         } else if (message.getType() == Message.TYPE_MESSAGE) {
             viewHolder.setMessage(message.getMessage());
+        } else if (message.getType() == Message.TYPE_ACTION) {
+            viewHolder.setActionText(message.getActionText());
         } else {
             viewHolder.setLogMessage(message.getMessage());
         }
@@ -200,6 +202,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (null == mMessageView) return;
             mMessageView.setText(message);
             mMessageView.setTypeface(Typeface.DEFAULT);
+        }
+
+        public void setActionText(String actionText) {
+            if (null == mMessageView) return;
+            if (actionText != null && !actionText.isEmpty()) {
+                mMessageView.setText(actionText);
+            } else {
+                mMessageView.setText(mContext.getString(R.string.user_action_typing));
+            }
+            mMessageView.setTypeface(Typeface.DEFAULT);
+            mMessageView.setTextColor(mContext.getResources().getColor(R.color.on_surface_dim));
         }
 
         public void setRoleplayMessage(String message) {

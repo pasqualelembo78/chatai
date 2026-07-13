@@ -1205,13 +1205,15 @@ async def api_streak(user: AuthUser = Depends(jwt_required)):
     return {"streak": get_checkin_streak(user.user_id)}
 
 @app.post("/chat/suggestion")
-async def api_chat_suggestion(body: SuggestionRequest, user: AuthUser = Depends(jwt_required)):
+async def api_chat_suggestion(body: SuggestionRequest, user: Optional[AuthUser] = Depends(jwt_optional)):
     char = get_character(body.character_id)
     if not char:
         raise HTTPException(404, "character not found")
-    prefs = get_user_preferences(user.user_id)
-    tags = prefs.get("interest_tags", [])
-    tags_str = ", ".join(tags) if tags else "generali"
+    tags_str = "generali"
+    if user:
+        prefs = get_user_preferences(user.user_id)
+        tags = prefs.get("interest_tags", [])
+        tags_str = ", ".join(tags) if tags else "generali"
     prompt = (
         f"Genera UNA domanda o frase di apertura che l'utente potrebbe inviare al personaggio '{char['name']}' "
         f"per iniziare una conversazione interessante. "
@@ -1220,10 +1222,11 @@ async def api_chat_suggestion(body: SuggestionRequest, user: AuthUser = Depends(
         f"Restituisci SOLO la domanda, senza prefazioni o spiegazioni."
     )
     from ai_engine import get_ai_response as _gair
+    uid = user.user_id if user else "anonymous"
     suggestion, _, _ = _gair([
         {"role": "system", "content": "Sei un assistente che genera domande di apertura per chat con personaggi virtuali. Rispondi solo con la domanda, nient'altro."},
         {"role": "user", "content": prompt}
-    ], user_id=user.user_id)
+    ], user_id=uid)
     if not suggestion:
         import random
         fallbacks = [f"Ciao {char['name']}! Come stai?", f"Raccontami qualcosa di te, {char['name']}.", f"Che cosa ti appassiona di più, {char['name']}?"]
@@ -2287,6 +2290,8 @@ async def on_stream_message(sid, data):
     if not _check_character_access(user_id, character):
         await sio.emit("stream error", {"message": "premium_required"}, room=sid)
         return
+
+    await sio.emit("typing", {"username": character["name"]}, room=sid)
 
     stripped = text.strip()
     if stripped.startswith("/genera") or stripped.startswith("/muovi"):

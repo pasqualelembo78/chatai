@@ -168,6 +168,50 @@ public class MainFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() == null) return;
+        ChatApplication app = (ChatApplication) getActivity().getApplication();
+
+        Socket freshSocket = app.getSocket();
+        if (freshSocket != mSocket) {
+            mSocket.off(Socket.EVENT_CONNECT, onConnect);
+            mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
+            mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
+            mSocket.off("new message", onNewMessage);
+            mSocket.off("stream start", onStreamStart);
+            mSocket.off("stream token", onStreamToken);
+            mSocket.off("stream complete", onStreamComplete);
+            mSocket.off("stream error", onStreamError);
+            mSocket.off("typing", onTyping);
+            mSocket.off("stop typing", onStopTyping);
+            mSocket.off("login", onAutoLogin);
+            mSocket.off("pong", onPong);
+            mSocket = freshSocket;
+            reattachSocketListeners();
+        }
+
+        if (!mSocket.connected()) {
+            mSocketConnected = false;
+            mRegistered = false;
+            setConnStage("handshake");
+            startConnTimeout();
+            mSocket.connect();
+        } else if (!mRegistered) {
+            mSocketConnected = true;
+            setConnStage("verify_api");
+            JSONObject data = new JSONObject();
+            try {
+                data.put("username", mUsername);
+                data.put("character", mCharacterId);
+                data.put("user_id", mUserId);
+                mSocket.emit("add user", data);
+            } catch (JSONException e) {}
+        }
+        updateConnectionStatus();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         // Clean up banner ad
@@ -937,8 +981,30 @@ public class MainFragment extends Fragment {
     }
 
     private void addTyping(String username) {
+        for (int i = mMessages.size() - 1; i >= 0; i--) {
+            Message message = mMessages.get(i);
+            if (message.getType() == Message.TYPE_ACTION && message.getUsername().equals(username)) {
+                return;
+            }
+        }
         mMessages.add(new Message.Builder(Message.TYPE_ACTION)
                 .username(username).build());
+        mAdapter.notifyItemInserted(mMessages.size() - 1);
+        scrollToBottom();
+        updateEmptyState();
+    }
+
+    private void addThinking(String username) {
+        for (int i = mMessages.size() - 1; i >= 0; i--) {
+            Message message = mMessages.get(i);
+            if (message.getType() == Message.TYPE_ACTION && message.getUsername().equals(username)) {
+                return;
+            }
+        }
+        mMessages.add(new Message.Builder(Message.TYPE_ACTION)
+                .username(username)
+                .actionText(username + " " + getString(R.string.user_action_thinking))
+                .build());
         mAdapter.notifyItemInserted(mMessages.size() - 1);
         scrollToBottom();
         updateEmptyState();
@@ -1038,6 +1104,7 @@ public class MainFragment extends Fragment {
 
         mStreaming = true;
         showStreamStopButton(true);
+        addThinking(mCharacterName != null ? mCharacterName : "AI");
         mSocket.emit("stream message", payload);
 
         // Show interstitial every 8 messages (if not premium)
@@ -1904,6 +1971,7 @@ public class MainFragment extends Fragment {
                     }
 
                     removeTyping(username);
+                    removeTyping(mCharacterName != null ? mCharacterName : "AI");
 
                     if (!isRoleplay && username.equals(mUsername)) {
                         return;
@@ -1980,6 +2048,7 @@ public class MainFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    removeTyping(mCharacterName != null ? mCharacterName : "AI");
                     JSONObject data = (JSONObject) args[0];
                     String username = data.optString("username", mCharacterName != null ? mCharacterName : "AI");
                     mStreamingMessage = new Message.Builder(Message.TYPE_ROLEPLAY)
@@ -2021,6 +2090,7 @@ public class MainFragment extends Fragment {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
+                    removeTyping(mCharacterName != null ? mCharacterName : "AI");
                     String message = data.optString("message", "");
                     String username = data.optString("username", mCharacterName != null ? mCharacterName : "AI");
                     String aiProvider = data.optString("ai_provider", null);
@@ -2066,6 +2136,7 @@ public class MainFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    removeTyping(mCharacterName != null ? mCharacterName : "AI");
                     JSONObject data = (JSONObject) args[0];
                     String error = data.optString("message", "Errore sconosciuto");
 

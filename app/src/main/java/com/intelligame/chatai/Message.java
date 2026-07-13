@@ -16,6 +16,7 @@ public class Message {
     private String mAudioUrl;
     private String mImageBase64;
     private String mVideoUrl;
+    private String mActionText;
 
     private Message() {}
 
@@ -55,6 +56,10 @@ public class Message {
         return mVideoUrl;
     };
 
+    public String getActionText() {
+        return mActionText;
+    };
+
 
     public static class Builder {
         private final int mType;
@@ -66,6 +71,7 @@ public class Message {
         private String mAudioUrl;
         private String mImageBase64;
         private String mVideoUrl;
+        private String mActionText;
 
         public Builder(int type) {
             mType = type;
@@ -111,6 +117,11 @@ public class Message {
             return this;
         }
 
+        public Builder actionText(String actionText) {
+            mActionText = actionText;
+            return this;
+        }
+
         public Message build() {
             Message message = new Message();
             message.mType = mType;
@@ -122,6 +133,7 @@ public class Message {
             message.mAudioUrl = mAudioUrl;
             message.mImageBase64 = mImageBase64;
             message.mVideoUrl = mVideoUrl;
+            message.mActionText = mActionText;
             return message;
         }
     }

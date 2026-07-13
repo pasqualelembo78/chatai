@@ -4,6 +4,15 @@ android {
     namespace 'com.intelligame.chatai'
     compileSdk 35
 
+    signingConfigs {
+        release {
+            storeFile file('release.keystore')
+            storePassword 'Ch4tA1_R3l34s3!'
+            keyAlias 'chatai'
+            keyPassword 'Ch4tA1_R3l34s3!'
+        }
+    }
+
     defaultConfig {
         applicationId 'com.intelligame.chatai'
         minSdkVersion 21
@@ -16,6 +25,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false

@@ -93,8 +93,10 @@ public class ChatApplication extends Application {
     }
 
     public Socket getSocket() {
-        if (mSocket == null || !mSocket.connected()) {
+        if (mSocket == null) {
             connectWithAuth(mCurrentUrl);
+        } else if (!mSocket.connected()) {
+            mSocket.connect();
         }
         return mSocket;
     }

@@ -774,6 +774,8 @@ $SUDO tee "$SERVICE_FILE" > /dev/null <<SERVICEEOF
 Description=ChatAI Backend
 After=network.target redis-server.service
 Wants=redis-server.service
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Service]
 Type=simple
@@ -783,8 +785,6 @@ WorkingDirectory=$ROOT_DIR/backend
 ExecStart=$ROOT_DIR/backend/venv/bin/python3 -m uvicorn app:socket_app --host 0.0.0.0 --port 5000 --workers 1
 Restart=on-failure
 RestartSec=10
-StartLimitIntervalSec=60
-StartLimitBurst=3
 TimeoutStartSec=120
 EnvironmentFile=$ROOT_DIR/backend/.env
 StandardOutput=append:/var/log/chatai.log
