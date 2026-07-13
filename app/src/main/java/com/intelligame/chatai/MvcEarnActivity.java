@@ -20,14 +20,7 @@ import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,18 +85,8 @@ public class MvcEarnActivity extends AppCompatActivity {
     private void loadBalance() {
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/mevacoins");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setConnectTimeout(5000);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
-                JSONObject obj = new JSONObject(resp.toString());
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins", "GET", null, 5000);
+                JSONObject obj = new JSONObject(resp.body);
                 int balance = obj.optInt("balance", 0);
                 mainHandler.post(() -> balanceText.setText(String.valueOf(balance)));
             } catch (Exception e) {
@@ -116,30 +99,17 @@ public class MvcEarnActivity extends AppCompatActivity {
     private void loadBonusStatus() {
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/mevacoins/streak");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setConnectTimeout(5000);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/streak", "GET", null, 5000);
 
-                int responseCode = conn.getResponseCode();
-                if (responseCode == 404) {
+                if (resp.statusCode == 404) {
                     mainHandler.post(() -> {
                         checkinStatusText.setText("Sistema streak non ancora disponibile");
                         btnCheckin.setText("Check-in +15 MVC");
                     });
-                    conn.disconnect();
                     return;
                 }
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
-
-                JSONObject data = new JSONObject(resp.toString());
+                JSONObject data = new JSONObject(resp.body);
                 int currentDay = data.optInt("current_day", 1);
                 boolean todayClaimed = data.optBoolean("today_claimed", false);
                 JSONArray days = data.optJSONArray("days");
@@ -276,38 +246,17 @@ public class MvcEarnActivity extends AppCompatActivity {
         int reward = calculateReward(dayNumber);
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/mevacoins/streak/claim");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setConnectTimeout(5000);
-
                 JSONObject body = new JSONObject();
                 body.put("day", dayNumber);
-                OutputStream os = conn.getOutputStream();
-                os.write(body.toString().getBytes());
-                os.close();
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/streak/claim", "POST", body.toString(), 5000);
 
-                int responseCode = conn.getResponseCode();
-                if (responseCode == 404) {
+                if (resp.statusCode == 404) {
                     mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
                             "Sistema streak non ancora disponibile", Snackbar.LENGTH_SHORT).show());
-                    conn.disconnect();
                     return;
                 }
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(
-                        responseCode >= 200 && responseCode < 300 ? conn.getInputStream() : conn.getErrorStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
-
-                JSONObject result = new JSONObject(resp.toString());
+                JSONObject result = new JSONObject(resp.body);
                 boolean claimed = result.optBoolean("claimed", false);
                 int earned = result.optInt("earned", reward);
 
@@ -333,19 +282,9 @@ public class MvcEarnActivity extends AppCompatActivity {
     private void loadTransactions() {
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/mevacoins/transactions");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setConnectTimeout(5000);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/transactions", "GET", null, 5000);
 
-                JSONArray arr = new JSONArray(resp.toString());
+                JSONArray arr = new JSONArray(resp.body);
                 mainHandler.post(() -> {
                     transactionsContainer.removeAllViews();
                     if (arr.length() == 0) {
@@ -454,29 +393,11 @@ public class MvcEarnActivity extends AppCompatActivity {
     private void creditReward(int amount) {
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/mevacoins/share");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setConnectTimeout(5000);
-
                 JSONObject body = new JSONObject();
                 body.put("platform", "admob_rewarded");
-                OutputStream os = conn.getOutputStream();
-                os.write(body.toString().getBytes());
-                os.close();
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/share", "POST", body.toString(), 5000);
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
-
-                JSONObject result = new JSONObject(resp.toString());
+                JSONObject result = new JSONObject(resp.body);
                 boolean success = result.optBoolean("success", false);
                 int earned = result.optInt("earned", amount);
 
@@ -507,31 +428,10 @@ public class MvcEarnActivity extends AppCompatActivity {
         btnCheckin.setText("...");
         executor.execute(() -> {
             try {
-                String token = mAuth.getAccessToken();
-                URL url = new URL(baseUrl + "/user/mevacoins/checkin");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setRequestProperty("Authorization", "Bearer " + token);
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setConnectTimeout(10000);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/checkin", "POST", "{}", 10000);
 
-                OutputStream os = conn.getOutputStream();
-                os.write("{}".getBytes());
-                os.close();
-
-                int responseCode = conn.getResponseCode();
-                InputStream is = responseCode >= 200 && responseCode < 300
-                        ? conn.getInputStream() : conn.getErrorStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                StringBuilder resp = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) resp.append(line);
-                reader.close();
-                conn.disconnect();
-
-                if (responseCode < 200 || responseCode >= 300) {
-                    final String errMsg = resp.length() > 0 ? resp.toString() : "HTTP " + responseCode;
+                if (resp.statusCode < 200 || resp.statusCode >= 300) {
+                    final String errMsg = resp.body != null && !resp.body.isEmpty() ? resp.body : "HTTP " + resp.statusCode;
                     mainHandler.post(() -> {
                         btnCheckin.setText("Check-in");
                         btnCheckin.setEnabled(true);
@@ -541,7 +441,7 @@ public class MvcEarnActivity extends AppCompatActivity {
                     return;
                 }
 
-                JSONObject result = new JSONObject(resp.toString());
+                JSONObject result = new JSONObject(resp.body);
                 boolean alreadyChecked = result.optBoolean("already_checked", false);
                 final int earned = result.optInt("earned", 0);
 

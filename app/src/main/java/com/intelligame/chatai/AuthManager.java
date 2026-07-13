@@ -433,4 +433,95 @@ public class AuthManager {
         void onSuccess(String newAccessToken, String newRefreshToken);
         void onFailure(String error);
     }
+
+    public static class HttpResponse {
+        public int statusCode;
+        public String body;
+        public HttpURLConnection connection;
+    }
+
+    public HttpResponse requestWithRefresh(String urlStr, String method, String jsonBody, int timeout) throws Exception {
+        HttpResponse first = doRequest(urlStr, method, jsonBody, timeout);
+        if (first.statusCode == 401 && refreshTokenSync()) {
+            HttpResponse second = doRequest(urlStr, method, jsonBody, timeout);
+            first.connection.disconnect();
+            return second;
+        }
+        return first;
+    }
+
+    private HttpResponse doRequest(String urlStr, String method, String jsonBody, int timeout) throws Exception {
+        URL url = new URL(urlStr);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod(method);
+        conn.setConnectTimeout(timeout);
+        conn.setReadTimeout(timeout);
+        String token = getAccessToken();
+        if (!token.isEmpty()) {
+            conn.setRequestProperty("Authorization", "Bearer " + token);
+        }
+        if (jsonBody != null) {
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            OutputStream os = conn.getOutputStream();
+            os.write(jsonBody.getBytes());
+            os.close();
+        }
+        int code = conn.getResponseCode();
+        InputStream is = code >= 200 && code < 300 ? conn.getInputStream() : conn.getErrorStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder resp = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) resp.append(line);
+        reader.close();
+
+        HttpResponse result = new HttpResponse();
+        result.statusCode = code;
+        result.body = resp.toString();
+        result.connection = conn;
+        return result;
+    }
+
+    private boolean refreshTokenSync() {
+        String refreshTok = getRefreshToken();
+        if (refreshTok.isEmpty()) return false;
+        try {
+            URL url = new URL(baseUrl + "/auth/refresh");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            JSONObject body = new JSONObject();
+            body.put("refresh_token", refreshTok);
+            OutputStream os = conn.getOutputStream();
+            os.write(body.toString().getBytes());
+            os.close();
+
+            int code = conn.getResponseCode();
+            if (code == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder resp = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) resp.append(line);
+                reader.close();
+
+                JSONObject json = new JSONObject(resp.toString());
+                String newAccess = json.getString("access_token");
+                String newRefresh = json.getString("refresh_token");
+                prefs.edit()
+                        .putString(KEY_ACCESS_TOKEN, newAccess)
+                        .putString(KEY_REFRESH_TOKEN, newRefresh)
+                        .apply();
+                conn.disconnect();
+                return true;
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            Log.e(TAG, "Refresh token sync failed", e);
+        }
+        return false;
+    }
 }
