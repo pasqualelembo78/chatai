@@ -78,11 +78,12 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        if (password.length() < 8) {
-            mPasswordView.setError("Minimo 8 caratteri");
-            mPasswordView.requestFocus();
-            return;
-        }
+        // DEV MODE: skip min length check
+        // if (password.length() < 8) {
+        //     mPasswordView.setError("Minimo 8 caratteri");
+        //     mPasswordView.requestFocus();
+        //     return;
+        // }
 
         setLoading(true);
         final String serverUrl = getEffectiveServerUrl();
@@ -94,12 +95,13 @@ public class LoginActivity extends Activity {
                 runOnUiThread(() -> {
                     setLoading(false);
                     saveServerUrl(serverUrl);
-                    if (!role.equals("admin") && !role.equals("moderator")) {
-                        Toast.makeText(LoginActivity.this,
-                                "Accesso negato. Solo amministratori possono accedere.", Toast.LENGTH_LONG).show();
-                        mAuth.logout();
-                        return;
-                    }
+                    // DEV MODE: skip role check
+                    // if (!role.equals("admin") && !role.equals("moderator")) {
+                    //     Toast.makeText(LoginActivity.this,
+                    //             "Accesso negato. Solo amministratori possono accedere.", Toast.LENGTH_LONG).show();
+                    //     mAuth.logout();
+                    //     return;
+                    // }
                     startMainActivity();
                 });
             }

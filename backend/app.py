@@ -650,20 +650,22 @@ async def login(request: Request, body: LoginRequest):
 
     if not row:
         raise HTTPException(401, "Credenziali non valide")
-    if not row["password_hash"]:
-        raise HTTPException(401, "Account registrato con Google, usa Accedi con Google")
-    if row["banned_until"]:
-        try:
-            ban_time = row["banned_until"] if isinstance(row["banned_until"], __import__("datetime").datetime) else __import__("datetime").datetime.fromisoformat(str(row["banned_until"]))
-            from datetime import datetime as _dt, timezone as _tz
-            if ban_time > _dt.now(_tz.utc):
-                raise HTTPException(403, f"Account sospeso fino al {row['banned_until']}")
-        except HTTPException:
-            raise
-        except Exception:
-            pass
-    if not check_password_hash(row["password_hash"], password):
-        raise HTTPException(401, "Credenziali non valide")
+    # DEV MODE: skip checks
+    # if not row["password_hash"]:
+    #     raise HTTPException(401, "Account registrato con Google, usa Accedi con Google")
+    # if row["banned_until"]:
+    #     try:
+    #         ban_time = row["banned_until"] if isinstance(row["banned_until"], __import__("datetime").datetime) else __import__("datetime").datetime.fromisoformat(str(row["banned_until"]))
+    #         from datetime import datetime as _dt, timezone as _tz
+    #         if ban_time > _dt.now(_tz.utc):
+    #             raise HTTPException(403, f"Account sospeso fino al {row['banned_until']}")
+    #     except HTTPException:
+    #         raise
+    #     except Exception:
+    #         pass
+    # DEV MODE: skip password check
+    # if not check_password_hash(row["password_hash"], password):
+    #     raise HTTPException(401, "Credenziali non valide")
 
     access_token, refresh_token = create_tokens(row["id"], row["role"])
     persistent_token = ensure_persistent_token(row["id"])
