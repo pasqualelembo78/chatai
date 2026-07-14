@@ -59,6 +59,203 @@ def load_gen_status():
     return {}
 
 
+# ─── Key Rotation System ──────────────────────────────────────────
+class KeyRotator:
+    """Rotatore automatico di API keys con gestione rate limit."""
+    
+    def __init__(self, keys, provider_name=""):
+        self.keys = [k for k in keys if k and k.strip()]
+        self.provider_name = provider_name
+        self.current_index = 0
+        self.failed_keys = {}  # {key: retry_after_timestamp}
+    
+    def get_current_key(self):
+        """Restituisce la key attiva attualmente."""
+        if not self.keys:
+            return None
+        
+        now = time.time()
+        # Cerca la prima key non bloccata
+        for i in range(len(self.keys)):
+            idx = (self.current_index + i) % len(self.keys)
+            key = self.keys[idx]
+            if key not in self.failed_keys or now >= self.failed_keys[key]:
+                self.current_index = idx
+                return key
+        
+        # Tutte le key sono bloccate
+        return None
+    
+    def wait_for_available_key(self, max_wait=300):
+        """Aspetta fino a quando una key diventa disponibile.
+        
+        Args:
+            max_wait: Secondi massimi di attesa (default 5 minuti)
+        
+        Returns:
+            La key disponibile o None se timeout
+        """
+        if not self.keys:
+            return None
+        
+        # Calcola quanto tempo aspettare
+        now = time.time()
+        wait_times = []
+        for key in self.keys:
+            if key in self.failed_keys:
+                wait_times.append(self.failed_keys[key] - now)
+        
+        if not wait_times:
+            # Nessuna key bloccata
+            return self.get_current_key()
+        
+        # Aspetta il tempo necessario (almeno 5 secondi, massimo max_wait)
+        wait_time = max(5, min(min(wait_times) + 2, max_wait))
+        
+        print(f"\n  ⏳ {self.provider_name}: tutte le keys sono bloccate.")
+        print(f"  ⏳ Aspetto {wait_time:.0f} secondi prima di riprovare...")
+        print(f"  ⏳ (Ctrl+C per interrompere)")
+        
+        try:
+            time.sleep(wait_time)
+        except KeyboardInterrupt:
+            print(f"\n  ⚠️  Interrutto dall'utente")
+            return None
+        
+        # Riprova dopo l'attesa
+        return self.get_current_key()
+    
+    def report_failure(self, key, retry_after=60):
+        """Segna una key come fallita (rate limit)."""
+        self.failed_keys[key] = time.time() + retry_after
+        print(f"  ⚠️  {self.provider_name} key {key[:12]}... bloccata per {retry_after}s")
+        
+        # Cerca la prossima key disponibile
+        next_key = self.get_current_key()
+        if next_key and next_key != key:
+            print(f"  🔄 Passo alla key successiva: {next_key[:12]}...")
+        elif not next_key:
+            print(f"  ❌ Tutte le {self.provider_name} keys sono bloccate!")
+        
+        return next_key
+    
+    def report_success(self, key):
+        """Rimuove la key dalla lista delle bloccate."""
+        if key in self.failed_keys:
+            del self.failed_keys[key]
+    
+    def available_keys(self):
+        """Numero di keys disponibili (non bloccate)."""
+        now = time.time()
+        return sum(1 for k in self.keys if k not in self.failed_keys or now >= self.failed_keys[k])
+    
+    def all_blocked(self):
+        """True se tutte le keys sono bloccate."""
+        return self.available_keys() == 0
+
+
+class ProviderRotator:
+    """Rotatore tra provider LLM multipli con fallback automatico.
+    
+    Esempio: Groq → Together AI → Cerebras → SambaNova → OpenRouter
+    """
+    
+    def __init__(self):
+        self.providers = []
+        self.current_provider_idx = 0
+    
+    def add_provider(self, name, api_key, model, base_url, headers_func=None, payload_func=None):
+        """Aggiunge un provider alla lista."""
+        if api_key and api_key.strip():
+            self.providers.append({
+                "name": name,
+                "api_key": api_key.strip(),
+                "model": model,
+                "base_url": base_url,
+                "headers_func": headers_func,
+                "payload_func": payload_func
+            })
+    
+    def get_current_provider(self):
+        """Restituisce il provider attivo."""
+        if not self.providers:
+            return None
+        return self.providers[self.current_provider_idx]
+    
+    def rotate_to_next(self):
+        """Passa al provider successivo."""
+        if len(self.providers) > 1:
+            self.current_provider_idx = (self.current_provider_idx + 1) % len(self.providers)
+            return self.get_current_provider()
+        return None
+    
+    def call(self, prompt, max_tokens=800, temperature=0.8):
+        """Chiama il provider corrente con fallback automatico.
+        
+        Returns:
+            dict con il testo della risposta o None se fallisce
+        """
+        import requests
+        
+        attempts = 0
+        max_attempts = len(self.providers) * 2  # Due cicli completi
+        
+        while attempts < max_attempts:
+            provider = self.get_current_provider()
+            if not provider:
+                print(f"  ❌ Nessun provider LLM disponibile")
+                return None
+            
+            try:
+                # Costruisci headers
+                if provider["headers_func"]:
+                    headers = provider["headers_func"](provider["api_key"])
+                else:
+                    headers = {
+                        "Authorization": f"Bearer {provider['api_key']}",
+                        "Content-Type": "application/json"
+                    }
+                
+                # Costruisci payload
+                if provider["payload_func"]:
+                    payload = provider["payload_func"](prompt, provider["model"], max_tokens, temperature)
+                else:
+                    payload = {
+                        "model": provider["model"],
+                        "messages": [{"role": "user", "content": prompt}],
+                        "temperature": temperature,
+                        "max_tokens": max_tokens,
+                    }
+                
+                resp = requests.post(
+                    provider["base_url"],
+                    headers=headers, json=payload, timeout=30
+                )
+                resp.encoding = "utf-8"
+                
+                if resp.status_code == 200:
+                    content = resp.json()["choices"][0]["message"]["content"]
+                    return {"text": content, "provider": provider["name"]}
+                elif resp.status_code == 429:
+                    print(f"  ⚠️  {provider['name']} rate limited, provo il prossimo...")
+                    self.rotate_to_next()
+                    attempts += 1
+                    continue
+                else:
+                    print(f"  ⚠️  {provider['name']} errore {resp.status_code}: {resp.text[:100]}")
+                    self.rotate_to_next()
+                    attempts += 1
+                    continue
+            except Exception as e:
+                print(f"  ⚠️  {provider['name']} eccezione: {e}")
+                self.rotate_to_next()
+                attempts += 1
+                continue
+        
+        print(f"  ❌ Tutti i provider LLM falliti dopo {max_attempts} tentativi")
+        return None
+
+
 def save_gen_status(status):
     """Salva lo stato delle generazioni su file."""
     tmp = STATUS_FILE + ".tmp"
@@ -109,6 +306,91 @@ if os.path.isfile(ENV_FILE):
             if line and not line.startswith("#") and "=" in line:
                 key, val = line.split("=", 1)
                 os.environ.setdefault(key.strip(), val.strip())
+
+# ─── Inizializza Key Rotators ─────────────────────────────────────
+def get_api_keys(env_var, single_var=None):
+    """Carica multiple keys da env (separate da virgola) o singola key."""
+    keys = []
+    # Prova prima la variabile multipla (es. GROQ_API_KEYS)
+    multi_var = env_var + "S"  # GROQ_API_KEYS
+    multi_val = os.environ.get(multi_var, "")
+    if multi_val:
+        keys = [k.strip() for k in multi_val.split(",") if k.strip()]
+    # Fallback alla singola key
+    if not keys and single_var:
+        single_val = os.environ.get(single_var, "")
+        if single_val:
+            keys = [single_val]
+    return keys
+
+# Inizializza i rotators per chiavi
+groq_keys = get_api_keys("GROQ_API_KEY", "GROQ_API_KEY")
+pexels_keys = get_api_keys("PEXELS_API_KEY", "PEXELS_API_KEY")
+
+groq_rotator = KeyRotator(groq_keys, "Groq") if groq_keys else None
+pexels_rotator = KeyRotator(pexels_keys, "Pexels") if pexels_keys else None
+
+# Inizializza il rotatore provider LLM (fallback tra provider diversi)
+llm_provider_rotator = ProviderRotator()
+
+# 1. Groq (primario) - aggiungi tutte le keys
+for key in groq_keys:
+    llm_provider_rotator.add_provider(
+        name=f"Groq",
+        api_key=key,
+        model="llama-3.3-70b-versatile",
+        base_url="https://api.groq.com/openai/v1/chat/completions"
+    )
+
+# 2. Google Gemini (fallback) - se configurato
+gemini_key = os.environ.get("GEMINI_API_KEY", "")
+if gemini_key:
+    def gemini_headers(api_key):
+        return {"Content-Type": "application/json", "x-goog-api-key": api_key}
+    def gemini_payload(prompt, model, max_tokens, temperature):
+        return {
+            "model": "gemini-1.5-flash",
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"maxOutputTokens": max_tokens, "temperature": temperature}
+        }
+    llm_provider_rotator.add_provider(
+        name="Google Gemini",
+        api_key=gemini_key,
+        model="gemini-1.5-flash",
+        base_url="https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+        headers_func=gemini_headers,
+        payload_func=gemini_payload
+    )
+
+# 3. Cerebras (fallback) - se configurato
+cerebras_key = os.environ.get("CEREBRAS_API_KEY", "")
+if cerebras_key:
+    llm_provider_rotator.add_provider(
+        name="Cerebras",
+        api_key=cerebras_key,
+        model="llama-3.3-70b-versatile",
+        base_url="https://api.cerebras.ai/v1/chat/completions"
+    )
+
+# 4. SambaNova (fallback) - se configurato
+sambanova_key = os.environ.get("SAMBANOVA_API_KEY", "")
+if sambanova_key:
+    llm_provider_rotator.add_provider(
+        name="SambaNova",
+        api_key=sambanova_key,
+        model="Meta-Llama-3.3-70B-Instruct",
+        base_url="https://api.sambanova.ai/v1/chat/completions"
+    )
+
+# 5. Mistral AI (fallback) - se configurato
+mistral_key = os.environ.get("MISTRAL_API_KEY", "")
+if mistral_key:
+    llm_provider_rotator.add_provider(
+        name="Mistral AI",
+        api_key=mistral_key,
+        model="mistral-large-latest",
+        base_url="https://api.mistral.ai/v1/chat/completions"
+    )
 
 MODELS = {
     "flux-schnell": "black-forest-labs/FLUX.1-schnell",
@@ -499,14 +781,33 @@ def generate_image_free(model_id, char_id, char_name, prompt=None, api_key=None,
     if not negative_prompt:
         negative_prompt = get_negative_prompt()
 
-    # 1. Prova Pexels prima (foto reali, non AI)
-    pexels_key = os.environ.get('PEXELS_API_KEY', '')
-    if pexels_key and model_id in ["free", "pexels", "pollinations"]:
+    # 1. Prova Pexels prima (foto reali, non AI) con key rotation
+    if pexels_rotator and model_id in ["free", "pexels", "pollinations"]:
         # Costruisci keyword basata su carattere
         keyword = build_pexels_keyword(char_name, prompt, char_id, char)
-        result = generate_image_pexels(keyword, pexels_key)
-        if result:
-            return result
+        
+        # Prova con tutte le keys disponibili
+        attempts = 0
+        max_attempts = len(pexels_rotator.keys) * 2  # Permetti 2 cicli completi
+        
+        while attempts < max_attempts:
+            pexels_key = pexels_rotator.get_current_key()
+            
+            # Se nessuna key disponibile, aspetta
+            if not pexels_key:
+                pexels_key = pexels_rotator.wait_for_available_key(max_wait=300)
+                if not pexels_key:
+                    print(f"  ❌ Timeout: nessuna key Pexels disponibile dopo 5 minuti")
+                    break
+            
+            result = generate_image_pexels(keyword, pexels_key)
+            if result:
+                pexels_rotator.report_success(pexels_key)
+                return result
+            
+            # Se fallito, prova la prossima key
+            pexels_rotator.report_failure(pexels_key, retry_after=60)
+            attempts += 1
     
     # 2. Prova Pollinations (migliore qualità AI)
     if model_id in ["free", "pollinations"]:
@@ -559,8 +860,8 @@ def generate_image_free(model_id, char_id, char_name, prompt=None, api_key=None,
 
 # ─── Generazione biografia italiana con Groq ──────────────────────
 
-def generate_italian_biography(char, groq_token):
-    """Genera biografia completa in italiano usando Groq API."""
+def generate_italian_biography(char, groq_token=None):
+    """Genera biografia completa in italiano usando provider LLM multipli con fallback."""
     import requests
 
     prompt = f"""Sei uno scrittore creativo specializzato in personaggi per roleplay interattivo.
@@ -591,29 +892,43 @@ Importante:
 - I valori devono essere coerenti con l'età e il ruolo
 - Esempio valido: 'È notte fonda. Luna è seduta da sola al bancone di un bar quasi vuoto, la chitarra acustica sulle ginocchia. tu entri nel locale e incroci il suo sguardo.'"""
 
-    headers = {"Authorization": f"Bearer {groq_token}", "Content-Type": "application/json"}
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.8,
-        "max_tokens": 800,
-    }
-
-    try:
-        resp = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers=headers, json=payload, timeout=30
-        )
-        resp.encoding = "utf-8"
-        if resp.status_code != 200:
-            print(f"  Errore Groq {resp.status_code}: {resp.text[:200]}")
+    # Usa il rotatore provider LLM multipli (Groq → Gemini → Cerebras → SambaNova → Mistral)
+    if llm_provider_rotator.providers:
+        result = llm_provider_rotator.call(prompt, max_tokens=800, temperature=0.8)
+        if result and result.get("text"):
+            print(f"  📡 Provider utilizzato: {result.get('provider', 'sconosciuto')}")
+            return parse_biography_response(result["text"])
+        else:
+            print(f"  ❌ Tutti i provider LLM falliti")
             return None
-
-        content = resp.json()["choices"][0]["message"]["content"]
-        return parse_biography_response(content)
-    except Exception as e:
-        print(f"  Errore generazione biografia: {e}")
-        return None
+    
+    # Fallback: usa la singola key fornita
+    elif groq_token:
+        headers = {"Authorization": f"Bearer {groq_token}", "Content-Type": "application/json"}
+        payload = {
+            "model": "llama-3.3-70b-versatile",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.8,
+            "max_tokens": 800,
+        }
+        
+        try:
+            resp = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers, json=payload, timeout=30
+            )
+            resp.encoding = "utf-8"
+            if resp.status_code != 200:
+                print(f"  Errore Groq {resp.status_code}: {resp.text[:200]}")
+                return None
+            
+            content = resp.json()["choices"][0]["message"]["content"]
+            return parse_biography_response(content)
+        except Exception as e:
+            print(f"  Errore generazione biografia: {e}")
+            return None
+    
+    return None
 
 
 def parse_biography_response(text):
@@ -655,8 +970,8 @@ def parse_biography_response(text):
     return result
 
 
-def generate_italian_description_only(char, groq_token):
-    """Genera solo la descrizione in italiano usando Groq API."""
+def generate_italian_description_only(char, groq_token=None):
+    """Genera solo la descrizione in italiano usando provider LLM multipli con fallback."""
     import requests
 
     prompt = f"""Sei uno scrittore creativo. Genera una descrizione breve e accattivante in ITALIANO per il seguente personaggio.
@@ -676,33 +991,52 @@ Importante:
 - La descrizione deve essere breve e d'impatto
 - Deve catturare l'essenza del personaggio"""
 
-    headers = {"Authorization": f"Bearer {groq_token}", "Content-Type": "application/json"}
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.7,
-        "max_tokens": 150,
-    }
-
-    try:
-        resp = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers=headers, json=payload, timeout=20
-        )
-        resp.encoding = "utf-8"
-        if resp.status_code != 200:
-            print(f"  Errore Groq {resp.status_code}: {resp.text[:200]}")
+    # Usa il rotatore provider LLM multipli
+    if llm_provider_rotator.providers:
+        result = llm_provider_rotator.call(prompt, max_tokens=150, temperature=0.7)
+        if result and result.get("text"):
+            print(f"  📡 Provider utilizzato: {result.get('provider', 'sconosciuto')}")
+            content = result["text"]
+            # Estrai solo la descrizione
+            for line in content.strip().split("\n"):
+                if line.upper().startswith("DESCRIPTION:"):
+                    return line[len("DESCRIPTION:"):].strip()
+            return content.strip()
+        else:
+            print(f"  ❌ Tutti i provider LLM falliti")
             return None
-
-        content = resp.json()["choices"][0]["message"]["content"]
-        # Estrai solo la descrizione
-        for line in content.strip().split("\n"):
-            if line.upper().startswith("DESCRIPTION:"):
-                return line[len("DESCRIPTION:"):].strip()
-        return content.strip()
-    except Exception as e:
-        print(f"  Errore generazione descrizione: {e}")
-        return None
+    
+    # Fallback: usa la singola key
+    elif groq_token:
+        headers = {"Authorization": f"Bearer {groq_token}", "Content-Type": "application/json"}
+        payload = {
+            "model": "llama-3.3-70b-versatile",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.7,
+            "max_tokens": 150,
+        }
+        
+        try:
+            resp = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers=headers, json=payload, timeout=20
+            )
+            resp.encoding = "utf-8"
+            if resp.status_code != 200:
+                print(f"  Errore Groq {resp.status_code}: {resp.text[:200]}")
+                return None
+            
+            content = resp.json()["choices"][0]["message"]["content"]
+            # Estrai solo la descrizione
+            for line in content.strip().split("\n"):
+                if line.upper().startswith("DESCRIPTION:"):
+                    return line[len("DESCRIPTION:"):].strip()
+            return content.strip()
+        except Exception as e:
+            print(f"  Errore generazione descrizione: {e}")
+            return None
+    
+    return None
 
 
 def _load_category_json(cat_name):
@@ -1082,15 +1416,14 @@ def cmd_generate(args):
     # Pollinations API key opzionale (per limiti migliori)
     pollinations_key = os.environ.get("POLLINATIONS_API_KEY", "")
 
-    groq_token = args.groq_token or os.environ.get("GROQ_API_KEY", "")
-    if not groq_token:
-        groq_path = os.path.join(ROOT, "backend", ".env")
-        if os.path.isfile(groq_path):
-            with open(groq_path) as f:
-                for line in f:
-                    if line.startswith("GROQ_API_KEY="):
-                        groq_token = line.split("=", 1)[1].strip()
-                        break
+    # Info sulle keys e provider disponibili
+    if groq_rotator:
+        print(f"  📊 Groq keys: {len(groq_rotator.keys)} caricate, {groq_rotator.available_keys()} disponibili")
+    if pexels_rotator:
+        print(f"  📊 Pexels keys: {len(pexels_rotator.keys)} caricate, {pexels_rotator.available_keys()} disponibili")
+    if llm_provider_rotator.providers:
+        provider_names = list(set([p["name"] for p in llm_provider_rotator.providers]))
+        print(f"  📊 Provider LLM: {', '.join(provider_names)} ({len(llm_provider_rotator.providers)} totali)")
 
     chars = parse_characters()
 
@@ -1197,7 +1530,7 @@ def cmd_generate(args):
             print(f"  ⏳ Attesa 3 sec (rate limit Pexels)...")
             time.sleep(3)
 
-        if args.bio and groq_token:
+        if args.bio and (groq_rotator or groq_token):
             # Controlla limite biografie
             bio_limit = args.bio_limit if hasattr(args, 'bio_limit') and args.bio_limit > 0 else 0
             if bio_limit > 0 and bio_count >= bio_limit:
@@ -1208,7 +1541,7 @@ def cmd_generate(args):
                 print(f"  Biografia già flaggata 'fatto'. Salto (usa --force per rigenerare).")
                 continue
             print(f"  Genero biografia italiana...")
-            bio = generate_italian_biography(char, groq_token)
+            bio = generate_italian_biography(char)
             if bio:
                 try:
                     update_characters_py_full(char["id"], bio, force=force)

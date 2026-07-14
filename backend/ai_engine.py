@@ -24,6 +24,88 @@ GROQ_CHAT_MODELS = [
     "meta-llama/llama-4-scout-17b-16e-instruct",
 ]
 
+# ─── Key Rotation per Chat ──────────────────────────────────────
+class ChatKeyRotator:
+    """Rotatore di API keys per la chat con gestione rate limit."""
+    
+    def __init__(self):
+        self.keys = []
+        self.current_index = 0
+        self.failed_keys = {}  # {key: retry_after_timestamp}
+        self._loaded = False
+    
+    def _ensure_loaded(self):
+        """Carica le keys solo quando necessario (lazy loading)."""
+        if self._loaded:
+            return
+        
+        # Prova la variabile multipla
+        multi_val = os.environ.get("GROQ_API_KEYS", "")
+        if multi_val:
+            self.keys = [k.strip() for k in multi_val.split(",") if k.strip()]
+        
+        # Fallback alla singola key
+        if not self.keys:
+            single_val = os.environ.get("GROQ_API_KEY", "")
+            if single_val:
+                self.keys = [single_val]
+        
+        self._loaded = True
+        if self.keys:
+            logger.info(f"Chat Groq key rotator: {len(self.keys)} keys loaded")
+    
+    def get_key(self):
+        """Restituisce la prossima key disponibile."""
+        self._ensure_loaded()
+        
+        if not self.keys:
+            return None
+        
+        now = time.time()
+        # Cerca la prima key non bloccata
+        for i in range(len(self.keys)):
+            idx = (self.current_index + i) % len(self.keys)
+            key = self.keys[idx]
+            if key not in self.failed_keys or now >= self.failed_keys[key]:
+                self.current_index = idx
+                return key
+        
+        # Tutte le key sono bloccate - aspetta la prima che si libera
+        return self._wait_for_key()
+    
+    def _wait_for_key(self, max_wait=30):
+        """Aspetta brevemente per una key disponibile."""
+        if not self.keys:
+            return None
+        
+        now = time.time()
+        wait_times = []
+        for key in self.keys:
+            if key in self.failed_keys:
+                wait_times.append(self.failed_keys[key] - now)
+        
+        if not wait_times:
+            return self.keys[0]
+        
+        # Aspetta al massimo max_wait secondi
+        wait_time = max(1, min(min(wait_times) + 1, max_wait))
+        time.sleep(wait_time)
+        
+        return self.get_key()
+    
+    def report_failure(self, key, retry_after=30):
+        """Segna una key come fallita (rate limit)."""
+        self.failed_keys[key] = time.time() + retry_after
+        logger.warning(f"Chat Groq key {key[:12]}... rate limited, retry after {retry_after}s")
+    
+    def report_success(self, key):
+        """Rimuove la key dalla lista delle bloccate."""
+        if key in self.failed_keys:
+            del self.failed_keys[key]
+
+# Istanza globale per la chat
+_chat_key_rotator = ChatKeyRotator()
+
 # ─── Model Discovery Cache ───────────────────────────────────────
 
 _MODEL_CACHE = {}
@@ -1225,45 +1307,92 @@ GROQ_MODELS = [
 
 
 def _groq_key(user_id=None):
+    """Restituisce la prossima key Groq disponibile con rotazione."""
     if user_id:
         k = _get_user_api_key(user_id, "groq")
         if k:
             return k
-    return os.environ.get("GROQ_API_KEY", "")
+    # Usa il rotatore per ottenere la prossima key disponibile
+    return _chat_key_rotator.get_key() or os.environ.get("GROQ_API_KEY", "")
 
 
 def _groq_generate(messages, model, user_id=None):
-    key = _groq_key(user_id)
-    if not key:
-        logger.error("Groq API key not set")
-        return None
-    try:
-        resp = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-            json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
-            timeout=60
-        )
-        resp.encoding = "utf-8"
-        if resp.status_code == 200:
-            return resp.json()["choices"][0]["message"]["content"]
-        logger.error(f"Groq error: {resp.status_code} {resp.text}")
-        return None
-    except Exception as e:
-        logger.error(f"Groq request failed: {e}")
-        return None
+    """Genera risposta usando Groq con rotazione automatica delle keys."""
+    max_attempts = len(_chat_key_rotator.keys) if _chat_key_rotator.keys else 1
+    
+    for attempt in range(max_attempts):
+        key = _groq_key(user_id)
+        if not key:
+            logger.error("Groq API key not set")
+            return None
+        
+        try:
+            resp = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
+                timeout=60
+            )
+            resp.encoding = "utf-8"
+            if resp.status_code == 200:
+                _chat_key_rotator.report_success(key)
+                return resp.json()["choices"][0]["message"]["content"]
+            elif resp.status_code == 429:
+                # Rate limit - prova la prossima key
+                _chat_key_rotator.report_failure(key, retry_after=30)
+                logger.warning(f"Groq rate limited on attempt {attempt + 1}, trying next key...")
+                continue
+            else:
+                logger.error(f"Groq error: {resp.status_code} {resp.text}")
+                return None
+        except Exception as e:
+            logger.error(f"Groq request failed: {e}")
+            return None
+    
+    logger.error("All Groq keys exhausted")
+    return None
 
 
 def _groq_generate_stream(messages, model, user_id=None):
-    key = _groq_key(user_id)
-    if not key:
-        return
-    yield from _stream_openai_compatible(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        {"messages": messages, "temperature": 0.9, "max_tokens": 200},
-        model
-    )
+    """Genera risposta streaming usando Groq con rotazione automatica delle keys."""
+    max_attempts = len(_chat_key_rotator.keys) if _chat_key_rotator.keys else 1
+    
+    for attempt in range(max_attempts):
+        key = _groq_key(user_id)
+        if not key:
+            return
+        
+        try:
+            # Testa la key con una richiesta breve
+            resp = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                json={"model": model, "messages": messages[:1], "temperature": 0.9, "max_tokens": 10},
+                timeout=10
+            )
+            
+            if resp.status_code == 429:
+                _chat_key_rotator.report_failure(key, retry_after=30)
+                logger.warning(f"Groq streaming rate limited on attempt {attempt + 1}, trying next key...")
+                continue
+            elif resp.status_code == 200:
+                _chat_key_rotator.report_success(key)
+                # Key valida, procedi con lo streaming completo
+                yield from _stream_openai_compatible(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    {"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    {"messages": messages, "temperature": 0.9, "max_tokens": 200},
+                    model
+                )
+                return
+            else:
+                # Altro errore, prova la prossima key
+                continue
+        except Exception as e:
+            logger.error(f"Groq streaming test failed: {e}")
+            continue
+    
+    logger.error("All Groq keys exhausted for streaming")
 
 
 register_provider({
