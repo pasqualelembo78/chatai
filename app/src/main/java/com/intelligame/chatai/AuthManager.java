@@ -188,6 +188,10 @@ public class AuthManager {
                 .apply();
     }
 
+    public void logout() {
+        clear();
+    }
+
     public String getAuthorizationHeader() {
         String token = getAccessToken();
         if (token.isEmpty()) return "";
