@@ -47,6 +47,11 @@ def get_conn():
 
 def put_conn(conn):
     if _pool and conn:
+        try:
+            if conn.status != psycopg2.extensions.STATUS_READY:
+                conn.rollback()
+        except Exception:
+            pass
         _pool.putconn(conn)
 
 

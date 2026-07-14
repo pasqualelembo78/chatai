@@ -49,10 +49,12 @@ def init_auth_db():
             )
         """)
         # Add persistent_token column if missing (migration)
-        try:
+        cur.execute("""
+            SELECT column_name FROM information_schema.columns
+            WHERE table_name = 'users' AND column_name = 'persistent_token'
+        """)
+        if not cur.fetchone():
             cur.execute("ALTER TABLE users ADD COLUMN persistent_token TEXT UNIQUE")
-        except Exception:
-            pass  # Column already exists
         cur.execute("""
             CREATE TABLE IF NOT EXISTS refresh_tokens (
                 id TEXT PRIMARY KEY,
