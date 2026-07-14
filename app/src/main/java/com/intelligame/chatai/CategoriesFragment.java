@@ -1,5 +1,6 @@
 package com.intelligame.chatai;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -36,12 +37,29 @@ public class CategoriesFragment extends Fragment {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private List<HomeFragment.Category> categories = new ArrayList<>();
+    private List<CatItem> categories = new ArrayList<>();
     private CategoryGridAdapter gridAdapter;
 
     private boolean showingCharacters = false;
     private List<HomeFragment.CharacterItem> currentCategoryCharacters = new ArrayList<>();
     private CharacterListAdapter listAdapter;
+
+    // Model for categories with count and locked status
+    static class CatItem {
+        String id, name, icon;
+        boolean locked, premium;
+        int mvcCost, characterCount;
+
+        CatItem(String id, String name, String icon, boolean locked, boolean premium, int mvcCost, int characterCount) {
+            this.id = id;
+            this.name = name;
+            this.icon = icon;
+            this.locked = locked;
+            this.premium = premium;
+            this.mvcCost = mvcCost;
+            this.characterCount = characterCount;
+        }
+    }
 
     @Nullable
     @Override
@@ -86,18 +104,19 @@ public class CategoriesFragment extends Fragment {
                 String json = httpGetWithAuthRefresh(baseUrl + "/categories");
                 if (json != null) {
                     JSONArray arr = new JSONArray(json);
-                    List<HomeFragment.Category> list = new ArrayList<>();
+                    List<CatItem> list = new ArrayList<>();
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
                         String id = obj.optString("id");
                         if ("per_te".equals(id)) continue;
-                        list.add(new HomeFragment.Category(
+                        list.add(new CatItem(
                             id,
                             obj.optString("name"),
                             obj.optString("icon", "\uD83D\uDCCC"),
-                            obj.optBoolean("premium", false),
                             obj.optBoolean("locked", false),
-                            obj.optInt("mvc_cost", 0)
+                            obj.optBoolean("premium", false),
+                            obj.optInt("mvc_cost", 0),
+                            obj.optInt("character_count", 0)
                         ));
                     }
                     mainHandler.post(() -> {
@@ -123,39 +142,46 @@ public class CategoriesFragment extends Fragment {
 
     private void loadOfflineCategories() {
         categories.clear();
-        categories.add(new HomeFragment.Category("romance", "Romantici", "\uD83D\uDC95"));
-        categories.add(new HomeFragment.Category("fantasy", "Fantasy", "\uD83E\uDDD9"));
-        categories.add(new HomeFragment.Category("anime", "Anime", "\uD83C\uDFB5"));
-        categories.add(new HomeFragment.Category("gamer", "Videogiochi", "\uD83C\uDFAE"));
-        categories.add(new HomeFragment.Category("storia", "Storici", "\uD83C\uDFDB\uFE0F"));
-        categories.add(new HomeFragment.Category("sci_fi", "Fantascienza", "\uD83D\uDE80"));
-        categories.add(new HomeFragment.Category("horror", "Horror", "\uD83D\uDC7B"));
-        categories.add(new HomeFragment.Category("detective", "Mistero", "\uD83D\uDD75\uFE0F"));
-        categories.add(new HomeFragment.Category("amicizia", "Amicizia", "\uD83E\uDD1D"));
-        categories.add(new HomeFragment.Category("sport", "Sport", "\u26BD"));
-        categories.add(new HomeFragment.Category("cucina", "Cucina", "\uD83C\uDF73"));
-        categories.add(new HomeFragment.Category("medicina", "Medicina", "\uD83C\uDFE5"));
-        categories.add(new HomeFragment.Category("tecnologia", "Tecnologia", "\uD83D\uDCBB"));
-        categories.add(new HomeFragment.Category("creativi", "Creativi", "\uD83C\uDFA8"));
-        categories.add(new HomeFragment.Category("relazioni", "Relazioni", "\uD83D\uDC91"));
-        categories.add(new HomeFragment.Category("motivazione", "Motivazione", "\uD83D\uDCAA"));
-        categories.add(new HomeFragment.Category("scuola", "Scuola", "\uD83C\uDF93"));
-        categories.add(new HomeFragment.Category("viaggi", "Viaggi", "\uD83D\uDEE2\uFE0F"));
-        categories.add(new HomeFragment.Category("seduzione", "Seduzione", "\uD83D\uDE08"));
-        categories.add(new HomeFragment.Category("sopravvivenza", "Sopravvivenza", "\uD83C\uDFD4\uFE0F"));
-        categories.add(new HomeFragment.Category("business", "Business", "\uD83D\uDCBC"));
-        categories.add(new HomeFragment.Category("premium", "Premium", "\uD83D\uDC8E"));
+        categories.add(new CatItem("romantici", "Romantici", "\uD83D\uDC95", false, false, 0, 0));
+        categories.add(new CatItem("amicizia", "Amicizia", "\uD83E\uDD1D", false, false, 0, 0));
+        categories.add(new CatItem("fantasy", "Fantasy", "\uD83E\uDDD9", false, false, 0, 0));
+        categories.add(new CatItem("horror", "Horror", "\uD83D\uDC7B", true, false, 200, 0));
+        categories.add(new CatItem("anime", "Anime", "\uD83C\uDFB5", false, false, 0, 0));
+        categories.add(new CatItem("gamer", "Gamer", "\uD83C\uDFAE", false, false, 0, 0));
+        categories.add(new CatItem("detective", "Detective", "\uD83D\uDD75\uFE0F", false, false, 0, 0));
+        categories.add(new CatItem("flirt", "Flirt", "\uD83D\uDE08", true, false, 300, 0));
+        categories.add(new CatItem("seduzione", "Seduzione", "\uD83D\uDE08", true, false, 500, 0));
+        categories.add(new CatItem("sport", "Sport", "\u26BD", false, false, 0, 0));
+        categories.add(new CatItem("cucina", "Cucina", "\uD83C\uDF73", false, false, 0, 0));
+        categories.add(new CatItem("medicina", "Medicina", "\uD83C\uDFE5", false, false, 0, 0));
+        categories.add(new CatItem("tecnologia", "Tecnologia", "\uD83D\uDCBB", false, false, 0, 0));
+        categories.add(new CatItem("creativi", "Creativi", "\uD83C\uDFA8", false, false, 0, 0));
+        categories.add(new CatItem("relazioni", "Relazioni", "\uD83D\uDC91", true, false, 300, 0));
+        categories.add(new CatItem("motivazione", "Motivazione", "\uD83D\uDCAA", false, false, 0, 0));
+        categories.add(new CatItem("scuola", "Scuola", "\uD83C\uDF93", false, false, 0, 0));
+        categories.add(new CatItem("viaggi", "Viaggi", "\uD83D\uDEE2\uFE0F", false, false, 0, 0));
+        categories.add(new CatItem("sopravvivenza", "Sopravvivenza", "\uD83C\uDFD4\uFE0F", false, false, 0, 0));
+        categories.add(new CatItem("business", "Business", "\uD83D\uDCBC", false, false, 0, 0));
+        categories.add(new CatItem("storia", "Storia", "\uD83C\uDFDB\uFE0F", false, false, 0, 0));
+        categories.add(new CatItem("supereroi", "Supereroi", "\uD83D\uDEE1\uFE0F", false, false, 0, 0));
+        categories.add(new CatItem("sci_fi", "Fantascienza", "\uD83D\uDE80", false, false, 0, 0));
+        categories.add(new CatItem("confessioni", "Confessioni", "\uD83D\uDE48", true, false, 300, 0));
+        categories.add(new CatItem("premium", "Premium", "\uD83D\uDC8E", false, true, 0, 0));
         gridAdapter.notifyDataSetChanged();
     }
 
-    private void loadCharactersForCategory(String categoryId) {
+    private void loadCharactersForCategory(String categoryId, boolean locked) {
+        if (locked) {
+            // TODO: show unlock dialog
+            return;
+        }
         showingCharacters = true;
-        titleText.setText(categories.stream()
-            .filter(c -> c.id.equals(categoryId))
-            .map(c -> c.icon + " " + c.name)
-            .findFirst()
-            .orElse("Personaggi"));
-        backButton.setText("←");
+        CatItem selected = null;
+        for (CatItem c : categories) {
+            if (c.id.equals(categoryId)) { selected = c; break; }
+        }
+        titleText.setText(selected != null ? selected.icon + " " + selected.name : "Personaggi");
+        backButton.setText("\u2190");
 
         currentCategoryCharacters.clear();
         listAdapter.notifyDataSetChanged();
@@ -165,7 +191,7 @@ public class CategoriesFragment extends Fragment {
 
         executor.execute(() -> {
             try {
-                String url = baseUrl + "/characters?category=" + categoryId + "&limit=100&offset=0";
+                String url = baseUrl + "/characters?category=" + categoryId + "&limit=200&offset=0";
                 String json = httpGetWithAuthRefresh(url);
                 if (json != null) {
                     JSONArray arr = new JSONArray(json);
@@ -191,7 +217,7 @@ public class CategoriesFragment extends Fragment {
     private void showCategoriesView() {
         showingCharacters = false;
         titleText.setText("Categorie");
-        backButton.setText("←");
+        backButton.setText("\u2190");
         categoriesRecycler.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         categoriesRecycler.setAdapter(gridAdapter);
     }
@@ -227,28 +253,28 @@ public class CategoriesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
-            HomeFragment.Category cat = categories.get(position);
+            CatItem cat = categories.get(position);
             holder.icon.setText(cat.icon);
             holder.name.setText(cat.name);
-            holder.count.setText("Carica...");
-            holder.itemView.setOnClickListener(v -> loadCharactersForCategory(cat.id));
 
-            // Load character count
-            executor.execute(() -> {
-                try {
-                    String url = baseUrl + "/characters?category=" + cat.id + "&limit=1&offset=0";
-                    String json = httpGetWithAuthRefresh(url);
-                    if (json != null) {
-                        JSONArray arr = new JSONArray(json);
-                        int total = arr.length();
-                        mainHandler.post(() -> {
-                            if (holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
-                                holder.count.setText(total + " personaggi");
-                            }
-                        });
-                    }
-                } catch (Exception ignored) {}
-            });
+            if (cat.characterCount > 0) {
+                holder.count.setText(cat.characterCount + " personaggi");
+            } else {
+                holder.count.setText("Carica...");
+            }
+
+            if (cat.locked) {
+                holder.name.setPaintFlags(holder.name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.count.setText("\uD83D\uDD12 " + cat.mvcCost + " MVC per sbloccare");
+                holder.count.setTextColor(0xFFFF9800); // orange
+                holder.itemView.setAlpha(0.7f);
+            } else {
+                holder.name.setPaintFlags(holder.name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.count.setTextColor(0xFF6B6B80); // on_surface_dim
+                holder.itemView.setAlpha(1.0f);
+            }
+
+            holder.itemView.setOnClickListener(v -> loadCharactersForCategory(cat.id, cat.locked));
         }
 
         @Override

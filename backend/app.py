@@ -401,18 +401,26 @@ async def api_categories(
         except Exception:
             pass
     cats = get_categories()
+    unlocks = set()
     if user:
-        prefs = get_user_preferences(user.user_id)
-        unlocks = {u["content_id"] for u in get_user_unlocks(user.user_id) if u["content_type"] == "category"}
-        result = []
-        for c in cats:
-            entry = dict(c)
-            mvc_cost = c.get("mvc_cost", 0)
-            entry["locked"] = mvc_cost > 0 and c["id"] not in unlocks
-            result.append(entry)
-        return result
-    cats = [c for c in cats if not c.get("adult") and not c.get("mvc_cost")]
-    return cats
+        try:
+            prefs = get_user_preferences(user.user_id)
+            unlocks = {u["content_id"] for u in get_user_unlocks(user.user_id) if u["content_type"] == "category"}
+        except Exception:
+            pass
+    result = []
+    for c in cats:
+        entry = dict(c)
+        mvc_cost = c.get("mvc_cost", 0)
+        entry["locked"] = mvc_cost > 0 and c["id"] not in unlocks
+        # Count characters in this category
+        from characters import get_characters_by_category
+        try:
+            entry["character_count"] = len(get_characters_by_category(c["id"]))
+        except Exception:
+            entry["character_count"] = 0
+        result.append(entry)
+    return result
 
 @app.get("/providers")
 async def api_providers():
