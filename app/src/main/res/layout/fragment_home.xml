@@ -71,6 +71,8 @@
         android:nestedScrollingEnabled="false"
         android:orientation="horizontal"
         android:visibility="gone"
+        android:alpha="0"
+        android:importantForAccessibility="no"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <ProgressBar

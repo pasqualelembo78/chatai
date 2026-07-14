@@ -496,7 +496,7 @@ public class HomeFragment extends Fragment {
 
         selectedSearchFilterId = null;
         searchFilterAdapter.setSelected(0);
-        searchFiltersRecycler.setVisibility(searchFilters.size() > 1 ? View.VISIBLE : View.GONE);
+        searchFiltersRecycler.setVisibility(View.GONE);
         searchFilterAdapter.notifyDataSetChanged();
     }
 
