@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Admin Panel</string>
-    <string name="title_activity_login">Admin Login</string>
+    <string name="app_name">Aria Admin</string>
+    <string name="title_activity_login">Aria Admin Login</string>
     <string name="action_leave">Leave</string>
     <string name="action_send">Send</string>
     <string name="action_settings">Settings</string>

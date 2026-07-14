@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'com.intelligame.chatai'
+    namespace 'com.intelligame.chatadmin'
     compileSdk 35
 
     signingConfigs {
@@ -14,7 +14,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.intelligame.chatai'
+        applicationId 'com.intelligame.chatadmin'
         minSdkVersion 21
         targetSdkVersion 35
         versionCode 2

@@ -1,4 +1,4 @@
-package com.intelligame.chatai;
+package com.intelligame.chatadmin;
 
 import android.graphics.Color;
 import android.os.Bundle;

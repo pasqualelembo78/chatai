@@ -6,7 +6,7 @@
 
     <application
         android:allowBackup="true"
-        android:name="com.intelligame.chatai.ChatApplication"
+        android:name="com.intelligame.chatadmin.ChatApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"

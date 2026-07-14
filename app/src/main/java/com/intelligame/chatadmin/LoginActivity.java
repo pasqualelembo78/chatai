@@ -1,4 +1,4 @@
-package com.intelligame.chatai;
+package com.intelligame.chatadmin;
 
 import android.app.Activity;
 import android.content.Intent;

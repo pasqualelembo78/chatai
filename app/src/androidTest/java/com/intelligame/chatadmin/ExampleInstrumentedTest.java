@@ -1,4 +1,4 @@
-package com.intelligame.chatia;
+package com.intelligame.chatadmin;
 
 import android.content.Context;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -15,6 +15,6 @@ public class ExampleInstrumentedTest {
     @Test
     public void useAppContext() throws Exception {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.intelligame.chatia", appContext.getPackageName());
+        assertEquals("com.intelligame.chatadmin", appContext.getPackageName());
     }
 }
