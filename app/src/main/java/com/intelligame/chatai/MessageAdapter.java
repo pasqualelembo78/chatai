@@ -291,6 +291,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (isMine) {
                 mContainer.setGravity(Gravity.END);
                 mMessageView.setBackgroundResource(R.drawable.bubble_user);
+                mMessageView.setTextColor(0xFF1E1E2E); // Dark text for white bubble
                 if (mUsernameView != null) {
                     mUsernameView.setVisibility(View.GONE);
                 }
@@ -300,6 +301,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             } else {
                 mContainer.setGravity(Gravity.START);
                 mMessageView.setBackgroundResource(R.drawable.bubble_ai);
+                mMessageView.setTextColor(0xFFFFFFFF); // White text for dark bubble
                 if (mUsernameView != null) {
                     mUsernameView.setVisibility(View.GONE);
                 }
