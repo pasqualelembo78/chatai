@@ -517,6 +517,46 @@
                     android:textSize="13sp"
                     android:visibility="gone" />
 
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/detail_scenario_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="@color/surface_container"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ambientazione"
+                            android:textColor="@color/primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/detail_scenario"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:maxLines="3"
+                            android:ellipsize="end"
+                            android:textColor="@color/on_surface_variant"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"

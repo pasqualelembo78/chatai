@@ -705,6 +705,23 @@ def count_messages(user_id, character_id):
         put_conn(conn)
 
 
+def has_scenario_message(user_id, character_id):
+    """True se esiste già almeno un messaggio di sistema (scenario) per
+    questa coppia utente/character, indipendentemente da quanti messaggi
+    sono stati scambiati. Evita che lo scenario venga reinserito a ogni
+    rientro nella chat."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT 1 FROM messages WHERE user_id=%s AND character_id=%s AND role='system' LIMIT 1",
+            (user_id, character_id)
+        )
+        return cur.fetchone() is not None
+    finally:
+        put_conn(conn)
+
+
 def count_all_user_messages(user_id):
     conn = get_conn()
     try:

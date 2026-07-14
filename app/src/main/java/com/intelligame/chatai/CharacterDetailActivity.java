@@ -42,8 +42,8 @@ public class CharacterDetailActivity extends AppCompatActivity {
     private TextView avatarEmoji, name, author, description, descriptionFull, tags;
     private TextView ageRole, categoryBadge;
     private TextView statsInteractions, statsLikes;
-    private TextView backstory, hobbies, personality;
-    private CardView backstoryCard, evolutionCard;
+    private TextView backstory, hobbies, personality, scenario;
+    private CardView backstoryCard, scenarioCard, evolutionCard;
     private TextView evoStageIcon, evoStageName, evoProgressText;
     private TextView evoUnlockedLabel, evoUnlockedList, evoNextLabel, evoNextName;
     private android.widget.ProgressBar evoProgress;
@@ -144,6 +144,8 @@ public class CharacterDetailActivity extends AppCompatActivity {
         // Details tab
         backstory = findViewById(R.id.detail_backstory);
         backstoryCard = findViewById(R.id.detail_backstory_card);
+        scenario = findViewById(R.id.detail_scenario);
+        scenarioCard = findViewById(R.id.detail_scenario_card);
         hobbies = findViewById(R.id.detail_hobbies);
         personality = findViewById(R.id.detail_personality);
 
@@ -292,6 +294,15 @@ public class CharacterDetailActivity extends AppCompatActivity {
                 backstory.setMaxLines(Integer.MAX_VALUE);
             } else {
                 backstory.setMaxLines(3);
+            }
+        });
+
+        // Scenario expand
+        scenarioCard.setOnClickListener(v -> {
+            if (scenario.getMaxLines() == 3) {
+                scenario.setMaxLines(Integer.MAX_VALUE);
+            } else {
+                scenario.setMaxLines(3);
             }
         });
     }
@@ -475,6 +486,15 @@ public class CharacterDetailActivity extends AppCompatActivity {
             backstoryCard.setVisibility(View.VISIBLE);
         } else {
             backstoryCard.setVisibility(View.GONE);
+        }
+
+        // Scenario
+        String scenarioStr = obj.optString("opening_scenario", "");
+        if (!scenarioStr.isEmpty()) {
+            scenario.setText(scenarioStr);
+            scenarioCard.setVisibility(View.VISIBLE);
+        } else {
+            scenarioCard.setVisibility(View.GONE);
         }
 
         // Hobbies

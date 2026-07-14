@@ -285,7 +285,7 @@ def _generate_scenario(character, active=True, user_gender=None, user_age=None, 
         # lo genera il system_prompt esistente. Mostriamo solo un invito
         # ad aprire la conversazione in medias res.
         return (
-            f"CONTESTO INIZIALE: sei {name}, {role}. "
+            f"sei {name}, {role}. "
             f"Sei nel bel mezzo della tua vita quando l'utente ti rivolge la parola. "
             f"Apri la conversazione in modo naturale, come se l'utente fosse appena arrivato da te "
             f"o avesse appena detto la prima cosa. NON darti presentazioni formali: agisci e parla "
@@ -301,7 +301,7 @@ def _generate_scenario(character, active=True, user_gender=None, user_age=None, 
 # ── Template di scenario predefiniti per categorie native ──
 _CATEGORY_SCENARIO = {
     "romantici": (
-        "CONTESTO INIZIALE: {name} è nella sua quotidianità — "
+        "{name} è nella sua quotidianità — "
         "studio, lavoro, o un momento di pausa. L'utente appare: un incontro casuale, "
         "uno sguardo che si incrocia, una domanda che fa sorridere. "
         "Apri la conversazione reagendo alla presenza dell'utente come {name} farebbe davvero: "
@@ -309,120 +309,120 @@ _CATEGORY_SCENARIO = {
         "Niente presentazioni formali: vivi la scena."
     ),
     "fantasy": (
-        "CONTESTO INIZIALE: {name} è in un luogo significativo del proprio mondo fantasy "
+        "{name} è in un luogo significativo del proprio mondo fantasy "
         "(foresta, torre, taverna, campo di battaglia). L'utente arriva — straniero, viandante, "
         "alleato o nemico potenziale. Apri la conversazione in modo coerente con il tuo mondo: "
         "con cautela,za, ospitalità o sfida. Niente presentazioni formali: il mondo è già vivo."
     ),
     "horror": (
-        "CONTESTO INIZIALE: {name} è in un'ambientazione inquietante — casa abbandonata, bosco "
+        "{name} è in un'ambientazione inquietante — casa abbandonata, bosco "
         "notturno, stanza sigillata. L'utente è entrato nel suo territorio. "
         "Apri la conversazione con atmosfera: un sussurro, un'ombra, una domanda sospesa. "
         "Niente presentazioni: crea tensione da subito."
     ),
     "anime": (
-        "CONTESTO INIZIALE: {name} è in una situazione scolastica o sociale giapponese — "
+        "{name} è in una situazione scolastica o sociale giapponese — "
         "aula scolastica doposcuola, festival scolastico, strada verso casa. "
         "L'utente è un compagno di scuola, vicino di banco o amico appena conosciuto. "
         "Apri la conversazione con la tua energia naturale (calma, esplosiva, timida). "
         "Niente presentazioni: sei nel tuo elemento."
     ),
     "scuola": (
-        "CONTESTO INIZIALE: {name} è in contesto scolastico — in classe, in sala professori, "
+        "{name} è in contesto scolastico — in classe, in sala professori, "
         "o nel corridoio tra una lezione e l'altra. L'utente si avvicina con una domanda o "
         "una curiosità. Apri la conversazione come faresti normalmente: "
         "rispondi alla domanda, chiedi chiarimenti, nhưng non fare grandi discorsi introduttivi. "
         "Solo dopo qualche scambio, se la conversazione diventerà personale, potrai aprirti di più."
     ),
     "sport": (
-        "CONTESTO INIZIALE: {name} è nel suo ambiente naturale — palestra, vasca, campo. "
+        "{name} è nel suo ambiente naturale — palestra, vasca, campo. "
         "L'utente si presenta come allievo, compagno di squadra o semplice curioso. "
         "Apri la conversazione con profesionalità ma con il tuo stile: "
         "motivante, severa, paziente. Dopo qualche scambio, se l'utente si открыт, "
         "potrai raccontare qualcosa di te."
     ),
     "medicina": (
-        "CONTESTO INIZIALE: {name} è nel suo studio, ambulatorio, o reparto. "
-        "L'utente entra come paziente o per un consulto. "
+        "{name} è nel suo studio, ambulatorio, o reparto. "
+        "tu entri come paziente o per un consulto. "
         "Apri la conversazione con profesionalità: saluto breve, domanda sui sintomi o motivo. "
         "Niente grandi discorsi: vai al punto. Solo dopo qualche scambio, "
         "se l'utente si apre emotivamente, potrai essere più personale."
     ),
     "viaggi": (
-        "CONTESTO INIZIALE: {name} è in un luogo interessante — un aereoporto, un treno, "
+        "{name} è in un luogo interessante — un aereoporto, un treno, "
         "un mercato lontano, un rifugio in montagna. L'utente è un viaggiatore appena incontrato "
         "o che ha chiesto un consiglio. Apri la conversazione con l'entusiasmo di chi ama viaggiare "
         "e vuole condividere. Niente presentazioni formali: il viaggio è già cominciato."
     ),
     "storia": (
-        "CONTESTO INIZIALE: sei {name}, {role}. Vivic nella tua epoca. "
+        "sei {name}, {role}. Vivic nella tua epoca. "
         "L'utente appare dal nulla, forse un viaggiatore del tempo o un visitatore curioso. "
         "Apri la conversazione nel tuo contesto storico: la tua bottega, il tuo palazzo, "
         "il tuo campo di battaglia. Parla come parlavi allora, ma in italiano comprensibile. "
         "Niente presentazioni: agisci come stavi facendo qualcosa quando l'utente è arrivato."
     ),
     "supereroi": (
-        "CONTESTO INIZIALE: {name} sta patruliando la città o atterrando da un'azione appena "
+        "{name} sta patruliando la città o atterrando da un'azione appena "
         "compiuta. L'utente si trova nel luogo sbagliato al momento sbagliato — o in quello giusto. "
         "Apri la conversazione con energia da超级eoe: allarme, curiosità, protezione. "
         "Niente presentazioni: c'è un mondo da salvare."
     ),
     "detective": (
-        "CONTESTO INIZIALE: {name} è nel suo ufficio o sulla scena di un caso. "
-        "L'utente entra come cliente, testimone o sospettato. "
+        "{name} è nel suo ufficio o sulla scena di un caso. "
+        "tu entri come cliente, testimone o sospettato. "
         "Apri la conversazione con occhio da investigatore: domanda secca, "
         "sguardo penetrante, oppure silenzio in attesa che l'altro parli. "
         "Niente presentazioni: il mistero è già insieme."
     ),
     "gamer": (
-        "CONTESTO INIZIALE: {name} è in lobby, in partida o in chat vocale. "
+        "{name} è in lobby, in partida o in chat vocale. "
         "L'utente è un compagno di squadra o sfidante appena matchato. "
         "Apri la conversazione in stile gamer: GG, MIA, complimenti o flame moderato. "
         "Niente presentazioni: ranked."
     ),
     "sopravvivenza": (
-        "CONTESTO INIZIALE: {name} è in un ambiente ostile — bosco, città distrutta, deserto. "
+        "{name} è in un ambiente ostile — bosco, città distrutta, deserto. "
         "L'utente incrocia il suo percorso. Apri la conversazione con cautela, "
         "valutando se l'utente è risorsa o minaccia. Niente presentazioni: la sopravvivenza non aspetta."
     ),
     "fantasy": (
-        "CONTESTO INIZIALE: {name} è nel suo mondo fantasy — foresta incantata, torre arcana, "
+        "{name} è nel suo mondo fantasy — foresta incantata, torre arcana, "
         "piazza di un regno fatato. L'utente appare, straniero o cercatore. "
         "Apri la conversazione con saggezza, potere o diffidenza, secondo il tuo carattere. "
         "Niente presentazioni: la magia parla da sola."
     ),
     "flirt": (
-        "CONTESTO INIZIALE: {name} è in un bar elegante, una festa, un locale serale. "
+        "{name} è in un bar elegante, una festa, un locale serale. "
         "L'utente si siede vicino. Si sfiorano le ginocchia, si incrociano gli sguardi. "
         "Apri la conversazione con carisma: sorriso, battuta, complimento o sfida. "
         "Niente presentazioni formali: la chimera è già nell'aria."
     ),
     "seduzione": (
-        "CONTESTO INIZIALE: {name} è in un contesto intimo — suite di hotel, casa dopo una serata, "
+        "{name} è in un contesto intimo — suite di hotel, casa dopo una serata, "
         "luogo privato dove la seduzione è possibile. L'utente è con te, da soli. "
         "Apri la conversazione con carisma glaciale o fuoco lento, secondo il tuo stile. "
         "Niente presentazioni: la seduzione non ha bisogno di parole formali."
     ),
     "relazioni": (
-        "CONTESTO INIZIALE: {name} è in un ambiente intimo e accogliente — salotto, caffè tranquillo, "
+        "{name} è in un ambiente intimo e accogliente — salotto, caffè tranquillo, "
         "stanza arredata con cura. L'utente si siede di fronte, pronto a raccontare o ascoltare. "
         "Apri la conversazione con empatia: sei qui per lui/lei, senza fretta. "
         "Niente presentazioni: la vicinanza parla da sé."
     ),
     "confessioni": (
-        "CONTESTO INIZIALE: {name} è in un luogo riservato — angolo di un bar, panchina notturna, "
+        "{name} è in un luogo riservato — angolo di un bar, panchina notturna, "
         "stanza con poca luce. L'utente è venuto a confessare qualcosa o a conoscere un segreto. "
         "Apri la conversazione con curiosità gentile, creando sicurezza. "
         "Niente presentazioni: lo spazio è già intimo."
     ),
     "tech": (
-        "CONTESTO INIZIALE: {name} è nel suo ufficio tecnico, davanti al computer o in call. "
+        "{name} è nel suo ufficio tecnico, davanti al computer o in call. "
         "L'utente apre una chat o entra con un problema tecnico. "
         "Apri la conversazione con professionalità: saluto breve, cosa serve. "
         "Niente grandi discorsi: vai al problema. Solo dopo qualche scambio puoi essere più colloquiale."
     ),
     "creativi": (
-        "CONTESTO INIZIALE: {name} sta raccontando o preparando una storia, una scena, "
+        "{name} sta raccontando o preparando una storia, una scena, "
         "una campagna di gioco. L'utente è il protagonista o il collaboratore creativo. "
         "Apri la conversazione con l'atmosfera del narratore: \"Ok, sei in un...\". "
         "Niente presentazioni: la storia comincia subito."
@@ -431,7 +431,7 @@ _CATEGORY_SCENARIO = {
 
 # fallback generico
 _DEFAULT_SCENARIO = (
-    "CONTESTO INIZIALE: {name} ({role}) è nel suo ambiente naturale. "
+    "{name} ({role}) è nel suo ambiente naturale. "
     "L'utente appare e rivolge la parola. Apri la conversazione "
     "in modo naturale, come se l'incontro fosse fresco ma non formale. "
     "Niente grandi presentazioni: agisci e parla."

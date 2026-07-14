@@ -40,7 +40,7 @@ from storage import (
     get_personality, update_personality, describe_personality,
     update_intimacy, update_pressure_level,
     get_world_state, save_world_state,
-    add_message, get_recent_messages, count_messages,
+    add_message, get_recent_messages, count_messages, has_scenario_message,
     add_memory, get_memories, get_last_summary_checkpoint,
     record_personality_shift, get_recent_shifts,
     get_user_memory, update_user_memory, reset_user_memory,
@@ -2272,31 +2272,7 @@ async def on_add_user(sid, data):
         return
     greeted_users.add(greet_key)
 
-    from scenario_engine import get_opening_scenario, classify_character
     total_msgs = count_messages(user_id, character_id)
-
-    has_scenario = any(
-        m["role"] == "system"
-        for m in get_recent_messages(user_id, character_id, limit=5)
-    )
-
-    if not has_scenario:
-        user_gender = user_age = sexual_orientation = None
-        if user_id:
-            prefs = get_user_preferences(user_id)
-            user_gender = prefs.get("user_gender") or None
-            user_age = prefs.get("user_age") or None
-            sexual_orientation = prefs.get("sexual_orientation") or None
-
-        scenario_text = get_opening_scenario(character, total_msgs,
-                                              user_gender=user_gender,
-                                              user_age=user_age,
-                                              sexual_orientation=sexual_orientation)
-        if scenario_text:
-            add_message(user_id, character_id, "system", scenario_text)
-            await sio.emit("new message", {
-                "username": "system", "message": scenario_text, "is_roleplay": False, "is_scenario": True
-            }, room=sid)
 
     if total_msgs == 0:
         greeting = _generate_greeting(character, character_name, username, user_id=user_id)
@@ -2355,6 +2331,40 @@ async def on_new_message(sid, data):
     if result.get("generated_video"):
         response_data["generated_video"] = result["generated_video"]
     await sio.emit("new message", response_data, room=sid)
+
+@sio.on("get scenario")
+async def on_get_scenario(sid, data):
+    """Invia lo scenario di apertura quando l'utente lo richiede dal menu."""
+    user_id = user_rooms.get(sid)
+    if not user_id:
+        await sio.emit("error", {"message": "Not logged in"}, room=sid)
+        return
+    character_id = data.get("character", "")
+    character = get_character(character_id)
+    if not character:
+        await sio.emit("error", {"message": "Character not found"}, room=sid)
+        return
+    from scenario_engine import get_opening_scenario
+    total_msgs = count_messages(user_id, character_id)
+    user_gender = user_age = sexual_orientation = None
+    prefs = get_user_preferences(user_id)
+    user_gender = prefs.get("user_gender") or None
+    user_age = prefs.get("user_age") or None
+    sexual_orientation = prefs.get("sexual_orientation") or None
+    scenario_text = get_opening_scenario(character, total_msgs,
+                                          user_gender=user_gender,
+                                          user_age=user_age,
+                                          sexual_orientation=sexual_orientation)
+    if scenario_text:
+        await sio.emit("scenario content", {
+            "character": character_id,
+            "message": scenario_text
+        }, room=sid)
+    else:
+        await sio.emit("scenario content", {
+            "character": character_id,
+            "message": ""
+        }, room=sid)
 
 @sio.on("stream message")
 async def on_stream_message(sid, data):
@@ -2609,9 +2619,30 @@ def _generate_greeting(character, character_name, username=None, user_id=None):
     sp = build_system_prompt(character, {"emotion": "neutral", "intensity": 0}, rel, pers, ws,
                              username=username, user_gender=user_gender, user_age=user_age,
                              sexual_orientation=sexual_orientation)
-    prompt = "Inizia la conversazione presentandoti in modo naturale e coinvolgente, come faresti nella vita reale. Non usare frasi fatte. Sii creativo e coerente con il tuo personaggio."
-    if username:
-        prompt = f"La persona con cui parli si chiama {username}. {prompt}"
+
+    # Determina livello di familiarità
+    msg_count = count_messages(user_id, character["id"]) if user_id else 0
+    if msg_count == 0:
+        warmth = "stranger"
+        warmth_desc = "Non hai mai parlato con questa persona. Fai una prima presentazione breve e naturale."
+    elif msg_count <= 10:
+        warmth = "acquaintance"
+        warmth_desc = f"Conosci appena {username}. Saluta in modo cordiale ma non eccessivo."
+    elif msg_count <= 50:
+        warmth = "friend"
+        warmth_desc = f"Sei abbastanza in confidenza con {username}. Saluta con calore, mostra che sei contento di rivederlo/a."
+    elif msg_count <= 100:
+        warmth = "close_friend"
+        warmth_desc = f"Tu e {username} avete una bella amicizia. Saluta con affetto genuino, come faresti con un amico caro."
+    else:
+        warmth = "best_friend"
+        warmth_desc = f"Tu e {username} siete molto legati. Saluta con grande affetto e intimità, come una persona cara che non vedi da tempo."
+
+    prompt = (
+        f"Livello di familiarità: {warmth}. {warmth_desc}\n"
+        f"Saluta {username} in modo naturale e coerente con il tuo personaggio. "
+        f"Non usare frasi fatte. Sii creativo. Massimo 1-2 frasi."
+    )
     msgs = [{"role": "system", "content": sp}, {"role": "user", "content": prompt}]
     ai_text, _, _ = get_ai_response(msgs, user_id=user_id)
     if ai_text:

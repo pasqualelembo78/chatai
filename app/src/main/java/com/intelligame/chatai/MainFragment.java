@@ -165,6 +165,7 @@ public class MainFragment extends Fragment {
         mSocket.on("stop typing", onStopTyping);
         mSocket.on("login", onAutoLogin);
         mSocket.on("pong", onPong);
+        mSocket.on("scenario content", onScenarioContent);
         mSocket.connect();
     }
 
@@ -557,7 +558,9 @@ public class MainFragment extends Fragment {
         String[] options = {
             "Ricomincia chat",
             "Storia della chat",
+            "Guarda scenario",
             "Elimina chat",
+            "Copia chat",
             "Gioco",
             "AvatarMix",
             "Bobine",
@@ -572,22 +575,28 @@ public class MainFragment extends Fragment {
                 case 1: // Storia della chat
                     showChatHistory();
                     break;
-                case 2: // Elimina chat
+                case 2: // Guarda scenario
+                    requestScenario();
+                    break;
+                case 3: // Elimina chat
                     confirmDeleteChat();
                     break;
-                case 3: // Gioco
+                case 4: // Copia chat
+                    copyChat();
+                    break;
+                case 5: // Gioco
                     if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Game Center in arrivo", Toast.LENGTH_SHORT).show();
                     break;
-                case 4: // AvatarMix
+                case 6: // AvatarMix
                     if (!isAdded()) return;
                     Toast.makeText(getActivity(), "AvatarMix in arrivo", Toast.LENGTH_SHORT).show();
                     break;
-                case 5: // Bobine
+                case 7: // Bobine
                     if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Bobine in arrivo", Toast.LENGTH_SHORT).show();
                     break;
-                case 6: // Canzone
+                case 8: // Canzone
                     if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Canzone in arrivo", Toast.LENGTH_SHORT).show();
                     break;
@@ -646,6 +655,47 @@ public class MainFragment extends Fragment {
             .show();
     }
 
+    private void requestScenario() {
+        if (mSocket == null || !mSocket.connected()) {
+            if (!isAdded()) return;
+            Toast.makeText(getActivity(), "Non connesso al server", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        JSONObject data = new JSONObject();
+        try {
+            data.put("character", mCharacterId);
+        } catch (JSONException e) {
+            return;
+        }
+        mSocket.emit("get scenario", data);
+        if (!isAdded()) return;
+        Toast.makeText(getActivity(), "Caricamento scenario...", Toast.LENGTH_SHORT).show();
+    }
+
+    private Emitter.Listener onScenarioContent = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            safeRunOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    try {
+                        String message = data.getString("message");
+                        if (message == null || message.isEmpty()) {
+                            if (isAdded()) {
+                                Toast.makeText(getActivity(), "Nessuno scenario disponibile", Toast.LENGTH_SHORT).show();
+                            }
+                            return;
+                        }
+                        addLog("Ambientazione: " + message);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Scenario parse error: " + e.getMessage());
+                    }
+                }
+            });
+        }
+    };
+
     private void confirmDeleteChat() {
         new android.app.AlertDialog.Builder(getActivity())
             .setTitle("Elimina chat")
@@ -662,6 +712,57 @@ public class MainFragment extends Fragment {
             })
             .setNegativeButton("Annulla", null)
             .show();
+    }
+
+    private void copyChat() {
+        if (!isAdded()) return;
+        if (mMessages == null || mMessages.isEmpty()) {
+            Toast.makeText(getActivity(), "Nessun messaggio da copiare", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        String myUser = mUsername != null ? mUsername : "";
+        String charName = mCharacterName != null ? mCharacterName : "Personaggio";
+        for (Message msg : mMessages) {
+            if (msg == null) continue;
+            int type = msg.getType();
+            if (type == Message.TYPE_ACTION) {
+                continue;
+            }
+            String text = msg.getMessage();
+            if (text == null || text.isEmpty()) continue;
+
+            if (type == Message.TYPE_LOG) {
+                sb.append(text);
+            } else {
+                String sender;
+                String u = msg.getUsername();
+                if (u != null && u.equals(myUser)) {
+                    sender = "Tu";
+                } else if (u != null && !u.isEmpty()) {
+                    sender = u;
+                } else {
+                    sender = charName;
+                }
+                sb.append(sender).append(": ").append(text);
+            }
+            sb.append("\n\n");
+        }
+
+        if (sb.length() == 0) {
+            Toast.makeText(getActivity(), "Nessun messaggio da copiare", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("chat", sb.toString().trim());
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(getActivity(), "Chat copiata", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Copia non riuscita", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void openGameCenter() {
@@ -915,6 +1016,7 @@ public class MainFragment extends Fragment {
         mSocket.on("stop typing", onStopTyping);
         mSocket.on("login", onAutoLogin);
         mSocket.on("pong", onPong);
+        mSocket.on("scenario content", onScenarioContent);
     }
 
     // ---------------------------------------------------------------
