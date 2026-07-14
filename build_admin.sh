@@ -28,7 +28,7 @@ SERVER_URL="http://82.165.218.56"
 echo -e "  Server: ${GREEN}$SERVER_URL${NC}"
 
 # ─── Aggiorna Constants.java ─────────────────────────────────────
-CONSTANTS_FILE="$ROOT_DIR/app/src/main/java/com/intelligame/chatai/Constants.java"
+CONSTANTS_FILE="$ROOT_DIR/app/src/main/java/com/intelligame/chatadmin/Constants.java"
 if [ -f "$CONSTANTS_FILE" ]; then
     sed -i "s|DEFAULT_SERVER_URL = \".*\"|DEFAULT_SERVER_URL = \"$SERVER_URL\"|" "$CONSTANTS_FILE"
     echo -e "  Constants.java: ${GREEN}OK${NC}"
