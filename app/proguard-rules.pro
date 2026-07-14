@@ -36,3 +36,12 @@
     public static int d(...);
     public static int i(...);
 }
+
+# Keep Tink crypto (used by security-crypto)
+-keep class com.google.crypto.tink.** { *; }
+-dontwarn com.google.crypto.tink.**
+
+# Ignore missing javax.annotation classes (Tink references)
+-dontwarn javax.annotation.**
+-dontwarn javax.annotation.concurrent.**
+-dontwarn org.checkerframework.**
