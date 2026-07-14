@@ -1342,6 +1342,11 @@ def _groq_generate(messages, model, user_id=None):
                 _chat_key_rotator.report_failure(key, retry_after=30)
                 logger.warning(f"Groq rate limited on attempt {attempt + 1}, trying next key...")
                 continue
+            elif resp.status_code == 401:
+                # Key non valida - prova la prossima
+                _chat_key_rotator.report_failure(key, retry_after=9999)
+                logger.warning(f"Groq invalid key (401) on attempt {attempt + 1}, trying next key...")
+                continue
             else:
                 logger.error(f"Groq error: {resp.status_code} {resp.text}")
                 return None
@@ -1374,6 +1379,10 @@ def _groq_generate_stream(messages, model, user_id=None):
             if resp.status_code == 429:
                 _chat_key_rotator.report_failure(key, retry_after=30)
                 logger.warning(f"Groq streaming rate limited on attempt {attempt + 1}, trying next key...")
+                continue
+            elif resp.status_code == 401:
+                _chat_key_rotator.report_failure(key, retry_after=9999)
+                logger.warning(f"Groq streaming invalid key (401) on attempt {attempt + 1}, trying next key...")
                 continue
             elif resp.status_code == 200:
                 _chat_key_rotator.report_success(key)

@@ -20,6 +20,7 @@ import uuid
 import threading
 import time
 import base64
+import hashlib
 from typing import Optional
 from functools import wraps
 
@@ -798,7 +799,6 @@ async def reauth(request: Request):
 
 @app.post("/auth/logout")
 async def logout(request: Request, body: LogoutRequest):
-    import hashlib
     token = None
     auth_header = request.headers.get("Authorization", "")
     if auth_header.startswith("Bearer "):
