@@ -26,18 +26,13 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
         ChatApplication app = (ChatApplication) getApplication();
         mAuth = app.getAuthManager();
         mPrefs = app.getPrefs();
 
-        if (mAuth.isLoggedIn()) {
-            checkAdminAndStart();
-            return;
-        }
-
-        initViews();
+        // DEV MODE: skip login, go straight to main
+        startMainActivity();
     }
 
     private void initViews() {
