@@ -26,6 +26,7 @@ public class AuthManager {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_ROLE = "role";
     private static final String KEY_EMAIL = "email";
+    private static final String KEY_PERSISTENT_TOKEN = "persistent_token";
 
     private SharedPreferences prefs;
     private final String baseUrl;
@@ -77,6 +78,10 @@ public class AuthManager {
         return prefs.getString(KEY_EMAIL, "");
     }
 
+    public String getPersistentToken() {
+        return prefs.getString(KEY_PERSISTENT_TOKEN, "");
+    }
+
     public void saveTokens(String accessToken, String refreshToken, String userId, String username, String role, String email) {
         prefs.edit()
                 .putString(KEY_ACCESS_TOKEN, accessToken)
@@ -86,6 +91,10 @@ public class AuthManager {
                 .putString(KEY_ROLE, role != null ? role : "user")
                 .putString(KEY_EMAIL, email != null ? email : "")
                 .apply();
+    }
+
+    public void savePersistentToken(String persistentToken) {
+        prefs.edit().putString(KEY_PERSISTENT_TOKEN, persistentToken != null ? persistentToken : "").apply();
     }
 
     public void loginLocal(String username, String serverUrl, AuthCallback callback) {
@@ -126,11 +135,13 @@ public class AuthManager {
                     JSONObject json = new JSONObject(response.toString());
                     String accessToken = json.getString("access_token");
                     String refreshToken = json.getString("refresh_token");
+                    String persistentToken = json.optString("persistent_token", "");
                     JSONObject user = json.getJSONObject("user");
                     String userId = user.getString("id");
                     String role = user.optString("role", "user");
 
                     saveTokens(accessToken, refreshToken, userId, username, role, "");
+                    if (!persistentToken.isEmpty()) savePersistentToken(persistentToken);
                     callback.onSuccess(accessToken, refreshToken, userId, username, role, "");
                 } else {
                     String errMsg = "Errore login locale (" + code + ")";
@@ -173,6 +184,7 @@ public class AuthManager {
                 .remove(KEY_USERNAME)
                 .remove(KEY_ROLE)
                 .remove(KEY_EMAIL)
+                .remove(KEY_PERSISTENT_TOKEN)
                 .apply();
     }
 
@@ -225,6 +237,7 @@ public class AuthManager {
                     JSONObject json = new JSONObject(response.toString());
                     String accessToken = json.getString("access_token");
                     String refreshToken = json.getString("refresh_token");
+                    String persistentToken = json.optString("persistent_token", "");
                     JSONObject user = json.getJSONObject("user");
                     String userId = user.getString("id");
                     String username = user.optString("username", "");
@@ -232,6 +245,7 @@ public class AuthManager {
                     String email = user.optString("email", "");
 
                     saveTokens(accessToken, refreshToken, userId, username, role, email);
+                    if (!persistentToken.isEmpty()) savePersistentToken(persistentToken);
                     callback.onSuccess(accessToken, refreshToken, userId, username, role, email);
                 } else {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
@@ -290,11 +304,13 @@ public class AuthManager {
                     JSONObject json = new JSONObject(response.toString());
                     String accessToken = json.getString("access_token");
                     String refreshToken = json.getString("refresh_token");
+                    String persistentToken = json.optString("persistent_token", "");
                     JSONObject user = json.getJSONObject("user");
                     String userId = user.getString("id");
                     String role = user.optString("role", "user");
 
                     saveTokens(accessToken, refreshToken, userId, username, role, "");
+                    if (!persistentToken.isEmpty()) savePersistentToken(persistentToken);
                     callback.onSuccess(accessToken, refreshToken, userId, username, role, "");
                 } else {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
@@ -353,12 +369,14 @@ public class AuthManager {
                     JSONObject json = new JSONObject(response.toString());
                     String accessToken = json.getString("access_token");
                     String refreshToken = json.getString("refresh_token");
+                    String persistentToken = json.optString("persistent_token", "");
                     JSONObject user = json.getJSONObject("user");
                     String userId = user.getString("id");
                     String role = user.optString("role", "user");
                     String userEmail = user.optString("email", "");
 
                     saveTokens(accessToken, refreshToken, userId, username, role, userEmail);
+                    if (!persistentToken.isEmpty()) savePersistentToken(persistentToken);
                     callback.onSuccess(accessToken, refreshToken, userId, username, role, userEmail);
                 } else {
                     JSONObject err = new JSONObject(response.toString());
@@ -492,18 +510,64 @@ public class AuthManager {
 
     private boolean refreshTokenSync() {
         String refreshTok = getRefreshToken();
-        if (refreshTok.isEmpty()) return false;
+        boolean refreshOk = false;
+        if (!refreshTok.isEmpty()) {
+            try {
+                URL url = new URL(baseUrl + "/auth/refresh");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setDoOutput(true);
+
+                JSONObject body = new JSONObject();
+                body.put("refresh_token", refreshTok);
+                OutputStream os = conn.getOutputStream();
+                os.write(body.toString().getBytes());
+                os.close();
+
+                int code = conn.getResponseCode();
+                if (code == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder resp = new StringBuilder();
+                    // Consume output even on error to avoid leaking sockets
+                    String line;
+                    while ((line = reader.readLine()) != null) resp.append(line);
+                    reader.close();
+
+                    JSONObject json = new JSONObject(resp.toString());
+                    String newAccess = json.getString("access_token");
+                    String newRefresh = json.getString("refresh_token");
+                    prefs.edit()
+                            .putString(KEY_ACCESS_TOKEN, newAccess)
+                            .putString(KEY_REFRESH_TOKEN, newRefresh)
+                            .apply();
+                    refreshOk = true;
+                }
+                conn.disconnect();
+            } catch (Exception e) {
+                Log.w(TAG, "Refresh token sync failed, trying reauth", e);
+            }
+        }
+        if (refreshOk) return true;
+
+        // Fallback: reauth via persistent token (never expires)
+        String persistentTok = getPersistentToken();
+        if (persistentTok == null || persistentTok.isEmpty()) return false;
         try {
-            URL url = new URL(baseUrl + "/auth/refresh");
+            URL url = new URL(baseUrl + "/auth/reauth");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setConnectTimeout(10000);
             conn.setReadTimeout(10000);
             conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
 
             JSONObject body = new JSONObject();
-            body.put("refresh_token", refreshTok);
+            body.put("persistent_token", persistentTok);
             OutputStream os = conn.getOutputStream();
             os.write(body.toString().getBytes());
             os.close();
@@ -528,7 +592,7 @@ public class AuthManager {
             }
             conn.disconnect();
         } catch (Exception e) {
-            Log.e(TAG, "Refresh token sync failed", e);
+            Log.e(TAG, "Reauth via persistent token failed", e);
         }
         return false;
     }

@@ -44,9 +44,15 @@ def init_auth_db():
                 email TEXT DEFAULT '',
                 banned_until TIMESTAMP NULL,
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                last_login TIMESTAMP NULL
+                last_login TIMESTAMP NULL,
+                persistent_token TEXT UNIQUE
             )
         """)
+        # Add persistent_token column if missing (migration)
+        try:
+            cur.execute("ALTER TABLE users ADD COLUMN persistent_token TEXT UNIQUE")
+        except Exception:
+            pass  # Column already exists
         cur.execute("""
             CREATE TABLE IF NOT EXISTS refresh_tokens (
                 id TEXT PRIMARY KEY,
@@ -146,6 +152,54 @@ def revoke_refresh_token(refresh_token):
         conn.commit()
     finally:
         put_conn(conn)
+
+# ─── Persistent Token (API Key) ────────────────────────────────
+def ensure_persistent_token(user_id: str) -> str:
+    """Get or create a persistent API key for the user. Never expires."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT persistent_token FROM users WHERE id = %s", (user_id,))
+        row = cur.fetchone()
+        if row and row["persistent_token"]:
+            return row["persistent_token"]
+        token = "ptk_" + str(uuid.uuid4()).replace("-", "")
+        cur.execute("UPDATE users SET persistent_token = %s WHERE id = %s", (token, user_id))
+        conn.commit()
+        return token
+    finally:
+        put_conn(conn)
+
+def validate_persistent_token(token: str) -> Optional[str]:
+    """Validate persistent token and return user_id. Never expires."""
+    if not token or not token.startswith("ptk_"):
+        return None
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM users WHERE persistent_token = %s", (token,))
+        row = cur.fetchone()
+        if row:
+            return row["id"]
+        return None
+    finally:
+        put_conn(conn)
+
+def reauth_from_persistent_token(persistent_token: str):
+    """Exchange persistent token for fresh JWT pair. Returns (access_token, refresh_token, user_id) or None."""
+    user_id = validate_persistent_token(persistent_token)
+    if not user_id:
+        return None
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT role FROM users WHERE id = %s", (user_id,))
+        row = cur.fetchone()
+    finally:
+        put_conn(conn)
+    role = row["role"] if row else "user"
+    access_token, refresh_token = create_tokens(user_id, role)
+    return access_token, refresh_token, user_id
 
 def socket_authenticate(token):
     if not token:

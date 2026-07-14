@@ -85,6 +85,7 @@ from auth_fastapi import (
     GOOGLE_CLIENT_ID, _verify_google_token, _cleanup_expired_tokens,
     revoke_refresh_token, _verify_jwt, _blacklist_lock, _token_blacklist,
     generate_password_hash, check_password_hash,
+    ensure_persistent_token, reauth_from_persistent_token,
 )
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -558,12 +559,14 @@ async def google_login(body: GoogleLoginRequest):
 
     from datetime import datetime as _dt
     access_token, refresh_token = create_tokens(user_id, row["role"] if row else "user")
+    persistent_token = ensure_persistent_token(user_id)
     status = 200 if row else 201
     return JSONResponse(
         status_code=status,
         content={
             "access_token": access_token,
             "refresh_token": refresh_token,
+            "persistent_token": persistent_token,
             "user": {"id": user_id, "username": username, "role": row["role"] if row else "user", "email": email}
         }
     )
@@ -609,6 +612,7 @@ async def register(request: Request, body: RegisterRequest):
         _crb(user_id, referral_code)
 
     access_token, refresh_token = create_tokens(user_id, "user")
+    persistent_token = ensure_persistent_token(user_id)
     try:
         from storage import audit_log
         audit_log(user_id, "auth.register", username)
@@ -619,6 +623,7 @@ async def register(request: Request, body: RegisterRequest):
         content={
             "access_token": access_token,
             "refresh_token": refresh_token,
+            "persistent_token": persistent_token,
             "user": {"id": user_id, "username": username, "role": "user", "email": email}
         }
     )
@@ -657,6 +662,7 @@ async def login(request: Request, body: LoginRequest):
         raise HTTPException(401, "Credenziali non valide")
 
     access_token, refresh_token = create_tokens(row["id"], row["role"])
+    persistent_token = ensure_persistent_token(row["id"])
     conn2 = get_conn()
     try:
         cur2 = conn2.cursor()
@@ -673,6 +679,7 @@ async def login(request: Request, body: LoginRequest):
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
+        "persistent_token": persistent_token,
         "user": {"id": row["id"], "username": username, "role": row["role"]}
     }
 
@@ -719,6 +726,7 @@ async def local_login(body: LocalLoginRequest):
         put_conn(conn)
 
     access_token, refresh_token = create_tokens(user_id, row["role"] if row else "user")
+    persistent_token = ensure_persistent_token(user_id)
     try:
         from storage import audit_log
         audit_log(user_id, "auth.local_login", username)
@@ -729,6 +737,7 @@ async def local_login(body: LocalLoginRequest):
         content={
             "access_token": access_token,
             "refresh_token": refresh_token,
+            "persistent_token": persistent_token,
             "user": {"id": user_id, "username": username, "role": row["role"] if row else "user"}
         }
     )
@@ -766,6 +775,26 @@ async def refresh(body: RefreshRequest):
 
     new_access, new_refresh = create_tokens(row["user_id"], role)
     return {"access_token": new_access, "refresh_token": new_refresh}
+
+@app.post("/auth/reauth")
+async def reauth(request: Request):
+    """Re-authenticate using persistent token (API key). Fallback when JWT + refresh both fail."""
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(400, "JSON body richiesto")
+    persistent_token = body.get("persistent_token", "")
+    if not persistent_token:
+        raise HTTPException(400, "persistent_token richiesto")
+    result = reauth_from_persistent_token(persistent_token)
+    if not result:
+        raise HTTPException(401, "Persistent token non valido")
+    access_token, refresh_token, user_id = result
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "persistent_token": persistent_token,
+    }
 
 @app.post("/auth/logout")
 async def logout(request: Request, body: LogoutRequest):
