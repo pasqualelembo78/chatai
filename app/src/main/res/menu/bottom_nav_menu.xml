@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_home"
-        android:icon="@android:drawable/ic_menu_compass"
-        android:title="Home" />
-    <item android:id="@+id/nav_chat"
-        android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Chat" />
-    <item android:id="@+id/nav_categories"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:title="Categorie" />
-    <item android:id="@+id/nav_create"
-        android:icon="@android:drawable/ic_menu_add"
-        android:title="Crea" />
-    <item android:id="@+id/nav_profile"
-        android:icon="@android:drawable/ic_menu_my_calendar"
-        android:title="Profilo" />
+    <item android:id="@+id/nav_dashboard"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="Dashboard" />
+    <item android:id="@+id/nav_users"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="Utenti" />
+    <item android:id="@+id/nav_logs"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        android:title="Log" />
+    <item android:id="@+id/nav_moderation"
+        android:icon="@android:drawable/ic_menu_alert"
+        android:title="Moderazione" />
+    <item android:id="@+id/nav_import"
+        android:icon="@android:drawable/ic_menu_upload"
+        android:title="Import" />
 </menu>

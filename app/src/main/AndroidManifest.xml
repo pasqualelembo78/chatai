@@ -3,7 +3,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -12,11 +11,6 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:networkSecurityConfig="@xml/network_security_config" >
-
-        <!-- Google Play richiede URL privacy policy nel manifest -->
-        <meta-data
-            android:name="android.privacy.POLICY_URL"
-            android:value="https://www.mevacoin.com/privacy.html"/>
 
         <activity
             android:name=".SplashActivity"
@@ -30,46 +24,17 @@
         </activity>
 
         <activity
-            android:name="com.intelligame.chatai.MainActivity"
-            android:label="@string/app_name"
-            android:exported="false"
-            android:windowSoftInputMode="adjustNothing">
-        </activity>
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-2572171530354182~3524563603"/>
-
-        <activity
-            android:name="com.intelligame.chatai.LoginActivity"
+            android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:exported="false"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
 
         <activity
-            android:name="com.intelligame.chatai.CharacterDetailActivity"
+            android:name=".MainActivity"
+            android:label="@string/app_name"
             android:exported="false"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustNothing">
-        </activity>
-
-        <activity
-            android:name="com.intelligame.chatai.GameCenterActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-        </activity>
-
-        <activity
-            android:name=".OnboardingActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
-        </activity>
-
-        <activity
-            android:name=".MvcEarnActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme">
         </activity>
 
         <activity

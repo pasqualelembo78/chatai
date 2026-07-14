@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Audit Log"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface" />
+
+        <Button
+            android:id="@+id/btn_refresh_logs"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Aggiorna"
+            android:textSize="12sp"
+            android:textAllCaps="false"
+            style="@style/Widget.Aria.Button.Tonal" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loading_logs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/logs_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

@@ -296,6 +296,9 @@ class ImportRequest(BaseModel):
 class DuplicatesRequest(BaseModel):
     filepath: str = "backend/characters.py"
 
+class RoleRequest(BaseModel):
+    role: str = "user"
+
 class MemoryUpdateRequest(BaseModel):
     facts: dict = {}
 
@@ -1413,6 +1416,56 @@ async def admin_clean_duplicates(request: Request, body: DuplicatesRequest, user
               request.client.host if request.client else "",
               request.headers.get("User-Agent", ""))
     return result
+
+@app.get("/admin/stats")
+async def admin_stats(user: AuthUser = Depends(admin_required)):
+    from storage import get_admin_stats
+    return get_admin_stats()
+
+@app.get("/admin/users/search")
+async def admin_search_users(q: str = Query(""), user: AuthUser = Depends(admin_required)):
+    from storage import search_users
+    if not q:
+        return []
+    return search_users(q)
+
+@app.get("/admin/users/{user_id}")
+async def admin_user_detail(user_id: str, user: AuthUser = Depends(admin_required)):
+    from storage import get_user_detail
+    detail = get_user_detail(user_id)
+    if not detail:
+        raise HTTPException(404, "Utente non trovato")
+    return detail
+
+@app.put("/admin/users/{user_id}/role")
+async def admin_update_role(user_id: str, request: Request, body: RoleRequest, user: AuthUser = Depends(admin_required)):
+    if body.role not in ("user", "moderator", "admin"):
+        raise HTTPException(400, "Ruolo non valido")
+    from storage import update_user_role, audit_log
+    ok = update_user_role(user_id, body.role)
+    if not ok:
+        raise HTTPException(404, "Utente non trovato")
+    audit_log(user.user_id, "admin.role_change", f"user={user_id} role={body.role}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "user_id": user_id, "role": body.role}
+
+@app.get("/admin/characters")
+async def admin_list_characters(user: AuthUser = Depends(admin_required)):
+    from storage import get_all_user_characters
+    chars = get_all_user_characters()
+    return [{"id": c.get("id"), "name": c.get("name"), "category": c.get("category"),
+             "user_id": c.get("user_id"), "is_adult": c.get("is_adult", False),
+             "created_at": c.get("created_at")} for c in chars]
+
+@app.delete("/admin/characters/{char_id}")
+async def admin_delete_character(char_id: str, request: Request, user: AuthUser = Depends(admin_required)):
+    from storage import delete_user_character, audit_log
+    delete_user_character(char_id)
+    audit_log(user.user_id, "admin.delete_character", f"char_id={char_id}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "deleted": char_id}
 
 # ═══════════════════════════════════════════════════════════════════
 # ROUTES: Chat & Media

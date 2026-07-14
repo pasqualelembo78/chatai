@@ -4,222 +4,118 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background">
+    android:background="@color/background">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:paddingStart="32dp"
+        android:paddingEnd="32dp">
 
-        <RelativeLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin Panel"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Accedi per gestire il sistema"
+            android:textSize="14sp"
+            android:textColor="@color/on_surface_variant"
+            android:gravity="center"
+            android:layout_marginBottom="32dp"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:orientation="vertical"
+            android:background="@color/surface_card"
+            android:padding="16dp">
 
-            <LinearLayout
-                android:id="@+id/center_content"
+            <EditText
+                android:id="@+id/username_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_centerInParent="true"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp">
+                android:hint="Username"
+                android:textColorHint="@color/on_surface_variant"
+                android:textColor="@color/on_surface"
+                android:inputType="textPersonName"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:background="@drawable/edittext_bg"
+                android:padding="14dp"
+                android:layout_marginBottom="12dp"/>
 
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:text="🐱"
-                    android:textSize="48sp"
-                    android:gravity="center"
-                    android:background="@drawable/circle_logo_bg"
-                    android:padding="16dp"
-                    android:layout_marginBottom="24dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Aria"
-                    android:textSize="36sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/on_primary"
-                    android:gravity="center"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Il tuo compagno AI"
-                    android:textSize="16sp"
-                    android:textColor="@color/on_surface_variant"
-                    android:gravity="center"
-                    android:layout_marginTop="4dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/bottom_content"
+            <EditText
+                android:id="@+id/password_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_alignParentBottom="true"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp"
-                android:paddingBottom="24dp">
+                android:hint="Password (min 8 caratteri)"
+                android:textColorHint="@color/on_surface_variant"
+                android:textColor="@color/on_surface"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:background="@drawable/edittext_bg"
+                android:padding="14dp"
+                android:layout_marginBottom="12dp"/>
 
-                <com.google.android.gms.common.SignInButton
-                    android:id="@+id/google_sign_in_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginBottom="12dp"
-                    android:visibility="gone"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="ACCEDI"
+                android:textSize="14sp"
+                android:backgroundTint="@color/primary"
+                android:textColor="@color/on_primary"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                app:cornerRadius="22dp"/>
 
-                <LinearLayout
-                    android:id="@+id/login_section"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/card_bg"
-                    android:padding="16dp"
-                    android:layout_marginBottom="16dp">
+            <TextView
+                android:id="@+id/server_url_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Configura server..."
+                android:textSize="13sp"
+                android:textColor="@color/text_link"
+                android:paddingTop="12dp"
+                android:paddingBottom="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="center_horizontal"/>
 
-                    <EditText
-                        android:id="@+id/username_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Username"
-                        android:textColorHint="@color/on_surface_variant"
-                        android:textColor="@color/on_surface"
-                        android:inputType="textPersonName"
-                        android:maxLength="20"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:background="@drawable/edittext_bg"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp"/>
+            <EditText
+                android:id="@+id/server_url_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="URL del server"
+                android:textColorHint="@color/on_surface_variant"
+                android:textColor="@color/on_surface"
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:background="@drawable/edittext_bg"
+                android:padding="14dp"
+                android:visibility="gone"/>
 
-                    <EditText
-                        android:id="@+id/email_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Email (opzionale)"
-                        android:textColorHint="@color/on_surface_variant"
-                        android:textColor="@color/on_surface"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:background="@drawable/edittext_bg"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp"
-                        android:visibility="gone"/>
+            <ProgressBar
+                android:id="@+id/auth_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="12dp"/>
+        </LinearLayout>
 
-                    <EditText
-                        android:id="@+id/password_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Password (min 8 caratteri)"
-                        android:textColorHint="@color/on_surface_variant"
-                        android:textColor="@color/on_surface"
-                        android:inputType="textPassword"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:background="@drawable/edittext_bg"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/login_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:text="ACCEDI"
-                        android:textSize="14sp"
-                        android:backgroundTint="@color/primary"
-                        android:textColor="@color/on_primary"
-                        android:textAllCaps="false"
-                        android:textStyle="bold"
-                        app:cornerRadius="22dp"/>
-
-                    <TextView
-                        android:id="@+id/toggle_auth_mode"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Non hai account? Registrati"
-                        android:textSize="13sp"
-                        android:textColor="@color/text_link"
-                        android:paddingTop="12dp"
-                        android:paddingBottom="4dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:layout_gravity="center_horizontal"/>
-
-                    <TextView
-                        android:id="@+id/server_url_toggle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Configura server..."
-                        android:textSize="13sp"
-                        android:textColor="@color/text_link"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="4dp"
-                        android:clickable="true"
-                        android:focusable="true"/>
-
-                    <EditText
-                        android:id="@+id/server_url_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="URL del server (es. http://192.168.1.100:5000)"
-                        android:textColorHint="@color/on_surface_variant"
-                        android:textColor="@color/on_surface"
-                        android:inputType="textUri"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:background="@drawable/edittext_bg"
-                        android:padding="14dp"
-                        android:visibility="gone"/>
-
-                    <EditText
-                        android:id="@+id/referral_code_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Codice referral (opzionale)"
-                        android:textColorHint="@color/on_surface_variant"
-                        android:textColor="@color/on_surface"
-                        android:inputType="textVisiblePassword"
-                        android:maxLength="8"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:background="@drawable/edittext_bg"
-                        android:padding="14dp"
-                        android:layout_marginTop="4dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Hai un codice invito? Inseriscilo qui e ricevi 50 MVC!"
-                        android:textSize="11sp"
-                        android:textColor="@color/text_hint"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="8dp"/>
-
-                    <ProgressBar
-                        android:id="@+id/auth_progress"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:layout_marginTop="12dp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="11sp"
-                    android:textColor="@color/text_hint"
-                    android:gravity="center"
-                    android:autoLink="web"
-                    android:text="@string/privacy_notice"/>
-            </LinearLayout>
-
-        </RelativeLayout>
-    </ScrollView>
-
+    </LinearLayout>
 </FrameLayout>

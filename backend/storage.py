@@ -1273,6 +1273,86 @@ def resolve_moderation_flag(flag_id):
         put_conn(conn)
 
 
+def get_admin_stats():
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        stats = {}
+        cur.execute("SELECT COUNT(*) AS cnt FROM users")
+        stats["total_users"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE last_login >= NOW() - INTERVAL '1 day'")
+        stats["active_today"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE last_login >= NOW() - INTERVAL '7 days'")
+        stats["active_7d"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE last_login >= NOW() - INTERVAL '30 days'")
+        stats["active_30d"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE created_at >= NOW() - INTERVAL '1 day'")
+        stats["registrations_today"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE created_at >= NOW() - INTERVAL '7 days'")
+        stats["registrations_7d"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE created_at >= NOW() - INTERVAL '30 days'")
+        stats["registrations_30d"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM messages")
+        stats["total_messages"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM user_characters")
+        stats["total_user_characters"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM moderation_flags WHERE resolved_at IS NULL")
+        stats["pending_flags"] = cur.fetchone()["cnt"]
+        return stats
+    finally:
+        put_conn(conn)
+
+
+def get_user_detail(user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, username, role, email, google_id, banned_until, created_at, last_login FROM users WHERE id=%s",
+            (user_id,)
+        )
+        user = cur.fetchone()
+        if not user:
+            return None
+        result = dict(user)
+        cur.execute("SELECT COUNT(*) AS cnt FROM messages WHERE user_id=%s", (user_id,))
+        result["message_count"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(DISTINCT character_id) AS cnt FROM messages WHERE user_id=%s", (user_id,))
+        result["conversation_count"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT balance FROM mevacoins WHERE user_id=%s", (user_id,))
+        mc = cur.fetchone()
+        result["mevacoins"] = mc["balance"] if mc else 0
+        return result
+    finally:
+        put_conn(conn)
+
+
+def search_users(query, limit=50):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        like_q = f"%{query}%"
+        cur.execute(
+            "SELECT id, username, role, email, google_id, banned_until, created_at, last_login FROM users WHERE username ILIKE %s OR email ILIKE %s ORDER BY created_at DESC LIMIT %s",
+            (like_q, like_q, min(limit, 200))
+        )
+        rows = cur.fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        put_conn(conn)
+
+
+def update_user_role(user_id, role):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("UPDATE users SET role=%s WHERE id=%s", (role, user_id))
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
 def get_flag_count(user_id):
     conn = get_conn()
     try:
