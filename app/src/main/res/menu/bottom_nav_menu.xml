@@ -10,7 +10,7 @@
         android:icon="@android:drawable/ic_menu_recent_history"
         android:title="Log" />
     <item android:id="@+id/nav_moderation"
-        android:icon="@android:drawable/ic_menu_alert"
+        android:icon="@android:drawable/ic_menu_report_image"
         android:title="Moderazione" />
     <item android:id="@+id/nav_import"
         android:icon="@android:drawable/ic_menu_upload"
