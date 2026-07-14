@@ -26,8 +26,49 @@ from pathlib import Path
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
+CHARACTERS_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend", "characters", "data")
+CHAR_FILES = [
+    "amicizia", "anime", "business", "confessioni", "creativi", "cucina",
+    "detective", "esperti", "fantasy", "flirt", "gamer", "horror",
+    "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
+    "relazioni", "romantici", "sci_fi", "scuola", "seduzione",
+    "sopravvivenza", "speciale", "sport", "storia", "supereroi",
+    "tecnici", "tecnologia", "viaggi",
+]
+
 HUGGINGFACE_ROWS_API = "https://datasets-server.huggingface.co/rows"
 HUGGINGFACE_DATASET = "NousResearch/CharacterCodex"
+
+
+# ── JSON per-categoria helpers ───────────────────────────────────────────────
+
+def _load_category_json(cat_name):
+    """Carica un file JSON per-categoria."""
+    path = os.path.join(CHARACTERS_DATA_DIR, f"{cat_name}.json")
+    if not os.path.isfile(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _save_category_json(cat_name, chars):
+    """Salva la lista di personaggi nel file JSON per-categoria."""
+    path = os.path.join(CHARACTERS_DATA_DIR, f"{cat_name}.json")
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(chars, f, indent=2, ensure_ascii=False)
+    os.replace(tmp, path)
+
+
+def get_existing_ids_from_json():
+    """Legge tutti gli ID dai file JSON per-categoria."""
+    existing = set()
+    for cat_name in CHAR_FILES:
+        for c in _load_category_json(cat_name):
+            cid = c.get("id")
+            if cid:
+                existing.add(cid)
+    return existing
 
 # Mappatura generi → nostre categorie
 GENRE_CATEGORY_MAP = {
@@ -470,27 +511,73 @@ def convert_hf_character(hf_char, index):
 
 # ── Output Writers ────────────────────────────────────────────────────────────
 
-def get_existing_ids(filepath="backend/characters.py"):
-    """Legge gli ID dei personaggi (solo quelli top-level, 8 spazi di indentazione)."""
-    existing = set()
-    if not os.path.exists(filepath):
+def get_existing_ids(filepath=None):
+    """Legge gli ID esistenti dai file JSON per-categoria.
+    Se filepath è specificato (legacy mode), legge dal monolite."""
+    if filepath and filepath.endswith(".py"):
+        existing = set()
+        if not os.path.exists(filepath):
+            return existing
+        with open(filepath, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.startswith('        "id":'):
+                    match = re.search(r'"id"\s*:\s*"([^"]+)"', line)
+                    if match:
+                        existing.add(match.group(1))
         return existing
-    with open(filepath, 'r', encoding='utf-8') as f:
-        for line in f:
-            # Solo le righe con 8 spazi = "id" top-level del personaggio
-            if line.startswith('        "id":'):
-                match = re.search(r'"id"\s*:\s*"([^"]+)"', line)
-                if match:
-                    existing.add(match.group(1))
-    return existing
+    return get_existing_ids_from_json()
 
 
-def write_to_characters_py(characters, filepath="backend/characters.py"):
-    """Aggiunge i personaggi alla lista CHARACTERS, saltando i duplicati."""
+def write_to_characters_py(characters, filepath=None):
+    """Aggiunge i personaggi ai file JSON per-categoria, saltando i duplicati.
+    Se filepath è specificato (legacy mode), scrive nel monolite."""
+    if filepath and filepath.endswith(".py"):
+        return _write_to_monolith(characters, filepath)
+    return _write_to_json_dir(characters)
+
+
+def _write_to_json_dir(characters):
+    """Scrive i personaggi nel file JSON corrispondente alla loro categoria."""
+    existing_ids = get_existing_ids_from_json()
+    print(f"  📋 Found {len(existing_ids)} existing characters in JSON files")
+
+    new_chars = [c for c in characters if c["id"] not in existing_ids]
+    skipped = len(characters) - len(new_chars)
+    if skipped > 0:
+        print(f"  ⏭ Skipped {skipped} duplicates")
+    if not new_chars:
+        print(f"  ✓ No new characters to add")
+        return True
+
+    # Raggruppa per categoria
+    by_cat = {}
+    for c in new_chars:
+        cat = c.get("category", "creativi")
+        by_cat.setdefault(cat, []).append(c)
+
+    total_added = 0
+    for cat, chars in by_cat.items():
+        if cat not in CHAR_FILES:
+            print(f"  ⚠ Unknown category '{cat}', placing in 'creativi'")
+            cat = "creativi"
+        existing = _load_category_json(cat)
+        existing_ids_in_cat = {c["id"] for c in existing}
+        to_add = [c for c in chars if c["id"] not in existing_ids_in_cat]
+        if to_add:
+            existing.extend(to_add)
+            _save_category_json(cat, existing)
+            print(f"  ✓ {cat}.json: added {len(to_add)} characters")
+            total_added += len(to_add)
+
+    print(f"  ✓ Total: {total_added} new characters added to JSON files")
+    return True
+
+
+def _write_to_monolith(characters, filepath="backend/characters.py"):
+    """Legacy: aggiunge i personaggi alla lista CHARACTERS nel monolite."""
     existing_ids = get_existing_ids(filepath)
     print(f"  📋 Found {len(existing_ids)} existing characters in {filepath}")
 
-    # Filtra duplicati
     new_chars = [c for c in characters if c["id"] not in existing_ids]
     skipped = len(characters) - len(new_chars)
     if skipped > 0:
@@ -502,7 +589,6 @@ def write_to_characters_py(characters, filepath="backend/characters.py"):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Trova la fine della lista CHARACTERS
     marker = "    },\n]"
     marker_alt = "    }\n]"
     insert_pos = content.rfind(marker)
@@ -618,9 +704,9 @@ def main():
     parser.add_argument("--count", type=int, default=500, help="Number of characters to import (default: 500)")
     parser.add_argument("--all", action="store_true", help="Import ALL characters (~16K)")
     parser.add_argument("--genre", type=str, help="Filter by genre (e.g., fantasy, anime, romance)")
-    parser.add_argument("--output", type=str, default="py", choices=["py", "json"],
-                        help="Output format: py (characters.py) or json (file)")
-    parser.add_argument("--output-file", type=str, help="Output file path")
+    parser.add_argument("--output", type=str, default="json_dir", choices=["json_dir", "py", "json"],
+                        help="Output: json_dir (JSON per-categoria, default), py (monolite), json (singolo file)")
+    parser.add_argument("--output-file", type=str, help="Output file path (solo per --output py/json)")
     args = parser.parse_args()
 
     count = 16000 if args.all else args.count
@@ -664,7 +750,10 @@ def main():
     print()
 
     # Output
-    if args.output == "py":
+    if args.output == "json_dir":
+        print(f"💾 Writing to JSON per-categoria in {CHARACTERS_DATA_DIR}...")
+        write_to_characters_py(converted)  # writes to JSON dir
+    elif args.output == "py":
         out_path = args.output_file or "backend/characters.py"
         print(f"💾 Writing to {out_path}...")
         write_to_characters_py(converted, out_path)

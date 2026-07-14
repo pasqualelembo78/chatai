@@ -303,32 +303,78 @@ def _default_core_traits():
 
 # ── Existing ID Loader ────────────────────────────────────────────────────────
 
-def _get_existing_ids(filepath="backend/characters.py"):
-    """Load all existing character IDs from characters.py."""
-    existing = set()
-    if not os.path.exists(filepath):
+CHARACTERS_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "characters", "data")
+_CHAR_FILES = [
+    "amicizia", "anime", "business", "confessioni", "creativi", "cucina",
+    "detective", "esperti", "fantasy", "flirt", "gamer", "horror",
+    "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
+    "relazioni", "romantici", "sci_fi", "scuola", "seduzione",
+    "sopravvivenza", "speciale", "sport", "storia", "supereroi",
+    "tecnici", "tecnologia", "viaggi",
+]
+
+
+def _load_category_json(cat_name):
+    """Carica un file JSON per-categoria."""
+    path = os.path.join(CHARACTERS_DATA_DIR, f"{cat_name}.json")
+    if not os.path.isfile(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _save_category_json(cat_name, chars):
+    """Salva la lista di personaggi nel file JSON per-categoria."""
+    path = os.path.join(CHARACTERS_DATA_DIR, f"{cat_name}.json")
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(chars, f, indent=2, ensure_ascii=False)
+    os.replace(tmp, path)
+
+
+def _get_existing_ids(filepath=None):
+    """Load all existing character IDs from JSON per-categoria files.
+    Se filepath è specificato (legacy mode), legge dal monolite."""
+    if filepath and filepath.endswith(".py"):
+        existing = set()
+        if not os.path.exists(filepath):
+            return existing
+        with open(filepath, 'r', encoding='utf-8') as f:
+            for line in f:
+                if '        "id":' in line:
+                    match = re.search(r'"id"\s*:\s*"([^"]+)"', line)
+                    if match:
+                        existing.add(match.group(1))
         return existing
-    with open(filepath, 'r', encoding='utf-8') as f:
-        for line in f:
-            if '        "id":' in line:
-                match = re.search(r'"id"\s*:\s*"([^"]+)"', line)
-                if match:
-                    existing.add(match.group(1))
+    existing = set()
+    for cat_name in _CHAR_FILES:
+        for c in _load_category_json(cat_name):
+            cid = c.get("id")
+            if cid:
+                existing.add(cid)
     return existing
 
 
-def _get_existing_name_fingerprints(filepath="backend/characters.py"):
-    """Load name fingerprints for additional dedup (name-similarity check)."""
-    names = set()
-    if not os.path.exists(filepath):
+def _get_existing_name_fingerprints(filepath=None):
+    """Load name fingerprints for additional dedup from JSON files.
+    Se filepath è specificato (legacy mode), legge dal monolite."""
+    if filepath and filepath.endswith(".py"):
+        names = set()
+        if not os.path.exists(filepath):
+            return names
+        with open(filepath, 'r', encoding='utf-8') as f:
+            for line in f:
+                if '        "name":' in line:
+                    match = re.search(r'"name"\s*:\s*"([^"]+)"', line)
+                    if match:
+                        names.add(match.group(1).lower().strip())
         return names
-    with open(filepath, 'r', encoding='utf-8') as f:
-        for line in f:
-            if '        "name":' in line:
-                match = re.search(r'"name"\s*:\s*"([^"]+)"', line)
-                if match:
-                    name = match.group(1).lower().strip()
-                    names.add(name)
+    names = set()
+    for cat_name in _CHAR_FILES:
+        for c in _load_category_json(cat_name):
+            name = c.get("name", "").lower().strip()
+            if name:
+                names.add(name)
     return names
 
 
@@ -597,73 +643,87 @@ def _fingerprint_name(name):
     return name
 
 
-def find_duplicates(filepath="backend/characters.py"):
+def find_duplicates(filepath=None):
     """
-    Find all duplicate characters in characters.py.
-    Returns list of {id, name, occurrences: [line_numbers]}.
+    Find all duplicate characters across JSON per-categoria files.
+    Se filepath è specificato (legacy mode), cerca nel monolite.
+    Returns list of {id, name, count, categories}.
     """
     id_occurrences = {}
-    name_occurrences = {}
 
-    if not os.path.exists(filepath):
-        return []
-
-    with open(filepath, 'r', encoding='utf-8') as f:
-        for line_num, line in enumerate(f, 1):
-            if '        "id":' in line:
-                match = re.search(r'"id"\s*:\s*"([^"]+)"', line)
-                if match:
-                    cid = match.group(1)
-                    id_occurrences.setdefault(cid, []).append(line_num)
-
-            if '        "name":' in line:
-                match = re.search(r'"name"\s*:\s*"([^"]+)"', line)
-                if match:
-                    name = match.group(1)
-                    fp = _fingerprint_name(name)
-                    name_occurrences.setdefault(fp, []).append((line_num, name))
+    if filepath and filepath.endswith(".py"):
+        if not os.path.exists(filepath):
+            return []
+        with open(filepath, 'r', encoding='utf-8') as f:
+            for line_num, line in enumerate(f, 1):
+                if '        "id":' in line:
+                    match = re.search(r'"id"\s*:\s*"([^"]+)"', line)
+                    if match:
+                        cid = match.group(1)
+                        id_occurrences.setdefault(cid, []).append(line_num)
+    else:
+        for cat_name in _CHAR_FILES:
+            chars = _load_category_json(cat_name)
+            for c in chars:
+                cid = c.get("id")
+                if cid:
+                    id_occurrences.setdefault(cid, []).append(cat_name)
 
     duplicates = []
-
-    # ID duplicates
-    for cid, lines in id_occurrences.items():
-        if len(lines) > 1:
+    for cid, locations in id_occurrences.items():
+        if len(locations) > 1:
             duplicates.append({
                 "type": "id",
                 "id": cid,
-                "count": len(lines),
-                "lines": lines,
+                "count": len(locations),
+                "locations": locations,
             })
-
-    # Name-similarity duplicates (same normalized name, different IDs)
-    for fp, entries in name_occurrences.items():
-        if len(entries) > 1:
-            unique_names = set(e[1] for e in entries)
-            if len(unique_names) == 1:
-                duplicates.append({
-                    "type": "name",
-                    "name": entries[0][1],
-                    "normalized": fp,
-                    "count": len(entries),
-                    "lines": [e[0] for e in entries],
-                })
 
     return duplicates
 
 
-def clean_duplicates(filepath="backend/characters.py"):
+def clean_duplicates(filepath=None):
     """
-    Remove duplicate characters from characters.py.
+    Remove duplicate characters from JSON per-categoria files.
+    Se filepath è specificato (legacy mode), pulisce il monolite.
     Keeps the FIRST occurrence of each ID.
     Returns {removed: int, remaining: int}.
     """
+    if filepath and filepath.endswith(".py"):
+        return _clean_duplicates_monolith(filepath)
+
+    removed = 0
+    seen_ids = set()
+    total_remaining = 0
+
+    for cat_name in _CHAR_FILES:
+        chars = _load_category_json(cat_name)
+        original_count = len(chars)
+        unique = []
+        for c in chars:
+            cid = c.get("id")
+            if cid and cid not in seen_ids:
+                seen_ids.add(cid)
+                unique.append(c)
+            elif not cid:
+                unique.append(c)
+            else:
+                removed += 1
+        if len(unique) < original_count:
+            _save_category_json(cat_name, unique)
+        total_remaining += len(unique)
+
+    return {"removed": removed, "remaining": total_remaining}
+
+
+def _clean_duplicates_monolith(filepath):
+    """Legacy: remove duplicates from monolith characters.py."""
     if not os.path.exists(filepath):
         return {"removed": 0, "remaining": 0, "error": "File not found"}
 
     with open(filepath, 'r', encoding='utf-8') as f:
         lines = f.readlines()
 
-    # Find character block boundaries
     char_start = None
     for i, line in enumerate(lines):
         if line.strip().startswith("CHARACTERS = ["):
@@ -673,7 +733,6 @@ def clean_duplicates(filepath="backend/characters.py"):
     if char_start is None:
         return {"removed": 0, "remaining": 0, "error": "CHARACTERS list not found"}
 
-    # Parse characters: find each { ... } block
     char_blocks = []
     i = char_start + 1
     while i < len(lines):
@@ -681,7 +740,6 @@ def clean_duplicates(filepath="backend/characters.py"):
         if line.strip() == "],":
             break
         if line.strip().startswith("{") or (lines[i-1].strip().endswith(",") and line.strip().startswith('"id"')):
-            # Found start of a character block
             block_start = i
             if not line.strip().startswith("{"):
                 block_start = i - 1
@@ -698,7 +756,6 @@ def clean_duplicates(filepath="backend/characters.py"):
         else:
             i += 1
 
-    # Deduplicate by ID
     seen_ids = set()
     keep_blocks = []
     removed = 0
@@ -718,9 +775,7 @@ def clean_duplicates(filepath="backend/characters.py"):
     if removed == 0:
         return {"removed": 0, "remaining": len(char_blocks), "message": "No duplicates found"}
 
-    # Rebuild file
     new_lines = lines[:char_start + 1]
-
     for i, (_, _, block_text) in enumerate(keep_blocks):
         new_lines.append(block_text)
         if i < len(keep_blocks) - 1:
@@ -728,8 +783,6 @@ def clean_duplicates(filepath="backend/characters.py"):
         else:
             new_lines.append("\n")
 
-    # Add the rest of the file after CHARACTERS ]
-    # Find where CHARACTERS list ends
     end_idx = char_start + 1
     depth = 0
     for i in range(char_start + 1, len(lines)):
@@ -748,7 +801,7 @@ def clean_duplicates(filepath="backend/characters.py"):
 
 # ── Main Import Function ─────────────────────────────────────────────────────
 
-def start_import(source_key, count=500, genre_filter=None, filepath="backend/characters.py"):
+def start_import(source_key, count=500, genre_filter=None, filepath=None):
     """
     Start a background import job.
     Returns immediately; status available via get_import_status().
@@ -862,15 +915,53 @@ def start_import(source_key, count=500, genre_filter=None, filepath="backend/cha
     return {"status": "started", "source": source_key, "count": count}
 
 
-def _write_characters_to_file(new_chars, filepath="backend/characters.py"):
-    """Append new characters to the CHARACTERS list in characters.py."""
+def _write_characters_to_file(new_chars, filepath=None):
+    """Scrive i nuovi personaggi nei file JSON per-categoria.
+    Se filepath è specificato (legacy mode), scrive nel monolite."""
+    if filepath and filepath.endswith(".py"):
+        return _write_to_monolith(new_chars, filepath)
+    return _write_to_json_dir(new_chars)
+
+
+def _write_to_json_dir(new_chars):
+    """Scrive i personaggi nel file JSON corrispondente alla loro categoria."""
+    existing_ids = _get_existing_ids()
+    filtered = [c for c in new_chars if c["id"] not in existing_ids]
+    if not filtered:
+        logger.info("No new characters to add (all duplicates)")
+        return True
+
+    by_cat = {}
+    for c in filtered:
+        cat = c.get("category", "creativi")
+        by_cat.setdefault(cat, []).append(c)
+
+    total_added = 0
+    for cat, chars in by_cat.items():
+        if cat not in _CHAR_FILES:
+            logger.warning(f"Unknown category '{cat}', placing in 'creativi'")
+            cat = "creativi"
+        existing = _load_category_json(cat)
+        existing_ids_in_cat = {c["id"] for c in existing}
+        to_add = [c for c in chars if c["id"] not in existing_ids_in_cat]
+        if to_add:
+            existing.extend(to_add)
+            _save_category_json(cat, existing)
+            logger.info(f"{cat}.json: added {len(to_add)} characters")
+            total_added += len(to_add)
+
+    logger.info(f"Total: {total_added} new characters added to JSON files")
+    return True
+
+
+def _write_to_monolith(new_chars, filepath="backend/characters.py"):
+    """Legacy: append new characters to the CHARACTERS list in characters.py."""
     if not os.path.exists(filepath):
         return False
 
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Find insertion point (before the last ] of CHARACTERS)
     marker = "    },\n]"
     marker_alt = "    }\n]"
     insert_pos = content.rfind(marker)
@@ -885,7 +976,6 @@ def _write_characters_to_file(new_chars, filepath="backend/characters.py"):
     else:
         insert_pos += len("    }\n")
 
-    # Format new entries
     entries = []
     for char in new_chars:
         entries.append(_format_char_python(char))

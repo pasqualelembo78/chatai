@@ -20,7 +20,7 @@ echo -e "${BLUE}====================================================${NC}"
 
 # ─── 1. Verifica dipendenze ──────────────────────────────────────
 echo ""
-echo -e "${YELLOW}[1/5] Verifica dipendenze...${NC}"
+echo -e "${YELLOW}[1/6] Verifica dipendenze...${NC}"
 
 if ! command -v python3 &>/dev/null; then
     echo -e "${RED}python3 non trovato. Installa Python 3.${NC}"
@@ -40,7 +40,7 @@ echo -e "    ${GREEN}Dipendenze pronte.${NC}"
 
 # ─── 2. Carica API keys ─────────────────────────────────────────
 echo ""
-echo -e "${YELLOW}[2/5] Caricamento API keys...${NC}"
+echo -e "${YELLOW}[2/6] Caricamento API keys...${NC}"
 
 # Carica GROQ_API_KEY e PEXELS_API_KEY da .env
 GROQ_KEY=""
@@ -72,15 +72,17 @@ fi
 
 # ─── 3. Modalità ────────────────────────────────────────────────
 echo ""
-echo -e "${YELLOW}[3/5] Scegli modalita:${NC}"
+echo -e "${YELLOW}[3/6] Scegli modalita:${NC}"
 echo -e "    ${CYAN}1)${NC} Genera avatar mancanti (Pexels + fallback)"
 echo -e "    ${CYAN}2)${NC} Genera biografie italiane (Groq 70B)"
 echo -e "    ${CYAN}3)${NC} Genera avatar + biografie (completo)"
 echo -e "    ${CYAN}4)${NC} Genera icone categorie"
 echo -e "    ${CYAN}5)${NC} Elenca personaggi senza avatar"
 echo -e "    ${CYAN}6)${NC} Test generazione singola"
-echo -e "    ${CYAN}7)${NC} Esci"
-read -p "    Scegli [1-7] (default 3): " MODE
+echo -e "    ${CYAN}7)${NC} ${RED}RIGENERA TUTTO (force)${NC} - sovrascrive avatar + bio + scenario"
+echo -e "    ${CYAN}8)${NC} Mostra stato generazioni (flag 'fatto')"
+echo -e "    ${CYAN}9)${NC} Esci"
+read -p "    Scegli [1-9] (default 3): " MODE
 
 case "${MODE:-3}" in
     1) ACTION="avatars" ;;
@@ -89,28 +91,38 @@ case "${MODE:-3}" in
     4) ACTION="icons" ;;
     5) ACTION="list" ;;
     6) ACTION="test" ;;
+    7) ACTION="force_all" ;;
+    8) ACTION="status" ;;
     *) ACTION="both" ;;
 esac
 
 # ─── 4. Limiti ──────────────────────────────────────────────────
 echo ""
-echo -e "${YELLOW}[4/5] Limiti di generazione:${NC}"
+echo -e "${YELLOW}[4/6] Limiti di generazione:${NC}"
 
-if [ "$ACTION" = "avatars" ] || [ "$ACTION" = "both" ]; then
+if [ "$ACTION" = "avatars" ] || [ "$ACTION" = "both" ] || [ "$ACTION" = "force_all" ]; then
     echo -e "    ${CYAN}Quanti avatar generare?${NC}"
     echo -e "    Pexels limiti:"
     echo -e "      200 req/ora, 20000 req/mese (gratis)"
     echo -e "      Foto reali di fotografi professionisti"
     echo -e "    + Fallback: Pollinations.AI, ThisPersonDoesNotExist, PrAvatar, DiceBear"
-    read -p "    Numero (default 50, 0=tutti): " AVATAR_LIMIT
+    if [ "$ACTION" = "force_all" ]; then
+        echo -e "    ${YELLOW}⚠️  Modalita FORCE: sovrascrive avatar esistenti${NC}"
+        read -p "    Numero (default 50, 0=tutti): " AVATAR_LIMIT
+    else
+        read -p "    Numero (default 50, 0=tutti): " AVATAR_LIMIT
+    fi
     AVATAR_LIMIT="${AVATAR_LIMIT:-50}"
 else
     AVATAR_LIMIT=0
 fi
 
-if [ "$ACTION" = "bios" ] || [ "$ACTION" = "both" ]; then
+if [ "$ACTION" = "bios" ] || [ "$ACTION" = "both" ] || [ "$ACTION" = "force_all" ]; then
     echo -e "    ${CYAN}Quante biografie generare?${NC}"
     echo -e "    (Groq: 1000/giorno, ~30 RPM)"
+    if [ "$ACTION" = "force_all" ]; then
+        echo -e "    ${YELLOW}⚠️  Modalita FORCE: sovrascrive bio + scenario esistenti${NC}"
+    fi
     read -p "    Numero (default 50, 0=tutti): " BIO_LIMIT
     BIO_LIMIT="${BIO_LIMIT:-50}"
 else
@@ -119,7 +131,7 @@ fi
 
 # ─── 5. Esegui ──────────────────────────────────────────────────
 echo ""
-echo -e "${YELLOW}[5/5] Esecuzione...${NC}"
+echo -e "${YELLOW}[5/6] Esecuzione...${NC}"
 
 export GROQ_API_KEY="$GROQ_KEY"
 export PEXELS_API_KEY="$PEXELS_KEY"
@@ -147,6 +159,23 @@ case "$ACTION" in
             --bio \
             --avatar-limit "$AVATAR_LIMIT" \
             --bio-limit "$BIO_LIMIT"
+        ;;
+    force_all)
+        echo -e "    ${RED}>>> RIGENERAZIONE FORZATA DI TUTTO <<<${NC}"
+        echo -e "    Sovrascrive avatar + bio + scenario per tutti i personaggi"
+        echo -e "    Salta i personaggi gia flaggati 'fatto' a meno che non serva"
+        echo ""
+        "$VENV_DIR/bin/python3" "$TOOL" \
+            --generate-all \
+            --model pexels \
+            --bio \
+            --force \
+            --avatar-limit "$AVATAR_LIMIT" \
+            --bio-limit "$BIO_LIMIT"
+        ;;
+    status)
+        "$VENV_DIR/bin/python3" "$TOOL" --status
+        exit 0
         ;;
     icons)
         echo -e "    Generazione icone categorie..."
@@ -178,9 +207,11 @@ echo -e "${BLUE}====================================================${NC}"
 echo -e "${GREEN}  Operazione completata!${NC}"
 echo -e "${BLUE}====================================================${NC}"
 echo ""
-echo -e "  ${CYAN}Prossimi passi:${NC}"
-echo -e "    bash generate_avatars.sh        — Rilancia il tool"
-echo -e "    python3 backend/avatar_tool.py --help  — Tutte le opzioni"
+echo -e "  ${CYAN}Stato generazioni (flag 'fatto'):${NC}"
+echo -e "    bash generate_avatars.sh         — Rilancia il tool (opzione 8 = stato)"
+echo -e "    python3 backend/avatar_tool.py --status  — Vedi statistiche"
+echo -e "    python3 backend/avatar_tool.py --force --generate-all --bio  — Forza tutto"
+echo -e "    python3 backend/avatar_tool.py --reset-status <ID>  — Reset di 1 personaggio"
 echo ""
 echo -e "  ${CYAN}Limiti API:${NC}"
 echo -e "    Pexels: 200 req/ora, 20000 req/mese (gratis, foto reali)"

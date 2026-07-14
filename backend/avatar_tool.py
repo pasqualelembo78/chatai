@@ -29,10 +29,76 @@ import time
 import wave
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CHARACTERS_FILE = os.path.join(ROOT, "backend", "characters.py")
+CHARACTERS_DATA_DIR = os.path.join(ROOT, "backend", "characters", "data")
+CHAR_FILES = [
+    "amicizia", "anime", "business", "confessioni", "creativi", "cucina",
+    "detective", "esperti", "fantasy", "flirt", "gamer", "horror",
+    "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
+    "relazioni", "romantici", "sci_fi", "scuola", "seduzione",
+    "sopravvivenza", "speciale", "sport", "storia", "supereroi",
+    "tecnici", "tecnologia", "viaggi",
+]
 DRAWABLE_DIR = os.path.join(ROOT, "app", "src", "main", "res")
 STATIC_AVATARS = os.path.join(ROOT, "backend", "static", "avatars")
 TOKEN_FILE = os.path.join(ROOT, "backend", ".hf_token")
+
+# File di tracking delle generazioni completate (flag "fatto")
+# Formato: { "char_id": {"avatar": true, "bio": true, "scenario": true, "ts": "..."} }
+STATUS_FILE = os.path.join(ROOT, "backend", ".gen_status.json")
+GEN_TASKS = ("avatar", "bio", "scenario")
+
+
+def load_gen_status():
+    """Carica lo stato delle generazioni completate dal file di tracking."""
+    if os.path.isfile(STATUS_FILE):
+        try:
+            with open(STATUS_FILE) as f:
+                return json.load(f)
+        except Exception:
+            return {}
+    return {}
+
+
+def save_gen_status(status):
+    """Salva lo stato delle generazioni su file."""
+    tmp = STATUS_FILE + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(status, f, indent=2, ensure_ascii=False)
+    os.replace(tmp, STATUS_FILE)
+
+
+def is_char_done(char_id, tasks=GEN_TASKS):
+    """True se il personaggio ha tutti i task specificati marcati come fatti."""
+    status = load_gen_status()
+    entry = status.get(char_id, {})
+    return all(entry.get(t) for t in tasks)
+
+
+def mark_char_done(char_id, task):
+    """Marca un singolo task come completato per il personaggio."""
+    status = load_gen_status()
+    entry = status.setdefault(char_id, {})
+    entry[task] = True
+    entry["ts"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    save_gen_status(status)
+
+
+def mark_char_done_all(char_id):
+    """Marca tutti i task (avatar, bio, scenario) come completati per il personaggio."""
+    status = load_gen_status()
+    entry = status.setdefault(char_id, {})
+    for t in GEN_TASKS:
+        entry[t] = True
+    entry["ts"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    save_gen_status(status)
+
+
+def reset_char_status(char_id):
+    """Resetta lo stato di un personaggio (utile per rigenerare)."""
+    status = load_gen_status()
+    if char_id in status:
+        del status[char_id]
+        save_gen_status(status)
 
 # Carica .env
 ENV_FILE = os.path.join(ROOT, "backend", ".env")
@@ -514,13 +580,16 @@ BACKSTORY: [storia completa del personaggio in 3-4 frasi]
 PERSONALITY: [tratti di personalità in 2-3 frasi]
 SPEAKING_STYLE: [stile di parlato in 2 frasi]
 HOBBIES: [lista hobby separati da virgola, formato: nome (livello)]
-OPENING_SCENARIO: [ambientazione iniziale per il roleplay, 2-3 frasi descriptive, es: 'Sei in un locale buio con musica soft...']
+OPENING_SCENARIO: [ambientazione iniziale per il roleplay, 2-3 frasi descrittive]
 
 Importante:
 - Tutto in ITALIANO
 - Scrivi come se il personaggio fosse REALE
-- L'OPENING_SCENARIO deve essere un'ambientazione vivid e coinvolgente
-- Idevi essere coerenti con l'età e il ruolo"""
+- L'OPENING_SCENARIO deve essere un'ambientazione vivida e coinvolgente
+- NON iniziare l'OPENING_SCENARIO con etichette come 'CONTESTO INIZIALE:' o 'Introduzione:'
+- NON usare espressioni come 'l'utente entra come...': usa la seconda persona diretta ('tu entri...', 'sei...', 'ti trovi...')
+- I valori devono essere coerenti con l'età e il ruolo
+- Esempio valido: 'È notte fonda. Luna è seduta da sola al bancone di un bar quasi vuoto, la chitarra acustica sulle ginocchia. tu entri nel locale e incroci il suo sguardo.'"""
 
     headers = {"Authorization": f"Bearer {groq_token}", "Content-Type": "application/json"}
     payload = {
@@ -636,107 +705,47 @@ Importante:
         return None
 
 
-def update_characters_py_full(char_id, bio_data):
-    """Aggiorna characters.py con biografia completa italiana."""
-    with open(CHARACTERS_FILE) as f:
-        content = f.read()
+def _load_category_json(cat_name):
+    """Carica un file JSON per-categoria e restituisce la lista di personaggi."""
+    path = os.path.join(CHARACTERS_DATA_DIR, f"{cat_name}.json")
+    if not os.path.isfile(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
 
-    marker = f'"id": "{char_id}"'
-    idx = content.find(marker)
-    if idx == -1:
-        print(f"  WARNING: '{char_id}' non trovato in characters.py")
-        return False
 
-    char_block_start = content.rfind("{", 0, idx)
-    char_block_end = content.find("}", idx)
-    if char_block_start == -1 or char_block_end == -1:
-        return False
+def _save_category_json(cat_name, chars):
+    """Salva la lista di personaggi nel file JSON per-categoria."""
+    path = os.path.join(CHARACTERS_DATA_DIR, f"{cat_name}.json")
+    tmp = path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(chars, f, indent=2, ensure_ascii=False)
+    os.replace(tmp, path)
 
-    old_block = content[char_block_start:char_block_end + 1]
 
-    if "backstory" in old_block:
-        print(f"  Biografia già presente per '{char_id}', salto")
-        return True
+def _find_char_in_json(char_id):
+    """Trova un personaggio per ID nei file JSON per-categoria.
+    Restituisce (cat_name, char_dict, index) o (None, None, -1)."""
+    for cat_name in CHAR_FILES:
+        chars = _load_category_json(cat_name)
+        for i, c in enumerate(chars):
+            if c.get("id") == char_id:
+                return cat_name, c, i
+    return None, None, -1
 
-    fields_to_add = []
-    if "description" in bio_data:
-        fields_to_add.append(f'"description": "{bio_data["description"]}"')
-    if "backstory" in bio_data:
-        fields_to_add.append(f'"backstory": "{bio_data["backstory"]}"')
-    if "personality" in bio_data:
-        fields_to_add.append(f'"personality": "{bio_data["personality"]}"')
-    if "speaking_style" in bio_data:
-        fields_to_add.append(f'"speaking_style": "{bio_data["speaking_style"]}"')
-    if "hobbies" in bio_data:
-        hobbies_str = json.dumps(bio_data["hobbies"], ensure_ascii=False)
-        fields_to_add.append(f'"hobbies": {hobbies_str}')
-    if "opening_scenario" in bio_data:
-        fields_to_add.append(f'"opening_scenario": "{bio_data["opening_scenario"]}"')
 
-    if not fields_to_add:
-        return False
-
-    insert_pos = old_block.rfind("}")
-    new_fields = ",\n        " + ",\n        ".join(fields_to_add)
-    new_block = old_block[:insert_pos] + new_fields + "\n    }" + old_block[insert_pos + 1:]
-
-    content = content[:char_block_start] + new_block + content[char_block_end + 1:]
-
-    with open(CHARACTERS_FILE, "w") as f:
-        f.write(content)
-
-    print(f"  characters.py aggiornato con biografia per '{char_id}'")
-    return True
+def parse_characters():
+    """Carica tutti i personaggi dai file JSON per-categoria."""
+    chars = []
+    for cat_name in CHAR_FILES:
+        chars.extend(_load_category_json(cat_name))
+    return chars
 
 API_URL = "https://router.huggingface.co/hf-inference/models/"
 
 
 # ─── Parsing characters ──────────────────────────────────────────
-
-def parse_characters():
-    import re
-    chars = []
-    with open(CHARACTERS_FILE) as f:
-        content = f.read()
-    i = 0
-    while True:
-        start = content.find("{", i)
-        if start == -1:
-            break
-        depth = 0
-        j = start
-        while j < len(content):
-            if content[j] == "{":
-                depth += 1
-            elif content[j] == "}":
-                depth -= 1
-                if depth == 0:
-                    block = content[start:j+1]
-                    m = re.search(r'"id"\s*:\s*"([^"]+)"', block)
-                    if m:
-                        cat_m = re.search(r'"category"\s*:\s*"([^"]+)"', block)
-                        if cat_m:
-                            cid = m.group(1)
-                            cat = cat_m.group(1)
-                            name_m = re.search(r'"name"\s*:\s*"([^"]+)"', block)
-                            name = name_m.group(1) if name_m else cid
-                            desc_m = re.search(r'"description"\s*:\s*"([^"]+)"', block)
-                            desc = desc_m.group(1) if desc_m else ""
-                            age_m = re.search(r'"age"\s*:\s*(\d+)', block)
-                            age = int(age_m.group(1)) if age_m else 25
-                            role_m = re.search(r'"role"\s*:\s*"([^"]+)"', block)
-                            role = role_m.group(1) if role_m else ""
-                            avi_m = re.search(r'"avatar_image"\s*:\s*"([^"]+)"', block)
-                            avatar_image = avi_m.group(1) if avi_m else ""
-                            chars.append({"id": cid, "name": name, "category": cat,
-                                          "description": desc, "age": age, "role": role,
-                                          "avatar_image": avatar_image})
-                    j += 1
-                    break
-            j += 1
-        i = j
-    return chars
-
+# parse_characters() is defined above (JSON-based)
 
 # ─── Generazione immagini ────────────────────────────────────────
 
@@ -987,37 +996,74 @@ def save_avatar(char_id, category, image_data):
 
 
 def update_characters_py(char_id):
-    with open(CHARACTERS_FILE) as f:
-        content = f.read()
-    marker = f'"id": "{char_id}"'
-    idx = content.find(marker)
-    if idx == -1:
-        print(f"  WARNING: '{char_id}' non trovato in characters.py")
+    """Aggiunge il campo 'avatar_image' al personaggio nel file JSON per-categoria."""
+    cat_name, char_data, idx = _find_char_in_json(char_id)
+    if cat_name is None:
+        print(f"  WARNING: '{char_id}' non trovato nei file JSON")
         return False
-    if '"avatar_image"' in content[idx:idx + 500]:
+    if char_data.get("avatar_image"):
         print(f"  avatar_image già presente per '{char_id}'")
         return True
-    snippet = content[idx:]
-    avatar_pos = snippet.find('"avatar"')
-    if avatar_pos == -1:
-        print(f"  WARNING: campo 'avatar' non trovato per '{char_id}'")
+    # Carica la lista completa, aggiorna e salva
+    chars = _load_category_json(cat_name)
+    for c in chars:
+        if c.get("id") == char_id:
+            c["avatar_image"] = char_id
+            break
+    _save_category_json(cat_name, chars)
+    print(f"  {cat_name}.json aggiornato per '{char_id}'")
+    return True
+
+
+def update_characters_py_full(char_id, bio_data, force=False):
+    """Aggiorna il file JSON per-categoria con biografia completa italiana.
+
+    Args:
+        char_id: ID del personaggio
+        bio_data: dict con eventuali chiavi description, backstory,
+                  personality, speaking_style, hobbies, opening_scenario
+        force: se True, sovrascrive i campi esistenti invece di saltare.
+    """
+    cat_name, char_data, idx = _find_char_in_json(char_id)
+    if cat_name is None:
+        print(f"  WARNING: '{char_id}' non trovato nei file JSON")
         return False
-    rest = snippet[avatar_pos:]
-    line_end = rest.find("\n")
-    full_line = rest[:line_end]  # linea completa con virgola
-    indent = " " * (len(full_line) - len(full_line.lstrip()))
-    new_line = full_line.rstrip(",") + ",\n" + indent + '"avatar_image": "' + char_id + '",'
-    old = full_line + "\n"
-    new = new_line + "\n"
-    if old in content:
-        content = content.replace(old, new, 1)
-        with open(CHARACTERS_FILE, "w") as f:
-            f.write(content)
-        print(f"  characters.py aggiornato per '{char_id}'")
+
+    if char_data.get("backstory") and not force:
+        print(f"  Biografia già presente per '{char_id}', salto (usa --force per sovrascrivere)")
         return True
-    else:
-        print(f"  WARNING: impossibile aggiornare '{char_id}' (formato linea non trovato)")
-        return False
+
+    # Carica la lista completa
+    chars = _load_category_json(cat_name)
+    for c in chars:
+        if c.get("id") != char_id:
+            continue
+
+        # In modalità force, rimuovi i campi esistenti
+        if force:
+            for key in ["description", "backstory", "personality",
+                        "speaking_style", "hobbies", "opening_scenario"]:
+                c.pop(key, None)
+
+        # Aggiungi i nuovi campi dal bio_data
+        if "description" in bio_data:
+            c["description"] = bio_data["description"]
+        if "backstory" in bio_data:
+            c["backstory"] = bio_data["backstory"]
+        if "personality" in bio_data:
+            c["personality"] = bio_data["personality"]
+        if "speaking_style" in bio_data:
+            c["speaking_style"] = bio_data["speaking_style"]
+        if "hobbies" in bio_data:
+            c["hobbies"] = bio_data["hobbies"]
+        if "opening_scenario" in bio_data:
+            c["opening_scenario"] = bio_data["opening_scenario"]
+        break
+
+    _save_category_json(cat_name, chars)
+    suffix = " (FORCED)" if force else ""
+    print(f"  {cat_name}.json aggiornato con biografia per '{char_id}'{suffix}")
+    return True
 
 
 def cmd_generate(args):
@@ -1059,11 +1105,35 @@ def cmd_generate(args):
             print(f"  {c['id']:25s} {c['name']:20s} [{c.get('category','')}]{flag}")
         return
 
+    force = getattr(args, "force", False)
+
     if args.generate_all:
-        targets = [c for c in chars if not c.get("avatar_image") or not os.path.isfile(avatar_path(c))]
-        if not targets:
-            print("Tutti i personaggi hanno già immagine.")
-            return
+        if force:
+            # In modalità force: rigenero TUTTI i personaggi, anche quelli con avatar
+            targets = list(chars)
+            # Salto quelli già marcati "fatto" (a meno che non sia specificato --force)
+            # NB: con --force, ignoriamo il flag "fatto" e rigeneriamo comunque
+            print(f"Modalita FORZATA: rigenero avatar per TUTTI i {len(targets)} personaggi")
+        else:
+            # Modalità normale: solo chi è mancante E non è già flaggato "fatto"
+            targets = [c for c in chars
+                        if (not c.get("avatar_image") or not os.path.isfile(avatar_path(c)))
+                        and not is_char_done(c["id"], tasks=("avatar",))]
+            # Se però hanno flag "fatto" ma mancano il file, li rimettiamo in coda
+            skipped_done = [c for c in chars
+                            if is_char_done(c["id"], tasks=("avatar",))
+                            and (not c.get("avatar_image") or not os.path.isfile(avatar_path(c)))]
+            if skipped_done:
+                print(f"⚠️  {len(skipped_done)} personaggi flaggati 'fatto' ma senza file avatar:")
+                for c in skipped_done:
+                    print(f"    {c['id']} — resetto lo stato per rigenerarli")
+                    reset_char_status(c["id"])
+                    if c not in targets:
+                        targets.append(c)
+            if not targets:
+                print("Tutti i personaggi hanno già immagine (flag 'fatto' presente).")
+                print("  Usa --force per rigenerare tutto.")
+                return
         # Applica limite
         limit = args.avatar_limit if hasattr(args, 'avatar_limit') and args.avatar_limit > 0 else args.limit
         if limit > 0 and len(targets) > limit:
@@ -1077,6 +1147,11 @@ def cmd_generate(args):
             print(f"Personaggio '{args.generate}' non trovato.")
             sys.exit(1)
         targets = matched
+        # Se è già flaggato "fatto" e non siamo in force mode, avvisa
+        if not force and is_char_done(matched[0]["id"], tasks=("avatar",)):
+            print(f"  Personaggio '{args.generate}' già flaggato 'fatto'. Salto.")
+            print(f"  Usa --force per rigenerare.")
+            return
     else:
         return
 
@@ -1108,6 +1183,8 @@ def cmd_generate(args):
             save_avatar(char["id"], char.get("category", ""), image_data)
             update_characters_py(char["id"])
             print(f"  ✅ Avatar salvato!")
+            # Marca il task avatar come fatto
+            mark_char_done(char["id"], "avatar")
         except Exception as e:
             print(f"  ERRORE salvataggio avatar: {e}")
 
@@ -1126,13 +1203,22 @@ def cmd_generate(args):
             if bio_limit > 0 and bio_count >= bio_limit:
                 print(f"  Limite biografie raggiunto ({bio_limit})")
                 break
+            # Se non siamo in force mode e bio è già fatto, salta
+            if not force and is_char_done(char["id"], tasks=("bio", "scenario")):
+                print(f"  Biografia già flaggata 'fatto'. Salto (usa --force per rigenerare).")
+                continue
             print(f"  Genero biografia italiana...")
             bio = generate_italian_biography(char, groq_token)
             if bio:
                 try:
-                    update_characters_py_full(char["id"], bio)
+                    update_characters_py_full(char["id"], bio, force=force)
                     bio_count += 1
                     print(f"  ✅ Biografia salvata! ({bio_count}/{bio_limit if bio_limit > 0 else 'infinito'})")
+                    # Marca bio come fatto
+                    mark_char_done(char["id"], "bio")
+                    # Marca scenario come fatto solo se opening_scenario è stato effettivamente generato
+                    if bio.get("opening_scenario"):
+                        mark_char_done(char["id"], "scenario")
                 except Exception as e:
                     print(f"  ERRORE salvataggio biografia: {e}")
             else:
@@ -1141,6 +1227,11 @@ def cmd_generate(args):
             time.sleep(2)
 
     print("\nGenerazione completata!")
+    # Stampa riepilogo stato
+    if args.generate_all or args.generate:
+        status = load_gen_status()
+        done_count = sum(1 for c in chars if is_char_done(c["id"]))
+        print(f"Personaggi completati (tutti i task flag 'fatto'): {done_count}/{len(chars)}")
 
 
 # ─── Animazione avatar ───────────────────────────────────────────
@@ -1259,14 +1350,20 @@ def main():
     parser.add_argument("--prompt", help="Prompt personalizzato (solo con --generate)")
     parser.add_argument("--bio", action="store_true",
                         help="Genera biografia italiana automatica con Groq (backstory, personality, opening_scenario)")
+    parser.add_argument("--force", action="store_true",
+                        help="Forza rigenerazione anche se flag 'fatto' presente o campi esistenti. "
+                             "Di default salta i personaggi gia completati.")
+    parser.add_argument("--reset-status", metavar="ID", help="Resetta il flag 'fatto' per un personaggio")
 
     gen = parser.add_argument_group("Generazione immagini")
     gen.add_argument("--generate", metavar="ID", help="Genera avatar per un personaggio")
-    gen.add_argument("--generate-all", action="store_true", help="Genera avatar per tutti i personaggi mancanti")
+    gen.add_argument("--generate-all", action="store_true",
+                     help="Genera avatar per tutti i personaggi mancanti (o TUTTI con --force)")
     gen.add_argument("--list-missing", action="store_true", help="Elenca personaggi senza avatar")
     gen.add_argument("--limit", type=int, default=0, help="Numero massimo di avatar da generare (0=tutti)")
     gen.add_argument("--avatar-limit", type=int, default=0, help="Limite avatar per modalita both")
     gen.add_argument("--bio-limit", type=int, default=0, help="Limite biografie per modalita both")
+    gen.add_argument("--status", action="store_true", help="Mostra statistiche stato generazioni")
 
     anim = parser.add_argument_group("Animazione avatar")
     anim.add_argument("--animate", metavar="ID", help="Anima un avatar esistente")
@@ -1280,6 +1377,37 @@ def main():
                        help="Genera icona PNG per una singola categoria")
 
     args = parser.parse_args()
+
+    # Gestione --reset-status <ID>: resetta il flag 'fatto' per un personaggio
+    if args.reset_status:
+        reset_char_status(args.reset_status)
+        print(f"Reset stato per '{args.reset_status}'. Le prossime generazioni non lo salteranno.")
+        return
+
+    # Gestione --status: mostra statistiche
+    if args.status:
+        chars = parse_characters()
+        status = load_gen_status()
+        total = len(chars)
+        done_all = sum(1 for c in chars if is_char_done(c["id"]))
+        done_avatar = sum(1 for c in chars if status.get(c["id"], {}).get("avatar"))
+        done_bio = sum(1 for c in chars if status.get(c["id"], {}).get("bio"))
+        done_scenario = sum(1 for c in chars if status.get(c["id"], {}).get("scenario"))
+        print(f"\n=== Stato generazioni ===")
+        print(f"  Personaggi totali: {total}")
+        print(f"  Completi (tutti i task): {done_all}/{total}")
+        print(f"  Avatar: {done_avatar}/{total}")
+        print(f"  Bio: {done_bio}/{total}")
+        print(f"  Scenario: {done_scenario}/{total}")
+        pending = [c for c in chars if not is_char_done(c["id"])]
+        if pending:
+            print(f"\n  In attesa ({len(pending)}):")
+            for c in pending[:20]:
+                tasks = [t for t in GEN_TASKS if not status.get(c["id"], {}).get(t)]
+                print(f"    {c['id']:30s} manca: {', '.join(tasks)}")
+            if len(pending) > 20:
+                print(f"    ... e altri {len(pending) - 20}")
+        return
 
     has_gen = args.generate or args.generate_all or args.list_missing
     has_anim = args.animate or args.animate_all or args.list_avatars
