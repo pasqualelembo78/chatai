@@ -788,6 +788,7 @@ Type=simple
 User=chatai
 Group=chatai
 WorkingDirectory=$ROOT_DIR/backend
+ExecStartPre=$ROOT_DIR/backend/venv/bin/python3 -c "import app; print('Import OK')"
 ExecStart=$ROOT_DIR/backend/venv/bin/python3 -m uvicorn app:socket_app --host 0.0.0.0 --port 5000 --workers 1
 Restart=on-failure
 RestartSec=10
