@@ -239,7 +239,9 @@ public class GroupChatFragment extends Fragment {
                                     messagesList.scrollToPosition(messages.size() - 1);
                                 }
                             });
-                            try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+                            if (i < responses.length() - 1) {
+                                try { Thread.sleep(800); } catch (InterruptedException ignored) {}
+                            }
                         }
                     }
                     if (!isCancelled) {

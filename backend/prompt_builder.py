@@ -426,21 +426,21 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
         lines.append(f"NON rispondere per gli altri personaggi.")
         if auto_selected:
             lines.append(f"L'utente non ha interpellato nessuno in modo specifico. Sei stato selezionato perché rilevante per la conversazione.")
-            lines.append(f"Rispondi solo se il messaggio dell'utente ti riguarda o ti interessa. Altrimenti, non rispondere.")
+            lines.append(f"Rispondi all'utente. Concentrati sul suo messaggio, non sugli altri personaggi.")
         else:
-            lines.append(f"L'utente ti ha interpellato specificamente con @. Rispondi al suo messaggio.")
+            lines.append(f"L'utente ti ha interpellato specificamente con @. Rispondi all'utente, non ad altri personaggi.")
     else:
         lines.append("Genera le risposte di OGNI personaggio in base a ciò che è stato detto.")
 
     lines.append("")
     lines.append("REGOLE FONDAMENTALI:")
     lines.append("- Ogni personaggio deve mantenere la propria personalità, stile di parlare e backstory.")
-    lines.append("- I personaggi possono reagire a ciò che gli ALTRI personaggi hanno detto (non solo all'utente).")
+    lines.append("- Rispondi PRINCIPALMENTE all'utente, non agli altri personaggi.")
     lines.append("- Usa un tono naturale e colloquiale in italiano.")
     lines.append("- NON ripetere gli stessi concetti: ogni personaggio offre una prospettiva diversa.")
     lines.append("- Rispondi in modo breve e conciso (1-3 frasi massimo).")
-    lines.append("- IMPORTANTE: Quando ti rivolgi direttamente a un altro personaggio, DEVI usare la sintassi @NomePersonaggio. Questo serve per attivare automaticamente la risposta di quel personaggio.")
-    lines.append("- Se un altro personaggio ti ha menzionato con @ nella conversazione precedente, DEVI rispondere a quel personaggio.")
+    lines.append("- NON usare @ per menzionare altri personaggi, a meno che non sia strettamente necessario.")
+    lines.append("- Rivolgiti direttamente all'utente con 'tu'.")
     lines.append("")
 
     if previous_responses:

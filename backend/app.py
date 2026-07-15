@@ -1876,7 +1876,7 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
 
     responded_ids = {r["character_id"] for r in responses}
     mention_rounds = 0
-    max_mention_rounds = 3
+    max_mention_rounds = 1
 
     while mention_rounds < max_mention_rounds:
         mentioned_to_respond = []
