@@ -499,7 +499,6 @@ public class GroupChatListFragment extends Fragment {
         super.onStop();
         if (executor != null && !executor.isShutdown()) {
             executor.shutdownNow();
-            executor = null;
         }
     }
 
