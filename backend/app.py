@@ -1590,8 +1590,14 @@ async def admin_mark_dms_read(user_id: str, user: AuthUser = Depends(admin_requi
 
 @app.get("/group-chats")
 async def list_group_chats(user: AuthUser = Depends(jwt_required)):
-    from storage import list_group_chats as _lgc
-    return _lgc(user.user_id)
+    from storage import list_group_chats as _lgc, get_user_group_chats as _ugc
+    owned = _lgc(user.user_id)
+    participating = _ugc(user.user_id)
+    owned_ids = {c["id"] for c in owned}
+    for c in participating:
+        if c["id"] not in owned_ids:
+            owned.append(c)
+    return owned
 
 @app.post("/group-chats")
 async def create_group_chat(request: Request, body: CreateGroupChatRequest, user: AuthUser = Depends(jwt_required)):
@@ -1612,18 +1618,22 @@ async def create_group_chat(request: Request, body: CreateGroupChatRequest, user
 
 @app.get("/group-chats/{chat_id}")
 async def get_group_chat(chat_id: int, user: AuthUser = Depends(jwt_required)):
-    from storage import get_group_chat as _ggc, get_group_messages as _ggm
-    chat = _ggc(chat_id, user.user_id)
+    from storage import get_group_chat as _ggc, get_group_messages as _ggm, is_group_participant as _igp, get_group_participants as _gp
+    chat = _ggc(chat_id)
     if not chat:
         raise HTTPException(404, "Chat di gruppo non trovata")
+    if chat["user_id"] != user.user_id and not _igp(chat_id, user.user_id):
+        raise HTTPException(403, "Non sei autorizzato a visualizzare questa chat")
     messages = _ggm(chat_id, limit=100)
+    participants = _gp(chat_id)
     chat["messages"] = messages
+    chat["participants"] = [p["user_id"] for p in participants]
     return chat
 
 @app.delete("/group-chats/{chat_id}")
 async def delete_group_chat(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
     from storage import get_group_chat as _ggc, delete_group_chat as _dgc, audit_log
-    chat = _ggc(chat_id, user.user_id)
+    chat = _ggc(chat_id)
     if not chat:
         raise HTTPException(404, "Chat di gruppo non trovata")
     _dgc(chat_id)
@@ -1675,17 +1685,67 @@ async def remove_character_from_group(chat_id: int, character_id: str, request: 
               request.headers.get("User-Agent", ""))
     return {"status": "ok", "removed": character_id}
 
+@app.get("/group-chats/{chat_id}/participants")
+async def get_group_participants(chat_id: int, user: AuthUser = Depends(jwt_required)):
+    from storage import get_group_chat as _ggc, get_group_participants as _gp
+    chat = _ggc(chat_id, user.user_id)
+    if not chat:
+        raise HTTPException(404, "Chat di gruppo non trovata")
+    return _gp(chat_id)
+
+@app.post("/group-chats/{chat_id}/participants")
+async def add_group_participant(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
+    from storage import get_group_chat as _ggc, add_group_participant as _ap, audit_log
+    chat = _ggc(chat_id, user.user_id)
+    if not chat:
+        raise HTTPException(404, "Chat di gruppo non trovata")
+    data = await request.json()
+    participant_id = data.get("user_id", "").strip()
+    if not participant_id:
+        raise HTTPException(400, "user_id richiesto")
+    if participant_id == user.user_id:
+        raise HTTPException(400, "Sei già il proprietario della chat")
+    from storage import user_exists as _ue
+    if not _ue(participant_id):
+        raise HTTPException(404, "Utente non trovato")
+    _ap(chat_id, participant_id)
+    audit_log(user.user_id, "group_chat.add_participant", f"chat={chat_id} user={participant_id}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "user_id": participant_id}
+
+@app.delete("/group-chats/{chat_id}/participants/{participant_id}")
+async def remove_group_participant(chat_id: int, participant_id: str, request: Request,
+                                    user: AuthUser = Depends(jwt_required)):
+    from storage import get_group_chat as _ggc, remove_group_participant as _rp, audit_log
+    chat = _ggc(chat_id, user.user_id)
+    if not chat:
+        raise HTTPException(404, "Chat di gruppo non trovata")
+    _rp(chat_id, participant_id)
+    audit_log(user.user_id, "group_chat.remove_participant", f"chat={chat_id} user={participant_id}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "removed": participant_id}
+
+@app.get("/users/search")
+async def search_users(q: str, user: AuthUser = Depends(jwt_required)):
+    from storage import search_users as _su
+    results = _su(q, limit=10)
+    return results
+
 @app.post("/group-chats/{chat_id}/message")
 async def send_group_message(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
     data = await request.json()
     text = data.get("text", "").strip()
     if not text:
         raise HTTPException(400, "Messaggio vuoto")
-    from storage import get_group_chat as _ggc, add_group_message as _agm
+    from storage import get_group_chat as _ggc, add_group_message as _agm, is_group_participant as _igp
     from characters import get_character
-    chat = _ggc(chat_id, user.user_id)
+    chat = _ggc(chat_id)
     if not chat:
         raise HTTPException(404, "Chat di gruppo non trovata")
+    if chat["user_id"] != user.user_id and not _igp(chat_id, user.user_id):
+        raise HTTPException(403, "Non sei autorizzato a scrivere in questa chat")
     _agm(chat_id, "user", user.user_id, "user", text)
     characters = []
     for cid in chat["character_ids"]:

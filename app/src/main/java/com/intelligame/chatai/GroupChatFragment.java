@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -258,6 +259,13 @@ public class GroupChatFragment extends Fragment {
                             currentIds.add(currentChars.getString(i));
                         }
                     }
+                    JSONArray participantsArr = obj.optJSONArray("participants");
+                    List<String> participantIds = new ArrayList<>();
+                    if (participantsArr != null) {
+                        for (int i = 0; i < participantsArr.length(); i++) {
+                            participantIds.add(participantsArr.getString(i));
+                        }
+                    }
 
                     AuthManager.HttpResponse allResp = mAuth.requestWithRefresh(
                         baseUrl + "/characters", "GET", null, 10000);
@@ -274,9 +282,10 @@ public class GroupChatFragment extends Fragment {
 
                     final List<String> finalCurrentIds = currentIds;
                     final List<JSONObject> finalAllChars = allChars;
+                    final List<String> finalParticipantIds = participantIds;
                     mainHandler.post(() -> {
                         loadingBar.setVisibility(View.GONE);
-                        showManageCharactersDialog(finalCurrentIds, finalAllChars);
+                        showManageDialog(finalCurrentIds, finalAllChars, finalParticipantIds);
                     });
                 }
             } catch (Exception e) {
@@ -288,20 +297,21 @@ public class GroupChatFragment extends Fragment {
         });
     }
 
-    private void showManageCharactersDialog(List<String> currentIds, List<JSONObject> allChars) {
+    private void showManageDialog(List<String> currentIds, List<JSONObject> allChars, List<String> participantIds) {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-        builder.setTitle("Gestisci Personaggi");
+        builder.setTitle("Gestisci Chat di Gruppo");
 
+        ScrollView scroll = new ScrollView(getContext());
         LinearLayout container = new LinearLayout(getContext());
         container.setOrientation(LinearLayout.VERTICAL);
         int pad = (int) (48 * getResources().getDisplayMetrics().density);
         container.setPadding(pad, 32, pad, 0);
 
-        TextView currentLabel = new TextView(getContext());
-        currentLabel.setText("Personaggi attuali (" + currentIds.size() + "):");
-        currentLabel.setPadding(0, 0, 0, 8);
-        currentLabel.setTextColor(Color.parseColor("#E0E0E0"));
-        container.addView(currentLabel);
+        TextView charLabel = new TextView(getContext());
+        charLabel.setText("Personaggi (" + currentIds.size() + "):");
+        charLabel.setPadding(0, 0, 0, 8);
+        charLabel.setTextColor(Color.parseColor("#E0E0E0"));
+        container.addView(charLabel);
 
         for (String cid : currentIds) {
             String charName = cid;
@@ -316,19 +326,16 @@ public class GroupChatFragment extends Fragment {
             charView.setPadding(0, 8, 0, 8);
             charView.setTextColor(Color.parseColor("#FF8A80"));
             charView.setTextSize(14);
-            charView.setTag(cid);
-            charView.setOnClickListener(v -> {
-                removeCharacter(cid, charName);
-            });
+            charView.setOnClickListener(v -> removeCharacter(cid, charName));
             container.addView(charView);
         }
 
         if (currentIds.size() < 8) {
-            TextView addLabel = new TextView(getContext());
-            addLabel.setText("\nAggiungi personaggio:");
-            addLabel.setPadding(0, 16, 0, 8);
-            addLabel.setTextColor(Color.parseColor("#E0E0E0"));
-            container.addView(addLabel);
+            TextView addCharLabel = new TextView(getContext());
+            addCharLabel.setText("\nAggiungi personaggio:");
+            addCharLabel.setPadding(0, 16, 0, 8);
+            addCharLabel.setTextColor(Color.parseColor("#E0E0E0"));
+            container.addView(addCharLabel);
 
             for (JSONObject c : allChars) {
                 String id = c.optString("id");
@@ -340,17 +347,88 @@ public class GroupChatFragment extends Fragment {
                     addView.setPadding(0, 8, 0, 8);
                     addView.setTextColor(Color.parseColor("#81C784"));
                     addView.setTextSize(14);
-                    addView.setOnClickListener(v -> {
-                        addCharacter(id, name);
-                    });
+                    addView.setOnClickListener(v -> addCharacter(id, name));
                     container.addView(addView);
                 }
             }
         }
 
-        builder.setView(container);
+        TextView partLabel = new TextView(getContext());
+        partLabel.setText("\nUtenti (" + participantIds.size() + "):");
+        partLabel.setPadding(0, 24, 0, 8);
+        partLabel.setTextColor(Color.parseColor("#E0E0E0"));
+        container.addView(partLabel);
+
+        for (String pid : participantIds) {
+            TextView partView = new TextView(getContext());
+            partView.setText("✕ " + pid);
+            partView.setPadding(0, 8, 0, 8);
+            partView.setTextColor(Color.parseColor("#FF8A80"));
+            partView.setTextSize(14);
+            partView.setOnClickListener(v -> removeParticipant(pid));
+            container.addView(partView);
+        }
+
+        TextView addPartLabel = new TextView(getContext());
+        addPartLabel.setText("\nInvita utente:");
+        addPartLabel.setPadding(0, 16, 0, 8);
+        addPartLabel.setTextColor(Color.parseColor("#E0E0E0"));
+        container.addView(addPartLabel);
+
+        EditText searchInput = new EditText(getContext());
+        searchInput.setHint("Cerca username...");
+        searchInput.setTextColor(Color.parseColor("#E0E0E0"));
+        searchInput.setTextSize(14);
+        container.addView(searchInput);
+
+        TextView searchResults = new TextView(getContext());
+        searchResults.setPadding(0, 8, 0, 0);
+        container.addView(searchResults);
+
+        searchInput.setOnEditorActionListener((v, actionId, event) -> {
+            String query = searchInput.getText().toString().trim();
+            if (!query.isEmpty()) {
+                searchUsers(query, searchResults);
+            }
+            return true;
+        });
+
+        scroll.addView(container);
+        builder.setView(scroll);
         builder.setNegativeButton("Chiudi", null);
         builder.show();
+    }
+
+    private void searchUsers(String query, TextView resultsView) {
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                    baseUrl + "/users/search?q=" + query, "GET", null, 5000);
+                if (resp.statusCode == 200) {
+                    JSONArray arr = new JSONArray(resp.body);
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject u = arr.getJSONObject(i);
+                        String uid = u.optString("id");
+                        String username = u.optString("username");
+                        sb.append("+ ").append(username).append(" (").append(uid).append(")\n");
+                    }
+                    final String text = sb.toString();
+                    mainHandler.post(() -> {
+                        resultsView.setText(text.isEmpty() ? "Nessun risultato" : text);
+                        resultsView.setOnClickListener(v -> {
+                            if (!text.isEmpty()) {
+                                String firstLine = text.split("\n")[0];
+                                String uid = firstLine.substring(firstLine.indexOf("(") + 1, firstLine.indexOf(")"));
+                                addParticipant(uid);
+                            }
+                        });
+                    });
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> resultsView.setText("Errore ricerca"));
+            }
+        });
     }
 
     private void addCharacter(String characterId, String characterName) {
@@ -400,6 +478,75 @@ public class GroupChatFragment extends Fragment {
                             loadingBar.setVisibility(View.GONE);
                             if (resp.statusCode == 200) {
                                 Toast.makeText(getContext(), characterName + " rimosso", Toast.LENGTH_SHORT).show();
+                                loadMessages();
+                            } else {
+                                String errMsg = "Errore";
+                                try {
+                                    JSONObject err = new JSONObject(resp.body);
+                                    if (err.has("detail")) errMsg = err.getString("detail");
+                                } catch (Exception ignored) {}
+                                Toast.makeText(getContext(), errMsg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (Exception e) {
+                        mainHandler.post(() -> {
+                            loadingBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Errore connessione", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            })
+            .setNegativeButton("Annulla", null)
+            .show();
+    }
+
+    private void addParticipant(String userId) {
+        loadingBar.setVisibility(View.VISIBLE);
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("user_id", userId);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                    baseUrl + "/group-chats/" + chatId + "/participants",
+                    "POST", body.toString(), 10000);
+                mainHandler.post(() -> {
+                    loadingBar.setVisibility(View.GONE);
+                    if (resp.statusCode == 200 || resp.statusCode == 201) {
+                        Toast.makeText(getContext(), "Utente aggiunto!", Toast.LENGTH_SHORT).show();
+                        loadMessages();
+                    } else {
+                        String errMsg = "Errore";
+                        try {
+                            JSONObject err = new JSONObject(resp.body);
+                            if (err.has("detail")) errMsg = err.getString("detail");
+                        } catch (Exception ignored) {}
+                        Toast.makeText(getContext(), errMsg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    loadingBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Errore connessione", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void removeParticipant(String userId) {
+        new android.app.AlertDialog.Builder(getContext())
+            .setTitle("Rimuovi " + userId + "?")
+            .setMessage("Vuoi rimuovere questo utente dalla chat?")
+            .setPositiveButton("Rimuovi", (d, w) -> {
+                loadingBar.setVisibility(View.VISIBLE);
+                executor.execute(() -> {
+                    try {
+                        AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                            baseUrl + "/group-chats/" + chatId + "/participants/" + userId,
+                            "DELETE", null, 10000);
+                        mainHandler.post(() -> {
+                            loadingBar.setVisibility(View.GONE);
+                            if (resp.statusCode == 200) {
+                                Toast.makeText(getContext(), "Utente rimosso", Toast.LENGTH_SHORT).show();
                                 loadMessages();
                             } else {
                                 String errMsg = "Errore";

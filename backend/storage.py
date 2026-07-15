@@ -2774,6 +2774,16 @@ def get_admin_stats():
         put_conn(conn)
 
 
+def user_exists(user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT 1 FROM users WHERE id=%s", (user_id,))
+        return cur.fetchone() is not None
+    finally:
+        put_conn(conn)
+
+
 def search_users(query, limit=50):
     conn = get_conn()
     try:
@@ -2949,9 +2959,19 @@ def init_group_chat_tables():
                 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS group_chat_participants (
+                group_chat_id INTEGER NOT NULL REFERENCES group_chats(id) ON DELETE CASCADE,
+                user_id TEXT NOT NULL,
+                joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (group_chat_id, user_id)
+            )
+        """)
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gcm_chat ON group_chat_messages(group_chat_id, timestamp)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gcc_chat ON group_chat_characters(group_chat_id)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gc_user ON group_chats(user_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gcp_chat ON group_chat_participants(group_chat_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gcp_user ON group_chat_participants(user_id)")
         conn.commit()
     finally:
         put_conn(conn)
@@ -3049,6 +3069,83 @@ def remove_group_character(chat_id, character_id):
             (chat_id, character_id))
         conn.commit()
         return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
+def add_group_participant(chat_id, user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO group_chat_participants (group_chat_id, user_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+            (chat_id, user_id))
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
+def remove_group_participant(chat_id, user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "DELETE FROM group_chat_participants WHERE group_chat_id=%s AND user_id=%s",
+            (chat_id, user_id))
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
+def get_group_participants(chat_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT user_id, joined_at FROM group_chat_participants WHERE group_chat_id=%s ORDER BY joined_at",
+            (chat_id,))
+        return [{"user_id": row["user_id"], "joined_at": str(row["joined_at"])} for row in cur.fetchall()]
+    finally:
+        put_conn(conn)
+
+
+def is_group_participant(chat_id, user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT 1 FROM group_chat_participants WHERE group_chat_id=%s AND user_id=%s",
+            (chat_id, user_id))
+        return cur.fetchone() is not None
+    finally:
+        put_conn(conn)
+
+
+def get_user_group_chats(user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT gc.id, gc.name, gc.created_at 
+            FROM group_chats gc
+            JOIN group_chat_participants gcp ON gc.id = gcp.group_chat_id
+            WHERE gcp.user_id = %s
+            ORDER BY gc.created_at DESC
+        """, (user_id,))
+        chats = []
+        for r in cur.fetchall():
+            cur2 = conn.cursor()
+            cur2.execute("SELECT character_id FROM group_chat_characters WHERE group_chat_id=%s", (r["id"],))
+            chars = [row["character_id"] for row in cur2.fetchall()]
+            cur2.execute("SELECT user_id FROM group_chat_participants WHERE group_chat_id=%s", (r["id"],))
+            participants = [row["user_id"] for row in cur2.fetchall()]
+            cur2.execute("SELECT COUNT(*) as cnt FROM group_chat_messages WHERE group_chat_id=%s", (r["id"],))
+            msg_count = cur2.fetchone()["cnt"]
+            chats.append({"id": r["id"], "name": r["name"], "created_at": str(r["created_at"]),
+                          "character_ids": chars, "participants": participants, "message_count": msg_count})
+        return chats
     finally:
         put_conn(conn)
 
