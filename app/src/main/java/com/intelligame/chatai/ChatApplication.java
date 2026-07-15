@@ -31,14 +31,9 @@ public class ChatApplication extends Application {
         new Thread(() -> {
             mPremiumManager = new PremiumManager(ChatApplication.this);
             mPremiumManager.init(ChatApplication.this);
-            AdManager.getInstance().init(ChatApplication.this);
-
-            new Handler(Looper.getMainLooper()).post(() -> {
-                if (mPremiumManager != null && mPremiumManager.isPremium()) {
-                    AdManager.getInstance().setAdsEnabled(false);
-                }
-            });
         }).start();
+
+        AdManager.getInstance().init(this);
     }
 
     public LocalDatabaseHelper getLocalDb() {
