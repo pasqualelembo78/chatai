@@ -1853,6 +1853,69 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
             responses.append({"character_id": fallback_char["id"],
                               "character_name": fallback_char["name"],
                               "content": reply})
+            previous_responses.append({"name": fallback_char["name"], "content": reply})
+
+    responded_ids = {r["character_id"] for r in responses}
+    mention_rounds = 0
+    max_mention_rounds = 3
+
+    while mention_rounds < max_mention_rounds:
+        mentioned_to_respond = []
+        for r in responses:
+            content = r.get("content", "")
+            resp_mentions = re.findall(r'@(\w+)', content, re.IGNORECASE)
+            if not resp_mentions:
+                continue
+            for char in characters:
+                if char["id"] in responded_ids:
+                    continue
+                char_name_lower = char["name"].lower()
+                for mention in resp_mentions:
+                    if mention.lower() in char_name_lower or char_name_lower in mention.lower():
+                        mentioned_to_respond.append(char)
+                        break
+
+        if not mentioned_to_respond:
+            break
+
+        seen_ids = set()
+        new_responses = []
+        for char in mentioned_to_respond:
+            if char["id"] in seen_ids or char["id"] in responded_ids:
+                continue
+            seen_ids.add(char["id"])
+
+            from prompt_builder import build_group_messages
+            messages = build_group_messages(
+                characters, text, history=history,
+                username=user.user_id[:8],
+                current_character=char["name"],
+                previous_responses=previous_responses,
+                auto_selected=False
+            )
+            from ai_engine import get_ai_response_stream
+            full_response = ""
+            for token_data in get_ai_response_stream(messages, user_id=user.user_id):
+                if isinstance(token_data, tuple):
+                    token = token_data[0]
+                else:
+                    token = token_data
+                full_response += token
+
+            reply = full_response.strip()
+            if reply:
+                _agm(chat_id, "character", char["id"], "assistant", reply)
+                resp = {"character_id": char["id"],
+                        "character_name": char["name"],
+                        "content": reply}
+                new_responses.append(resp)
+                responses.append(resp)
+                previous_responses.append({"name": char["name"], "content": reply})
+                responded_ids.add(char["id"])
+
+        if not new_responses:
+            break
+        mention_rounds += 1
 
     return {"responses": responses, "user_message": text}
 
