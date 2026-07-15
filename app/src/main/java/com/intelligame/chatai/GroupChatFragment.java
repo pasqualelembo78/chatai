@@ -30,7 +30,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -50,6 +52,7 @@ public class GroupChatFragment extends Fragment {
     private TextView titleView, subtitleView;
     private MessageAdapter adapter;
     private List<MessageItem> messages = new ArrayList<>();
+    private Map<String, String> charIdToName = new HashMap<>();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private boolean sending = false;
@@ -128,6 +131,18 @@ public class GroupChatFragment extends Fragment {
                     JSONObject obj = new JSONObject(resp.body);
                     JSONArray chars = obj.optJSONArray("character_ids");
                     int charCount = chars != null ? chars.length() : 0;
+
+                    Map<String, String> idToName = new HashMap<>();
+                    AuthManager.HttpResponse allResp = mAuth.requestWithRefresh(
+                        baseUrl + "/characters", "GET", null, 10000);
+                    if (allResp.statusCode == 200) {
+                        JSONArray allChars = new JSONArray(allResp.body);
+                        for (int i = 0; i < allChars.length(); i++) {
+                            JSONObject c = allChars.getJSONObject(i);
+                            idToName.put(c.optString("id"), c.optString("name", ""));
+                        }
+                    }
+
                     JSONArray msgs = obj.optJSONArray("messages");
                     List<MessageItem> items = new ArrayList<>();
                     if (msgs != null) {
@@ -139,12 +154,14 @@ public class GroupChatFragment extends Fragment {
                             item.role = m.optString("role", "");
                             item.content = m.optString("content", "");
                             item.timestamp = m.optString("timestamp", "");
-                            item.senderName = resolveSenderName(m, charCount);
+                            item.senderName = resolveSenderName(item, idToName);
                             items.add(item);
                         }
                     }
                     final int cc = charCount;
+                    final Map<String, String> finalIdToName = idToName;
                     mainHandler.post(() -> {
+                        charIdToName.putAll(finalIdToName);
                         subtitleView.setText(cc + " personaggi");
                         messages.clear();
                         messages.addAll(items);
@@ -161,12 +178,12 @@ public class GroupChatFragment extends Fragment {
         });
     }
 
-    private String resolveSenderName(JSONObject msg, int charCount) {
-        if ("user".equals(msg.optString("sender_type"))) {
+    private String resolveSenderName(MessageItem item, Map<String, String> idToName) {
+        if ("user".equals(item.senderType)) {
             return "Tu";
         }
-        String name = msg.optString("sender_id", "?");
-        return name;
+        String name = idToName.get(item.senderId);
+        return name != null ? name : item.senderId;
     }
 
     private void sendMessage() {

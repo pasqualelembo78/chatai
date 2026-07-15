@@ -477,10 +477,13 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
 
     messages = [{"role": "system", "content": system_prompt}]
 
+    char_id_to_name = {c["id"]: c["name"] for c in characters}
+
     for msg in (history or [])[-30:]:
         role = msg.get("role", "")
         content = msg.get("content", "")
-        sender = msg.get("sender_name", "")
+        sender_id = msg.get("sender_id", "")
+        sender = char_id_to_name.get(sender_id, sender_id)
         if role == "user":
             messages.append({"role": "user", "content": content})
         elif role == "assistant" and sender:
