@@ -47,6 +47,17 @@
                 android:textSize="11sp" />
         </LinearLayout>
 
+        <ImageButton
+            android:id="@+id/copy_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_share"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Copia chat"
+            android:minWidth="0dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
+
         <Button
             android:id="@+id/btn_group_settings"
             android:layout_width="wrap_content"

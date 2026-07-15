@@ -1,5 +1,8 @@
 package com.intelligame.chatai;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,7 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -105,6 +110,9 @@ public class GroupChatFragment extends Fragment {
             ((MainActivity) requireActivity()).onBackPressed());
 
         view.findViewById(R.id.btn_group_settings).setOnClickListener(v -> showGroupSettings());
+
+        ImageButton copyButton = view.findViewById(R.id.copy_button);
+        copyButton.setOnClickListener(v -> copyChatToClipboard());
 
         btnSend.setOnClickListener(v -> sendMessage());
 
@@ -571,6 +579,42 @@ public class GroupChatFragment extends Fragment {
             .show();
     }
 
+    private void showContextMenu(View anchor, MessageItem item) {
+        PopupMenu popup = new PopupMenu(anchor.getContext(), anchor);
+        popup.getMenu().add(0, 1, 0, "Copia messaggio");
+        popup.setOnMenuItemClickListener(menuItem -> {
+            if (menuItem.getItemId() == 1) {
+                ClipboardManager clipboard = (ClipboardManager) anchor.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("message", item.content);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(anchor.getContext(), "Messaggio copiato", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            return false;
+        });
+        popup.show();
+    }
+
+    private void copyChatToClipboard() {
+        StringBuilder sb = new StringBuilder();
+        String header = "Chat di gruppo: " + (chatName != null ? chatName : "");
+        sb.append(header).append("\n").append("═══════════════════════════════").append("\n\n");
+
+        for (MessageItem item : messages) {
+            String text = item.content;
+            if (text == null || text.isEmpty()) continue;
+            sb.append(item.senderName).append(": ").append(text).append("\n\n");
+        }
+
+        if (getActivity() == null) return;
+        ClipboardManager clipboard = (ClipboardManager)
+                getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("chat", sb.toString().trim());
+        clipboard.setPrimaryClip(clip);
+        if (!isAdded()) return;
+        Toast.makeText(getActivity(), "Conversazione copiata negli appunti", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -630,6 +674,11 @@ public class GroupChatFragment extends Fragment {
                 tv.setTextColor(color);
                 tv.setBackgroundColor(Color.parseColor("#1A1A2E"));
             }
+
+            tv.setOnLongClickListener(v -> {
+                showContextMenu(v, item);
+                return true;
+            });
         }
 
         @Override
