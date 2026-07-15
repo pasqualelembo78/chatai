@@ -1855,9 +1855,17 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
                                   "content": reply})
                 previous_responses.append({"name": char["name"], "content": reply})
     else:
+        tasks = []
         for char in responding_chars:
-            reply = await _generate_single_char(char, previous_responses, auto_selected)
+            tasks.append(_generate_single_char(char, [], auto_selected))
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                logger.warning(f"Group chat: eccezione per {responding_chars[i]['name']}: {result}")
+                continue
+            reply = result
             if reply:
+                char = responding_chars[i]
                 _agm(chat_id, "character", char["id"], "assistant", reply)
                 responses.append({"character_id": char["id"],
                                   "character_name": char["name"],

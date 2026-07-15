@@ -232,16 +232,13 @@ public class GroupChatFragment extends Fragment {
                             charMsg.senderName = r.optString("character_name", "?");
                             charMsg.timestamp = "";
                             final int idx = i;
-                            mainHandler.post(() -> {
+                            mainHandler.postDelayed(() -> {
                                 if (!isCancelled && isAdded()) {
                                     messages.add(charMsg);
                                     adapter.notifyItemInserted(messages.size() - 1);
                                     messagesList.scrollToPosition(messages.size() - 1);
                                 }
-                            });
-                            if (i < responses.length() - 1) {
-                                try { Thread.sleep(800); } catch (InterruptedException ignored) {}
-                            }
+                            }, (i + 1) * 150L);
                         }
                     }
                     if (!isCancelled) {
