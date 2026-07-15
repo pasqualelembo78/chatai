@@ -409,3 +409,66 @@ def build_messages(character, emotion, relationship, personality, world_state, u
 
     messages.append({"role": "user", "content": user_text})
     return messages
+
+
+def build_group_messages(characters, user_text, history=None, username="Utente"):
+    names = [c["name"] for c in characters]
+    names_str = ", ".join(names)
+
+    lines = []
+    lines.append("Sei un facilitatore di conversazioni di gruppo. Ogni personaggio ha una personalità unica e univoca.")
+    lines.append(f"I partecipanti alla conversazione sono: {names_str}.")
+    lines.append("L'utente sta parlando con tutti loro contemporaneamente.")
+    lines.append("Genera le risposte di OGNI personaggio in base a ciò che è stato detto.")
+    lines.append("")
+    lines.append("REGOLE FONDAMENTALI:")
+    lines.append("- Ogni personaggio devemaintenere la propria personalità, stile di parlare e backstory.")
+    lines.append("- I personaggi possono reagire a ciò che gli ALTRI personaggi hanno detto (non solo all'utente).")
+    lines.append("- Usa un tono naturale e colloquiale in italiano.")
+    lines.append("- Non ripetere gli stessi concetti: ogni personaggio offre una prospettiva diversa.")
+    lines.append("")
+    lines.append("FORMATO OBBLIGATORIO per le risposte:")
+    lines.append("[NomePersonaggio]: la risposta del personaggio")
+    lines.append("[AltroNomePersonaggio]: la risposta dell'altro personaggio")
+    lines.append("...")
+    lines.append("")
+
+    for c in characters:
+        name = c["name"]
+        personality = c.get("personality", "")
+        speaking = c.get("speaking_style", "")
+        backstory = c.get("backstory", "")
+        desc = c.get("description", "")
+        role = c.get("role", "")
+        age = c.get("age", "")
+        lines.append(f"--- {name} ---")
+        lines.append(f"Nome: {name}")
+        if age:
+            lines.append(f"Età: {age}")
+        if role:
+            lines.append(f"Ruolo: {role}")
+        if desc:
+            lines.append(f"Descrizione: {desc[:200]}")
+        if personality:
+            lines.append(f"Personalità: {personality[:200]}")
+        if speaking:
+            lines.append(f"Stile di parlare: {speaking[:200]}")
+        if backstory:
+            lines.append(f"Background: {backstory[:200]}")
+        lines.append("")
+
+    system_prompt = "\n".join(lines)
+
+    messages = [{"role": "system", "content": system_prompt}]
+
+    for msg in (history or [])[-30:]:
+        role = msg.get("role", "")
+        content = msg.get("content", "")
+        sender = msg.get("sender_name", "")
+        if role == "user":
+            messages.append({"role": "user", "content": content})
+        elif role == "assistant" and sender:
+            messages.append({"role": "assistant", "content": f"[{sender}]: {content}"})
+
+    messages.append({"role": "user", "content": f"[{username}]: {user_text}"})
+    return messages

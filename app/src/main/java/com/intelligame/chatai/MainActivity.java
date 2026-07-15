@@ -186,6 +186,26 @@ public class MainActivity extends AppCompatActivity {
         navView.setVisibility(View.GONE);
     }
 
+    public void openGroupChatList() {
+        GroupChatListFragment fragment = new GroupChatListFragment();
+        getSupportFragmentManager().beginTransaction()
+            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+            .replace(R.id.fragment_container, fragment, "group_chat_list")
+            .addToBackStack("group_chat_list")
+            .commit();
+        navView.setVisibility(View.GONE);
+    }
+
+    public void openGroupChat(int chatId, String chatName) {
+        GroupChatFragment fragment = GroupChatFragment.newInstance(chatId, chatName);
+        getSupportFragmentManager().beginTransaction()
+            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+            .replace(R.id.fragment_container, fragment, "group_chat")
+            .addToBackStack("group_chat")
+            .commit();
+        navView.setVisibility(View.GONE);
+    }
+
     public void showBottomNav() {
         navView.setVisibility(View.VISIBLE);
     }

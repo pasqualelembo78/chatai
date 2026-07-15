@@ -67,6 +67,39 @@ def init_auth_db():
         conn.commit()
     finally:
         put_conn(conn)
+    ensure_admin_account()
+
+
+def ensure_admin_account():
+    admin_username = os.environ.get("ADMIN_USERNAME", "admin")
+    admin_password = os.environ.get("ADMIN_PASSWORD", "admin")
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, password_hash FROM users WHERE username = %s", (admin_username,))
+        row = cur.fetchone()
+        if row:
+            try:
+                if not row["password_hash"] or not check_password_hash(row["password_hash"], admin_password):
+                    cur.execute(
+                        "UPDATE users SET password_hash = %s, role = 'admin' WHERE username = %s",
+                        (generate_password_hash(admin_password, method="scrypt"), admin_username)
+                    )
+                    conn.commit()
+                    logger.info(f"Admin account '{admin_username}' password/role refreshed")
+            except Exception as e:
+                logger.warning(f"Admin password refresh failed: {e}")
+            return
+        user_id = str(uuid.uuid4())
+        password_hash = generate_password_hash(admin_password, method="scrypt")
+        cur.execute(
+            "INSERT INTO users (id, username, password_hash, role, email) VALUES (%s, %s, %s, 'admin', '')",
+            (user_id, admin_username, password_hash)
+        )
+        conn.commit()
+        logger.info(f"Default admin account created: {admin_username}")
+    finally:
+        put_conn(conn)
 
 # ─── JWT helpers ──────────────────────────────────────────────────
 def _get_jwt_secret():

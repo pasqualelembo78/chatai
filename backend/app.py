@@ -133,6 +133,8 @@ async def lifespan(application):
     logger.info("Initializing database...")
     init_db()
     init_auth_db()
+    from storage import init_group_chat_tables
+    init_group_chat_tables()
     init_provider()
     rebuild_free_model_chain()
     threading.Thread(target=_cleanup_loop, daemon=True).start()
@@ -296,6 +298,15 @@ class ImportRequest(BaseModel):
 class DuplicatesRequest(BaseModel):
     filepath: str = "backend/characters.py"
 
+class RoleRequest(BaseModel):
+    role: str = "user"
+
+class CreateUserRequest(BaseModel):
+    username: str
+    password: str
+    email: str = ""
+    role: str = "user"
+
 class MemoryUpdateRequest(BaseModel):
     facts: dict = {}
 
@@ -312,6 +323,10 @@ class ClaimReferralRequest(BaseModel):
 
 class ShareRequest(BaseModel):
     platform: str = ""
+
+class CreateGroupChatRequest(BaseModel):
+    name: str
+    character_ids: list = []
 
 class ReportRequest(BaseModel):
     reported_user: str = "unknown"
@@ -1413,6 +1428,269 @@ async def admin_clean_duplicates(request: Request, body: DuplicatesRequest, user
               request.client.host if request.client else "",
               request.headers.get("User-Agent", ""))
     return result
+
+# ─── Endpoint admin extra: stats, search, detail, role, characters ─
+@app.get("/admin/stats")
+async def admin_stats(user: AuthUser = Depends(admin_required)):
+    from storage import get_admin_stats
+    return get_admin_stats()
+
+@app.get("/admin/users/search")
+async def admin_search_users(q: str = Query(""), user: AuthUser = Depends(admin_required)):
+    from storage import search_users
+    if not q:
+        return []
+    return search_users(q)
+
+@app.get("/admin/users/{user_id}")
+async def admin_user_detail(user_id: str, user: AuthUser = Depends(admin_required)):
+    from storage import get_user_detail
+    detail = get_user_detail(user_id)
+    if not detail:
+        raise HTTPException(404, "Utente non trovato")
+    return detail
+
+@app.put("/admin/users/{user_id}/role")
+async def admin_update_role(user_id: str, request: Request, body: RoleRequest, user: AuthUser = Depends(admin_required)):
+    if body.role not in ("user", "moderator", "admin"):
+        raise HTTPException(400, "Ruolo non valido")
+    from storage import update_user_role, audit_log
+    ok = update_user_role(user_id, body.role)
+    if not ok:
+        raise HTTPException(404, "Utente non trovato")
+    audit_log(user.user_id, "admin.role_change", f"user={user_id} role={body.role}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "user_id": user_id, "role": body.role}
+
+@app.post("/admin/users")
+async def admin_create_user(request: Request, body: CreateUserRequest, user: AuthUser = Depends(admin_required)):
+    username = body.username.strip()
+    password = body.password
+    email = body.email.strip().lower()
+    role = body.role
+    if not username or not password:
+        raise HTTPException(400, "Username e password richiesti")
+    if len(username) < 3 or len(username) > 20:
+        raise HTTPException(400, "Username deve essere 3-20 caratteri")
+    if len(password) < 8:
+        raise HTTPException(400, "Password minima 8 caratteri")
+    if not re.match(r"^[a-zA-Z0-9_]+$", username):
+        raise HTTPException(400, "Username solo lettere, numeri e underscore")
+    if role not in ("user", "moderator", "admin"):
+        raise HTTPException(400, "Ruolo non valido")
+    if email and not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        raise HTTPException(400, "Email non valida")
+    from storage import get_conn, put_conn
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM users WHERE username = %s", (username,))
+        if cur.fetchone():
+            raise HTTPException(409, "Username già in uso")
+        if email:
+            cur.execute("SELECT id FROM users WHERE email = %s AND email != ''", (email,))
+            if cur.fetchone():
+                raise HTTPException(409, "Email già registrata")
+        new_id = str(uuid.uuid4())
+        password_hash = generate_password_hash(password, method="scrypt")
+        cur.execute("INSERT INTO users (id, username, password_hash, email, role) VALUES (%s, %s, %s, %s, %s)",
+                    (new_id, username, password_hash, email, role))
+        conn.commit()
+    finally:
+        put_conn(conn)
+    from storage import audit_log
+    audit_log(user.user_id, "admin.create_user", f"username={username} role={role}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "user_id": new_id, "username": username, "role": role}
+
+@app.delete("/admin/users/{user_id}")
+async def admin_delete_user(user_id: str, request: Request, user: AuthUser = Depends(admin_required)):
+    from storage import delete_user, get_user_detail, audit_log
+    target = get_user_detail(user_id)
+    if not target:
+        raise HTTPException(404, "Utente non trovato")
+    if target.get("role") == "admin":
+        raise HTTPException(403, "Non puoi eliminare un amministratore")
+    delete_user(user_id)
+    audit_log(user.user_id, "admin.delete_user", f"deleted={user_id} username={target.get('username','?')}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "deleted": user_id}
+
+@app.get("/admin/characters")
+async def admin_list_characters(user: AuthUser = Depends(admin_required)):
+    from storage import get_all_user_characters
+    chars = get_all_user_characters()
+    return [{"id": c.get("id"), "name": c.get("name"), "category": c.get("category"),
+             "user_id": c.get("user_id"), "is_adult": c.get("is_adult", False),
+             "created_at": c.get("created_at")} for c in chars]
+
+@app.delete("/admin/characters/{char_id}")
+async def admin_delete_character(char_id: str, request: Request, user: AuthUser = Depends(admin_required)):
+    from storage import delete_user_character, audit_log
+    delete_user_character(char_id)
+    audit_log(user.user_id, "admin.delete_character", f"char_id={char_id}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "deleted": char_id}
+
+@app.get("/admin/users/{user_id}/conversations")
+async def admin_user_conversations(user_id: str, user: AuthUser = Depends(admin_required)):
+    from storage import list_user_conversations
+    convs = list_user_conversations(user_id)
+    result = []
+    for c in convs:
+        char = get_character(c["character_id"])
+        result.append({
+            "character_id": c["character_id"],
+            "character_name": char["name"] if char else c["character_id"],
+            "msg_count": c["msg_count"],
+            "first_msg": str(c["first_msg"]) if c.get("first_msg") else None,
+            "last_msg": str(c["last_msg"]) if c.get("last_msg") else None,
+        })
+    return result
+
+@app.get("/admin/users/{user_id}/conversations/{character_id}")
+async def admin_user_conversation_messages(user_id: str, character_id: str, user: AuthUser = Depends(admin_required)):
+    from storage import get_user_conversation_messages
+    msgs = get_user_conversation_messages(user_id, character_id)
+    return [{"role": m["role"], "content": m["content"],
+             "timestamp": str(m["timestamp"]) if m.get("timestamp") else None} for m in msgs]
+
+class AdminDmRequest(BaseModel):
+    content: str
+
+@app.post("/admin/users/{user_id}/dm")
+async def admin_send_dm(user_id: str, request: Request, body: AdminDmRequest, user: AuthUser = Depends(admin_required)):
+    if not body.content.strip():
+        raise HTTPException(400, "Messaggio vuoto")
+    from storage import send_admin_dm, audit_log
+    dm = send_admin_dm(user.user_id, user_id, body.content.strip())
+    audit_log(user.user_id, "admin.send_dm", f"to={user_id} len={len(body.content)}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "id": dm["id"], "created_at": str(dm["created_at"])}
+
+@app.get("/admin/users/{user_id}/dms")
+async def admin_list_dms(user_id: str, user: AuthUser = Depends(admin_required)):
+    from storage import list_admin_dms
+    return list_admin_dms(user_id)
+
+@app.post("/admin/users/{user_id}/dms/read")
+async def admin_mark_dms_read(user_id: str, user: AuthUser = Depends(admin_required)):
+    from storage import mark_admin_dms_read
+    count = mark_admin_dms_read(user_id)
+    return {"marked_read": count}
+
+# ═══════════════════════════════════════════════════════════════════
+# ROUTES: Group Chats
+# ═══════════════════════════════════════════════════════════════════
+
+@app.get("/group-chats")
+async def list_group_chats(user: AuthUser = Depends(jwt_required)):
+    from storage import list_group_chats as _lgc
+    return _lgc(user.user_id)
+
+@app.post("/group-chats")
+async def create_group_chat(request: Request, body: CreateGroupChatRequest, user: AuthUser = Depends(jwt_required)):
+    name = body.name.strip()
+    character_ids = body.character_ids
+    if not name:
+        raise HTTPException(400, "Nome chat richiesto")
+    if not character_ids or len(character_ids) < 2:
+        raise HTTPException(400, "Servono almeno 2 personaggi per una chat di gruppo")
+    if len(character_ids) > 8:
+        raise HTTPException(400, "Massimo 8 personaggi per chat di gruppo")
+    from storage import create_group_chat as _cgc, audit_log
+    chat = _cgc(user.user_id, name, character_ids)
+    audit_log(user.user_id, "group_chat.create", f"name={name} chars={len(character_ids)}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return chat
+
+@app.get("/group-chats/{chat_id}")
+async def get_group_chat(chat_id: int, user: AuthUser = Depends(jwt_required)):
+    from storage import get_group_chat as _ggc, get_group_messages as _ggm
+    chat = _ggc(chat_id, user.user_id)
+    if not chat:
+        raise HTTPException(404, "Chat di gruppo non trovata")
+    messages = _ggm(chat_id, limit=100)
+    chat["messages"] = messages
+    return chat
+
+@app.delete("/group-chats/{chat_id}")
+async def delete_group_chat(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
+    from storage import get_group_chat as _ggc, delete_group_chat as _dgc, audit_log
+    chat = _ggc(chat_id, user.user_id)
+    if not chat:
+        raise HTTPException(404, "Chat di gruppo non trovata")
+    _dgc(chat_id)
+    audit_log(user.user_id, "group_chat.delete", f"chat={chat_id} name={chat['name']}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "deleted": chat_id}
+
+@app.post("/group-chats/{chat_id}/message")
+async def send_group_message(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
+    data = await request.json()
+    text = data.get("text", "").strip()
+    if not text:
+        raise HTTPException(400, "Messaggio vuoto")
+    from storage import get_group_chat as _ggc, add_group_message as _agm
+    from characters import get_character
+    chat = _ggc(chat_id, user.user_id)
+    if not chat:
+        raise HTTPException(404, "Chat di gruppo non trovata")
+    _agm(chat_id, "user", user.user_id, "user", text)
+    characters = []
+    for cid in chat["character_ids"]:
+        c = get_character(cid)
+        if c:
+            characters.append(c)
+    if not characters:
+        raise HTTPException(400, "Nessun personaggio valido trovato")
+    from storage import get_group_messages as _ggm
+    history = _ggm(chat_id, limit=50)
+    from prompt_builder import build_group_messages
+    messages = build_group_messages(characters, text, history=history, username=user.user_id[:8])
+    from ai_engine import get_ai_response_stream
+    full_response = ""
+    for token_data in get_ai_response_stream(messages, user_id=user.user_id):
+        if isinstance(token_data, tuple):
+            token = token_data[0]
+        else:
+            token = token_data
+        full_response += token
+    responses = []
+    import re
+    parts = re.split(r'(?:\[([^\]]+)\]|^([A-Z][a-zéèàùì]+)): ', full_response, flags=re.MULTILINE)
+    for i in range(1, len(parts), 3):
+        cname = (parts[i] or parts[i + 1] or "").strip()
+        ctext = parts[i + 2].strip() if i + 2 < len(parts) else ""
+        if cname and ctext:
+            matched_char = None
+            for c in characters:
+                if c["name"].lower() == cname.lower():
+                    matched_char = c
+                    break
+            if not matched_char:
+                for c in characters:
+                    if cname.lower() in c["name"].lower() or c["name"].lower() in cname.lower():
+                        matched_char = c
+                        break
+            if matched_char:
+                _agm(chat_id, "character", matched_char["id"], "assistant", ctext)
+                responses.append({"character_id": matched_char["id"],
+                                  "character_name": matched_char["name"],
+                                  "content": ctext})
+    if not responses and full_response.strip():
+        c = characters[0]
+        _agm(chat_id, "character", c["id"], "assistant", full_response.strip())
+        responses.append({"character_id": c["id"], "character_name": c["name"],
+                          "content": full_response.strip()})
+    return {"responses": responses, "user_message": text}
 
 # ═══════════════════════════════════════════════════════════════════
 # ROUTES: Chat & Media

@@ -443,6 +443,50 @@ def init_db():
             logger.info("pgvector extension loaded, semantic search available")
         except Exception as e:
             logger.warning(f"pgvector not available, semantic search disabled: {e}")
+            conn.rollback()
+
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS admin_dms (
+                id SERIAL PRIMARY KEY,
+                from_user_id TEXT NOT NULL,
+                to_user_id TEXT NOT NULL,
+                content TEXT NOT NULL,
+                read_at TIMESTAMP NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_admin_dms_to ON admin_dms(to_user_id, read_at)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_admin_dms_from ON admin_dms(from_user_id, created_at)")
+
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS group_chats (
+                id SERIAL PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                name TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS group_chat_characters (
+                group_chat_id INTEGER NOT NULL REFERENCES group_chats(id) ON DELETE CASCADE,
+                character_id TEXT NOT NULL,
+                PRIMARY KEY (group_chat_id, character_id)
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS group_chat_messages (
+                id SERIAL PRIMARY KEY,
+                group_chat_id INTEGER NOT NULL REFERENCES group_chats(id) ON DELETE CASCADE,
+                sender_type TEXT NOT NULL,
+                sender_id TEXT NOT NULL,
+                role TEXT NOT NULL,
+                content TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gcm_chat ON group_chat_messages(group_chat_id, timestamp)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gcc_chat ON group_chat_characters(group_chat_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gc_user ON group_chats(user_id)")
 
         conn.commit()
     finally:
@@ -2681,5 +2725,327 @@ def get_embedding_count(user_id):
         cur.execute("SELECT COUNT(*) as cnt FROM memory_embeddings WHERE user_id=%s", (user_id,))
         row = cur.fetchone()
         return row["cnt"] if row else 0
+    finally:
+        put_conn(conn)
+
+
+# ── Admin helpers ─────────────────────────────────────────────────────
+def get_admin_stats():
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        stats = {}
+        cur.execute("SELECT COUNT(*) AS cnt FROM users")
+        stats["total_users"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE last_login >= NOW() - INTERVAL '7 days'")
+        stats["active_7d"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE last_login >= NOW() - INTERVAL '30 days'")
+        stats["active_30d"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE created_at >= NOW() - INTERVAL '1 day'")
+        stats["registrations_today"] = cur.fetchone()["cnt"]
+        cur.execute("SELECT COUNT(*) AS cnt FROM users WHERE created_at >= NOW() - INTERVAL '7 days'")
+        stats["registrations_7d"] = cur.fetchone()["cnt"]
+        try:
+            cur.execute("SELECT COUNT(*) AS cnt FROM messages")
+            stats["total_messages"] = cur.fetchone()["cnt"]
+        except Exception:
+            stats["total_messages"] = 0
+        try:
+            cur.execute("SELECT COUNT(*) AS cnt FROM user_characters")
+            stats["total_user_characters"] = cur.fetchone()["cnt"]
+        except Exception:
+            stats["total_user_characters"] = 0
+        try:
+            cur.execute("SELECT COUNT(*) AS cnt FROM moderation_flags WHERE resolved_at IS NULL")
+            stats["pending_flags"] = cur.fetchone()["cnt"]
+        except Exception:
+            stats["pending_flags"] = 0
+        return stats
+    finally:
+        put_conn(conn)
+
+
+def search_users(query, limit=50):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        like_q = f"%{query}%"
+        cur.execute(
+            "SELECT id, username, role, email, google_id, banned_until, created_at, last_login "
+            "FROM users WHERE username ILIKE %s OR email ILIKE %s ORDER BY created_at DESC LIMIT %s",
+            (like_q, like_q, min(limit, 200))
+        )
+        rows = cur.fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        put_conn(conn)
+
+
+def get_user_detail(user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, username, role, email, google_id, banned_until, created_at, last_login "
+            "FROM users WHERE id=%s",
+            (user_id,)
+        )
+        user = cur.fetchone()
+        if not user:
+            return None
+        result = dict(user)
+        try:
+            cur.execute("SELECT COUNT(*) AS cnt FROM messages WHERE user_id=%s", (user_id,))
+            result["message_count"] = cur.fetchone()["cnt"]
+        except Exception:
+            result["message_count"] = 0
+        try:
+            cur.execute("SELECT COUNT(DISTINCT character_id) AS cnt FROM messages WHERE user_id=%s", (user_id,))
+            result["conversation_count"] = cur.fetchone()["cnt"]
+        except Exception:
+            result["conversation_count"] = 0
+        try:
+            cur.execute("SELECT balance FROM mevacoins WHERE user_id=%s", (user_id,))
+            mc = cur.fetchone()
+            result["mevacoins"] = mc["balance"] if mc else 0
+        except Exception:
+            result["mevacoins"] = 0
+        return result
+    finally:
+        put_conn(conn)
+
+
+def update_user_role(user_id, role):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("UPDATE users SET role=%s WHERE id=%s", (role, user_id))
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
+def list_user_conversations(user_id, limit=100):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT character_id, COUNT(*) as msg_count, MIN(timestamp) as first_msg, "
+            "MAX(timestamp) as last_msg FROM messages WHERE user_id=%s "
+            "GROUP BY character_id ORDER BY last_msg DESC LIMIT %s",
+            (user_id, limit)
+        )
+        return [dict(r) for r in cur.fetchall()]
+    finally:
+        put_conn(conn)
+
+
+def get_user_conversation_messages(user_id, character_id, limit=500):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT role, content, timestamp FROM messages "
+            "WHERE user_id=%s AND character_id=%s ORDER BY timestamp ASC LIMIT %s",
+            (user_id, character_id, limit)
+        )
+        return [dict(r) for r in cur.fetchall()]
+    finally:
+        put_conn(conn)
+
+
+def send_admin_dm(from_user_id, to_user_id, content):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO admin_dms (from_user_id, to_user_id, content) VALUES (%s, %s, %s) RETURNING id, created_at",
+            (from_user_id, to_user_id, content)
+        )
+        row = cur.fetchone()
+        conn.commit()
+        return dict(row) if row else None
+    finally:
+        put_conn(conn)
+
+
+def list_admin_dms(user_id, limit=200, unread_only=False):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        if unread_only:
+            cur.execute(
+                "SELECT id, from_user_id, to_user_id, content, read_at, created_at "
+                "FROM admin_dms WHERE to_user_id=%s AND read_at IS NULL ORDER BY created_at DESC LIMIT %s",
+                (user_id, limit)
+            )
+        else:
+            cur.execute(
+                "SELECT id, from_user_id, to_user_id, content, read_at, created_at "
+                "FROM admin_dms WHERE from_user_id=%s OR to_user_id=%s ORDER BY created_at DESC LIMIT %s",
+                (user_id, user_id, limit)
+            )
+        return [dict(r) for r in cur.fetchall()]
+    finally:
+        put_conn(conn)
+
+
+def mark_admin_dms_read(user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE admin_dms SET read_at = CURRENT_TIMESTAMP "
+            "WHERE to_user_id=%s AND read_at IS NULL",
+            (user_id,)
+        )
+        conn.commit()
+        return cur.rowcount
+    finally:
+        put_conn(conn)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# GROUP CHATS
+# ═══════════════════════════════════════════════════════════════════
+
+def init_group_chat_tables():
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS group_chats (
+                id SERIAL PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                name TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS group_chat_characters (
+                group_chat_id INTEGER NOT NULL REFERENCES group_chats(id) ON DELETE CASCADE,
+                character_id TEXT NOT NULL,
+                PRIMARY KEY (group_chat_id, character_id)
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS group_chat_messages (
+                id SERIAL PRIMARY KEY,
+                group_chat_id INTEGER NOT NULL REFERENCES group_chats(id) ON DELETE CASCADE,
+                sender_type TEXT NOT NULL,
+                sender_id TEXT NOT NULL,
+                role TEXT NOT NULL,
+                content TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gcm_chat ON group_chat_messages(group_chat_id, timestamp)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gcc_chat ON group_chat_characters(group_chat_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gc_user ON group_chats(user_id)")
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+def create_group_chat(user_id, name, character_ids):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("INSERT INTO group_chats (user_id, name) VALUES (%s, %s) RETURNING id, created_at",
+                    (user_id, name))
+        row = cur.fetchone()
+        chat_id = row["id"]
+        created_at = row["created_at"]
+        for cid in character_ids:
+            cur.execute("INSERT INTO group_chat_characters (group_chat_id, character_id) VALUES (%s, %s)",
+                        (chat_id, cid))
+        conn.commit()
+        return {"id": chat_id, "user_id": user_id, "name": name, "created_at": str(created_at),
+                "character_ids": character_ids}
+    finally:
+        put_conn(conn)
+
+
+def list_group_chats(user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, created_at FROM group_chats WHERE user_id=%s ORDER BY created_at DESC",
+                    (user_id,))
+        chats = []
+        for r in cur.fetchall():
+            cur2 = conn.cursor()
+            cur2.execute("SELECT character_id FROM group_chat_characters WHERE group_chat_id=%s", (r["id"],))
+            chars = [row["character_id"] for row in cur2.fetchall()]
+            cur2.execute("SELECT COUNT(*) as cnt FROM group_chat_messages WHERE group_chat_id=%s", (r["id"],))
+            msg_count = cur2.fetchone()["cnt"]
+            chats.append({"id": r["id"], "name": r["name"], "created_at": str(r["created_at"]),
+                          "character_ids": chars, "message_count": msg_count})
+        return chats
+    finally:
+        put_conn(conn)
+
+
+def get_group_chat(chat_id, user_id=None):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        if user_id:
+            cur.execute("SELECT id, user_id, name, created_at FROM group_chats WHERE id=%s AND user_id=%s",
+                        (chat_id, user_id))
+        else:
+            cur.execute("SELECT id, user_id, name, created_at FROM group_chats WHERE id=%s", (chat_id,))
+        r = cur.fetchone()
+        if not r:
+            return None
+        cur.execute("SELECT character_id FROM group_chat_characters WHERE group_chat_id=%s", (chat_id,))
+        chars = [row["character_id"] for row in cur.fetchall()]
+        return {"id": r["id"], "user_id": r["user_id"], "name": r["name"],
+                "created_at": str(r["created_at"]), "character_ids": chars}
+    finally:
+        put_conn(conn)
+
+
+def delete_group_chat(chat_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM group_chats WHERE id=%s", (chat_id,))
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
+def add_group_message(chat_id, sender_type, sender_id, role, content):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO group_chat_messages (group_chat_id, sender_type, sender_id, role, content) "
+            "VALUES (%s, %s, %s, %s, %s) RETURNING id, timestamp",
+            (chat_id, sender_type, sender_id, role, content))
+        row = cur.fetchone()
+        conn.commit()
+        return {"id": row["id"], "group_chat_id": chat_id, "sender_type": sender_type,
+                "sender_id": sender_id, "role": role, "content": content, "timestamp": str(row["timestamp"])}
+    finally:
+        put_conn(conn)
+
+
+def get_group_messages(chat_id, limit=50):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, sender_type, sender_id, role, content, timestamp "
+            "FROM group_chat_messages WHERE group_chat_id=%s "
+            "ORDER BY timestamp DESC LIMIT %s", (chat_id, limit))
+        msgs = [{"id": r["id"], "sender_type": r["sender_type"], "sender_id": r["sender_id"],
+                 "role": r["role"], "content": r["content"],
+                 "timestamp": str(r["timestamp"])} for r in cur.fetchall()]
+        msgs.reverse()
+        return msgs
     finally:
         put_conn(conn)
