@@ -1,6 +1,8 @@
 package com.intelligame.chatai;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -31,7 +33,7 @@ public class ChatApplication extends Application {
             mPremiumManager.init(ChatApplication.this);
             AdManager.getInstance().init(ChatApplication.this);
 
-            runOnUiThread(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
                 if (mPremiumManager != null && mPremiumManager.isPremium()) {
                     AdManager.getInstance().setAdsEnabled(false);
                 }
