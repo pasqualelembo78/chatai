@@ -385,6 +385,10 @@ FREE_MODEL_CHAIN = [
     ("inference",  "qwen/qwen3-32b"),
     ("inference",  "google/gemma-3-27b-instruct/bf-16"),
     ("inference",  "deepseek/deepseek-r1"),
+    ("pollinations", "openai"),
+    ("pollinations", "gemini"),
+    ("pollinations", "mistral"),
+    ("pollinations", "deepseek"),
     ("cohere",     "command-a-plus-05-2026"),
     ("cohere",     "command-r"),
     ("cloudflare", "@cf/meta/llama-3.1-8b-instruct-fp8"),
@@ -2053,6 +2057,67 @@ register_provider({
 })
 
 
+# ─── Pollinations AI (API gratuita, no key) ──────────────────────
+
+POLLINATIONS_MODELS = [
+    {"id": "openai", "name": "GPT-4o Mini (via Pollinations)", "quality": "alta", "costo": "gratuito"},
+    {"id": "gemini", "name": "Gemini Flash (via Pollinations)", "quality": "alta", "costo": "gratuito"},
+    {"id": "mistral", "name": "Mistral (via Pollinations)", "quality": "buona", "costo": "gratuito"},
+    {"id": "deepseek", "name": "DeepSeek (via Pollinations)", "quality": "alta", "costo": "gratuito"},
+]
+
+def _pollinations_generate(messages, model, uid=None):
+    key = os.environ.get("POLLINATIONS_API_KEY", "")
+    try:
+        headers = {"Content-Type": "application/json"}
+        if key:
+            headers["Authorization"] = f"Bearer {key}"
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": 0.9,
+            "max_tokens": 200,
+        }
+        resp = requests.post(
+            "https://gen.pollinations.ai/v1/chat/completions",
+            headers=headers, json=payload, timeout=60,
+        )
+        resp.encoding = "utf-8"
+        if resp.status_code == 200:
+            return resp.json()["choices"][0]["message"]["content"]
+        logger.error(f"Pollinations error: {resp.status_code} {resp.text[:200]}")
+        return None
+    except Exception as e:
+        logger.error(f"Pollinations request failed: {e}")
+        return None
+
+def _pollinations_generate_stream(messages, model, uid=None):
+    key = os.environ.get("POLLINATIONS_API_KEY", "")
+    headers = {"Content-Type": "application/json"}
+    if key:
+        headers["Authorization"] = f"Bearer {key}"
+    yield from _stream_openai_compatible(
+        "https://gen.pollinations.ai/v1/chat/completions",
+        headers,
+        {"messages": messages, "temperature": 0.9, "max_tokens": 200},
+        model
+    )
+
+register_provider({
+    "id": "pollinations",
+    "name": "Pollinations AI (API gratuita)",
+    "description": "Modelli gratuiti via Pollinations. Nessuna API key richiesta.",
+    "models": POLLINATIONS_MODELS,
+    "needs_key": False,
+    "has_key": lambda: True,
+    "free": True,
+    "website": "https://pollinations.ai",
+    "generate": _pollinations_generate,
+    "generate_stream": _pollinations_generate_stream,
+    "default_model": "openai",
+})
+
+
 # ─── Init: find best available default ──────────────────────────
 
 def init_provider():
@@ -2079,7 +2144,7 @@ def init_provider():
     else:
         logger.warning("Ollama non disponibile, provo altri provider.")
 
-    for preferred in ["llamacpp", "groq", "cerebras", "sambanova", "inference", "gemini", "cohere", "cloudflare", "mistral", "github", "huggingface", "openrouter", "openai", "anthropic", "together", "deepinfra", "fireworks", "nebius", "novita"]:
+    for preferred in ["llamacpp", "groq", "cerebras", "sambanova", "inference", "pollinations", "gemini", "cohere", "cloudflare", "mistral", "github", "huggingface", "openrouter", "openai", "anthropic", "together", "deepinfra", "fireworks", "nebius", "novita"]:
         info = providers.get(preferred)
         if not info:
             continue
