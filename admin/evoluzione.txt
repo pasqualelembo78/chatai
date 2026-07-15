@@ -1,0 +1,470 @@
+╔══════════════════════════════════════════════════════════════╗
+║                    CHATAI — PIANO EVOLUTIVO                 ║
+╚══════════════════════════════════════════════════════════════╝
+
+
+────────────────────────────────────────────────────────────
+1. MEMORIA UTENTE CONDIVISA TRA TUTTI I PERSONAGGI (FATTO)
+────────────────────────────────────────────────────────────
+
+Obiettivo: quando l'utente dice qualcosa a un personaggio,
+            tutti gli altri personaggi devono saperlo.
+
+Architettura:
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        TELEFONO (Android)                       │
+│                                                                 │
+│  LocalDatabaseHelper                                            │
+│  ├── TABLE messages (per-personaggio)                           │
+│  ├── TABLE user_memory ← TUTTA LA MEMORIA CONDIVISA            │
+│  │   key TEXT PRIMARY KEY, value TEXT                           │
+│  └── TABLE user_characters                                     │
+│                                                                 │
+│  MainFragment.getUserMemory() → restituisce TUTTA la memoria   │
+│  (sia utenti free che premium)                                 │
+│                                                                 │
+│  attemptSend() → include user_memory in ogni messaggio         │
+│  a QUALSIASI personaggio                                        │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │ SocketIO "new message"
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        BACKEND (Python/Flask)                   │
+│                                                                 │
+│  server.py:                                                     │
+│  process_message(user_id, char_id, text, ..., user_memory)      │
+│    ↓                                                            │
+│  prompt_builder.build_system_prompt(..., user_memory)           │
+│    ↓                                                            │
+│  System prompt contiene:                                        │
+│    "Informazioni sull'utente:                                   │
+│     - hobby: gli piace giocare a pallone                        │
+│     - lavoro: fa l'insegnante"                                  │
+│                                                                 │
+│  Dopo risposta AI:                                              │
+│  _extract_memory_updates() → se keywords personali              │
+│    → chiama AI per estrarre fatti in JSON                       │
+│    → rimanda al client come "memory_updates"                    │
+│                                                                 │
+│  Il server NON salva memoria nel proprio DB (solo telefono)     │
+└─────────────────────────────────────────────────────────────────┘
+
+
+File modificati:
+  - backend/server.py:
+      • process_message() usa user_memory dal client
+      • _extract_memory_updates() dopo ogni risposta
+      • _extract_user_facts() chiama AI con prompt JSON
+      • _mentions_personal_info() filtro keyword italiano
+      • Risposta SocketIO include "memory_updates"
+      • Risposta REST /chat include "memory_updates"
+
+  - app/.../MainFragment.java:
+      • Import java.util.Iterator
+      • onNewMessage: salva memory_updates in mLocalDb + mSessionMemory
+      • getUserMemory() già funzionante (tutta la memoria)
+
+  - app/.../LocalDatabaseHelper.java:
+      • Già pronto: setUserMemory(key, value)
+      • getAllUserMemory() restituisce tutto
+
+Keyword attuali (italiano):
+  "mi piace", "mi piacciono", "sono", "ho ", "voglio", "vorrei",
+  "preferisco", "odio", "amo", "faccio", "lavoro", "studio",
+  "vivo", "abit", "mi chiamo", "il mio", "la mia", "i miei",
+  "le mie", "detesto", "adoro", "non mi piace",
+  "mi piace tanto", "mi fa impazzire",
+  "il mio preferito", "la mia passione", "mi diverto"
+
+Nota: il server fa una chiamata AI extra per estrarre i fatti.
+      Se il modello è piccolo (<7B), l'estrazione potrebbe fallire.
+      In tal caso restituisce {} e il client ignora.
+
+
+────────────────────────────────────────────────────────────
+2. EVOLUZIONE DEL PERSONAGGIO (DA IMPLEMENTARE)
+────────────────────────────────────────────────────────────
+
+Obiettivo: i personaggi si evolvono con il tempo, sbloccano
+            backstory, nuovi dialoghi, tratti di personalità.
+            L'evoluzione è globale: visibile da TUTTE le chat
+            (perché salvata nel database condiviso).
+
+
+2.1 Database — Nuova tabella character_evolution
+
+Nel backend (storage.py):
+  CREATE TABLE IF NOT EXISTS character_evolution (
+      user_id TEXT NOT NULL,
+      character_id TEXT NOT NULL,
+      current_stage TEXT DEFAULT 'iniziale',
+      unlocked_stages TEXT DEFAULT '[]',        -- JSON array
+      flags TEXT DEFAULT '{}',                   -- JSON object
+      trait_modifiers TEXT DEFAULT '{}',         -- JSON object
+      intimacy_peak REAL DEFAULT 0,
+      total_messages INTEGER DEFAULT 0,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (user_id, character_id)
+  );
+
+Sul telefono (LocalDatabaseHelper.java):
+  Tabella identica o mirrorata (se vogliamo cache locale).
+
+
+2.2 Stati evolutivi (esempio configurabile per personaggio)
+
+Ogni personaggio in characters.py ha una sezione "evolution":
+
+  "evolution": {
+    "stages": [
+      {
+        "id": "base",
+        "name": "Conoscenza",
+        "min_intimacy": 0,
+        "min_messages": 0,
+        "unlocks": [
+          "presentazione_base",
+          "dialoghi_generici"
+        ],
+        "trait_bonus": {}
+      },
+      {
+        "id": "confidenza",
+        "name": "Confidenza",
+        "min_intimacy": 25,
+        "min_messages": 15,
+        "unlocks": [
+          "backstory_1",
+          "soprannome_utente",
+          "dialoghi_personali"
+        ],
+        "trait_bonus": {"warmth": 1, "sarcasm": 0}
+      },
+      {
+        "id": "intimo",
+        "name": "Intimo",
+        "min_intimacy": 50,
+        "min_messages": 50,
+        "unlocks": [
+          "backstory_2",
+          "segreto_personaggio",
+          "dialoghi_affettuosi",
+          "soprannome_personaggio"
+        ],
+        "trait_bonus": {"warmth": 2, "patience": 1}
+      },
+      {
+        "id": "profondo",
+        "name": "Relazione Profonda",
+        "min_intimacy": 80,
+        "min_messages": 120,
+        "unlocks": [
+          "backstory_finale",
+          "abilità_speciale",
+          "dialoghi_intimi"
+        ],
+        "trait_bonus": {"warmth": 3, "patience": 2, "sarcasm": -1}
+      }
+    ],
+    "milestones": [
+      {
+        "id": "primo_complimento",
+        "condition": {"type": "keyword", "value": ["sei bell*", "ti amo", "ti adoro"]},
+        "effect": {"affinity": 5, "trust": 3},
+        "unlock_flag": "has_received_compliment",
+        "dialog": "Sblocca dialogo imbarazzato"
+      },
+      {
+        "id": "parlato_di_famiglia",
+        "trigger_count": 3,
+        "condition": {"type": "topic", "value": ["famiglia", "genitori", "fratello", "madre", "padre"]},
+        "effect": "Sblocca backstory familiare"
+      },
+      {
+        "id": "aiuto_richiesto",
+        "condition": {"type": "keyword", "value": ["aiutami", "consiglio", "non so cosa fare"]},
+        "effect": {"trust": 5},
+        "cooldown_messages": 20
+      }
+    ]
+  }
+
+
+2.3 Trigger / Condizioni
+
+Ogni milestone ha una condition che può essere:
+  - type: "keyword" → match su testo utente (regex)
+  - type: "topic" → match su topic estratti (analisi AI leggera)
+  - type: "emotion" → match su emozione rilevata (es. "romance")
+  - type: "message_count" → dopo N messaggi totali
+  - type: "intimacy" → quando intimacy raggiunge X
+  - type: "time" → ora del giorno / data specifica
+  - type: "composite" → AND/OR di più condizioni
+
+Ogni milestone può avere:
+  - trigger_count: quante volte deve accadere
+  - cooldown_messages: messaggi da aspettare prima di riattivarsi
+  - one_shot: true = si attiva una volta sola
+  - effect: cosa succede (delta relationship, unlock flag, unlock dialogo)
+  - dialog_hint: testo da iniettare nel prompt per guidare l'AI
+  - unlock_flag: flag da salvare su character_evolution
+
+
+2.4 Evoluzione Engine — evolution_engine.py (nuovo file)
+
+  from storage import get_evolution, update_evolution
+  from emotion_engine import detect_emotion
+
+  def evaluate_evolution(user_id, character_id, character, user_text, emotion):
+      """
+      Valuta ogni messaggio dell'utente contro i milestones
+      del personaggio. Ritorna un dict con:
+        - new_stage: str | None
+        - unlocked: list di flag/dialoghi sbloccati
+        - relationship_deltas: dict
+        - trait_modifiers: dict
+        - dialog_hints: list di stringhe per il prompt
+      """
+      evo = get_evolution(user_id, character_id)
+      config = character.get("evolution", {})
+      stages = config.get("stages", [])
+      milestones = config.get("milestones", [])
+
+      updates = {
+          "new_stage": None,
+          "unlocked": [],
+          "relationship_deltas": {},
+          "trait_modifiers": {},
+          "dialog_hints": [],
+      }
+
+      # 1. Check stage progression
+      for stage in stages:
+          sid = stage["id"]
+          if sid in evo["unlocked_stages"]:
+              continue
+          if evo["total_messages"] >= stage["min_messages"]:
+              # Stage sbloccato!
+              updates["new_stage"] = sid
+              updates["unlocked"].extend(stage.get("unlocks", []))
+              updates["trait_modifiers"].update(stage.get("trait_bonus", {}))
+              # ... unlock ...
+
+      # 2. Check milestones
+      for m in milestones:
+          if _check_condition(m, user_text, emotion, evo):
+              if m.get("one_shot") and m["id"] in evo["flags"]:
+                  continue
+              # Attiva milestone
+              updates["unlocked"].append(m.get("unlock_flag"))
+              if "effect" in m:
+                  updates["relationship_deltas"].update(m["effect"])
+              if "dialog" in m:
+                  updates["dialog_hints"].append(m["dialog"])
+              evo["flags"][m["id"]] = True
+
+      # 3. Update evolution in DB
+      update_evolution(user_id, character_id, updates, evo)
+
+      return updates
+
+  def _check_condition(milestone, user_text, emotion, evo):
+      cond = milestone.get("condition", {})
+      ctype = cond.get("type")
+      if ctype == "keyword":
+          return any(kw in user_text.lower() for kw in cond.get("value", []))
+      if ctype == "emotion":
+          return emotion in cond.get("value", [])
+      if ctype == "message_count":
+          return evo["total_messages"] >= cond.get("value", 0)
+      if ctype == "composite":
+          op = cond.get("operator", "AND")
+          results = [_check_condition(c, user_text, emotion, evo) for c in cond.get("conditions", [])]
+          return all(results) if op == "AND" else any(results)
+      return False
+
+
+2.5 Integrazione in server.py
+
+  def process_message(...):
+      ...
+      add_message(user_id, character_id, "user", text)
+
+      # --- EVOLUZIONE ---
+      from evolution_engine import evaluate_evolution
+      evo_updates = evaluate_evolution(
+          user_id, character_id, character, text, emotion
+      )
+
+      if evo_updates["relationship_deltas"]:
+          update_relationship(user_id, character_id,
+                              evo_updates["relationship_deltas"])
+
+      if evo_updates["trait_modifiers"]:
+          personality = get_personality(character_id, character.get("core_traits"))
+          for trait, delta in evo_updates["trait_modifiers"].items():
+              personality[trait] = max(0, min(10, personality.get(trait, 5) + delta))
+          update_personality(character_id, personality)
+
+      # --- PROMPT CON EVOLUZIONE ---
+      messages = build_messages(
+          character, ...,
+          evolution=evo_updates  # nuovo parametro
+      )
+      ...
+
+      # Memory + evolution updates rimandati al client
+      memory_updates = _extract_memory_updates(...)
+      return {
+          ...,
+          "memory_updates": memory_updates,
+          "evo_updates": {
+              "new_stage": evo_updates["new_stage"],
+              "unlocked": evo_updates["unlocked"],
+          }
+      }
+
+
+2.6 Modifiche a prompt_builder.py
+
+  def build_system_prompt(character, emotion, relationship, personality,
+                          world_state, shifts=None, username=None,
+                          user_id=None, user_memory=None, evolution=None):
+      ...
+      if evolution:
+          if evolution.get("dialog_hints"):
+              extra.append("Note evolutive: " + "; ".join(evolution["dialog_hints"]))
+          if evolution.get("new_stage"):
+              stage_name = evolution["new_stage"]
+              extra.append(f"Sei ora nello stadio '{stage_name}' con {username}.")
+              extra.append(f"Comportati in modo appropriato a questo livello di confidenza.")
+          unlocked = evolution.get("unlocked", [])
+          if "backstory_1" in unlocked:
+              extra.append(f"Ora puoi raccontare il tuo passato: {character.get('backstory', '')}")
+          if "soprannome_utente" in unlocked:
+              extra.append(f"Puoi dare un soprannome affettuoso a {username}.")
+          ...
+
+
+2.7 Sul telefono (Android)
+
+Ogni risposta dal server può includere "evo_updates":
+  {
+    "new_stage": "confidenza" | null,
+    "unlocked": ["backstory_1", "soprannome_utente"]
+  }
+
+In MainFragment.onNewMessage:
+  if (data.has("evo_updates")) {
+      JSONObject evo = data.getJSONObject("evo_updates");
+      // Salva in locale se vuoi cache
+      // Mostra notifica: "🔓 Sbloccato: backstory_1"
+      if (evo.has("new_stage") && !evo.isNull("new_stage")) {
+          String stage = evo.getString("new_stage");
+          // Mostra dialog: "Hai raggiunto lo stadio CONFIDENZA con Marco!"
+      }
+  }
+
+Nel CharacterDetailActivity si può mostrare:
+  - Stadio attuale
+  - Progresso verso prossimo stadio
+  - Cosa sblocca
+
+
+2.8 Storage — Nuove funzioni in storage.py
+
+  def get_evolution(user_id, character_id):
+      conn = get_conn()
+      row = conn.execute(
+          "SELECT * FROM character_evolution WHERE user_id=? AND character_id=?",
+          (user_id, character_id)
+      ).fetchone()
+      conn.close()
+      if row:
+          return {
+              "current_stage": row["current_stage"],
+              "unlocked_stages": json.loads(row["unlocked_stages"]),
+              "flags": json.loads(row["flags"]),
+              "trait_modifiers": json.loads(row["trait_modifiers"]),
+              "intimacy_peak": row["intimacy_peak"],
+              "total_messages": row["total_messages"],
+          }
+      return {
+          "current_stage": "base",
+          "unlocked_stages": ["base"],
+          "flags": {},
+          "trait_modifiers": {},
+          "intimacy_peak": 0,
+          "total_messages": 0,
+      }
+
+  def update_evolution(user_id, character_id, updates, evo):
+      conn = get_conn()
+      if updates.get("new_stage"):
+          evo["current_stage"] = updates["new_stage"]
+          evo["unlocked_stages"].append(updates["new_stage"])
+      if updates.get("unlocked"):
+          evo["flags"].update({f: True for f in updates["unlocked"]})
+      evo["total_messages"] = evo.get("total_messages", 0) + 1
+      conn.execute("""
+          INSERT OR REPLACE INTO character_evolution
+          (user_id, character_id, current_stage, unlocked_stages,
+           flags, trait_modifiers, intimacy_peak, total_messages, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+      """, (
+          user_id, character_id,
+          evo["current_stage"],
+          json.dumps(evo["unlocked_stages"]),
+          json.dumps(evo["flags"]),
+          json.dumps(evo.get("trait_modifiers", {})),
+          evo.get("intimacy_peak", 0),
+          evo["total_messages"],
+      ))
+      conn.commit()
+      conn.close()
+
+
+────────────────────────────────────────────────────────────
+3. RIEPILOGO MODIFICHE DA FARE
+────────────────────────────────────────────────────────────
+
+Già fatto:
+  [x] backend/server.py — memoria utente + estrazione fatti
+  [x] app/.../MainFragment.java — salvataggio memory_updates
+
+Fatto:
+  [x] backend/storage.py                — tabella character_evolution + funzioni
+  [x] backend/evolution_engine.py       — evaluate_evolution() con stages/milestones
+  [x] backend/characters.py             — evolution config in Luna, Sofia, Marco + default
+  [x] backend/prompt_builder.py         — parametro evolution in system prompt
+  [x] backend/server.py                 — integrazione completa in process_message
+  [x] app/.../MainFragment.java         — gestione evo_updates + notifiche
+  [x] app/.../strings.xml              — stringhe evo_new_stage / evo_unlocked
+
+Da fare:
+  [x] backend/server.py                 — nuovo endpoint GET /evolution
+  [x] app/.../CharacterDetailActivity   — UI evoluzione: stadio, progresso, sblocchi
+  [x] app/.../fragment_character_detail — layout card evoluzione
+  [ ] app/.../LocalDatabaseHelper.java   — tabella mirror evolution sul telefono (posticipato)
+  [x] backend/characters.py             — evolution config via _DEFAULT_EVOLUTION_STAGES per tutti
+  [x] Riavvio backend + test endpoint OK
+
+
+────────────────────────────────────────────────────────────
+4. NOTE TECNICHE
+────────────────────────────────────────────────────────────
+
+- Database SQLite backend: /root/chatai/backend/roleplay_data.db
+- Database SQLite telefono: chatai_local.db (in data/app/...)
+- Provider AI di default: Ollama (locale) o quello configurato dall'utente
+- SocketIO eventi: "new message" (bidirezionale)
+- La memoria utente NON passa dal server DB, solo dal cliente
+- L'evoluzione invece SI salva sul server DB (permanente)
+- Se si vuole evoluzione anche offline, mirrorare su telefono
+
+Per riprendere in una nuova chat:
+  1. Apri questo file: evoluzione.txt
+  2. Inizia con "Continua evoluzione personaggio da evoluzione.txt"
+  3. Io avrò già tutto il contesto per proseguire
+

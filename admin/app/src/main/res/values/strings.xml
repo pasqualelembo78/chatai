@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Aria Admin</string>
+    <string name="title_activity_login">Aria Admin Login</string>
+    <string name="action_leave">Leave</string>
+    <string name="action_send">Send</string>
+    <string name="action_settings">Settings</string>
+    <string name="prompt_message">Scrivi un messaggio...</string>
+    <string name="prompt_welcome">Connetti al server per iniziare\n\nAssicurati che il backend Python sia in esecuzione</string>
+    <string name="prompt_character">Scegli il personaggio</string>
+    <string name="character_label">Personaggio:</string>
+    <string name="prompt_server_config">Configura server...</string>
+    <string name="prompt_server_url">URL del server (es. http://192.168.1.100:5000)</string>
+    <string name="connection_connecting">Connessione...</string>
+    <string name="connection_connected">Connesso</string>
+    <string name="connection_disconnected">Disconnesso</string>
+    <string name="conn_handshake">Esecuzione handshake...</string>
+    <string name="conn_connecting">Connessione al server...</string>
+    <string name="conn_verifying_api">Verifica API...</string>
+    <string name="conn_loading_memory">Caricamento memoria...</string>
+    <string name="conn_preparing_chat">Preparazione chat...</string>
+    <string name="conn_ready">Pronto</string>
+    <string name="conn_error">Errore connessione</string>
+    <string name="conn_server_unreachable">Server non raggiungibile</string>
+    <string name="conn_timeout">Timeout connessione</string>
+    <string name="conn_api_offline">API non disponibile</string>
+    <string name="conn_reconnecting">Riconnessione...</string>
+
+    <string name="connect">Connected</string>
+    <string name="disconnect">Disconnesso. Verifica la connessione.</string>
+    <string name="error_connect">Impossibile connettersi al server</string>
+    <string name="status_server_connected">Connesso</string>
+    <string name="status_server_disconnected">Non connesso</string>
+    <string name="status_api_active">Attiva</string>
+    <string name="status_api_offline">Offline</string>
+    <string name="status_memory_loaded">Caricata</string>
+    <string name="status_memory_loading">In caricamento</string>
+    <string name="status_chat_ready">Pronta</string>
+    <string name="status_chat_wait">Attendere</string>
+    <string name="status_none">-</string>
+
+    <!-- messages -->
+    <string name="message_welcome">Parli con</string>
+    <plurals name="message_participants">
+        <item quantity="one">there\'s %d participant</item>
+        <item quantity="other">there are %d participants</item>
+    </plurals>
+    <string name="message_user_joined">%s joined</string>
+    <string name="message_user_left">%s left</string>
+    <string name="user_action_typing">sta scrivendo</string>
+    <string name="user_action_thinking">sta pensando…</string>
+
+    <string-array name="provider_ids">
+        <item>ollama</item>
+        <item>openai</item>
+        <item>anthropic</item>
+        <item>gemini</item>
+        <item>groq</item>
+        <item>openrouter</item>
+        <item>mistral</item>
+        <item>github</item>
+        <item>huggingface</item>
+    </string-array>
+
+    <string-array name="provider_names">
+        <item>Ollama (Locale - Gratuito)</item>
+        <item>OpenAI (API - A pagamento)</item>
+        <item>Anthropic Claude (API - A pagamento)</item>
+        <item>Google Gemini (API - Free tier)</item>
+        <item>Groq (API - Gratuita)</item>
+        <item>OpenRouter (API - Gateway)</item>
+        <item>Mistral AI (API - Free tier)</item>
+        <item>GitHub Models (API - Gratuito)</item>
+        <item>Hugging Face (API - Free tier)</item>
+    </string-array>
+
+    <string-array name="provider_descriptions">
+        <item>Modelli AI gratuiti eseguiti localmente sul tuo computer</item>
+        <item>GPT-4o e GPT-3.5. Richiede chiave API OpenAI</item>
+        <item>Claude Sonnet e Haiku. Richiede chiave API Anthropic</item>
+        <item>Gemini Pro e Flash. Richiede chiave API Google (gratuita)</item>
+        <item>Inferenza veloce gratuita. Richiede chiave API Groq</item>
+        <item>Gateway per 200+ modelli. Richiede chiave OpenRouter</item>
+        <item>Mistral Small, Open Mixtral. Chiave API gratuita</item>
+        <item>GPT-4o-mini, Llama 3.3, DeepSeek. Token GitHub gratuito</item>
+        <item>Modelli open-source gratuiti via Inference API</item>
+    </string-array>
+
+    <string-array name="model_ollama">
+        <item>Llama 3.1 8B (Qualità: Alta)</item>
+        <item>Llama 3.2 3B (Qualità: Media)</item>
+        <item>Llama 3.2 1B (Qualità: Base)</item>
+        <item>Mistral 7B (Qualità: Alta)</item>
+        <item>Qwen 2.5 7B (Qualità: Alta)</item>
+        <item>Gemma 2 9B (Qualità: Alta)</item>
+        <item>Dolphin Llama 8B (Qualità: Alta)</item>
+        <item>Mixtral 8x7B (Qualità: Molto Alta)</item>
+    </string-array>
+
+    <string-array name="model_id_ollama">
+        <item>llama3.1:8b</item>
+        <item>llama3.2:3b</item>
+        <item>llama3.2:1b</item>
+        <item>mistral:7b</item>
+        <item>qwen2.5:7b</item>
+        <item>gemma2:9b</item>
+        <item>dolphin-llama3:8b</item>
+        <item>mixtral:8x7b</item>
+    </string-array>
+
+    <string-array name="model_openai">
+        <item>GPT-4o (Qualità: Molto Alta)</item>
+        <item>GPT-4o Mini (Qualità: Alta)</item>
+        <item>GPT-4 Turbo (Qualità: Molto Alta)</item>
+        <item>GPT-3.5 Turbo (Qualità: Alta)</item>
+    </string-array>
+
+    <string-array name="model_id_openai">
+        <item>gpt-4o</item>
+        <item>gpt-4o-mini</item>
+        <item>gpt-4-turbo</item>
+        <item>gpt-3.5-turbo</item>
+    </string-array>
+
+    <string-array name="model_anthropic">
+        <item>Claude 3.5 Sonnet (Qualità: Molto Alta)</item>
+        <item>Claude 3 Haiku (Qualità: Alta)</item>
+    </string-array>
+
+    <string-array name="model_id_anthropic">
+        <item>claude-3-5-sonnet-20240620</item>
+        <item>claude-3-haiku-20240307</item>
+    </string-array>
+
+    <string-array name="model_gemini">
+        <item>Gemini 2.5 Flash (Qualità: Molto Alta)</item>
+        <item>Gemini 2.5 Flash Lite (Qualità: Alta)</item>
+        <item>Gemini 2.0 Flash (Qualità: Alta)</item>
+        <item>Gemini 2.5 Pro (Qualità: Molto Alta)</item>
+    </string-array>
+
+    <string-array name="model_id_gemini">
+        <item>gemini-2.5-flash</item>
+        <item>gemini-2.5-flash-lite</item>
+        <item>gemini-2.0-flash</item>
+        <item>gemini-2.5-pro</item>
+    </string-array>
+
+    <string-array name="model_groq">
+        <item>Llama 3.3 70B Versatile (Qualità: Molto Alta)</item>
+        <item>Gemma 2 9B (Qualità: Alta)</item>
+        <item>Llama 3.1 8B Instant (Qualità: Alta)</item>
+        <item>Qwen QWQ 32B (Qualità: Molto Alta)</item>
+        <item>Qwen 2.5 32B (Qualità: Molto Alta)</item>
+        <item>Qwen 2.5 Coder 32B (Qualità: Molto Alta)</item>
+    </string-array>
+
+    <string-array name="model_id_groq">
+        <item>llama-3.3-70b-versatile</item>
+        <item>gemma2-9b-it</item>
+        <item>llama-3.1-8b-instant</item>
+        <item>qwen-qwq-32b</item>
+        <item>qwen-2.5-32b</item>
+        <item>qwen-2.5-coder-32b</item>
+    </string-array>
+
+    <string-array name="model_openrouter">
+        <item>GPT-4o Mini (Qualità: Alta)</item>
+        <item>Llama 4 Scout (Qualità: Molto Alta, gratuito)</item>
+        <item>Llama 4 Maverick (Qualità: Molto Alta, gratuito)</item>
+        <item>DeepSeek R1 (free)</item>
+        <item>Mistral Small (free)</item>
+        <item>Qwen 3 Coder (free)</item>
+        <item>Llama 3.3 70B Instruct (free)</item>
+        <item>DeepSeek V3 (Qualità: Molto Alta)</item>
+        <item>Qwen 110B (Qualità: Molto Alta)</item>
+        <item>Claude 3 Haiku (Qualità: Alta)</item>
+        <item>Command R+ (Qualità: Alta)</item>
+    </string-array>
+
+    <string-array name="model_id_openrouter">
+        <item>openai/gpt-4o-mini</item>
+        <item>meta-llama/llama-4-scout:free</item>
+        <item>meta-llama/llama-4-maverick:free</item>
+        <item>deepseek/deepseek-r1:free</item>
+        <item>mistralai/mistral-small:free</item>
+        <item>qwen/qwen3-coder:free</item>
+        <item>meta-llama/llama-3.3-70b-instruct:free</item>
+        <item>deepseek/deepseek-chat</item>
+        <item>qwen/qwen-110b-chat</item>
+        <item>anthropic/claude-3-haiku</item>
+        <item>cohere/command-r-plus</item>
+    </string-array>
+
+    <string-array name="model_huggingface">
+        <item>Mistral 7B Instruct (Qualità: Alta, gratuito)</item>
+        <item>Llama 3.2 3B Instruct (Qualità: Media, gratuito)</item>
+        <item>Phi-3 Mini (Qualità: Alta, gratuito)</item>
+        <item>Qwen 2.5 7B Instruct (Qualità: Alta, gratuito)</item>
+    </string-array>
+
+    <string-array name="model_id_huggingface">
+        <item>mistralai/Mistral-7B-Instruct-v0.3</item>
+        <item>meta-llama/Llama-3.2-3B-Instruct</item>
+        <item>microsoft/Phi-3-mini-4k-instruct</item>
+        <item>Qwen/Qwen2.5-7B-Instruct</item>
+    </string-array>
+
+    <string-array name="model_mistral">
+        <item>Mistral Small (Qualità: Alta, free tier)</item>
+        <item>Open Mistral 7B (Qualità: Alta, gratuito)</item>
+        <item>Open Mixtral 8x7B (Qualità: Molto Alta, gratuito)</item>
+        <item>Codestral (Qualità: Molto Alta, free tier)</item>
+    </string-array>
+
+    <string-array name="model_id_mistral">
+        <item>mistral-small-latest</item>
+        <item>open-mistral-7b</item>
+        <item>open-mixtral-8x7b</item>
+        <item>codestral-latest</item>
+    </string-array>
+
+    <string-array name="model_github">
+        <item>GPT-4o Mini (Qualità: Alta, gratuito)</item>
+        <item>Llama 3.3 70B (Qualità: Molto Alta, gratuito)</item>
+        <item>DeepSeek R1 (Qualità: Molto Alta, gratuito)</item>
+        <item>Phi-3.5 MoE (Qualità: Alta, gratuito)</item>
+    </string-array>
+
+    <string-array name="model_id_github">
+        <item>gpt-4o-mini</item>
+        <item>Llama-3.3-70b</item>
+        <item>DeepSeek-R1</item>
+        <item>Phi-3.5-MoE-instruct</item>
+    </string-array>
+
+    <string-array name="character_ids">
+        <item>ginecologa</item>
+        <item>insegnante_matematica</item>
+        <item>prof_italiano</item>
+        <item>insegnante_nuoto</item>
+    </string-array>
+
+    <string-array name="character_names">
+        <item>Elena - Ginecologa</item>
+        <item>Marco - Insegnante Matematica</item>
+        <item>Prof. Rossi - Italiano in pensione</item>
+        <item>Luna - Istruttrice Nuoto</item>
+    </string-array>
+
+    <!-- Evolution -->
+    <string name="evo_new_stage">🌟 Nuovo stadio evolutivo:</string>
+    <string name="evo_unlocked">🔓 Sbloccato:</string>
+
+    <!-- Fallback -->
+    <string name="fallback_unavailable">⚠️ AI momentaneamente non disponibile. Il personaggio attende la tua risposta.</string>
+
+    <!-- Memory & Reset -->
+    <string name="reset_conversation">Resetta conversazione</string>
+    <string name="reset_all_data">Resetta tutti i dati</string>
+    <string name="reset_confirm">Confermi? Tutta la cronologia verrà cancellata.</string>
+    <string name="reset_done">Dati resettati</string>
+
+    <!-- AI disclaimer (richiesto Google Play) -->
+    <string name="ai_disclaimer">I personaggi e i messaggi sono generati dall\'intelligenza artificiale. Non rappresentano persone reali. I contenuti sono forniti a scopo di intrattenimento.</string>
+    <string name="image_disclaimer">Le immagini dei personaggi sono fornite da Pexels (foto di fotografi indipendenti) e servizi gratuiti di generazione AI. Non rappresentano persone reali.</string>
+
+    <!-- Login -->
+    <string name="privacy_notice">Premendo Connect accetti i Termini di Servizio e la Privacy Policy. Hai bisogno di aiuto? Contattaci a lembopasquale78@gmail.com</string>
+
+    <!-- Commands help -->
+    <string name="commands_title">💬 Comandi Chat</string>
+    <string name="commands_subtitle">Digita uno di questi comandi nella chat per attivare funzioni speciali.</string>
+    <string name="commands_genera_title">🎨 /genera [descrizione]</string>
+    <string name="commands_genera_desc">Genera un\'immagine AI fotorealistica usando FLUX.1-schnell.\n\nSe non inserisci una descrizione, viene generato un ritratto del personaggio corrente.\n\n⏱️ Limite: 1 contenuto ogni 10 minuti (condiviso con /muovi).</string>
+    <string name="commands_muovi_title">🎬 /muovi [descrizione]</string>
+    <string name="commands_muovi_desc">Genera un\'immagine e la anima con SadTalker (via HF Space gratuito).\n\nIl risultato è un breve video con movimento del viso sincronizzato a un audio TTS.\n\n⏱️ Limite: 1 contenuto ogni 10 minuti (condiviso con /genera).</string>
+    <string name="commands_esempi_title">✏️ Esempi</string>
+    <string name="commands_esempi_desc"><![CDATA[• /genera una ragazza con i capelli rossi al tramonto\n• /genera un gatto nero con occhi verdi\n• /genera (ritratto del personaggio)\n• /muovi un mago che lancia un incantesimo\n• /muovi una principessa che saluta]]></string>
+    <string name="commands_note_title">📌 Note</string>
+    <string name="commands_note_desc">Immagini e video generati non vengono salvati in cronologia. Sono visibili solo nella conversazione corrente.\n\nIl comando /muovi richiede ~30-60 secondi (elaborazione su GPU condivisa HF).</string>
+    <string name="commands_dialog_title">Comandi Chat</string>
+    <string name="action_help">Aiuto</string>
+
+    <!-- Support & Privacy -->
+    <string name="support_email">lembopasquale78@gmail.com</string>
+    <string name="privacy_url">https://www.mevacoin.com/privacy.html</string>
+    <string name="terms_url">https://www.mevacoin.com/terms.html</string>
+    <string name="support_url">https://www.mevacoin.com/support.html</string>
+
+    <!-- Loading -->
+    <string name="loading_characters">Caricamento personaggi in corso…</string>
+    <string name="loading_categories">Caricamento categorie…</string>
+    <string name="loading_progress">(%1$d di %2$d)</string>
+
+</resources>

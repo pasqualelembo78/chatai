@@ -1,0 +1,276 @@
+================================================================================
+                    CHATAI — ROADMAP CONSIGLIATA 2025-2026
+================================================================================
+
+Stato attuale: App Android funzionante, 5083 personaggi, backend Flask/SQLite,
+modelli AI gratuiti (Groq/OpenRouter), monetizzazione base (MeVaCoins + Premium).
+Competitor: Character.AI (200M+ utenti), PolyBuzz (20M+).
+
+
+================================================================================
+FASE 1 — STABILIZZARE E RENDERE SOLIDO (1-2 mesi)
+================================================================================
+
+Priorita': dare solidita' tecnica prima di crescere.
+
+1.1  Migrazione a PostgreSQL
+     - SQLite non scala. 5083 personaggi + storage utenti = ok per ora,
+       ma con 10K+ utenti iniziera' a cascare.
+     - PostgreSQL con connection pooling (SQLAlchemy o asyncpg).
+     - Effort: 1-2 settimane.
+
+1.2  Backend -> FastAPI
+     - Flask e' sync e bloccante. FastAPI e' async, veloce 3-5x, con
+       OpenAPI automatico.
+     - Mantieni la struttura esistente, cambia solo il framework.
+     - Effort: 1-2 settimane.
+
+1.3  Deployment con Docker + CI/CD
+     - Docker Compose per backend + PostgreSQL + Redis.
+     - GitHub Actions per deploy automatico.
+     - Effort: 3-5 giorni.
+
+1.4  Monitoring e logging strutturato
+     - Sentry per errori, structured logging (JSON).
+     - Dashboard Grafana per metriche (requests/sec, latenza AI, errori).
+     - Effort: 2-3 giorni.
+
+1.5  Test automatici
+     - Test unitari per: emotion_engine, evolution_engine, time_engine,
+       prompt_builder, storage.
+     - Test integrazione per gli endpoint API principali.
+     - Effort: 1 settimana.
+
+
+================================================================================
+FASE 2 — UX E ENGAGEMENT (2-3 mesi)
+================================================================================
+
+Priorita': rendere l'esperienza piu' coinvolgente.
+
+2.1  Voice Chat (ALTA PRIORITA')
+     - La feature piu' mancata da tutti gli utenti.
+     - STT: Whisper API (gia' supportato per upload audio).
+     - TTS: ElevenLabs o Bark per voci naturali italiane.
+     - Flusso: utente parla -> Whisper trascrive -> AI risponde -> TTS legge.
+     - Costo: ~$0.01-0.03 per messaggio vocalizzato.
+     - Effort: 2-3 settimane.
+
+2.2  Memory System avanzato
+     - Pannello "Cosa ricorda di te" visibile all'utente.
+     - Pin to Message: l'utente fissa momenti importanti.
+     - Facts auto-catturati: nome, hobby, preferenze, relazioni.
+     - Memory usage meter: barra che mostra quanto spazio e' rimasto.
+     - Effort: 2 settimane.
+
+2.3  Onboarding migliorato
+     - Mostrare 3-5 personaggi di esempio prima del选择.
+     - Test rapido: "Prova a parlare con Luna per 3 messaggi".
+     - Spiegare le feature principali con tooltip.
+     - Effort: 1 settimana.
+
+2.4  Notifications push
+     - "Luna ti ha pensato oggi" (birthday o milestone raggiunto).
+     - "Hai una nuova conversazione in attesa".
+     - Firebase Cloud Messaging.
+     - Effort: 1 settimana.
+
+2.5  Dark mode / Temi
+     - Già parzialmente implementato, completare tutti gli schermi.
+     - Effort: 3-4 giorni.
+
+
+================================================================================
+FASE 3 — COMMUNITY E CRESCITA (3-4 mesi)
+================================================================================
+
+Priorita': far crescere la base utenti con effetto virale.
+
+3.1  Personaggi utente pubblici
+     - Gli utenti creano personaggi e li condividono con la community.
+     - Pagina "Trending" con personaggi piu' popolari.
+     - Rating + recensioni suggerite.
+     - Effort: 2 settimane.
+
+3.2  Lorebook / Worldbuilding
+     - Feature piu' richiesta su Character.AI, qui non esiste ancora.
+     - Ogni personaggio puo' avere un "libro del mondo": regole,
+       storia, locazioni, personaggi secondari.
+     - Il lore viene iniettato nel prompt quando rilevante.
+     - Effort: 2-3 settimane.
+
+3.3  Sharing virale
+     - Condividi la conversazione come screenshot/storia.
+     - Link "Parla con Luna" che apre direttamente la chat.
+     - Badge "Creatore" per chi crea personaggi popolari.
+     - Effort: 1 settimana.
+
+3.4  Referral system potenziato
+     - Già esistente (50 MVC per referral), ma nessun incentivo sociale.
+     - Aggiungere: "Il tuo amico ha creato X personaggi" (notifica sociale).
+     - Effort: 3 giorni.
+
+
+================================================================================
+FASE 4 — MONETIZZAZIONE AVANZATA (2-3 mesi)
+================================================================================
+
+Priorita': aumentare il revenue per utente.
+
+4.1  Premium Plus
+     - Tier sopra il Premium attuale.
+     - Features: voice chat illimitato, memory avanzato, modelli
+       esclusivi (deepseek-r1, gemini-2.5-flash), zero ads,
+       avatar personalizzati.
+     - Prezzo: 9.99-12.99 EUR/mese.
+     - Effort: 1 settimana (logica), 1 settimane (UI).
+
+4.2  Gacha / Loot boxes (opzionale, controverso)
+     - "Sfoglia mistero": apri una casella per un personaggio
+       raro/edizione limitata.
+     - Controverso ma efficace per engagement.
+     - Effort: 1 settimana.
+
+4.3  Abbonamento famiglia
+     - 2-5 utenti, stesso piano, prezzi scontati.
+     - Effort: 3-4 giorni.
+
+4.4  Marketplace personaggi
+     - Creatori vendono personaggi premium a 1-5 MVC.
+     - Platform prende 30%.
+     - Effort: 2 settimane.
+
+
+================================================================================
+FASE 5 — EXPANSIONE PIATTAFORMA (4-6 mesi)
+================================================================================
+
+Priorita': uscire da Android-only.
+
+5.1  Web App (PWA)
+     - React/Next.js frontend web, stesse API backend.
+     - PWA per installazione come app senza store.
+     - Effort: 4-6 settimane.
+
+5.2  iOS App
+     - Flutter o React Native per cross-platform.
+     - Oppure Swift nativo se il budget lo permette.
+     - Effort: 6-8 settimane.
+
+5.3  Immagini AI (Imagine)
+     - Generazione avatar dinamici per i personaggi.
+     - Midjourney/DALL-E API per generare scene durante la chat.
+     - Effort: 2-3 settimane.
+
+5.4  Video/Animazione (lontano)
+     - Personaggi animati con lip sync.
+     - Tavolo da valutare per il futuro.
+
+
+================================================================================
+FASE 6 — AI AVANZATA (3-4 mesi)
+================================================================================
+
+Priorita': rendere le conversazioni piu' realistiche.
+
+6.1  Fine-tuning modello italiano
+     - LoRA su Llama/Qwen con dataset di conversazioni italiane
+       in character.
+     - Migliora la qualita' del roleplay del 30-50%.
+     - Effort: 2-3 mesi (data collection + training).
+
+6.2  RAG (Retrieval-Augmented Generation)
+     - Quando il personaggio parla di qualcosa di specifico,
+       recupera informazioni da una knowledge base.
+     - Esempio: "Luna parla di musica" -> recupera fatti
+       sulla musica dal suo lore.
+     - Effort: 2-3 settimane.
+
+6.3  Multi-character conversations
+     - 2-3 personaggi nella stessa chat.
+     - Ognuno con la propria personalita' e memoria.
+     - Effort: 3-4 settimane.
+
+6.4  Agenti autonomi
+     - Il personaggio puo' fare azioni: cercare informazioni,
+       creare immagini, calcolare.
+     - Effort: 2-3 mesi (complesso).
+
+
+================================================================================
+PRIORITA' RIASSUNTIVA
+================================================================================
+
+URGENTE (fa' subito):
+  [1] Voice Chat — disisolazione numero 1 degli utenti
+  [2] PostgreSQL + FastAPI — infrastruttura solida
+  [3] iOS/Web — mercato enorme lasciato fuori
+
+IMPORTANTE (prossimi 3 mesi):
+  [4] Memory System avanzato
+  [5] Personaggi utente pubblici + Community
+  [6] Lorebook / Worldbuilding
+  [7] Premium Plus tier
+
+MOLTO IMPORTANTE (3-6 mesi):
+  [8] Fine-tuning modello italiano
+  [9] Multi-character conversations
+  [10] Notifications push
+
+
+================================================================================
+STIMA COSTI MENSILI
+================================================================================
+
+Attuale (SQLite, modelli gratuiti):
+  Server: ~5-10 EUR/mese (VPS base)
+  AI API: ~0 EUR (Groq + OpenRouter free tier)
+  Totale: ~5-10 EUR/mese
+
+Con crescita (1000 utenti):
+  Server: ~50 EUR/mese (VPS dedicato)
+  PostgreSQL: ~20 EUR/mese (managed)
+  AI API: ~100-300 EUR/mese (pay-per-use)
+  Voice: ~50-100 EUR/mese
+  Sentry + monitoring: ~25 EUR/mese
+  Totale: ~250-500 EUR/mese
+
+Con crescita (10.000 utenti):
+  Server: ~200 EUR/mese (multi-server)
+  PostgreSQL: ~100 EUR/mese
+  AI API: ~1000-3000 EUR/mese
+  Voice: ~500-1000 EUR/mese
+  Immagini: ~200-500 EUR/mese
+  CDN + storage: ~50 EUR/mese
+  Totale: ~2000-5000 EUR/mese
+
+
+================================================================================
+METRICHE DA TRACCIARE
+================================================================================
+
+Engagement:
+  - Session time medio (target: >5 min)
+  - Messaggi per sessione (target: >10)
+  - Ritorno giorno successivo (target: >40%)
+  - Ritorno a 7 giorni (target: >20%)
+
+Revenue:
+  - ARPU (Average Revenue Per User)
+  - Conversione free -> premium (target: >3%)
+  - LTV (Lifetime Value)
+  - Churn rate
+
+Tecnico:
+  - Tempo risposta API (target: <200ms)
+  - Latenza AI (target: <2s primo token)
+  - Error rate (target: <1%)
+  - Uptime (target: >99.5%)
+
+Crescita:
+  - Nuovi utenti/giorno
+  - Referral conversion rate
+  - Organic vs paid acquisition
+
+
+================================================================================

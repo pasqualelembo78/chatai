@@ -1,0 +1,62 @@
+{
+  "marco_amicizia": {
+    "avatar": true,
+    "ts": "2026-07-14T16:15:49",
+    "bio": true,
+    "scenario": true
+  },
+  "anna_amicizia": {
+    "avatar": true,
+    "ts": "2026-07-14T16:15:53",
+    "bio": true,
+    "scenario": true
+  },
+  "confidente": {
+    "avatar": true,
+    "ts": "2026-07-14T16:15:58",
+    "bio": true,
+    "scenario": true
+  },
+  "amico_ironico": {
+    "avatar": true,
+    "ts": "2026-07-14T16:16:03",
+    "bio": true,
+    "scenario": true
+  },
+  "compagno_chat": {
+    "avatar": true,
+    "ts": "2026-07-14T16:16:07",
+    "bio": true,
+    "scenario": true
+  },
+  "supporto_motivazionale": {
+    "avatar": true,
+    "ts": "2026-07-14T16:16:11",
+    "bio": true,
+    "scenario": true
+  },
+  "roseanne_conner_hf305": {
+    "avatar": true,
+    "ts": "2026-07-14T16:16:16",
+    "bio": true,
+    "scenario": true
+  },
+  "percy_jackson_hf1359": {
+    "avatar": true,
+    "ts": "2026-07-14T16:16:20",
+    "bio": true,
+    "scenario": true
+  },
+  "rummy_ruler_hf1656": {
+    "avatar": true,
+    "ts": "2026-07-14T16:16:24",
+    "bio": true,
+    "scenario": true
+  },
+  "spoons_specialist_hf2280": {
+    "avatar": true,
+    "ts": "2026-07-14T16:16:29",
+    "bio": true,
+    "scenario": true
+  }
+}

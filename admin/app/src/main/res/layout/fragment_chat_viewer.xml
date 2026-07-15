@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:background="@color/surface_card">
+
+        <Button
+            android:id="@+id/bcv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Indietro"
+            android:textAllCaps="false"
+            style="@style/Widget.Aria.Button.Outline" />
+
+        <TextView
+            android:id="@+id/bcv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Conversazioni"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface"
+            android:gravity="center"
+            android:layout_marginStart="8dp" />
+
+        <Button
+            android:id="@+id/bcv_dm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Msg Privato"
+            android:textAllCaps="false"
+            style="@style/Widget.Aria.Button.Tonal" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/bcv_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/bcv_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nessuna conversazione trovata"
+            android:textSize="16sp"
+            android:textColor="@color/on_surface_variant" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bcv_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="12dp"
+        android:clipToPadding="false" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bcv_messages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/bcv_msg_input_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:background="@color/surface_card">
+
+        <EditText
+            android:id="@+id/bcv_msg_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Scrivi un messaggio privato..."
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:background="@drawable/edittext_bg"
+            android:padding="12dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/on_surface_variant"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/bcv_msg_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invia"
+            android:textAllCaps="false"
+            style="@style/Widget.Aria.Button" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,36 @@
+PUNTO 7 — HTTPS PINNING (DA FARE DOPO IL DEPLOY)
+
+Cos'è:
+L'HTTPS pinning vincola l'app Android ad accettare SOLO il certificato
+SSL specifico del tuo server, rifiutando qualsiasi altro certificato anche se
+firmato da una CA riconosciuta.
+
+Perché serve:
+- Un attaccante su una rete WiFi pubblica potrebbe intercettare il traffico
+  con un attacco man-in-the-middle usando un certificato fasullo.
+- Anche se una CA viene compromessa, l'app non accetterà certificati
+  fraudolenti emessi da quella CA.
+- Protegge contro DNS spoofing e proxy malintenzionati.
+
+Cosa fare dopo il deploy (con Let's Encrypt attivo):
+
+  1. Connettiti al server via SSH
+  2. Estrai l'hash SHA-256 del certificato:
+
+     openssl s_client -connect TUO_DOMINIO:443 -servername TUO_DOMINIO \
+       </dev/null 2>/dev/null | openssl x509 -outform der | \
+       openssl dgst -sha256 -binary | openssl enc -base64
+
+  3. Apri il file:
+     app/src/main/res/xml/network_security_config.xml
+
+  4. Sostituisci il commento con il pin reale:
+
+     <pin-set>
+         <pin digest="SHA-256">HASH_OTTENUTO_QUI</pin>
+     </pin-set>
+
+  5. Ricompila l'APK e ridistribuisci.
+
+Nota: se cambi certificato (rinnovo, cambio hosting), dovrai aggiornare
+l'hash e pubblicare un aggiornamento dell'app.

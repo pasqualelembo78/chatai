@@ -1,0 +1,170 @@
+================================================================================
+  CHATAI — REPORT SICUREZZA
+  Data: 08/07/2026
+================================================================================
+
+STATO INIZIALE (prima delle modifiche)
+================================================================================
+
+File monitorati (STATO FINALE dopo le modifiche):
+  server.py          1940 righe  SHA256: 8bbefa13dbeb93f853e2915c212b8580f3dbdb80744f6e0871c5ba54566ad6e6
+  auth.py             588 righe  SHA256: 17dcf429b7e6954235c6545279b91020b509c231428021e0e9dea172d31a37b0
+  storage.py         1098 righe  SHA256: 197542d3d74e83fd4bb6297bf7ac2b2b9b45f9bf721726cb55f6928731d74e99 (non modificato)
+  characters.py     157686 righe SHA256: 183fd6345af78d024545d3a7dde18a432afbed1aad4dbad3b34973d4e52dadd1 (non modificato)
+  prompt_builder.py   248 righe  SHA256: f7fe9a69435b1e9d6714a6ead1ff6733fffc9df65b5fc03f9f1e6f28a0730a0f (non modificato)
+
+
+VULNERABILITÀ IDENTIFICATE
+================================================================================
+
+1. NESSUN CONTROLLO PREMIUM/ADULT SULLA CHAT
+   - Un utente free può chattare con qualsiasi personaggio premium/adult
+     semplicemente specificandone l'ID nelle API.
+   - Colpisce: REST /chat, Socket.IO "stream message", Socket.IO "new message"
+   - Gravità: ALTA (perdita revenue, contenuti non protetti)
+
+2. NESSUN RATE LIMITING SULLA CHAT
+   - L'endpoint /chat e i socket non hanno limiti di richieste.
+   - Un utente può fare milioni di richieste al minuto, facendo lievitare
+     i costi AI e potenzialmente buttando giù il server.
+   - Colpisce: REST /chat, Socket.IO "stream message", Socket.IO "new message"
+   - Gravità: ALTA (costi imprevedibili, DoS)
+
+3. BAN NON VERIFICATO SU ENDPOINT REST
+   - Il ban check esiste in auth.py per:
+     - socket_authenticate() → blocca socket se bannato
+     - /auth/login → blocca login se bannato
+   - MA NON esiste in jwt_required → un utente bannato con token vivo
+     (15 min) può ancora usare le API REST.
+   - Gravità: MEDIA (finestra di 15 min post-ban)
+
+4. PURCHASE TOKEN FALSO
+   - /premium/activate accetta qualsiasi purchase_token senza validazione.
+   - Un utente può attivare premium gratis via curl.
+   - Gravità: ALTA (nessuna revenue)
+
+
+MODIFICHE APPLICATE
+================================================================================
+
+[1] PREMIUM GATE
+--------------------------------------------------------------------------------
+Cosa: Controllo accesso premium/adult prima di processare qualsiasi messaggio.
+
+File modificato: server.py (righe 1265-1290 circa)
+
+Aggiunte:
+  - Lista PREMIUM_CATEGORIES = {"flirt", "relazioni", "confessioni", "seduzione", "premium", "horror"}
+  - Funzione _check_character_access(user_id, character)
+    → True se l'utente ha accesso al personaggio
+    → False se character.is_adult e utente non premium
+    → False se character.category in PREMIUM_CATEGORIES e utente non premium
+
+Chiamate a _check_character_access inserite in:
+  a) process_message()       → dopo character definitivo (riga ~1290)
+     Se accesso negato → return None (caller riceve errore generico)
+  b) api_chat() (REST)       → prima di process_message (riga ~620)
+     Se accesso negato → 403 {"error": "premium_required"}
+  c) on_stream_message()     → dopo get_character (riga ~970)
+     Se accesso negato → emit("stream error", {"message": "premium_required"})
+  d) on_new_message()        → coperto da process_message (via chiamata interna)
+
+Comportamento:
+  - REST: 403 {"error": "premium_required"}
+  - Socket: emit("stream error", {"message": "premium_required"})
+
+
+[2] RATE LIMITING PER UTENTE
+--------------------------------------------------------------------------------
+Cosa: Limita richieste chat per utente, non per IP.
+
+File modificato: server.py (righe 89-107, 601-604, 606-609, 896, 952)
+
+REST /chat:
+  - Aggiunto @limiter.limit("60 per minute", key_func=_chat_rate_key)
+  - _chat_rate_key(): restituisce "user:{user_id}" se loggato, IP altrimenti
+  - Limite: 60 richieste/min per utente
+
+Socket.IO (stream message, new message):
+  - Aggiunto decoratore @_socket_rate_limit()
+  - Usa defaultdict(list) con timestamp per tracciare richieste per user_id
+  - Mantiene finestra di 60 secondi, rimuove timestamp scaduti
+  - Limite: 30/min free, 120/min premium
+  - Se superato: emit("stream error", {"message": "rate_limit"})
+
+
+[3] BAN MIDDLEWARE
+--------------------------------------------------------------------------------
+Cosa: Blocca richieste REST da utenti bannati su qualsiasi endpoint.
+
+File modificato: auth.py (jwt_required righe 180-188, admin_required righe 230-237)
+
+Aggiunto in jwt_required (dopo estrazione payload JWT):
+  - Query: SELECT banned_until FROM users WHERE id = ?
+  - Se banned_until > datetime.now(timezone.utc) → 403 {"error": "Account sospeso"}
+
+Aggiunto in admin_required (stessa logica):
+  - Stessa query, stesso comportamento
+
+Già presenti (non modificati):
+  - socket_authenticate() → già blocca se bannato (ritorna None)
+  - /auth/login → già blocca se bannato (ritorna 403)
+
+
+[4] READ-ONLY FILESYSTEM + INTEGRITY WATCHDOG
+--------------------------------------------------------------------------------
+Cosa: I file .py sono resi read-only post-deploy.
+      Un watchdog cron ogni 5 min controlla l'integrità via git.
+
+File modificato: build_app.sh
+
+Aggiunto nel passo [1b/9] Security hardening:
+  - find ... -name "*.py" -exec chmod a-w {} \;  → tutti i .py read-only
+  - /usr/local/bin/chatai_integrity.sh             → script watchdog
+  - Cron: */5 * * * * root /usr/local/bin/chatai_integrity.sh
+  - systemd: ReadOnlyPaths + ReadWritePaths        → service hardening
+
+Lo script watchdog fa:
+  - git diff --quiet -- backend/  → se modificato: git checkout + restart
+  - git diff --quiet -- app/      → se modificato: git checkout
+  - Segnala nuovi file non tracciati su backend/
+
+Per aggiornare in futuro:
+  chmod -R +w /opt/chatai/backend/*.py
+  git pull
+  ./build_app.sh --skip-py --skip-apk --skip-ollama --skip-audio
+  # build_app.sh si occupa di tutto, incluso ri-chmod
+
+
+FILE MODIFICATI (riepilogo)
+================================================================================
+
+server.py        +59 righe  (Premium gate, rate limiting, socket decorator)
+auth.py          +22 righe  (Ban check in jwt_required, admin_required)
+build_app.sh     +54 righe  (Hardening step, integrity watchdog, systemd hardening)
+sicurezza.txt    nuovo      (Questo file)
+
+
+COME ROLLBACK
+================================================================================
+
+Per ripristinare lo stato precedente:
+
+1. Ripristinare server.py:
+   git checkout -- backend/server.py
+
+2. Ripristinare auth.py:
+   git checkout -- backend/auth.py
+
+3. Ripristinare build_app.sh:
+   git checkout -- build_app.sh
+
+4. Se il cron watchdog è stato aggiunto:
+   sed -i '/chatai_integrity/d' /etc/crontab
+
+5. In caso di problemi col DB (schema cambiato):
+   cp backend/roleplay_data.db backend/roleplay_data.db.bak
+   # Ricreare DB vuoto se necessario
+
+6. Riavviare il server:
+   systemctl restart chatai  o  python3 backend/server.py

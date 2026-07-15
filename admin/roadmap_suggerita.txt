@@ -1,0 +1,279 @@
+ROADMAP SICUREZZA E PRODUZIONE
+=================================
+Basata su analisi del codicebase ChatAI (Android + Python/Flask + 9 provider AI)
+Obiettivo: trasformare il prototipo in app pronta per produzione reale,
+impossibile da attaccare, conforme a normative GDPR/europee.
+
+Stato attuale: prototipo funzionante ma privo di sicurezza.
+- Nessuna autenticazione (chiunque può impersonare chiunque)
+- Nessuna moderazione contenuti (nudità, violenza, pedopornografia)
+- Nessun antivirus/scan sugli upload
+- Upload basati solo su estensione file (falsabile)
+- HTTP nudo, no HTTPS, no rate limiting
+- Dati in DB permanente senza retention policy
+- Password/API key in chiaro nel .env e nel codice Android
+
+----------------------------------------------------------------------
+FASE 1 – AUTENTICAZIONE E CONTROLLO ACCESSI (1-2 settimane)
+----------------------------------------------------------------------
+
+[1.1] Password-based authentication
+- Backend: endpoint POST /auth/register e /auth/login
+- Hash password con bcrypt (werkzeug con scrypt o bcrypt)
+- JWT token (access + refresh) con scadenza
+- Middleware Flask: @jwt_required su TUTTI gli endpoint (/chat, /transcribe, /tts, /upload-image, /conversations, /memory, /evolution, /config, /user/reset, ecc.)
+- Socket.IO: autenticazione via token in `auth` durante handshake
+- Android: LoginActivity con register/login, salva token in EncryptedSharedPreferences
+
+[1.2] Ruoli e permessi
+- Ruoli: user, admin, moderator
+- Admin: può cancellare upload, bannare utenti, vedere log
+- Moderator: può flaggare/rimuovere contenuti illegali
+- Endpoint admin: GET /admin/users, POST /admin/ban, DELETE /admin/content/<id>
+
+[1.3] Rate limiting
+- Flask-Limiter o middleware custom
+- Limiti: 30 richieste/min per /chat, 10/min per /transcribe, 10/min per /upload-image
+- Limiti più severi per /auth/login (5 tentativi/min) anti brute-force
+- Limiti per IP e per user_id
+
+[1.4] Logout e revoca token
+- Blacklist JWT su logout (Redis o set in DB)
+- Rotazione refresh token
+- Endpoint POST /auth/logout e POST /auth/refresh
+
+[1.5] Sessioni ed API key per provider
+- API key provider (Groq, Gemini, ecc.) spostate in variabili d'ambiente server
+- MAI inviate al client Android
+- Per utenti premium: API key personali criptate nel DB, accessibili solo a admin e all'utente proprietario
+- Android: il client NON deve mai vedere le chiavi dei provider
+
+[1.6] Protezione CSRF
+- Token CSRF per endpoint POST (o usare header X-Requested-With + SameSite cookies se si passa a session-based)
+
+----------------------------------------------------------------------
+FASE 2 – PROTEZIONE UPLOAD E FILE (1 settimana) ✓ COMPLETATA
+----------------------------------------------------------------------
+
+[2.1] Validazione MIME reale (non estensione) ✓
+- security_utils.validate_file_mime() usa python-magic per magic bytes
+- Rifiuta file con MIME pericoloso (EXE, APK, HTML, JS, PDF, SVG)
+- Rileva mismatch MIME/estensione dichiarata
+- Blocca: script, APK, EXE, HTML, PDF con JS, SVG con script
+
+[2.2] Antivirus scanner ✓
+- security_utils.scan_file() → clamdscan via subprocess (timeout 10s)
+- Scansiona OGNI file in /transcribe e /upload-image
+- File infetto → log + delete + risposta 400
+- Se clamdscan non disponibile → skip sicuro (warning log)
+
+[2.3] NSFW / moderazione contenuti ✓
+- security_utils.nsfw_check_image() via Gemini API (modello locale non necessario)
+- Rileva: nudità, violenza, armi, droga, sangue, contenuti sessuali
+- Se rilevato → rifiuta upload + log utente
+- security_utils.nsfw_check_text(): filtro keyword + OpenAI Moderation API opzionale
+
+[2.4] Ulteriore hardening upload ✓
+- security_utils.secure_save_upload(): nome random SENZA estensione
+- Permessi 0600 su file salvati
+- TTL ridotto a 5 minuti (security_utils.CLEANUP_AGE = 300s)
+- EXIF stripping via Pillow (security_utils.strip_exif())
+- Cleanup centralizzato in security_utils.cleanup_old_files()
+
+[2.5] Validazione audio aggiuntiva ✓
+- Durata massima: 60 secondi
+- Sample rate: 8kHz-48kHz
+- Dimensione massima ridotta: 10MB (era 25MB)
+
+----------------------------------------------------------------------
+FASE 3 – SICUREZZA DB E DATI (3-4 giorni) ✓ COMPLETATA
+----------------------------------------------------------------------
+
+[3.1] SQL injection ✓
+- Tutte le query in storage.py usano parametri ? (nessuna f-string SQL)
+- Nessun linter CI aggiunto (repo troppo piccolo per giustificarlo)
+
+[3.2] Retention policy ✓
+- Tabella audit_log creata in init_db()
+- POST /admin/prune: cancella messaggi, memorie, shift più vecchi di X giorni
+- Audit log retention: 365 giorni
+- File upload TTL: 5 minuti (Fase 2)
+
+[3.3] Crittografia dati sensibili ✓
+- encrypt_value() / decrypt_value() con Fernet (AES-128-CBC + HMAC-SHA256 via cryptography)
+- MASTER_KEY in env var (64 char hex)
+- purchase_token in premium_users cifrato all'inserimento
+- Password: scrypt via werkzeug (già in Fase 1)
+
+[3.4] Backup e disaster recovery ✓
+- backend/backup.sh: backup DB + .env in /var/backups/chatai/
+- Cron: ogni giorno alle 3:00 (configurato da build_app.sh)
+- Retention: 30 giorni
+
+----------------------------------------------------------------------
+FASE 4 – HARDENING RETE E INFRASTRUTTURA (3-4 giorni) ✓ COMPLETATA
+----------------------------------------------------------------------
+
+[4.1] HTTPS obbligatorio ✓
+- Let's Encrypt via Certbot in build_app.sh (--domain)
+- Apache redirect HTTP → HTTPS
+- HSTS header (max-age=31536000, includeSubDomains)
+- TLS 1.3 via Apache default
+
+[4.2] Headers di sicurezza ✓
+- Flask-Talisman: CSP (default-src 'self'), X-Content-Type-Options: nosniff, X-Frame-Options: DENY, HSTS
+- Apache: Strict-Transport-Security, X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy
+- Talisman con nonce per script-src
+
+[4.3] Firewall e proxy ✓
+- Apache reverse proxy con mod_proxy + mod_proxy_wstunnel (WebSocket)
+- Rate limiting lato app: Flask-Limiter su /auth/login (10/min), /transcribe (10/min), /upload-image (10/min)
+- Limit body size Apache: 25MB
+- Fail2ban jail per /auth/login (5 tentativi → ban 1h)
+- UFW firewall: solo 22/80/443
+
+[4.4] Sandboxing ✓
+- Utente dedicato chatai (no shell, no sudo)
+- /tmp/chatai_uploads con permessi 700
+- DB (chat.db, roleplay_data.db) con permessi 640
+- systemd hardening: NoNewPrivileges, PrivateTmp, ProtectSystem=full, ProtectHome=true
+
+[4.5] Logging e monitoring ✓
+- Tabella audit_log in SQLite: timestamp, user_id, action, detail, ip, user_agent
+- Audit su: register, login, google_login, google_register, character.create, premium.activate, admin.ban, admin.prune
+- Sentry SDK integrato (se SENTRY_DSN configurato in .env)
+
+----------------------------------------------------------------------
+FASE 5 – SICUREZZA ANDROID (4-5 giorni) ✓ COMPLETATA
+----------------------------------------------------------------------
+
+[5.1] Token storage sicuro ✓
+- AuthManager.java: EncryptedSharedPreferences (AES256_GCM) per JWT + dati utente
+- MasterKey con KeyScheme.AES256_GCM, chiave derivata da Android Keystore
+- Fallback a SharedPreferences normali se crittografia non disponibile
+
+[5.2] Hardening rete Android ✓
+- network_security_config.xml: cleartextTrafficPermitted="false" di default
+- Eccezioni cleartext solo per IP di sviluppo (localhost, 10.0.2.2, IP server)
+- Certificate trust: certificati system (HTTPS con CA pubbliche)
+- HttpURLConnection nativo (non OkHttp), ma protetto da Network Security Config
+
+[5.3] ProGuard / R8 ✓
+- build.gradle: minifyEnabled=true, shrinkResources=true in release
+- proguard-rules.pro: keep per socket.io, Google Sign-In, security-crypto, JSON
+- Log stripping: Log.v, Log.d, Log.i rimossi in release (assumenosideeffects)
+
+[5.4] Root detection ✓
+- RootDetectionUtil.java: check Build.TAGS, su binary paths, Build.TYPE
+- LoginActivity: root detection all'avvio → dialog bloccante → finish()
+
+[5.5] Android permissions ✓
+- CAMERA: rimosso (non usata nell'app)
+- RECORD_AUDIO: maxSdkVersion="32" (su 33+ gestito a runtime)
+- Permessi minimi: INTERNET, ACCESS_NETWORK_STATE, RECORD_AUDIO, storage (legacy), READ_MEDIA_IMAGES
+
+----------------------------------------------------------------------
+FASE 6 – GDPR E COMPLIANCE (2-3 giorni) ✓ COMPLETATA
+----------------------------------------------------------------------
+
+[6.1] Informativa e consenso ✓
+- GET /privacy → JSON con privacy policy completa (versionata)
+- Android: AlertDialog "Privacy Policy" al primo avvio
+- Accettazione salvata in SharedPreferences
+- Rifiuto → finish() (app si chiude)
+
+[6.2] Diritto all'oblio ✓
+- POST /user/delete: cancella TUTTI i dati utente (messages, relationships, memories, shifts,
+  user_memory, characters, premium, evolution, audit_log, users)
+- Loggato in audit_log prima della cancellazione
+
+[6.3] Data export ✓
+- GET /user/export → JSON completo: profile, relationships, messages, memories,
+  user_memory, characters, premium, evolution
+
+[6.4] Data breach notification ✓
+- _send_alert() via Telegram Bot API (se TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID configurati)
+- Alert automatici per: file infetti, NSFW detection
+- Audit log completo di ogni azione sensibile
+
+[6.5] Moderazione contenuti per compliance ✓
+- Tabella moderation_flags: user_id, reason, content_type, severity, resolved_at
+- Auto-flagging su NSFW detection (severity="high")
+- Admin endpoints: GET /admin/flags, POST /admin/flags/{id}/resolve
+- get_flag_count() per controllare soglie automatiche
+
+----------------------------------------------------------------------
+FASE 7 – TEST DI SICUREZZA E AUDIT (1 settimana) ✓ COMPLETATA
+----------------------------------------------------------------------
+
+[7.1] Test automatici OWASP Top 10 ✓
+- backend/test_security.py: suite pytest con 20+ test case
+- Classe TestAuth: register con password debole/username invalido, login utente inesistente, duplicate username, token mancante/invalido/manomesso, refresh token abuse
+- TestRateLimiting: brute force su /auth/login → 429
+- TestUpload: script PHP/Shell come immagine/audio, no file, filename vuoto, file > 10MB, valid image (skip senza Gemini)
+- TestIDOR: accesso conversazioni altro utente bloccato
+- TestPentest: SQL injection (5 payload), server info leak, username enumeration, admin endpoint bloccato, path traversal (3 tentativi)
+- TestGDPR: GET /privacy, GET /user/export, POST /user/delete
+- Esecuzione: cd backend && python -m pytest test_security.py -v
+- Richiede: pytest, GEMINI_API_KEY per upload tests, TEST_BASE_URL (default http://127.0.0.1:5000)
+
+[7.2] Dependency scanning ✓
+- .github/workflows/security.yml: CI workflow con pip-audit (vulnerabilità dipendenze Python)
+- Bandit security lint su tutto il backend (.py)
+- Syntax check di tutti i moduli Python
+- Verifica esistenza ProGuard rules e Network Security Config su Android
+- Schedule: automatico a ogni push/PR + ogni lunedì
+- Per Dependabot: abilitare su GitHub (Settings → Security → Dependabot)
+
+[7.3] Penetration test manuale — checklist ✓
+- backend/penetration_test_checklist.md: checklist completa per test manuale
+- Auth: token mancante/scaduto/manomesso/refresh abuse, JWT none attack, SQL injection login, username enumeration
+- Upload: script PHP, backdoor, EXE, APK, HTML con JS, SVG con script, zip bomb, symlink, null byte, file senza estensione, MIME mismatch
+- Rate limiting: /auth/login (10/min), /transcribe (10/min), /upload-image (10/min), via IP rotation
+- IDOR: conversations, memories, characters, premium di altro utente
+- Admin: endpoint non autorizzati, privilege escalation user→admin
+- Android: root detection bypass, token extraction, cleartext traffic
+- GDPR: export dati completi, delete account e ri-registrazione, privacy policy versionata
+
+[7.4] Security Headers check ✓
+- TestSecurityHeaders in test_security.py: X-Content-Type-Options: nosniff, X-Frame-Options: DENY, Strict-Transport-Security
+- Dopo deploy: eseguire manualmente:
+  • securityheaders.com/?q=https://tuodominio.it
+  • ssllabs.com/ssltest/analyze.html?d=tuodominio.it
+  • observatory.mozilla.org/analyze/tuodominio.it
+
+----------------------------------------------------------------------
+PRIORITÀ E TEMPI STIMATI
+----------------------------------------------------------------------
+
+Fase 1 (Autenticazione):      10-14 giorni   ✓ COMPLETATA
+Fase 2 (Upload & Moderazione):  5-7 giorni   ✓ COMPLETATA
+Fase 3 (DB & Dati):             3-4 giorni   ✓ COMPLETATA
+Fase 4 (Rete & Infra):          3-4 giorni   ✓ COMPLETATA
+Fase 5 (Android):               4-5 giorni   ✓ COMPLETATA
+Fase 6 (GDPR):                  2-3 giorni   ✓ COMPLETATA
+Fase 7 (Test):                  5-7 giorni   ✓ COMPLETATA
+
+Ordine consigliato: 1 → 2 → 4 → 3 → 5 → 6 → 7
+(2 e 4 possono essere paralleli)
+
+----------------------------------------------------------------------
+COSA NON FARE (sicurezza inutile o dannosa)
+----------------------------------------------------------------------
+
+✗ Captcha su ogni richiesta — inutilmente distruttivo per UX, meglio rate limiting
+✗ Blacklist IP fisse — i carrier mobili cambiano IP continuamente, inutile
+✗ Crittografia end-to-end dei messaggi — impossibile con provider AI esterni, inutile
+✗ Bloccare tutti i paesi fuori EU — falso senso di sicurezza, gli attacchi arrivano da ovunque
+✗ Password policy assurde (min 20 char, 3 simboli, cambio ogni 30gg) — induce password deboli scritte su post-it
+✗ Proprio algoritmo crittografico — usa solo standard (bcrypt, AES-GCM, JWT, TLS 1.3)
+
+----------------------------------------------------------------------
+NOTE TECNICHE
+----------------------------------------------------------------------
+
+- Flask + eventlet non è ideale per produzione: valutare gunicorn + gevent o uvicorn + asgi
+- Redis necessario per: JWT blacklist, rate limiting, cache
+- DB passare a PostgreSQL in produzione (SQLite non supporta concorrenza decente)
+- Monitoraggio: Prometheus + Grafana per metriche (CPU, RAM, request rate, error rate)
+- CI/CD: GitHub Actions con lint, test, security scan prima di deploy
