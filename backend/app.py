@@ -1653,43 +1653,35 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
         raise HTTPException(400, "Nessun personaggio valido trovato")
     from storage import get_group_messages as _ggm
     history = _ggm(chat_id, limit=50)
-    from prompt_builder import build_group_messages
-    messages = build_group_messages(characters, text, history=history, username=user.user_id[:8])
-    from ai_engine import get_ai_response_stream
-    full_response = ""
-    for token_data in get_ai_response_stream(messages, user_id=user.user_id):
-        if isinstance(token_data, tuple):
-            token = token_data[0]
-        else:
-            token = token_data
-        full_response += token
+
     responses = []
-    import re
-    parts = re.split(r'(?:\[([^\]]+)\]|^([A-Z][a-zéèàùì]+)): ', full_response, flags=re.MULTILINE)
-    for i in range(1, len(parts), 3):
-        cname = (parts[i] or parts[i + 1] or "").strip()
-        ctext = parts[i + 2].strip() if i + 2 < len(parts) else ""
-        if cname and ctext:
-            matched_char = None
-            for c in characters:
-                if c["name"].lower() == cname.lower():
-                    matched_char = c
-                    break
-            if not matched_char:
-                for c in characters:
-                    if cname.lower() in c["name"].lower() or c["name"].lower() in cname.lower():
-                        matched_char = c
-                        break
-            if matched_char:
-                _agm(chat_id, "character", matched_char["id"], "assistant", ctext)
-                responses.append({"character_id": matched_char["id"],
-                                  "character_name": matched_char["name"],
-                                  "content": ctext})
-    if not responses and full_response.strip():
-        c = characters[0]
-        _agm(chat_id, "character", c["id"], "assistant", full_response.strip())
-        responses.append({"character_id": c["id"], "character_name": c["name"],
-                          "content": full_response.strip()})
+    previous_responses = []
+
+    for char in characters:
+        from prompt_builder import build_group_messages
+        messages = build_group_messages(
+            characters, text, history=history,
+            username=user.user_id[:8],
+            current_character=char["name"],
+            previous_responses=previous_responses
+        )
+        from ai_engine import get_ai_response_stream
+        full_response = ""
+        for token_data in get_ai_response_stream(messages, user_id=user.user_id):
+            if isinstance(token_data, tuple):
+                token = token_data[0]
+            else:
+                token = token_data
+            full_response += token
+
+        reply = full_response.strip()
+        if reply:
+            _agm(chat_id, "character", char["id"], "assistant", reply)
+            responses.append({"character_id": char["id"],
+                              "character_name": char["name"],
+                              "content": reply})
+            previous_responses.append({"name": char["name"], "content": reply})
+
     return {"responses": responses, "user_message": text}
 
 # ═══════════════════════════════════════════════════════════════════

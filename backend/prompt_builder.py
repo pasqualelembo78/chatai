@@ -411,27 +411,36 @@ def build_messages(character, emotion, relationship, personality, world_state, u
     return messages
 
 
-def build_group_messages(characters, user_text, history=None, username="Utente"):
+def build_group_messages(characters, user_text, history=None, username="Utente",
+                         current_character=None, previous_responses=None):
     names = [c["name"] for c in characters]
     names_str = ", ".join(names)
 
     lines = []
-    lines.append("Sei un facilitatore di conversazioni di gruppo. Ogni personaggio ha una personalità unica e univoca.")
+    lines.append("Sei un personaggio in una conversazione di gruppo.")
     lines.append(f"I partecipanti alla conversazione sono: {names_str}.")
     lines.append("L'utente sta parlando con tutti loro contemporaneamente.")
-    lines.append("Genera le risposte di OGNI personaggio in base a ciò che è stato detto.")
+
+    if current_character:
+        lines.append(f"Tu sei {current_character}. Rispondi SOLO come {current_character}, con la tua personalità e il tuo stile.")
+        lines.append(f"NON rispondere per gli altri personaggi.")
+    else:
+        lines.append("Genera le risposte di OGNI personaggio in base a ciò che è stato detto.")
+
     lines.append("")
     lines.append("REGOLE FONDAMENTALI:")
-    lines.append("- Ogni personaggio devemaintenere la propria personalità, stile di parlare e backstory.")
+    lines.append("- Ogni personaggio deve mantenere la propria personalità, stile di parlare e backstory.")
     lines.append("- I personaggi possono reagire a ciò che gli ALTRI personaggi hanno detto (non solo all'utente).")
     lines.append("- Usa un tono naturale e colloquiale in italiano.")
-    lines.append("- Non ripetere gli stessi concetti: ogni personaggio offre una prospettiva diversa.")
+    lines.append("- NON ripetere gli stessi concetti: ogni personaggio offre una prospettiva diversa.")
+    lines.append("- Rispondi in modo breve e conciso (1-3 frasi massimo).")
     lines.append("")
-    lines.append("FORMATO OBBLIGATORIO per le risposte:")
-    lines.append("[NomePersonaggio]: la risposta del personaggio")
-    lines.append("[AltroNomePersonaggio]: la risposta dell'altro personaggio")
-    lines.append("...")
-    lines.append("")
+
+    if previous_responses:
+        lines.append("Cosa hanno detto gli altri personaggi prima di te:")
+        for pr in previous_responses:
+            lines.append(f"[{pr['name']}]: {pr['content']}")
+        lines.append("")
 
     for c in characters:
         name = c["name"]
