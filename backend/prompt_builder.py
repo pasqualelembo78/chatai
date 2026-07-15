@@ -439,7 +439,8 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
     lines.append("- Usa un tono naturale e colloquiale in italiano.")
     lines.append("- NON ripetere gli stessi concetti: ogni personaggio offre una prospettiva diversa.")
     lines.append("- Rispondi in modo breve e conciso (1-3 frasi massimo).")
-    lines.append("- Puoi menzionare altri personaggi nella tua risposta usando @NomePersonaggio.")
+    lines.append("- IMPORTANTE: Quando ti rivolgi direttamente a un altro personaggio, DEVI usare la sintassi @NomePersonaggio. Questo serve per attivare automaticamente la risposta di quel personaggio.")
+    lines.append("- Se un altro personaggio ti ha menzionato con @ nella conversazione precedente, DEVI rispondere a quel personaggio.")
     lines.append("")
 
     if previous_responses:

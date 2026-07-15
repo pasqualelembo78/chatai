@@ -1865,6 +1865,14 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
             content = r.get("content", "")
             resp_mentions = re.findall(r'@(\w+)', content, re.IGNORECASE)
             if not resp_mentions:
+                resp_mentions = []
+                for char in characters:
+                    if char["id"] in responded_ids:
+                        continue
+                    name = char["name"]
+                    if re.search(r'(?<![a-zA-Z])' + re.escape(name) + r'(?![a-zA-Z])', content, re.IGNORECASE):
+                        resp_mentions.append(name)
+            if not resp_mentions:
                 continue
             for char in characters:
                 if char["id"] in responded_ids:
