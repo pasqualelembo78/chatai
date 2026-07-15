@@ -290,13 +290,17 @@ public class MainActivity extends AppCompatActivity {
                 navView.setVisibility(View.VISIBLE);
             }
         } else {
-            // Show interstitial before closing (if not premium)
-            ChatApplication app = (ChatApplication) getApplication();
-            PremiumManager pm2 = app.getPremiumManager();
-            if (pm2 == null || !pm2.isPremium()) {
-                mAdManager.showInterstitialIfReady(this);
+            Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if (current instanceof HomeFragment) {
+                ChatApplication app = (ChatApplication) getApplication();
+                PremiumManager pm2 = app.getPremiumManager();
+                if (pm2 == null || !pm2.isPremium()) {
+                    mAdManager.showInterstitialIfReady(this);
+                }
+                super.onBackPressed();
+            } else {
+                navView.setSelectedItemId(R.id.nav_home);
             }
-            super.onBackPressed();
         }
     }
 
