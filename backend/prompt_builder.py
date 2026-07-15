@@ -412,7 +412,7 @@ def build_messages(character, emotion, relationship, personality, world_state, u
 
 
 def build_group_messages(characters, user_text, history=None, username="Utente",
-                         current_character=None, previous_responses=None):
+                         current_character=None, previous_responses=None, auto_selected=False):
     names = [c["name"] for c in characters]
     names_str = ", ".join(names)
 
@@ -424,6 +424,11 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
     if current_character:
         lines.append(f"Tu sei {current_character}. Rispondi SOLO come {current_character}, con la tua personalità e il tuo stile.")
         lines.append(f"NON rispondere per gli altri personaggi.")
+        if auto_selected:
+            lines.append(f"L'utente non ha interpellato nessuno in modo specifico. Sei stato selezionato perché rilevante per la conversazione.")
+            lines.append(f"Rispondi solo se il messaggio dell'utente ti riguarda o ti interessa. Altrimenti, non rispondere.")
+        else:
+            lines.append(f"L'utente ti ha interpellato specificamente con @. Rispondi al suo messaggio.")
     else:
         lines.append("Genera le risposte di OGNI personaggio in base a ciò che è stato detto.")
 
@@ -434,6 +439,7 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
     lines.append("- Usa un tono naturale e colloquiale in italiano.")
     lines.append("- NON ripetere gli stessi concetti: ogni personaggio offre una prospettiva diversa.")
     lines.append("- Rispondi in modo breve e conciso (1-3 frasi massimo).")
+    lines.append("- Puoi menzionare altri personaggi nella tua risposta usando @NomePersonaggio.")
     lines.append("")
 
     if previous_responses:

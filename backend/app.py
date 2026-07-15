@@ -1654,16 +1654,35 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
     from storage import get_group_messages as _ggm
     history = _ggm(chat_id, limit=50)
 
+    import re
+    mentions = re.findall(r'@(\w+)', text, re.IGNORECASE)
+    mentioned_chars = []
+    if mentions:
+        for char in characters:
+            char_name_lower = char["name"].lower()
+            for mention in mentions:
+                if mention.lower() in char_name_lower or char_name_lower in mention.lower():
+                    mentioned_chars.append(char)
+                    break
+
+    if mentioned_chars:
+        responding_chars = mentioned_chars
+        auto_selected = False
+    else:
+        responding_chars = characters[:2] if len(characters) >= 2 else characters
+        auto_selected = True
+
     responses = []
     previous_responses = []
 
-    for char in characters:
+    for char in responding_chars:
         from prompt_builder import build_group_messages
         messages = build_group_messages(
             characters, text, history=history,
             username=user.user_id[:8],
             current_character=char["name"],
-            previous_responses=previous_responses
+            previous_responses=previous_responses,
+            auto_selected=auto_selected
         )
         from ai_engine import get_ai_response_stream
         full_response = ""
@@ -1681,6 +1700,31 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
                               "character_name": char["name"],
                               "content": reply})
             previous_responses.append({"name": char["name"], "content": reply})
+
+    if not responses and responding_chars:
+        fallback_char = responding_chars[0]
+        from prompt_builder import build_group_messages
+        messages = build_group_messages(
+            characters, text, history=history,
+            username=user.user_id[:8],
+            current_character=fallback_char["name"],
+            previous_responses=[],
+            auto_selected=False
+        )
+        from ai_engine import get_ai_response_stream
+        full_response = ""
+        for token_data in get_ai_response_stream(messages, user_id=user.user_id):
+            if isinstance(token_data, tuple):
+                token = token_data[0]
+            else:
+                token = token_data
+            full_response += token
+        reply = full_response.strip()
+        if reply:
+            _agm(chat_id, "character", fallback_char["id"], "assistant", reply)
+            responses.append({"character_id": fallback_char["id"],
+                              "character_name": fallback_char["name"],
+                              "content": reply})
 
     return {"responses": responses, "user_message": text}
 

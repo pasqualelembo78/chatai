@@ -55,12 +55,6 @@ public class ChatListFragment extends Fragment {
         adapter = new ChatConversationAdapter();
         chatList.setAdapter(adapter);
 
-        view.findViewById(R.id.btn_group_chats).setOnClickListener(v -> {
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).openGroupChatList();
-            }
-        });
-
         loadConversations();
 
         return view;
