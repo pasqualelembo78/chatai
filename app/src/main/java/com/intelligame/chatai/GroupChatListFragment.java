@@ -66,6 +66,105 @@ public class GroupChatListFragment extends Fragment {
         view.findViewById(R.id.btn_create_group).setOnClickListener(v -> showCreateDialog());
 
         loadGroupChats();
+        loadInvitations();
+    }
+
+    private void loadInvitations() {
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/invitations", "GET", null, 5000);
+                if (resp.statusCode == 200) {
+                    JSONArray arr = new JSONArray(resp.body);
+                    if (arr.length() > 0) {
+                        StringBuilder msg = new StringBuilder();
+                        msg.append("Hai ").append(arr.length()).append(" invito/i in attesa:");
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject inv = arr.getJSONObject(i);
+                            msg.append("\n- ").append(inv.optString("chat_name"))
+                               .append(" da ").append(inv.optString("inviter_id"));
+                        }
+                        mainHandler.post(() -> {
+                            new android.app.AlertDialog.Builder(getContext())
+                                .setTitle("Inviti in attesa")
+                                .setMessage(msg.toString())
+                                .setPositiveButton("Vedi", (d, w) -> showInvitationsDialog())
+                                .setNegativeButton("Più tardi", null)
+                                .show();
+                        });
+                    }
+                }
+            } catch (Exception ignored) {}
+        });
+    }
+
+    private void showInvitationsDialog() {
+        loadingBar.setVisibility(View.VISIBLE);
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/invitations", "GET", null, 5000);
+                if (resp.statusCode == 200) {
+                    JSONArray arr = new JSONArray(resp.body);
+                    List<JSONObject> invitations = new ArrayList<>();
+                    for (int i = 0; i < arr.length(); i++) {
+                        invitations.add(arr.getJSONObject(i));
+                    }
+                    mainHandler.post(() -> {
+                        loadingBar.setVisibility(View.GONE);
+                        if (invitations.isEmpty()) {
+                            Toast.makeText(getContext(), "Nessun invito in sospeso", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        for (JSONObject inv : invitations) {
+                            showSingleInvitation(inv);
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> loadingBar.setVisibility(View.GONE));
+            }
+        });
+    }
+
+    private void showSingleInvitation(JSONObject inv) {
+        int invId = inv.optInt("id");
+        String chatName = inv.optString("chat_name", "Chat");
+        String inviter = inv.optString("inviter_id", "Sconosciuto");
+
+        new android.app.AlertDialog.Builder(getContext())
+            .setTitle("Invito a: " + chatName)
+            .setMessage(inviter + " ti ha invitato a una chat di gruppo.")
+            .setPositiveButton("Accetta", (d, w) -> respondToInvitation(invId, true))
+            .setNegativeButton("Rifiuta", (d, w) -> respondToInvitation(invId, false))
+            .setCancelable(false)
+            .show();
+    }
+
+    private void respondToInvitation(int invitationId, boolean accept) {
+        loadingBar.setVisibility(View.VISIBLE);
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("accept", accept);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                    baseUrl + "/user/invitations/" + invitationId + "/respond",
+                    "POST", body.toString(), 5000);
+                mainHandler.post(() -> {
+                    loadingBar.setVisibility(View.GONE);
+                    if (resp.statusCode == 200) {
+                        String action = accept ? "Accettato" : "Rifiutato";
+                        Toast.makeText(getContext(), action + "!", Toast.LENGTH_SHORT).show();
+                        loadGroupChats();
+                    } else {
+                        Toast.makeText(getContext(), "Errore", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    loadingBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Errore connessione", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     private void loadGroupChats() {

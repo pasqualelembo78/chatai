@@ -1694,33 +1694,58 @@ async def get_group_participants(chat_id: int, user: AuthUser = Depends(jwt_requ
     return _gp(chat_id)
 
 @app.post("/group-chats/{chat_id}/participants")
-async def add_group_participant(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
-    from storage import get_group_chat as _ggc, add_group_participant as _ap, audit_log
-    chat = _ggc(chat_id, user.user_id)
+async def invite_to_group(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
+    from storage import get_group_chat as _ggc, create_group_invitation as _ci, audit_log
+    chat = _ggc(chat_id)
     if not chat:
         raise HTTPException(404, "Chat di gruppo non trovata")
+    if chat["user_id"] != user.user_id:
+        raise HTTPException(403, "Solo il proprietario può invitare utenti")
     data = await request.json()
-    participant_id = data.get("user_id", "").strip()
-    if not participant_id:
+    invitee_id = data.get("user_id", "").strip()
+    if not invitee_id:
         raise HTTPException(400, "user_id richiesto")
-    if participant_id == user.user_id:
-        raise HTTPException(400, "Sei già il proprietario della chat")
-    from storage import user_exists as _ue
-    if not _ue(participant_id):
+    if invitee_id == user.user_id:
+        raise HTTPException(400, "Non puoi invitare te stesso")
+    from storage import user_exists as _ue, is_group_participant as _igp
+    if not _ue(invitee_id):
         raise HTTPException(404, "Utente non trovato")
-    _ap(chat_id, participant_id)
-    audit_log(user.user_id, "group_chat.add_participant", f"chat={chat_id} user={participant_id}",
+    if _igp(chat_id, invitee_id):
+        raise HTTPException(400, "Utente già nella chat")
+    _ci(chat_id, user.user_id, invitee_id)
+    audit_log(user.user_id, "group_chat.invite", f"chat={chat_id} user={invitee_id}",
               request.client.host if request.client else "",
               request.headers.get("User-Agent", ""))
-    return {"status": "ok", "user_id": participant_id}
+    return {"status": "invited", "user_id": invitee_id}
+
+@app.get("/user/invitations")
+async def list_pending_invitations(user: AuthUser = Depends(jwt_required)):
+    from storage import get_user_pending_invitations as _gpi
+    return _gpi(user.user_id)
+
+@app.post("/user/invitations/{invitation_id}/respond")
+async def respond_to_invitation(invitation_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
+    from storage import respond_to_invitation as _ri, audit_log
+    data = await request.json()
+    accept = data.get("accept", False)
+    chat_id = _ri(invitation_id, user.user_id, accept)
+    if not chat_id:
+        raise HTTPException(404, "Invito non trovato o già processato")
+    action = "accepted" if accept else "declined"
+    audit_log(user.user_id, f"group_chat.{action}", f"chat={chat_id} invitation={invitation_id}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": action, "group_chat_id": chat_id}
 
 @app.delete("/group-chats/{chat_id}/participants/{participant_id}")
 async def remove_group_participant(chat_id: int, participant_id: str, request: Request,
                                     user: AuthUser = Depends(jwt_required)):
     from storage import get_group_chat as _ggc, remove_group_participant as _rp, audit_log
-    chat = _ggc(chat_id, user.user_id)
+    chat = _ggc(chat_id)
     if not chat:
         raise HTTPException(404, "Chat di gruppo non trovata")
+    if chat["user_id"] != user.user_id:
+        raise HTTPException(403, "Solo il proprietario può rimuovere utenti")
     _rp(chat_id, participant_id)
     audit_log(user.user_id, "group_chat.remove_participant", f"chat={chat_id} user={participant_id}",
               request.client.host if request.client else "",

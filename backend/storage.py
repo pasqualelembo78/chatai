@@ -2967,11 +2967,24 @@ def init_group_chat_tables():
                 PRIMARY KEY (group_chat_id, user_id)
             )
         """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS group_chat_invitations (
+                id SERIAL PRIMARY KEY,
+                group_chat_id INTEGER NOT NULL REFERENCES group_chats(id) ON DELETE CASCADE,
+                inviter_id TEXT NOT NULL,
+                invitee_id TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                responded_at TIMESTAMP,
+                UNIQUE(group_chat_id, invitee_id)
+            )
+        """)
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gcm_chat ON group_chat_messages(group_chat_id, timestamp)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gcc_chat ON group_chat_characters(group_chat_id)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gc_user ON group_chats(user_id)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gcp_chat ON group_chat_participants(group_chat_id)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gcp_user ON group_chat_participants(user_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_gci_invitee ON group_chat_invitations(invitee_id, status)")
         conn.commit()
     finally:
         put_conn(conn)
@@ -3119,6 +3132,78 @@ def is_group_participant(chat_id, user_id):
             "SELECT 1 FROM group_chat_participants WHERE group_chat_id=%s AND user_id=%s",
             (chat_id, user_id))
         return cur.fetchone() is not None
+    finally:
+        put_conn(conn)
+
+
+def create_group_invitation(chat_id, inviter_id, invitee_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO group_chat_invitations (group_chat_id, inviter_id, invitee_id, status) "
+            "VALUES (%s, %s, %s, 'pending') ON CONFLICT (group_chat_id, invitee_id) "
+            "DO UPDATE SET status='pending', responded_at=NULL, created_at=CURRENT_TIMESTAMP "
+            "RETURNING id",
+            (chat_id, inviter_id, invitee_id))
+        row = cur.fetchone()
+        conn.commit()
+        return row["id"] if row else None
+    finally:
+        put_conn(conn)
+
+
+def get_user_pending_invitations(user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT gci.id, gci.group_chat_id, gci.inviter_id, gci.created_at, gc.name as chat_name
+            FROM group_chat_invitations gci
+            JOIN group_chats gc ON gci.group_chat_id = gc.id
+            WHERE gci.invitee_id = %s AND gci.status = 'pending'
+            ORDER BY gci.created_at DESC
+        """, (user_id,))
+        return [{"id": row["id"], "group_chat_id": row["group_chat_id"],
+                 "inviter_id": row["inviter_id"], "chat_name": row["chat_name"],
+                 "created_at": str(row["created_at"])} for row in cur.fetchall()]
+    finally:
+        put_conn(conn)
+
+
+def respond_to_invitation(invitation_id, user_id, accept):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        status = "accepted" if accept else "declined"
+        cur.execute(
+            "UPDATE group_chat_invitations SET status=%s, responded_at=CURRENT_TIMESTAMP "
+            "WHERE id=%s AND invitee_id=%s AND status='pending' "
+            "RETURNING group_chat_id",
+            (status, invitation_id, user_id))
+        row = cur.fetchone()
+        if not row:
+            return None
+        chat_id = row["group_chat_id"]
+        if accept:
+            cur.execute(
+                "INSERT INTO group_chat_participants (group_chat_id, user_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+                (chat_id, user_id))
+        conn.commit()
+        return chat_id
+    finally:
+        put_conn(conn)
+
+
+def get_invitation_status(chat_id, user_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT status FROM group_chat_invitations WHERE group_chat_id=%s AND invitee_id=%s",
+            (chat_id, user_id))
+        row = cur.fetchone()
+        return row["status"] if row else None
     finally:
         put_conn(conn)
 
