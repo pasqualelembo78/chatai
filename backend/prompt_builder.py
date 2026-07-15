@@ -417,37 +417,25 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
     names_str = ", ".join(names)
 
     lines = []
-    lines.append("Sei un personaggio in una conversazione di gruppo.")
-    lines.append(f"I partecipanti alla conversazione sono: {names_str}.")
-    lines.append("L'utente sta parlando con tutti loro contemporaneamente.")
+    lines.append(f"Tu sei {current_character}.")
+    lines.append("Sei in una chat di gruppo con altri personaggi, ma parli ESCLUSIVAMENTE con l'utente.")
+    lines.append("NON parlare mai con gli altri personaggi. NON rispondere a loro. NON usarne i nomi.")
+    lines.append("Parla SOLO con l'utente, come se fossi in una chat privata con lui/lei.")
+    lines.append("")
 
-    if current_character:
-        lines.append(f"Tu sei {current_character}. Rispondi SOLO come {current_character}, con la tua personalità e il tuo stile.")
-        lines.append(f"NON rispondere per gli altri personaggi.")
-        if auto_selected:
-            lines.append(f"L'utente non ha interpellato nessuno in modo specifico. Sei stato selezionato perché rilevante per la conversazione.")
-            lines.append(f"Rispondi come faresti in una conversazione con amici: puoi rivolgerti all'utente e anche interagire con gli altri personaggi.")
-        else:
-            lines.append(f"L'utente ti ha interpellato specificamente con @. Rispondi al suo messaggio.")
+    if auto_selected:
+        lines.append("L'utente non ha interpellato nessuno in modo specifico. Sei stato selezionato per rispondere.")
     else:
-        lines.append("Genera le risposte di OGNI personaggio in base a ciò che è stato detto.")
+        lines.append("L'utente ti ha interpellato con @ o menzionando il tuo nome. Rispondi al suo messaggio.")
 
     lines.append("")
-    lines.append("REGOLE FONDAMENTALI:")
-    lines.append("- Ogni personaggio deve mantenere la propria personalità, stile di parlare e backstory.")
-    lines.append("- I personaggi possono reagire a ciò che gli ALTRI personaggi hanno detto e interagire tra loro, come amici in una conversazione reale.")
+    lines.append("REGOLE:")
+    lines.append("- Rispondi come faresti in una normale chat privata con l'utente.")
+    lines.append("- Mantieni la tua personalità, stile di parlare e backstory.")
     lines.append("- Usa un tono naturale e colloquiale in italiano.")
-    lines.append("- NON ripetere gli stessi concetti: ogni personaggio offre una prospettiva diversa.")
     lines.append("- Rispondi in modo breve e conciso (1-3 frasi massimo).")
-    lines.append("- Quando ti rivolgi a un altro personaggio, usa la sintassi @NomePersonaggio per attivare la sua risposta.")
-    lines.append("- Rivolgiti all'utente con 'tu' quando gli parli direttamente.")
+    lines.append("- NON menzionare altri personaggi. NON parlar loro. Parla solo all'utente.")
     lines.append("")
-
-    if previous_responses:
-        lines.append("Cosa hanno detto gli altri personaggi prima di te:")
-        for pr in previous_responses:
-            lines.append(f"[{pr['name']}]: {pr['content']}")
-        lines.append("")
 
     for c in characters:
         name = c["name"]
