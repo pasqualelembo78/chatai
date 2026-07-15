@@ -637,7 +637,9 @@ public class MvcEarnActivity extends AppCompatActivity {
         btnCheckin.setText("...");
         executor.execute(() -> {
             try {
-                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/checkin", "POST", "{}", 10000);
+                JSONObject body = new JSONObject();
+                body.put("day", 0);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/streak/claim", "POST", body.toString(), 10000);
 
                 if (resp.statusCode < 200 || resp.statusCode >= 300) {
                     final String errMsg = resp.body != null && !resp.body.isEmpty() ? resp.body : "HTTP " + resp.statusCode;
@@ -651,18 +653,11 @@ public class MvcEarnActivity extends AppCompatActivity {
                 }
 
                 JSONObject result = new JSONObject(resp.body);
-                boolean alreadyChecked = result.optBoolean("already_checked", false);
+                boolean success = result.optBoolean("success", false);
                 final int earned = result.optInt("earned", 0);
 
                 mainHandler.post(() -> {
-                    if (alreadyChecked) {
-                        checkinStatusText.setText("Hai già fatto check-in oggi!");
-                        checkinStatusText.setTextColor(getResources().getColor(R.color.status_connected));
-                        btnCheckin.setText("\u2713 Riscosso");
-                        btnCheckin.setEnabled(false);
-                        Snackbar.make(findViewById(android.R.id.content),
-                                "Già registrato oggi!", Snackbar.LENGTH_SHORT).show();
-                    } else {
+                    if (success) {
                         checkinStatusText.setText("Check-in effettuato! +" + earned + " MVC");
                         checkinStatusText.setTextColor(getResources().getColor(R.color.status_connected));
                         btnCheckin.setText("\u2713 Riscosso! +" + earned + " MVC");
@@ -672,6 +667,13 @@ public class MvcEarnActivity extends AppCompatActivity {
                         loadTransactions();
                         Snackbar.make(findViewById(android.R.id.content),
                                 "+" + earned + " MVC!", Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        checkinStatusText.setText("Hai già fatto check-in oggi!");
+                        checkinStatusText.setTextColor(getResources().getColor(R.color.status_connected));
+                        btnCheckin.setText("\u2713 Riscosso");
+                        btnCheckin.setEnabled(false);
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "Già registrato oggi!", Snackbar.LENGTH_SHORT).show();
                     }
                 });
             } catch (Exception e) {

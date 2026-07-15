@@ -103,6 +103,8 @@ public class GroupChatListFragment extends Fragment {
                             adapter.setData(items);
                         }
                     });
+                } else {
+                    mainHandler.post(() -> loadingBar.setVisibility(View.GONE));
                 }
             } catch (Exception e) {
                 mainHandler.post(() -> {
@@ -237,9 +239,16 @@ public class GroupChatListFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (executor == null || executor.isShutdown()) {
+            executor = Executors.newSingleThreadExecutor();
+        }
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        if (executor != null) executor.shutdownNow();
     }
 
     static class GroupChatItem {

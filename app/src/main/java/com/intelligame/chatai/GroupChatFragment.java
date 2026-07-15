@@ -242,9 +242,16 @@ public class GroupChatFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (executor == null || executor.isShutdown()) {
+            executor = Executors.newSingleThreadExecutor();
+        }
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        if (executor != null) executor.shutdownNow();
     }
 
     static class MessageItem {

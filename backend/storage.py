@@ -1858,8 +1858,13 @@ def get_streak_30_status(user_id):
         )
         row = cur.fetchone()
         if row and row["claimed_at"]:
-            claimed_date = row["claimed_at"].strftime("%Y-%m-%d") if hasattr(row["claimed_at"], 'strftime') else str(row["claimed_at"])[:10]
-            if claimed_date == today.strftime("%Y-%m-%d"):
+            ca = row["claimed_at"]
+            if hasattr(ca, 'date'):
+                claimed_date = ca.date()
+            else:
+                from datetime import datetime as _dt
+                claimed_date = _dt.strptime(str(ca)[:10], "%Y-%m-%d").date()
+            if claimed_date == today:
                 already_claimed_today = True
 
         return {
@@ -1906,10 +1911,6 @@ def claim_streak_30_day(user_id, day=None):
                 target_day = check_day
                 break
 
-        if broken and target_day < expected_day:
-            cur.execute("DELETE FROM streak_30days WHERE user_id=%s", (user_id,))
-            claimed_days = {}
-
         if day is None or day <= 0:
             day = target_day
 
@@ -1918,13 +1919,21 @@ def claim_streak_30_day(user_id, day=None):
             return False, 0, "giorno_non_valido"
 
         cur.execute(
-            "SELECT claimed FROM streak_30days WHERE user_id=%s AND day_number=%s",
+            "SELECT claimed, claimed_at FROM streak_30days WHERE user_id=%s AND day_number=%s",
             (user_id, day)
         )
         row = cur.fetchone()
         if row and row["claimed"] == 1:
-            log.info(f"claim_streak_30: user={user_id} day={day} already claimed")
-            return False, 0, "gia_riscosso"
+            ca = row.get("claimed_at")
+            if ca:
+                if hasattr(ca, 'date'):
+                    claim_date = ca.date()
+                else:
+                    from datetime import datetime as _dt
+                    claim_date = _dt.strptime(str(ca)[:10], "%Y-%m-%d").date()
+                if claim_date == today:
+                    log.info(f"claim_streak_30: user={user_id} day={day} already claimed today")
+                    return False, 0, "gia_riscosso"
 
         earned = calculate_streak_reward(day)
 
