@@ -218,31 +218,43 @@ public class GroupChatListFragment extends Fragment {
         loadingBar.setVisibility(View.VISIBLE);
         executor.execute(() -> {
             try {
-                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/characters", "GET", null, 10000);
-                if (resp.statusCode == 200) {
-                    JSONArray arr = new JSONArray(resp.body);
-                    List<JSONObject> characters = new ArrayList<>();
+                AuthManager.HttpResponse charResp = mAuth.requestWithRefresh(baseUrl + "/characters", "GET", null, 10000);
+                List<JSONObject> characters = new ArrayList<>();
+                if (charResp.statusCode == 200) {
+                    JSONArray arr = new JSONArray(charResp.body);
                     for (int i = 0; i < arr.length(); i++) {
                         JSONObject c = arr.getJSONObject(i);
                         if (!c.optBoolean("is_adult", false)) {
                             characters.add(c);
                         }
                     }
-                    mainHandler.post(() -> {
-                        loadingBar.setVisibility(View.GONE);
-                        showCreateDialogWithChars(characters);
-                    });
-                    return;
                 }
+
+                AuthManager.HttpResponse userResp = mAuth.requestWithRefresh(baseUrl + "/users/search?q=", "GET", null, 5000);
+                List<JSONObject> users = new ArrayList<>();
+                if (userResp.statusCode == 200) {
+                    JSONArray arr = new JSONArray(userResp.body);
+                    for (int i = 0; i < arr.length(); i++) {
+                        users.add(arr.getJSONObject(i));
+                    }
+                }
+
+                final List<JSONObject> finalChars = characters;
+                final List<JSONObject> finalUsers = users;
+                mainHandler.post(() -> {
+                    loadingBar.setVisibility(View.GONE);
+                    showCreateDialogFull(finalChars, finalUsers);
+                });
+                return;
             } catch (Exception ignored) {}
             mainHandler.post(() -> {
                 loadingBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Errore caricamento personaggi", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Errore caricamento", Toast.LENGTH_SHORT).show();
             });
         });
     }
 
-    private void showCreateDialogWithChars(List<JSONObject> characters) {
+    private void showCreateDialogFull(List<JSONObject> characters, List<JSONObject> users) {
         LinearLayout container = new LinearLayout(getContext());
         container.setOrientation(LinearLayout.VERTICAL);
         int pad = (int) (48 * getResources().getDisplayMetrics().density);
@@ -252,54 +264,169 @@ public class GroupChatListFragment extends Fragment {
         nameInput.setHint("Nome della chat di gruppo");
         container.addView(nameInput);
 
-        TextView label = new TextView(getContext());
-        label.setText("Seleziona i personaggi (min 2):");
-        label.setPadding(0, 24, 0, 8);
-        container.addView(label);
+        TextView charLabel = new TextView(getContext());
+        charLabel.setText("Personaggi (min 2):");
+        charLabel.setPadding(0, 24, 0, 8);
+        charLabel.setTextColor(Color.parseColor("#E0E0E0"));
+        container.addView(charLabel);
 
-        ScrollView scroll = new ScrollView(getContext());
-        LinearLayout checkList = new LinearLayout(getContext());
-        checkList.setOrientation(LinearLayout.VERTICAL);
-        CheckBox[] checkBoxes = new CheckBox[characters.size()];
+        CheckBox[] charBoxes = new CheckBox[characters.size()];
         for (int i = 0; i < characters.size(); i++) {
             JSONObject c = characters.get(i);
             String name = c.optString("name", "?");
             String avatar = c.optString("avatar", "");
-            checkBoxes[i] = new CheckBox(getContext());
-            checkBoxes[i].setText(avatar + " " + name);
-            checkBoxes[i].setTag(c.optString("id"));
-            checkBoxes[i].setTextColor(Color.parseColor("#E0E0E0"));
-            checkList.addView(checkBoxes[i]);
+            charBoxes[i] = new CheckBox(getContext());
+            charBoxes[i].setText(avatar + " " + name);
+            charBoxes[i].setTag(c.optString("id"));
+            charBoxes[i].setTextColor(Color.parseColor("#E0E0E0"));
+            container.addView(charBoxes[i]);
         }
-        scroll.addView(checkList);
-        container.addView(scroll);
+
+        TextView userLabel = new TextView(getContext());
+        userLabel.setText("\nPersone da invitare:");
+        userLabel.setPadding(0, 24, 0, 8);
+        userLabel.setTextColor(Color.parseColor("#E0E0E0"));
+        container.addView(userLabel);
+
+        EditText userSearch = new EditText(getContext());
+        userSearch.setHint("Cerca username...");
+        userSearch.setTextColor(Color.parseColor("#E0E0E0"));
+        userSearch.setTextSize(14);
+        container.addView(userSearch);
+
+        LinearLayout userList = new LinearLayout(getContext());
+        userList.setOrientation(LinearLayout.VERTICAL);
+        container.addView(userList);
+
+        List<String> selectedUserIds = new ArrayList<>();
+        List<TextView> userResultViews = new ArrayList<>();
+
+        userSearch.setOnEditorActionListener((v, actionId, event) -> {
+            String query = userSearch.getText().toString().trim();
+            if (!query.isEmpty()) {
+                searchUsersForCreate(query, userList, userResultViews, selectedUserIds);
+            }
+            return true;
+        });
+
+        TextView selectedLabel = new TextView(getContext());
+        selectedLabel.setText("\nUtenti selezionati: 0");
+        selectedLabel.setPadding(0, 16, 0, 4);
+        selectedLabel.setTextColor(Color.parseColor("#81C784"));
+        selectedLabel.setTag("selected_label");
+        container.addView(selectedLabel);
+
+        for (JSONObject u : users) {
+            String uid = u.optString("id");
+            String username = u.optString("username", uid);
+            TextView userView = new TextView(getContext());
+            userView.setText("+ " + username);
+            userView.setPadding(0, 8, 0, 8);
+            userView.setTextColor(Color.parseColor("#4FC3F7"));
+            userView.setTextSize(14);
+            userView.setOnClickListener(v -> {
+                if (!selectedUserIds.contains(uid)) {
+                    selectedUserIds.add(uid);
+                    userView.setTextColor(Color.parseColor("#81C784"));
+                    userView.setText("✓ " + username);
+                    selectedLabel.setText("Utenti selezionati: " + selectedUserIds.size());
+                } else {
+                    selectedUserIds.remove(uid);
+                    userView.setTextColor(Color.parseColor("#4FC3F7"));
+                    userView.setText("+ " + username);
+                    selectedLabel.setText("Utenti selezionati: " + selectedUserIds.size());
+                }
+            });
+            container.addView(userView);
+        }
+
+        ScrollView scroll = new ScrollView(getContext());
+        scroll.addView(container);
 
         new AlertDialog.Builder(getContext())
             .setTitle("Nuova Chat di Gruppo")
-            .setView(container)
+            .setView(scroll)
             .setPositiveButton("Crea", (dialog, which) -> {
                 String name = nameInput.getText().toString().trim();
                 if (name.isEmpty()) {
                     Toast.makeText(getContext(), "Inserisci un nome", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                List<String> selected = new ArrayList<>();
-                for (CheckBox cb : checkBoxes) {
+                List<String> selectedChars = new ArrayList<>();
+                for (CheckBox cb : charBoxes) {
                     if (cb.isChecked()) {
-                        selected.add((String) cb.getTag());
+                        selectedChars.add((String) cb.getTag());
                     }
                 }
-                if (selected.size() < 2) {
+                if (selectedChars.size() < 2) {
                     Toast.makeText(getContext(), "Seleziona almeno 2 personaggi", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                createGroupChat(name, selected);
+                createGroupChat(name, selectedChars, selectedUserIds);
             })
             .setNegativeButton("Annulla", null)
             .show();
     }
 
-    private void createGroupChat(String name, List<String> characterIds) {
+    private void searchUsersForCreate(String query, LinearLayout userList, List<TextView> resultViews, List<String> selectedUserIds) {
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                    baseUrl + "/users/search?q=" + query, "GET", null, 5000);
+                if (resp.statusCode == 200) {
+                    JSONArray arr = new JSONArray(resp.body);
+                    List<JSONObject> results = new ArrayList<>();
+                    for (int i = 0; i < arr.length(); i++) {
+                        results.add(arr.getJSONObject(i));
+                    }
+                    mainHandler.post(() -> {
+                        userList.removeAllViews();
+                        resultViews.clear();
+                        if (results.isEmpty()) {
+                            TextView noResult = new TextView(getContext());
+                            noResult.setText("Nessun risultato");
+                            noResult.setTextColor(Color.parseColor("#888888"));
+                            userList.addView(noResult);
+                            return;
+                        }
+                        for (JSONObject u : results) {
+                            String uid = u.optString("id");
+                            String username = u.optString("username", uid);
+                            TextView userView = new TextView(getContext());
+                            boolean alreadySelected = selectedUserIds.contains(uid);
+                            userView.setText(alreadySelected ? "✓ " + username : "+ " + username);
+                            userView.setTextColor(Color.parseColor(alreadySelected ? "#81C784" : "#4FC3F7"));
+                            userView.setPadding(0, 8, 0, 8);
+                            userView.setTextSize(14);
+                            userView.setOnClickListener(v -> {
+                                if (!selectedUserIds.contains(uid)) {
+                                    selectedUserIds.add(uid);
+                                    userView.setTextColor(Color.parseColor("#81C784"));
+                                    userView.setText("✓ " + username);
+                                } else {
+                                    selectedUserIds.remove(uid);
+                                    userView.setTextColor(Color.parseColor("#4FC3F7"));
+                                    userView.setText("+ " + username);
+                                }
+                            });
+                            userList.addView(userView);
+                            resultViews.add(userView);
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    userList.removeAllViews();
+                    TextView errView = new TextView(getContext());
+                    errView.setText("Errore ricerca");
+                    errView.setTextColor(Color.parseColor("#FF8A80"));
+                    userList.addView(errView);
+                });
+            }
+        });
+    }
+
+    private void createGroupChat(String name, List<String> characterIds, List<String> userIds) {
         loadingBar.setVisibility(View.VISIBLE);
         executor.execute(() -> {
             try {
@@ -312,8 +439,30 @@ public class GroupChatListFragment extends Fragment {
                 AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
                     baseUrl + "/group-chats", "POST", body.toString(), 10000);
                 if (resp.statusCode == 200 || resp.statusCode == 201) {
+                    JSONObject result = new JSONObject(resp.body);
+                    int chatId = result.optInt("id", 0);
+
+                    int invited = 0;
+                    for (String uid : userIds) {
+                        try {
+                            JSONObject partBody = new JSONObject();
+                            partBody.put("user_id", uid);
+                            AuthManager.HttpResponse partResp = mAuth.requestWithRefresh(
+                                baseUrl + "/group-chats/" + chatId + "/participants",
+                                "POST", partBody.toString(), 5000);
+                            if (partResp.statusCode == 200 || partResp.statusCode == 201) {
+                                invited++;
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    final int finalInvited = invited;
                     mainHandler.post(() -> {
-                        Toast.makeText(getContext(), "Chat creata!", Toast.LENGTH_SHORT).show();
+                        String msg = "Chat creata!";
+                        if (finalInvited > 0) {
+                            msg += " " + finalInvited + " invito/i inviati.";
+                        }
+                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
                         loadGroupChats();
                     });
                 } else {
@@ -348,6 +497,10 @@ public class GroupChatListFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdownNow();
+            executor = null;
+        }
     }
 
     static class GroupChatItem {

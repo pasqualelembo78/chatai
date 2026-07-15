@@ -53,6 +53,7 @@ public class GroupChatFragment extends Fragment {
     private MessageAdapter adapter;
     private List<MessageItem> messages = new ArrayList<>();
     private Map<String, String> charIdToName = new HashMap<>();
+    private Map<String, String> userIdToName = new HashMap<>();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private volatile boolean sending = false;
@@ -181,7 +182,13 @@ public class GroupChatFragment extends Fragment {
 
     private String resolveSenderName(MessageItem item, Map<String, String> idToName) {
         if ("user".equals(item.senderType)) {
-            return "Tu";
+            String myId = mAuth.getUserId();
+            if (item.senderId.equals(myId)) {
+                return "Tu";
+            }
+            String name = userIdToName.get(item.senderId);
+            if (name != null) return name;
+            return item.senderId.length() > 8 ? item.senderId.substring(0, 8) + "..." : item.senderId;
         }
         String name = idToName.get(item.senderId);
         return name != null ? name : item.senderId;
@@ -319,11 +326,31 @@ public class GroupChatFragment extends Fragment {
                         }
                     }
 
+                    Map<String, String> uidToName = new HashMap<>();
+                    for (String pid : participantIds) {
+                        try {
+                            AuthManager.HttpResponse userResp = mAuth.requestWithRefresh(
+                                baseUrl + "/users/search?q=" + pid, "GET", null, 3000);
+                            if (userResp.statusCode == 200) {
+                                JSONArray uarr = new JSONArray(userResp.body);
+                                for (int i = 0; i < uarr.length(); i++) {
+                                    JSONObject u = uarr.getJSONObject(i);
+                                    if (pid.equals(u.optString("id"))) {
+                                        uidToName.put(pid, u.optString("username", pid));
+                                        break;
+                                    }
+                                }
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
                     final List<String> finalCurrentIds = currentIds;
                     final List<JSONObject> finalAllChars = allChars;
                     final List<String> finalParticipantIds = participantIds;
+                    final Map<String, String> finalUidToName = uidToName;
                     mainHandler.post(() -> {
                         loadingBar.setVisibility(View.GONE);
+                        userIdToName.putAll(finalUidToName);
                         showManageDialog(finalCurrentIds, finalAllChars, finalParticipantIds);
                     });
                 }
@@ -400,8 +427,10 @@ public class GroupChatFragment extends Fragment {
         container.addView(partLabel);
 
         for (String pid : participantIds) {
+            String displayName = userIdToName.get(pid);
+            if (displayName == null) displayName = pid.length() > 8 ? pid.substring(0, 8) + "..." : pid;
             TextView partView = new TextView(getContext());
-            partView.setText("✕ " + pid);
+            partView.setText("✕ " + displayName);
             partView.setPadding(0, 8, 0, 8);
             partView.setTextColor(Color.parseColor("#FF8A80"));
             partView.setTextSize(14);
@@ -421,14 +450,14 @@ public class GroupChatFragment extends Fragment {
         searchInput.setTextSize(14);
         container.addView(searchInput);
 
-        TextView searchResults = new TextView(getContext());
-        searchResults.setPadding(0, 8, 0, 0);
-        container.addView(searchResults);
+        LinearLayout searchResultsList = new LinearLayout(getContext());
+        searchResultsList.setOrientation(LinearLayout.VERTICAL);
+        container.addView(searchResultsList);
 
         searchInput.setOnEditorActionListener((v, actionId, event) -> {
             String query = searchInput.getText().toString().trim();
             if (!query.isEmpty()) {
-                searchUsers(query, searchResults);
+                searchUsers(query, searchResultsList);
             }
             return true;
         });
@@ -439,34 +468,47 @@ public class GroupChatFragment extends Fragment {
         builder.show();
     }
 
-    private void searchUsers(String query, TextView resultsView) {
+    private void searchUsers(String query, LinearLayout resultsList) {
         executor.execute(() -> {
             try {
                 AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
                     baseUrl + "/users/search?q=" + query, "GET", null, 5000);
                 if (resp.statusCode == 200) {
                     JSONArray arr = new JSONArray(resp.body);
-                    StringBuilder sb = new StringBuilder();
+                    List<JSONObject> results = new ArrayList<>();
                     for (int i = 0; i < arr.length(); i++) {
-                        JSONObject u = arr.getJSONObject(i);
-                        String uid = u.optString("id");
-                        String username = u.optString("username");
-                        sb.append("+ ").append(username).append(" (").append(uid).append(")\n");
+                        results.add(arr.getJSONObject(i));
                     }
-                    final String text = sb.toString();
                     mainHandler.post(() -> {
-                        resultsView.setText(text.isEmpty() ? "Nessun risultato" : text);
-                        resultsView.setOnClickListener(v -> {
-                            if (!text.isEmpty()) {
-                                String firstLine = text.split("\n")[0];
-                                String uid = firstLine.substring(firstLine.indexOf("(") + 1, firstLine.indexOf(")"));
-                                addParticipant(uid);
-                            }
-                        });
+                        resultsList.removeAllViews();
+                        if (results.isEmpty()) {
+                            TextView noResult = new TextView(getContext());
+                            noResult.setText("Nessun risultato");
+                            noResult.setTextColor(Color.parseColor("#888888"));
+                            resultsList.addView(noResult);
+                            return;
+                        }
+                        for (JSONObject u : results) {
+                            String uid = u.optString("id");
+                            String username = u.optString("username", uid);
+                            TextView userView = new TextView(getContext());
+                            userView.setText("+ " + username);
+                            userView.setPadding(0, 8, 0, 8);
+                            userView.setTextColor(Color.parseColor("#4FC3F7"));
+                            userView.setTextSize(14);
+                            userView.setOnClickListener(v -> addParticipant(uid, username));
+                            resultsList.addView(userView);
+                        }
                     });
                 }
             } catch (Exception e) {
-                mainHandler.post(() -> resultsView.setText("Errore ricerca"));
+                mainHandler.post(() -> {
+                    resultsList.removeAllViews();
+                    TextView errView = new TextView(getContext());
+                    errView.setText("Errore ricerca");
+                    errView.setTextColor(Color.parseColor("#FF8A80"));
+                    resultsList.addView(errView);
+                });
             }
         });
     }
@@ -540,7 +582,7 @@ public class GroupChatFragment extends Fragment {
             .show();
     }
 
-    private void addParticipant(String userId) {
+    private void addParticipant(String userId, String username) {
         loadingBar.setVisibility(View.VISIBLE);
         executor.execute(() -> {
             try {
@@ -552,7 +594,8 @@ public class GroupChatFragment extends Fragment {
                 mainHandler.post(() -> {
                     loadingBar.setVisibility(View.GONE);
                     if (resp.statusCode == 200 || resp.statusCode == 201) {
-                        Toast.makeText(getContext(), "Utente aggiunto!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Invito inviato a " + username + "!", Toast.LENGTH_SHORT).show();
+                        userIdToName.put(userId, username);
                         loadMessages();
                     } else {
                         String errMsg = "Errore";
