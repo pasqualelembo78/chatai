@@ -432,13 +432,11 @@ def generate_image_pollinations(prompt, char_id, api_key=None, negative_prompt=N
         encoded_neg = urllib.parse.quote(negative_prompt)
         params += f"&negative_prompt={encoded_neg}"
     
-    # Usa endpoint autenticato se API key fornita
+    # Usa endpoint con API key se fornita (limiti migliori)
+    url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?{params}"
+    headers = {}
     if api_key:
-        url = f"https://gen.pollinations.ai/prompt/{encoded_prompt}?{params}"
-        headers = {"Authorization": f"Bearer {api_key}"}
-    else:
-        url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?{params}"
-        headers = {}
+        headers["Authorization"] = f"Bearer {api_key}"
 
     for attempt in range(3):
         try:
@@ -763,7 +761,7 @@ def build_pexels_keyword(char_name, prompt=None, char_id=None, char=None):
     return "young person portrait candid"
 
 
-def generate_image_free(model_id, char_id, char_name, prompt=None, api_key=None, negative_prompt=None, char=None):
+def generate_image_free(model_id, char_id, char_name, prompt=None, api_key=None, negative_prompt=None, char=None, original_model=None):
     """Genera avatar usando API gratuite con fallback automatico.
     
     Provider gratuiti disponibili:
@@ -782,7 +780,8 @@ def generate_image_free(model_id, char_id, char_name, prompt=None, api_key=None,
         negative_prompt = get_negative_prompt()
 
     # 1. Prova Pexels prima (foto reali, non AI) con key rotation
-    if pexels_rotator and model_id in ["free", "pexels", "pollinations"]:
+    #    Solo se il modello NON è esplicitamente "pollinations"
+    if pexels_rotator and model_id in ["free", "pexels"] and original_model != "pollinations":
         # Costruisci keyword basata su carattere
         keyword = build_pexels_keyword(char_name, prompt, char_id, char)
         
@@ -1499,7 +1498,7 @@ def cmd_generate(args):
             prompt = get_prompt(char, args.prompt)
             print(f"  Uso API gratuita: {model_id}")
             print(f"  Prompt: {prompt[:120]}...")
-            image_data = generate_image_free(model_id, char['id'], char['name'], prompt, pollinations_key, char=char)
+            image_data = generate_image_free(model_id, char['id'], char['name'], prompt, pollinations_key, char=char, original_model=args.model)
         else:
             prompt = get_prompt(char, args.prompt)
             print(f"  Prompt: {prompt[:120]}...")

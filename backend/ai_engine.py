@@ -2069,22 +2069,29 @@ POLLINATIONS_MODELS = [
 def _pollinations_generate(messages, model, uid=None):
     key = os.environ.get("POLLINATIONS_API_KEY", "")
     try:
-        headers = {"Content-Type": "application/json"}
+        # Usa ultimo messaggio dell'utente come prompt semplice
+        prompt = messages[-1]["content"] if messages else ""
+        system_msg = ""
+        for m in messages:
+            if m["role"] == "system":
+                system_msg = m["content"]
+                break
+        if system_msg:
+            prompt = f"{system_msg}\n\n{prompt}"
+        
+        import urllib.parse
+        encoded = urllib.parse.quote(prompt)
+        params = {"model": model, "seed": 42}
         if key:
-            headers["Authorization"] = f"Bearer {key}"
-        payload = {
-            "model": model,
-            "messages": messages,
-            "temperature": 0.9,
-            "max_tokens": 200,
-        }
-        resp = requests.post(
-            "https://gen.pollinations.ai/v1/chat/completions",
-            headers=headers, json=payload, timeout=60,
+            params["token"] = key
+        
+        resp = requests.get(
+            f"https://text.pollinations.ai/{encoded}",
+            params=params, timeout=60,
         )
         resp.encoding = "utf-8"
-        if resp.status_code == 200:
-            return resp.json()["choices"][0]["message"]["content"]
+        if resp.status_code == 200 and resp.text.strip():
+            return resp.text.strip()
         logger.error(f"Pollinations error: {resp.status_code} {resp.text[:200]}")
         return None
     except Exception as e:
@@ -2093,15 +2100,34 @@ def _pollinations_generate(messages, model, uid=None):
 
 def _pollinations_generate_stream(messages, model, uid=None):
     key = os.environ.get("POLLINATIONS_API_KEY", "")
-    headers = {"Content-Type": "application/json"}
+    prompt = messages[-1]["content"] if messages else ""
+    system_msg = ""
+    for m in messages:
+        if m["role"] == "system":
+            system_msg = m["content"]
+            break
+    if system_msg:
+        prompt = f"{system_msg}\n\n{prompt}"
+    
+    import urllib.parse
+    encoded = urllib.parse.quote(prompt)
+    params = {"model": model, "seed": 42, "stream": "true"}
     if key:
-        headers["Authorization"] = f"Bearer {key}"
-    yield from _stream_openai_compatible(
-        "https://gen.pollinations.ai/v1/chat/completions",
-        headers,
-        {"messages": messages, "temperature": 0.9, "max_tokens": 200},
-        model
-    )
+        params["token"] = key
+    
+    try:
+        resp = requests.get(
+            f"https://text.pollinations.ai/{encoded}",
+            params=params, stream=True, timeout=120,
+        )
+        if resp.status_code != 200:
+            logger.error(f"Pollinations stream error: {resp.status_code}")
+            return
+        for line in resp.iter_lines(decode_unicode=True):
+            if line:
+                yield line, "pollinations", model
+    except Exception as e:
+        logger.error(f"Pollinations stream failed: {e}")
 
 register_provider({
     "id": "pollinations",
