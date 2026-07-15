@@ -1,8 +1,6 @@
 package com.intelligame.chatai;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
