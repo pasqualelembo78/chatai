@@ -426,7 +426,8 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
         lines.append(f"NON rispondere per gli altri personaggi.")
         if auto_selected:
             lines.append(f"L'utente non ha interpellato nessuno in modo specifico. Sei stato selezionato perché rilevante per la conversazione.")
-            lines.append(f"Rispondi all'utente. Concentrati sul suo messaggio, non sugli altri personaggi.")
+            lines.append(f"Rispondi ESCLUSIVAMENTE all'utente. NON menzionare gli altri personaggi nella tua risposta.")
+            lines.append(f"NON dire nulla agli altri personaggi. Parla SOLO con l'utente.")
         else:
             lines.append(f"L'utente ti ha interpellato specificamente con @. Rispondi all'utente, non ad altri personaggi.")
     else:
@@ -435,11 +436,12 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
     lines.append("")
     lines.append("REGOLE FONDAMENTALI:")
     lines.append("- Ogni personaggio deve mantenere la propria personalità, stile di parlare e backstory.")
-    lines.append("- Rispondi PRINCIPALMENTE all'utente, non agli altri personaggi.")
+    lines.append("- Rispondi SOLO all'utente. NON parlare con gli altri personaggi.")
+    lines.append("- NON menzionare il nome di altri personaggi nella tua risposta.")
     lines.append("- Usa un tono naturale e colloquiale in italiano.")
     lines.append("- NON ripetere gli stessi concetti: ogni personaggio offre una prospettiva diversa.")
     lines.append("- Rispondi in modo breve e conciso (1-3 frasi massimo).")
-    lines.append("- NON usare @ per menzionare altri personaggi, a meno che non sia strettamente necessario.")
+    lines.append("- NON usare @ per menzionare altri personaggi.")
     lines.append("- Rivolgiti direttamente all'utente con 'tu'.")
     lines.append("")
 
