@@ -102,6 +102,8 @@ public class GroupChatFragment extends Fragment {
         view.findViewById(R.id.btn_back).setOnClickListener(v ->
             ((MainActivity) requireActivity()).onBackPressed());
 
+        view.findViewById(R.id.btn_group_settings).setOnClickListener(v -> showGroupSettings());
+
         btnSend.setOnClickListener(v -> sendMessage());
 
         loadMessages();
@@ -239,6 +241,185 @@ public class GroupChatFragment extends Fragment {
                 });
             }
         });
+    }
+
+    private void showGroupSettings() {
+        loadingBar.setVisibility(View.VISIBLE);
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                    baseUrl + "/group-chats/" + chatId, "GET", null, 10000);
+                if (resp.statusCode == 200) {
+                    JSONObject obj = new JSONObject(resp.body);
+                    JSONArray currentChars = obj.optJSONArray("character_ids");
+                    List<String> currentIds = new ArrayList<>();
+                    if (currentChars != null) {
+                        for (int i = 0; i < currentChars.length(); i++) {
+                            currentIds.add(currentChars.getString(i));
+                        }
+                    }
+
+                    AuthManager.HttpResponse allResp = mAuth.requestWithRefresh(
+                        baseUrl + "/characters", "GET", null, 10000);
+                    List<JSONObject> allChars = new ArrayList<>();
+                    if (allResp.statusCode == 200) {
+                        JSONArray arr = new JSONArray(allResp.body);
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject c = arr.getJSONObject(i);
+                            if (!c.optBoolean("is_adult", false)) {
+                                allChars.add(c);
+                            }
+                        }
+                    }
+
+                    final List<String> finalCurrentIds = currentIds;
+                    final List<JSONObject> finalAllChars = allChars;
+                    mainHandler.post(() -> {
+                        loadingBar.setVisibility(View.GONE);
+                        showManageCharactersDialog(finalCurrentIds, finalAllChars);
+                    });
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    loadingBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Errore caricamento", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void showManageCharactersDialog(List<String> currentIds, List<JSONObject> allChars) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+        builder.setTitle("Gestisci Personaggi");
+
+        LinearLayout container = new LinearLayout(getContext());
+        container.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (48 * getResources().getDisplayMetrics().density);
+        container.setPadding(pad, 32, pad, 0);
+
+        TextView currentLabel = new TextView(getContext());
+        currentLabel.setText("Personaggi attuali (" + currentIds.size() + "):");
+        currentLabel.setPadding(0, 0, 0, 8);
+        currentLabel.setTextColor(Color.parseColor("#E0E0E0"));
+        container.addView(currentLabel);
+
+        for (String cid : currentIds) {
+            String charName = cid;
+            for (JSONObject c : allChars) {
+                if (c.optString("id").equals(cid)) {
+                    charName = c.optString("name", cid);
+                    break;
+                }
+            }
+            TextView charView = new TextView(getContext());
+            charView.setText("✕ " + charName);
+            charView.setPadding(0, 8, 0, 8);
+            charView.setTextColor(Color.parseColor("#FF8A80"));
+            charView.setTextSize(14);
+            charView.setTag(cid);
+            charView.setOnClickListener(v -> {
+                removeCharacter(cid, charName);
+            });
+            container.addView(charView);
+        }
+
+        if (currentIds.size() < 8) {
+            TextView addLabel = new TextView(getContext());
+            addLabel.setText("\nAggiungi personaggio:");
+            addLabel.setPadding(0, 16, 0, 8);
+            addLabel.setTextColor(Color.parseColor("#E0E0E0"));
+            container.addView(addLabel);
+
+            for (JSONObject c : allChars) {
+                String id = c.optString("id");
+                if (!currentIds.contains(id)) {
+                    String name = c.optString("name", "?");
+                    String avatar = c.optString("avatar", "");
+                    TextView addView = new TextView(getContext());
+                    addView.setText("+ " + avatar + " " + name);
+                    addView.setPadding(0, 8, 0, 8);
+                    addView.setTextColor(Color.parseColor("#81C784"));
+                    addView.setTextSize(14);
+                    addView.setOnClickListener(v -> {
+                        addCharacter(id, name);
+                    });
+                    container.addView(addView);
+                }
+            }
+        }
+
+        builder.setView(container);
+        builder.setNegativeButton("Chiudi", null);
+        builder.show();
+    }
+
+    private void addCharacter(String characterId, String characterName) {
+        loadingBar.setVisibility(View.VISIBLE);
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("character_id", characterId);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                    baseUrl + "/group-chats/" + chatId + "/characters",
+                    "POST", body.toString(), 10000);
+                mainHandler.post(() -> {
+                    loadingBar.setVisibility(View.GONE);
+                    if (resp.statusCode == 200 || resp.statusCode == 201) {
+                        Toast.makeText(getContext(), characterName + " aggiunto!", Toast.LENGTH_SHORT).show();
+                        loadMessages();
+                    } else {
+                        String errMsg = "Errore";
+                        try {
+                            JSONObject err = new JSONObject(resp.body);
+                            if (err.has("detail")) errMsg = err.getString("detail");
+                        } catch (Exception ignored) {}
+                        Toast.makeText(getContext(), errMsg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    loadingBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Errore connessione", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void removeCharacter(String characterId, String characterName) {
+        new android.app.AlertDialog.Builder(getContext())
+            .setTitle("Rimuovi " + characterName + "?")
+            .setMessage("Vuoi rimuovere " + characterName + " dalla chat?")
+            .setPositiveButton("Rimuovi", (d, w) -> {
+                loadingBar.setVisibility(View.VISIBLE);
+                executor.execute(() -> {
+                    try {
+                        AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                            baseUrl + "/group-chats/" + chatId + "/characters/" + characterId,
+                            "DELETE", null, 10000);
+                        mainHandler.post(() -> {
+                            loadingBar.setVisibility(View.GONE);
+                            if (resp.statusCode == 200) {
+                                Toast.makeText(getContext(), characterName + " rimosso", Toast.LENGTH_SHORT).show();
+                                loadMessages();
+                            } else {
+                                String errMsg = "Errore";
+                                try {
+                                    JSONObject err = new JSONObject(resp.body);
+                                    if (err.has("detail")) errMsg = err.getString("detail");
+                                } catch (Exception ignored) {}
+                                Toast.makeText(getContext(), errMsg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (Exception e) {
+                        mainHandler.post(() -> {
+                            loadingBar.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Errore connessione", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            })
+            .setNegativeButton("Annulla", null)
+            .show();
     }
 
     @Override

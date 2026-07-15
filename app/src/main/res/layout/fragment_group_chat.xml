@@ -46,6 +46,17 @@
                 android:textColor="@color/on_surface_variant"
                 android:textSize="11sp" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_group_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚙"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:minWidth="0dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp" />
     </LinearLayout>
 
     <ProgressBar

@@ -3027,6 +3027,32 @@ def delete_group_chat(chat_id):
         put_conn(conn)
 
 
+def add_group_character(chat_id, character_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO group_chat_characters (group_chat_id, character_id) VALUES (%s, %s) ON CONFLICT DO NOTHING",
+            (chat_id, character_id))
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
+def remove_group_character(chat_id, character_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "DELETE FROM group_chat_characters WHERE group_chat_id=%s AND character_id=%s",
+            (chat_id, character_id))
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
 def add_group_message(chat_id, sender_type, sender_id, role, content):
     conn = get_conn()
     try:

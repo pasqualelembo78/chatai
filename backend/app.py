@@ -1632,6 +1632,49 @@ async def delete_group_chat(chat_id: int, request: Request, user: AuthUser = Dep
               request.headers.get("User-Agent", ""))
     return {"status": "ok", "deleted": chat_id}
 
+@app.post("/group-chats/{chat_id}/characters")
+async def add_character_to_group(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
+    from storage import get_group_chat as _ggc, add_group_character as _agc, audit_log
+    from characters import get_character
+    chat = _ggc(chat_id, user.user_id)
+    if not chat:
+        raise HTTPException(404, "Chat di gruppo non trovata")
+    data = await request.json()
+    character_id = data.get("character_id", "").strip()
+    if not character_id:
+        raise HTTPException(400, "character_id richiesto")
+    char = get_character(character_id)
+    if not char:
+        raise HTTPException(404, "Personaggio non trovato")
+    current_ids = chat.get("character_ids", [])
+    if character_id in current_ids:
+        raise HTTPException(400, "Personaggio già presente nella chat")
+    if len(current_ids) >= 8:
+        raise HTTPException(400, "Massimo 8 personaggi per chat di gruppo")
+    _agc(chat_id, character_id)
+    audit_log(user.user_id, "group_chat.add_char", f"chat={chat_id} char={character_id}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "character_id": character_id, "character_name": char["name"]}
+
+@app.delete("/group-chats/{chat_id}/characters/{character_id}")
+async def remove_character_from_group(chat_id: int, character_id: str, request: Request,
+                                       user: AuthUser = Depends(jwt_required)):
+    from storage import get_group_chat as _ggc, remove_group_character as _rgc, audit_log
+    chat = _ggc(chat_id, user.user_id)
+    if not chat:
+        raise HTTPException(404, "Chat di gruppo non trovata")
+    current_ids = chat.get("character_ids", [])
+    if character_id not in current_ids:
+        raise HTTPException(400, "Personaggio non presente nella chat")
+    if len(current_ids) <= 2:
+        raise HTTPException(400, "Servono almeno 2 personaggi nella chat")
+    _rgc(chat_id, character_id)
+    audit_log(user.user_id, "group_chat.remove_char", f"chat={chat_id} char={character_id}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "removed": character_id}
+
 @app.post("/group-chats/{chat_id}/message")
 async def send_group_message(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
     data = await request.json()
