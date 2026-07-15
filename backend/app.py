@@ -1864,6 +1864,7 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
         for r in responses:
             content = r.get("content", "")
             resp_mentions = re.findall(r'@(\w+)', content, re.IGNORECASE)
+            is_explicit = bool(resp_mentions)
             if not resp_mentions:
                 resp_mentions = []
                 for char in characters:
@@ -1875,7 +1876,7 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
             if not resp_mentions:
                 continue
             for char in characters:
-                if char["id"] in responded_ids:
+                if not is_explicit and char["id"] in responded_ids:
                     continue
                 char_name_lower = char["name"].lower()
                 for mention in resp_mentions:
@@ -1889,7 +1890,7 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
         seen_ids = set()
         new_responses = []
         for char in mentioned_to_respond:
-            if char["id"] in seen_ids or char["id"] in responded_ids:
+            if char["id"] in seen_ids:
                 continue
             seen_ids.add(char["id"])
 
