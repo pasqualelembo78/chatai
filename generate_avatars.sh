@@ -40,10 +40,12 @@ echo -e "${YELLOW}[2/4] Caricamento API keys...${NC}"
 
 GROQ_KEY=""
 PEXELS_KEY=""
+POLLINATIONS_KEY=""
 
 if [ -f "$ENV_FILE" ]; then
     GROQ_KEY=$(grep "^GROQ_API_KEY=" "$ENV_FILE" | cut -d'=' -f2 | tr -d ' "')
     PEXELS_KEY=$(grep "^PEXELS_API_KEY=" "$ENV_FILE" | cut -d'=' -f2 | tr -d ' "')
+    POLLINATIONS_KEY=$(grep "^POLLINATIONS_API_KEY=" "$ENV_FILE" | cut -d'=' -f2 | tr -d ' "')
 fi
 
 if [ -z "$GROQ_KEY" ]; then
@@ -51,6 +53,15 @@ if [ -z "$GROQ_KEY" ]; then
 fi
 if [ -z "$PEXELS_KEY" ]; then
     PEXELS_KEY="${PEXELS_API_KEY:-}"
+fi
+if [ -z "$POLLINATIONS_KEY" ]; then
+    POLLINATIONS_KEY="${POLLINATIONS_API_KEY:-}"
+fi
+
+if [ -n "$POLLINATIONS_KEY" ]; then
+    echo -e "    ${GREEN}Pollinations: ${POLLINATIONS_KEY:0:12}...${NC}"
+else
+    echo -e "    ${YELLOW}Pollinations: non trovata (usa anonymous)${NC}"
 fi
 
 if [ -n "$PEXELS_KEY" ]; then
@@ -86,6 +97,7 @@ echo -e "${YELLOW}[4/4] Esecuzione...${NC}"
 
 export GROQ_API_KEY="$GROQ_KEY"
 export PEXELS_API_KEY="$PEXELS_KEY"
+export POLLINATIONS_API_KEY="$POLLINATIONS_KEY"
 
 if [ "$ACTION" = "status" ]; then
     "$VENV_DIR/bin/python3" "$TOOL" --status
@@ -103,7 +115,7 @@ echo ""
 
 "$VENV_DIR/bin/python3" "$TOOL" \
     --generate-all \
-    --model pexels \
+    --model pollinations \
     --bio \
     --limit "$LIMIT"
 
