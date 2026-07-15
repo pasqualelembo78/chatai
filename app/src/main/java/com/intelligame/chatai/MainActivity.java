@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Show app open ad on launch (if not premium)
-        if (!app.getPremiumManager().isPremium()) {
+        PremiumManager pm = app.getPremiumManager();
+        if (pm == null || !pm.isPremium()) {
             mAdManager.showAppOpenIfReady(this);
         }
 
@@ -291,7 +292,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Show interstitial before closing (if not premium)
             ChatApplication app = (ChatApplication) getApplication();
-            if (!app.getPremiumManager().isPremium()) {
+            PremiumManager pm2 = app.getPremiumManager();
+            if (pm2 == null || !pm2.isPremium()) {
                 mAdManager.showInterstitialIfReady(this);
             }
             super.onBackPressed();

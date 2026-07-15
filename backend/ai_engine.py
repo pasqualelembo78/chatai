@@ -74,23 +74,30 @@ class ChatKeyRotator:
         return self._wait_for_key()
     
     def _wait_for_key(self, max_wait=30):
-        """Aspetta brevemente per una key disponibile."""
+        """Restituisce None se tutte le key sono rate-limited, senza bloccare il thread."""
         if not self.keys:
             return None
         
         now = time.time()
-        wait_times = []
+        earliest_available = float('inf')
         for key in self.keys:
             if key in self.failed_keys:
-                wait_times.append(self.failed_keys[key] - now)
+                earliest_available = min(earliest_available, self.failed_keys[key])
+            else:
+                return key
         
-        if not wait_times:
+        if earliest_available == float('inf'):
             return self.keys[0]
         
-        # Aspetta al massimo max_wait secondi
-        wait_time = max(1, min(min(wait_times) + 1, max_wait))
-        time.sleep(wait_time)
+        remaining = earliest_available - now
+        if remaining <= 0:
+            return self.get_key()
         
+        if remaining > max_wait:
+            logger.warning(f"Chat Groq: tutte le key rate-limited, prossima disponibile tra {remaining:.0f}s")
+            return None
+        
+        time.sleep(min(remaining + 0.5, max_wait))
         return self.get_key()
     
     def report_failure(self, key, retry_after=30):

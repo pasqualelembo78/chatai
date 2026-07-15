@@ -22,21 +22,21 @@ public class ChatApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mPrefs = new PrefsManager(this);
-        mAuth = new AuthManager(this, mPrefs.getServerUrl());
         mLocalDb = new LocalDatabaseHelper(this);
-        mPremiumManager = new PremiumManager(this);
-        mPremiumManager.init(this);
-
-        // Initialize AdManager singleton
-        AdManager.getInstance().init(this);
-
-        // If premium, disable ads
-        if (mPremiumManager.isPremium()) {
-            AdManager.getInstance().setAdsEnabled(false);
-        }
-
         mCurrentUrl = mPrefs.getServerUrl();
-        // Il socket NON viene connesso qui — va connesso dopo login
+        mAuth = new AuthManager(this, mCurrentUrl);
+
+        new Thread(() -> {
+            mPremiumManager = new PremiumManager(ChatApplication.this);
+            mPremiumManager.init(ChatApplication.this);
+            AdManager.getInstance().init(ChatApplication.this);
+
+            runOnUiThread(() -> {
+                if (mPremiumManager != null && mPremiumManager.isPremium()) {
+                    AdManager.getInstance().setAdsEnabled(false);
+                }
+            });
+        }).start();
     }
 
     public LocalDatabaseHelper getLocalDb() {

@@ -55,7 +55,8 @@ public class GroupChatFragment extends Fragment {
     private Map<String, String> charIdToName = new HashMap<>();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
-    private boolean sending = false;
+    private volatile boolean sending = false;
+    private volatile boolean isCancelled = false;
 
     private static final int[] CHARACTER_COLORS = {
         Color.parseColor("#4FC3F7"),
@@ -213,7 +214,7 @@ public class GroupChatFragment extends Fragment {
 
                 AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
                     baseUrl + "/group-chats/" + chatId + "/message",
-                    "POST", body.toString(), 60000);
+                    "POST", body.toString(), 180000);
 
                 if (resp.statusCode == 200) {
                     JSONObject result = new JSONObject(resp.body);
@@ -221,6 +222,7 @@ public class GroupChatFragment extends Fragment {
 
                     if (responses != null) {
                         for (int i = 0; i < responses.length(); i++) {
+                            if (isCancelled) break;
                             JSONObject r = responses.getJSONObject(i);
                             MessageItem charMsg = new MessageItem();
                             charMsg.senderType = "character";
@@ -231,19 +233,26 @@ public class GroupChatFragment extends Fragment {
                             charMsg.timestamp = "";
                             final int idx = i;
                             mainHandler.post(() -> {
-                                messages.add(charMsg);
-                                adapter.notifyItemInserted(messages.size() - 1);
-                                messagesList.scrollToPosition(messages.size() - 1);
+                                if (!isCancelled && isAdded()) {
+                                    messages.add(charMsg);
+                                    adapter.notifyItemInserted(messages.size() - 1);
+                                    messagesList.scrollToPosition(messages.size() - 1);
+                                }
                             });
-                            try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+                            try { Thread.sleep(50); } catch (InterruptedException ignored) {}
                         }
                     }
-                    mainHandler.post(() -> {
-                        loadingBar.setVisibility(View.GONE);
-                        sending = false;
-                        btnSend.setEnabled(true);
-                    });
+                    if (!isCancelled) {
+                        mainHandler.post(() -> {
+                            if (isAdded()) {
+                                loadingBar.setVisibility(View.GONE);
+                                sending = false;
+                                btnSend.setEnabled(true);
+                            }
+                        });
+                    }
                 } else {
+                    if (isCancelled) return;
                     String errMsg = "Errore";
                     try {
                         JSONObject err = new JSONObject(resp.body);
@@ -251,20 +260,25 @@ public class GroupChatFragment extends Fragment {
                     } catch (Exception ignored) {}
                     final String msg = errMsg;
                     mainHandler.post(() -> {
-                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                            loadingBar.setVisibility(View.GONE);
+                            sending = false;
+                            btnSend.setEnabled(true);
+                            messageInput.setText(text);
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                if (isCancelled) return;
+                mainHandler.post(() -> {
+                    if (isAdded()) {
+                        Toast.makeText(getContext(), "Errore connessione", Toast.LENGTH_SHORT).show();
                         loadingBar.setVisibility(View.GONE);
                         sending = false;
                         btnSend.setEnabled(true);
                         messageInput.setText(text);
-                    });
-                }
-            } catch (Exception e) {
-                mainHandler.post(() -> {
-                    Toast.makeText(getContext(), "Errore connessione", Toast.LENGTH_SHORT).show();
-                    loadingBar.setVisibility(View.GONE);
-                    sending = false;
-                    btnSend.setEnabled(true);
-                    messageInput.setText(text);
+                    }
                 });
             }
         });
@@ -635,6 +649,7 @@ public class GroupChatFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        isCancelled = false;
         if (executor == null || executor.isShutdown()) {
             executor = Executors.newSingleThreadExecutor();
         }
@@ -643,6 +658,12 @@ public class GroupChatFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        isCancelled = true;
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdownNow();
+            executor = null;
+        }
+        sending = false;
     }
 
     static class MessageItem {

@@ -18,6 +18,7 @@ import logging
 import re
 import uuid
 import threading
+import asyncio
 import time
 import base64
 import hashlib
@@ -1803,51 +1804,69 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
     responses = []
     previous_responses = []
 
-    for char in responding_chars:
+    async def _generate_single_char(char, prev_responses, auto_sel):
         from prompt_builder import build_group_messages
         messages = build_group_messages(
             characters, text, history=history,
             username=user.user_id[:8],
             current_character=char["name"],
-            previous_responses=previous_responses,
-            auto_selected=auto_selected
+            previous_responses=prev_responses,
+            auto_selected=auto_sel
         )
         from ai_engine import get_ai_response_stream
-        full_response = ""
-        for token_data in get_ai_response_stream(messages, user_id=user.user_id):
-            if isinstance(token_data, tuple):
-                token = token_data[0]
-            else:
-                token = token_data
-            full_response += token
+        def _sync_generate():
+            full_response = ""
+            for token_data in get_ai_response_stream(messages, user_id=user.user_id):
+                if isinstance(token_data, tuple):
+                    token = token_data[0]
+                else:
+                    token = token_data
+                full_response += token
+            return full_response.strip()
+        try:
+            loop = asyncio.get_event_loop()
+            reply = await asyncio.wait_for(
+                loop.run_in_executor(None, _sync_generate),
+                timeout=90
+            )
+            return reply
+        except asyncio.TimeoutError:
+            logger.warning(f"Group chat: timeout generazione risposta per {char['name']}")
+            return ""
+        except Exception as e:
+            logger.warning(f"Group chat: errore generazione risposta per {char['name']}: {e}")
+            return ""
 
-        reply = full_response.strip()
-        if reply:
-            _agm(chat_id, "character", char["id"], "assistant", reply)
-            responses.append({"character_id": char["id"],
-                              "character_name": char["name"],
-                              "content": reply})
-            previous_responses.append({"name": char["name"], "content": reply})
+    if len(responding_chars) > 1 and not auto_selected:
+        tasks = []
+        for char in responding_chars:
+            tasks.append(_generate_single_char(char, [], False))
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                logger.warning(f"Group chat: eccezione per {responding_chars[i]['name']}: {result}")
+                continue
+            reply = result
+            if reply:
+                char = responding_chars[i]
+                _agm(chat_id, "character", char["id"], "assistant", reply)
+                responses.append({"character_id": char["id"],
+                                  "character_name": char["name"],
+                                  "content": reply})
+                previous_responses.append({"name": char["name"], "content": reply})
+    else:
+        for char in responding_chars:
+            reply = await _generate_single_char(char, previous_responses, auto_selected)
+            if reply:
+                _agm(chat_id, "character", char["id"], "assistant", reply)
+                responses.append({"character_id": char["id"],
+                                  "character_name": char["name"],
+                                  "content": reply})
+                previous_responses.append({"name": char["name"], "content": reply})
 
     if not responses and responding_chars:
         fallback_char = responding_chars[0]
-        from prompt_builder import build_group_messages
-        messages = build_group_messages(
-            characters, text, history=history,
-            username=user.user_id[:8],
-            current_character=fallback_char["name"],
-            previous_responses=[],
-            auto_selected=False
-        )
-        from ai_engine import get_ai_response_stream
-        full_response = ""
-        for token_data in get_ai_response_stream(messages, user_id=user.user_id):
-            if isinstance(token_data, tuple):
-                token = token_data[0]
-            else:
-                token = token_data
-            full_response += token
-        reply = full_response.strip()
+        reply = await _generate_single_char(fallback_char, [], False)
         if reply:
             _agm(chat_id, "character", fallback_char["id"], "assistant", reply)
             responses.append({"character_id": fallback_char["id"],
@@ -1888,39 +1907,45 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
             break
 
         seen_ids = set()
-        new_responses = []
+        unique_chars = []
         for char in mentioned_to_respond:
-            if char["id"] in seen_ids:
-                continue
-            seen_ids.add(char["id"])
+            if char["id"] not in seen_ids:
+                seen_ids.add(char["id"])
+                unique_chars.append(char)
 
-            from prompt_builder import build_group_messages
-            messages = build_group_messages(
-                characters, text, history=history,
-                username=user.user_id[:8],
-                current_character=char["name"],
-                previous_responses=previous_responses,
-                auto_selected=False
-            )
-            from ai_engine import get_ai_response_stream
-            full_response = ""
-            for token_data in get_ai_response_stream(messages, user_id=user.user_id):
-                if isinstance(token_data, tuple):
-                    token = token_data[0]
-                else:
-                    token = token_data
-                full_response += token
-
-            reply = full_response.strip()
-            if reply:
-                _agm(chat_id, "character", char["id"], "assistant", reply)
-                resp = {"character_id": char["id"],
-                        "character_name": char["name"],
-                        "content": reply}
-                new_responses.append(resp)
-                responses.append(resp)
-                previous_responses.append({"name": char["name"], "content": reply})
-                responded_ids.add(char["id"])
+        if len(unique_chars) > 1:
+            tasks = []
+            for char in unique_chars:
+                tasks.append(_generate_single_char(char, previous_responses, False))
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            new_responses = []
+            for i, result in enumerate(results):
+                if isinstance(result, Exception):
+                    continue
+                reply = result
+                if reply:
+                    char = unique_chars[i]
+                    _agm(chat_id, "character", char["id"], "assistant", reply)
+                    resp = {"character_id": char["id"],
+                            "character_name": char["name"],
+                            "content": reply}
+                    new_responses.append(resp)
+                    responses.append(resp)
+                    previous_responses.append({"name": char["name"], "content": reply})
+                    responded_ids.add(char["id"])
+        else:
+            new_responses = []
+            for char in unique_chars:
+                reply = await _generate_single_char(char, previous_responses, False)
+                if reply:
+                    _agm(chat_id, "character", char["id"], "assistant", reply)
+                    resp = {"character_id": char["id"],
+                            "character_name": char["name"],
+                            "content": reply}
+                    new_responses.append(resp)
+                    responses.append(resp)
+                    previous_responses.append({"name": char["name"], "content": reply})
+                    responded_ids.add(char["id"])
 
         if not new_responses:
             break

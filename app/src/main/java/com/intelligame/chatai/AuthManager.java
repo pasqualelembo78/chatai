@@ -109,8 +109,8 @@ public class AuthManager {
                 URL url = new URL(urlStr);
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
-                conn.setConnectTimeout(10000);
-                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(20000);
+                conn.setReadTimeout(20000);
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setDoOutput(true);
 
