@@ -1856,7 +1856,7 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
                 previous_responses.append({"name": char["name"], "content": reply})
     else:
         for char in responding_chars:
-            reply = await _generate_single_char(char, [], auto_selected)
+            reply = await _generate_single_char(char, previous_responses, auto_selected)
             if reply:
                 _agm(chat_id, "character", char["id"], "assistant", reply)
                 responses.append({"character_id": char["id"],
@@ -1876,17 +1876,26 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
 
     responded_ids = {r["character_id"] for r in responses}
     mention_rounds = 0
-    max_mention_rounds = 1
+    max_mention_rounds = 2
 
     while mention_rounds < max_mention_rounds:
         mentioned_to_respond = []
         for r in responses:
             content = r.get("content", "")
             resp_mentions = re.findall(r'@(\w+)', content, re.IGNORECASE)
+            is_explicit = bool(resp_mentions)
+            if not resp_mentions:
+                resp_mentions = []
+                for char in characters:
+                    if char["id"] in responded_ids:
+                        continue
+                    name = char["name"]
+                    if re.search(r'(?<![a-zA-Z])' + re.escape(name) + r'(?![a-zA-Z])', content, re.IGNORECASE):
+                        resp_mentions.append(name)
             if not resp_mentions:
                 continue
             for char in characters:
-                if char["id"] in responded_ids:
+                if not is_explicit and char["id"] in responded_ids:
                     continue
                 char_name_lower = char["name"].lower()
                 for mention in resp_mentions:
