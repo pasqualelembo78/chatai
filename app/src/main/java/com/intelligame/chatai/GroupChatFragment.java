@@ -701,9 +701,6 @@ public class GroupChatFragment extends Fragment {
     public void onStop() {
         super.onStop();
         isCancelled = true;
-        if (executor != null && !executor.isShutdown()) {
-            executor.shutdownNow();
-        }
         sending = false;
     }
 

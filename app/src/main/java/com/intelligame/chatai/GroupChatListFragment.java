@@ -497,9 +497,6 @@ public class GroupChatListFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (executor != null && !executor.isShutdown()) {
-            executor.shutdownNow();
-        }
     }
 
     static class GroupChatItem {
