@@ -3,12 +3,15 @@ package com.intelligame.chatai;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,12 +23,21 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navView;
     private View fragmentContainer;
     private AuthManager mAuth;
     private AdManager mAdManager;
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
+    private int pendingInvitations = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +127,71 @@ public class MainActivity extends AppCompatActivity {
         }
 
         handleIntent(getIntent());
+        checkPendingInvitations();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPendingInvitations();
+    }
+
+    private void checkPendingInvitations() {
+        executor.execute(() -> {
+            try {
+                ChatApplication app = (ChatApplication) getApplication();
+                String baseUrl = app.getCurrentUrl();
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                    baseUrl + "/user/invitations", "GET", null, 5000);
+                if (resp.statusCode == 200) {
+                    JSONArray arr = new JSONArray(resp.body);
+                    final int count = arr.length();
+                    mainHandler.post(() -> {
+                        pendingInvitations = count;
+                        updateGroupsBadge();
+                        if (count > 0 && getSupportFragmentManager().findFragmentByTag("groups") == null) {
+                            showInvitationNotification(arr);
+                        }
+                    });
+                }
+            } catch (Exception ignored) {}
+        });
+    }
+
+    private void updateGroupsBadge() {
+        try {
+            BadgeDrawable badge = navView.getOrCreateBadge(R.id.nav_groups);
+            if (pendingInvitations > 0) {
+                badge.setVisible(true);
+                badge.setNumber(pendingInvitations);
+            } else {
+                badge.setVisible(false);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private void showInvitationNotification(JSONArray arr) {
+        try {
+            StringBuilder msg = new StringBuilder();
+            msg.append("Hai ").append(arr.length()).append(" invito/i in attesa:");
+            for (int i = 0; i < arr.length() && i < 3; i++) {
+                JSONObject inv = arr.getJSONObject(i);
+                msg.append("\n\n• ").append(inv.optString("chat_name"))
+                   .append("\n  da ").append(inv.optString("inviter_id"));
+            }
+            if (arr.length() > 3) {
+                msg.append("\n\n... e altri ").append(arr.length() - 3);
+            }
+
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Inviti di Gruppo")
+                .setMessage(msg.toString())
+                .setPositiveButton("Gestisci", (d, w) -> {
+                    navView.setSelectedItemId(R.id.nav_groups);
+                })
+                .setNegativeButton("Più tardi", null)
+                .show();
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -219,6 +296,12 @@ public class MainActivity extends AppCompatActivity {
             }
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (executor != null) executor.shutdownNow();
     }
 
     public void showLoading(String message) {
