@@ -17,6 +17,14 @@ HEAVY_LOCAL_MODELS = {
     "hf.co/mradermacher/Qwen2.5-7B-Instruct-abliterated-GGUF:Q4_K_M": 5.0,
     "hf.co/huihui-ai/Qwen2.5-7B-Instruct-abliterated-v2-GGUF:Q4_K_M": 5.0,
     "mixtral:8x7b": 27.0,
+    "qwen2.5:14b": 9.0,
+    "mistral-nemo:12b": 8.0,
+    "qwen2.5:32b": 20.0,
+    "deepseek-r1:7b": 5.0,
+    "llama3.3:70b": 40.0,
+    "llama3.1:70b": 40.0,
+    "qwen2.5:72b": 45.0,
+    "deepseek-r1:70b": 43.0,
 }
 
 FREE_MODEL_CHAIN = []
@@ -144,14 +152,16 @@ def rebuild_free_model_chain():
     from ai_engine.providers.ollama import _ollama_available
     chain = []
 
-    chain.append(("ollama", "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M"))
-    chain.append(("ollama", "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M"))
-    chain.append(("ollama", "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M"))
-    chain.append(("ollama", "llama3.2:3b"))
-    chain.append(("ollama", "llama3.2:1b"))
-    if _ram_ok_for_model(HEAVY_LOCAL_MODELS["hf.co/mradermacher/Qwen2.5-7B-Instruct-abliterated-GGUF:Q4_K_M"]):
-        pass
-    chain.append(("ollama", "hf.co/mradermacher/Qwen2.5-7B-Instruct-abliterated-GGUF:Q4_K_M"))
+    from ai_engine.providers.ollama import OLLAMA_MODELS as _OLLAMA_MODELS
+    try:
+        _ollama_sorted = sorted(
+            _OLLAMA_MODELS,
+            key=lambda m: float(str(m.get("size", "0")).replace("GB", "").strip() or 0)
+        )
+    except Exception:
+        _ollama_sorted = _OLLAMA_MODELS
+    for m in _ollama_sorted:
+        chain.append(("ollama", m["id"]))
 
     chain.append(("openrouter", "openai/gpt-4o-mini"))
 

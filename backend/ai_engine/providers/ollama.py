@@ -71,12 +71,21 @@ OLLAMA_MODELS = [
     {"id": "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Llama 3.2 3B Abliterated (uncensored, fallback)", "quality": "media", "size": "2.0GB"},
     {"id": "llama3.2:3b", "name": "Llama 3.2 3B (censurato)", "quality": "media", "size": "2.0GB"},
     {"id": "llama3.2:1b", "name": "Llama 3.2 1B (censurato)", "quality": "base", "size": "0.7GB"},
+    {"id": "openchat/openchat-7b", "name": "OpenChat 7B (censurato)", "quality": "alta", "size": "4.1GB"},
     {"id": "hf.co/mradermacher/Qwen2.5-7B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Qwen 2.5 7B Abliterated (uncensored, pesante)", "quality": "molto alta", "size": "4.7GB"},
     {"id": "qwen2.5:7b", "name": "Qwen 2.5 7B (censurato)", "quality": "alta", "size": "4.7GB"},
     {"id": "llama3.1:8b", "name": "Llama 3.1 8B (censurato)", "quality": "alta", "size": "4.7GB"},
     {"id": "mistral:7b", "name": "Mistral 7B (censurato)", "quality": "alta", "size": "4.1GB"},
     {"id": "gemma2:9b", "name": "Gemma 2 9B (censurato)", "quality": "alta", "size": "5.5GB"},
     {"id": "mixtral:8x7b", "name": "Mixtral 8x7B (censurato)", "quality": "molto alta", "size": "26GB"},
+    {"id": "qwen2.5:14b", "name": "Qwen 2.5 14B (censurato)", "quality": "alta", "size": "9.0GB"},
+    {"id": "mistral-nemo:12b", "name": "Mistral Nemo 12B (censurato)", "quality": "alta", "size": "7.5GB"},
+    {"id": "qwen2.5:32b", "name": "Qwen 2.5 32B (censurato)", "quality": "molto alta", "size": "20GB"},
+    {"id": "deepseek-r1:7b", "name": "DeepSeek-R1 7B (ragiona)", "quality": "alta", "size": "4.7GB"},
+    {"id": "llama3.3:70b", "name": "Llama 3.3 70B (censurato, server grande)", "quality": "top", "size": "40GB"},
+    {"id": "llama3.1:70b", "name": "Llama 3.1 70B (censurato, server grande)", "quality": "top", "size": "40GB"},
+    {"id": "qwen2.5:72b", "name": "Qwen 2.5 72B (censurato, server grande)", "quality": "top", "size": "45GB"},
+    {"id": "deepseek-r1:70b", "name": "DeepSeek-R1 70B (ragiona, server grande)", "quality": "top", "size": "43GB"},
 ]
 
 
