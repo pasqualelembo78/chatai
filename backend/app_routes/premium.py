@@ -20,6 +20,7 @@ from storage import (
     claim_streak_milestone,
     credit_referral_first_message,
     audit_log,
+    get_daily_message_status, unlock_unlimited_messages,
 )
 from auth_fastapi import jwt_optional, jwt_required, AuthUser
 from chat_engine import FEATURES
@@ -84,6 +85,24 @@ async def api_mevacoins_unlocks(user: AuthUser = Depends(jwt_required)):
 @router.get("/user/mevacoins/transactions")
 async def api_mevacoins_tx(user: AuthUser = Depends(jwt_required)):
     return get_mevacoins_transactions(user.user_id)
+
+
+@router.get("/user/messages/status")
+async def api_daily_message_status(user: AuthUser = Depends(jwt_required)):
+    return get_daily_message_status(user.user_id)
+
+
+@router.post("/user/messages/unlock")
+async def api_unlock_unlimited_messages(request: Request, user: AuthUser = Depends(jwt_required)):
+    ok, msg = unlock_unlimited_messages(user.user_id)
+    if not ok:
+        if msg == "saldo_insufficiente":
+            raise HTTPException(400, "saldo_insufficiente")
+        raise HTTPException(500, msg)
+    audit_log(user.user_id, "messages.unlock", "daily limit lifted via MVC",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"status": "ok", "unlocked": True, "message_status": get_daily_message_status(user.user_id)}
 
 
 @router.post("/user/mevacoins/checkin")

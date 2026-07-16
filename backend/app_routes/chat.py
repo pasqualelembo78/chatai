@@ -102,6 +102,21 @@ async def api_chat(request: Request, body: ChatRequest, user: AuthUser = Depends
     if char and not _check_character_access(user.user_id, char):
         raise HTTPException(403, "premium_required")
 
+    from storage import check_and_count_message
+    allowed, status = check_and_count_message(user.user_id)
+    if not allowed:
+        raise HTTPException(
+            429,
+            {
+                "error": "daily_limit_reached",
+                "limit": status["limit"],
+                "used": status["used"],
+                "unlock_cost": status["unlock_cost"],
+                "message": f"Limite giornaliero di messaggi raggiunto ({status['limit']}). "
+                           f"Sblocca messaggi illimitati con {status['unlock_cost']} MVC.",
+            },
+        )
+
     result = process_message(user.user_id, character_id, text, username,
                              memory_context=body.memory_context,
                              user_memory=body.user_memory,

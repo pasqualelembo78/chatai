@@ -435,6 +435,23 @@ def init_db():
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gcc_chat ON group_chat_characters(group_chat_id)")
         cur.execute("CREATE INDEX IF NOT EXISTS idx_gc_user ON group_chats(user_id)")
 
+        # ─── Daily free-message limit per user ──────────────────────
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_daily_messages (
+                user_id TEXT NOT NULL,
+                day TEXT NOT NULL,
+                count INTEGER DEFAULT 0,
+                PRIMARY KEY (user_id, day)
+            )
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_message_unlock (
+                user_id TEXT PRIMARY KEY,
+                unlocked INTEGER DEFAULT 0,
+                unlocked_at TIMESTAMP
+            )
+        """)
+
         conn.commit()
     finally:
         put_conn(conn)

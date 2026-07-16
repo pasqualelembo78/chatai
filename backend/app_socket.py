@@ -29,6 +29,7 @@ import ai_engine
 import image_utils
 import security_utils
 from auth_fastapi import socket_authenticate
+from storage import check_and_count_message
 from chat_engine import (
     _detect_pretend, _find_character_by_name, _build_ad_hoc_character,
     IMPERSONATION_MVC_COST,
@@ -126,6 +127,14 @@ def register_socket_handlers(sio):
         user_id = user_rooms.get(sid)
         if not user_id:
             await sio.emit("error", {"message": "Not logged in"}, room=sid)
+            return
+        allowed, status = check_and_count_message(user_id)
+        if not allowed:
+            await sio.emit("daily_limit_reached", status, room=sid)
+            await sio.emit("error", {
+                "message": f"Limite giornaliero di messaggi raggiunto ({status['limit']}). "
+                           f"Sblocca messaggi illimitati con {status['unlock_cost']} MVC."
+            }, room=sid)
             return
         text = data.get("message", "")
         character_id = data.get("character", list_characters()[0]["id"])
@@ -231,6 +240,15 @@ def register_socket_handlers(sio):
             return
         if not _check_character_access(user_id, character):
             await sio.emit("stream error", {"message": "premium_required"}, room=sid)
+            return
+
+        allowed, status = check_and_count_message(user_id)
+        if not allowed:
+            await sio.emit("daily_limit_reached", status, room=sid)
+            await sio.emit("stream error", {
+                "message": f"Limite giornaliero di messaggi raggiunto ({status['limit']}). "
+                           f"Sblocca messaggi illimitati con {status['unlock_cost']} MVC."
+            }, room=sid)
             return
 
         await sio.emit("typing", {"username": character["name"]}, room=sid)
