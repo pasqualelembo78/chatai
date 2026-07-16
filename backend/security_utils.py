@@ -283,7 +283,7 @@ def nsfw_check_text(text):
 
     # 6. Termine di "minore" vicino (entro ~40 caratteri) a termine sessuale esplicito
     minor_words = r'(minorenne|minorenn\w*|bambin[oi]|bambin[ai]|ragazzin[oi]|ragazzin[ai]|fanciull\w*|piccol\w*|neonato|neonata|underage|child|kids?)'
-    sex_words = r'(nud[oaioy]|nudes?|porno?|sessual\w*|erotico?|scopare|cazzo|pompino|sbora|sborra|sesso\s*orale|sesso\s*anale|fuck|cock|blowjob|pussy|hentai|anal|creampie|violenta|stupro|seduttrice|sedurre)'
+    sex_words = r'(nud[oaioy]|nudes?|porno?|sessual\w*|erotico?|scopare|sbora|sborra|sesso\s*orale|sesso\s*anale|fuck|cock|blowjob|pussy|hentai|anal|creampie|violenta|stupro|seduttrice|sedurre)'
     pattern = rf'({minor_words}).{{0,40}}?({sex_words})|({sex_words}).{{0,40}}?({minor_words})'
     if re.search(pattern, text_lower, re.DOTALL):
         logger.warning("Keyword filter triggered (minor + sex words proximity)")
