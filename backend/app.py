@@ -77,6 +77,7 @@ from ai_engine import (get_ai_response, init_provider, get_providers,
     get_active_config, set_active, clear_model_cache,
     rebuild_free_model_chain, test_provider_connection)
 import ai_engine
+from server import _detect_pretend, _find_character_by_name, _build_ad_hoc_character, IMPERSONATION_MVC_COST
 import audio_utils
 import image_utils
 import security_utils
@@ -2234,6 +2235,74 @@ def process_message(user_id, character_id, text, username="Utente",
         evo = get_evolution(user_id, character_id)
         summaries = get_memories(user_id, character_id, limit=5)
 
+    # ─── Impersonification detection ─────────────────────────────
+    impersonate_override = None
+    pretend_action, pretend_target = _detect_pretend(text) if text else (None, None)
+    logger.info(f"Pretend detect: action={pretend_action} target={pretend_target} user={user_id} char={character_id}")
+
+    if pretend_action == "STOP":
+        evo["flags"]["impersonating"] = False
+        evo["flags"]["impersonate_target"] = ""
+        evo["flags"].pop("impersonate_data", None)
+        if not client_storage:
+            update_evolution(user_id, character_id, evo)
+        logger.info(f"Pretend stop: user={user_id} char={character_id}")
+    elif pretend_action == "START" and pretend_target:
+        if not is_content_unlocked(user_id, "feature", "impersonation"):
+            char_name = character.get("name", "io")
+            premium_msg = (
+                f"*{char_name} scuote la testa.* "
+                f"Mi dispiace, ma questa è una funzionalità premium. "
+                f"Per finta di essere qualcun altro devi sbloccarla con {IMPERSONATION_MVC_COST} MevaCoins. "
+                f"Vai nelle impostazioni per sbloccarla!"
+            )
+            return {
+                "ai_text": premium_msg,
+                "ai_provider": "system",
+                "ai_model": "",
+                "is_fallback": False,
+                "emotion": "neutro",
+                "intensity": 0.0,
+                "character": character,
+                "memory_updates": None,
+                "evo_updates": {"new_stage": None, "unlocked": []},
+                "impersonating": False,
+                "impersonate_target": "",
+                "premium_required": True,
+                "unlock_cost": IMPERSONATION_MVC_COST,
+            }
+        target_char = _find_character_by_name(pretend_target)
+        if not target_char:
+            target_char = _build_ad_hoc_character(pretend_target)
+        evo["flags"]["impersonating"] = True
+        evo["flags"]["impersonate_target"] = pretend_target
+        evo["flags"]["impersonate_data"] = target_char
+        evo["flags"]["original_character_id"] = character_id
+        if not client_storage:
+            update_evolution(user_id, character_id, evo)
+        impersonate_override = target_char
+        character = {**character, **target_char}
+        logger.info(f"Pretend start: user={user_id} char={character_id} target={pretend_target}")
+    elif evo.get("flags", {}).get("impersonating"):
+        saved_target = evo["flags"].get("impersonate_target", "")
+        saved_data = evo["flags"].get("impersonate_data")
+        if saved_data:
+            impersonate_override = saved_data
+            character = {**character, **saved_data}
+            logger.info(f"Pretend restore: user={user_id} target={saved_target}")
+        elif saved_target:
+            target_char = _find_character_by_name(saved_target)
+            if target_char:
+                impersonate_override = target_char
+                character = {**character, **target_char}
+                evo["flags"]["impersonate_data"] = target_char
+                if not client_storage:
+                    update_evolution(user_id, character_id, evo)
+                logger.info(f"Pretend re-lookup: user={user_id} target={saved_target}")
+
+    if impersonate_override and impersonate_override.get("core_traits"):
+        personality = {**impersonate_override["core_traits"]}
+
     # Phase 2: Per-user world state
     if client_storage:
         world_state = get_world_state()
@@ -2405,9 +2474,13 @@ def process_message(user_id, character_id, text, username="Utente",
         user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation,
         temporal_context=temporal_context, recent_topics=recent_topics,
         shared_memories=shared_mems,
+        impersonate_override=impersonate_override,
     )
 
-    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
+    fp = "ollama" if impersonate_override else None
+    logger.info(f"get_ai_response: force_provider={fp} impersonate={impersonate_override is not None}")
+    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id, force_provider=fp)
+    logger.info(f"AI response: provider={ai_provider} model={ai_model} len={len(ai_text) if ai_text else 0}")
     if not ai_text:
         ai_text = _fallback_response(character, emotion)
         ai_provider = "fallback"
@@ -2430,6 +2503,8 @@ def process_message(user_id, character_id, text, username="Utente",
         "is_fallback": is_fallback, "emotion": emotion, "intensity": intensity,
         "character": character, "memory_updates": memory_updates,
         "evo_updates": {"new_stage": evo_updates.get("new_stage"), "unlocked": evo_updates.get("unlocked", [])},
+        "impersonating": evo.get("flags", {}).get("impersonating", False),
+        "impersonate_target": evo.get("flags", {}).get("impersonate_target", ""),
     }
 
     if client_storage:
@@ -2837,6 +2912,8 @@ async def on_new_message(sid, data):
         "ai_model": result.get("ai_model", ""),
         "is_roleplay": True,
         "is_fallback": result.get("is_fallback", False),
+        "impersonating": result.get("impersonating", False),
+        "impersonate_target": result.get("impersonate_target", ""),
     }
     if mem_updates:
         response_data["memory_updates"] = mem_updates
@@ -2961,6 +3038,66 @@ async def on_stream_message(sid, data):
         credit_referral_first_message(user_id)
 
     evo = get_evolution(user_id, character_id)
+
+    # ─── Impersonification detection (stream) ───────────────────
+    impersonate_override = None
+    pretend_action, pretend_target = _detect_pretend(text) if text else (None, None)
+    logger.info(f"Stream Pretend detect: action={pretend_action} target={pretend_target} user={user_id}")
+
+    if pretend_action == "STOP":
+        evo["flags"]["impersonating"] = False
+        evo["flags"]["impersonate_target"] = ""
+        evo["flags"].pop("impersonate_data", None)
+        update_evolution(user_id, character_id, evo)
+    elif pretend_action == "START" and pretend_target:
+        if not is_content_unlocked(user_id, "feature", "impersonation"):
+            char_name = character.get("name", "io")
+            premium_msg = (
+                f"*{char_name} scuote la testa.* "
+                f"Mi dispiace, ma questa è una funzionalità premium. "
+                f"Per finta di essere qualcun altro devi sbloccarla con {IMPERSONATION_MVC_COST} MevaCoins. "
+                f"Vai nelle impostazioni per sbloccarla!"
+            )
+            await sio.emit("stream start", {
+                "username": character["name"],
+                "user_message": data.get("message", ""),
+                "emotion": "neutro", "intensity": 0.0,
+            }, room=sid)
+            await sio.emit("stream token", {"token": premium_msg, "text": premium_msg}, room=sid)
+            await sio.emit("stream complete", {
+                "text": premium_msg, "username": character["name"],
+                "emotion": "neutro", "ai_provider": "system", "ai_model": "",
+                "impersonating": False, "impersonate_target": "",
+                "premium_required": True, "unlock_cost": IMPERSONATION_MVC_COST,
+            }, room=sid)
+            return
+        target_char = _find_character_by_name(pretend_target)
+        if not target_char:
+            target_char = _build_ad_hoc_character(pretend_target)
+        evo["flags"]["impersonating"] = True
+        evo["flags"]["impersonate_target"] = pretend_target
+        evo["flags"]["impersonate_data"] = target_char
+        evo["flags"]["original_character_id"] = character_id
+        update_evolution(user_id, character_id, evo)
+        impersonate_override = target_char
+        character = {**character, **target_char}
+    elif evo.get("flags", {}).get("impersonating"):
+        saved_target = evo["flags"].get("impersonate_target", "")
+        saved_data = evo["flags"].get("impersonate_data")
+        if saved_data:
+            impersonate_override = saved_data
+            character = {**character, **saved_data}
+        elif saved_target:
+            target_char = _find_character_by_name(saved_target)
+            if target_char:
+                impersonate_override = target_char
+                character = {**character, **target_char}
+                evo["flags"]["impersonate_data"] = target_char
+                update_evolution(user_id, character_id, evo)
+
+    if impersonate_override and impersonate_override.get("core_traits"):
+        personality = {**impersonate_override["core_traits"]}
+
     evo_updates = evaluate_evolution(user_id, character_id, character, text, emotion, evo)
     if evo_updates["relationship_deltas"]:
         update_relationship(user_id, character_id, evo_updates["relationship_deltas"])
@@ -3045,7 +3182,8 @@ async def on_stream_message(sid, data):
         relationship, personality, world_state, text, user_id, history,
         shifts, username, user_memory=user_memory, summaries=summaries,
         evolution=evo, is_favorite=user_is_favorite, total_messages=_total_msgs,
-        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation
+        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation,
+        impersonate_override=impersonate_override,
     )
 
     await sio.emit("stream start", {
@@ -3061,7 +3199,8 @@ async def on_stream_message(sid, data):
     is_fallback = False
 
     try:
-        for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id):
+        fp = "ollama" if impersonate_override else None
+        for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id, force_provider=fp):
             ai_text += token
             ai_provider = pid
             ai_model = model
@@ -3093,6 +3232,8 @@ async def on_stream_message(sid, data):
         "is_fallback": is_fallback,
         "memory_updates": memory_updates or {},
         "evo_updates": {"new_stage": evo_updates.get("new_stage"), "unlocked": evo_updates.get("unlocked", [])},
+        "impersonating": evo.get("flags", {}).get("impersonating", False),
+        "impersonate_target": evo.get("flags", {}).get("impersonate_target", ""),
     }, room=sid)
 
 @sio.on("stream stop")
