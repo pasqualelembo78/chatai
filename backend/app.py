@@ -2477,9 +2477,8 @@ def process_message(user_id, character_id, text, username="Utente",
         impersonate_override=impersonate_override,
     )
 
-    fp = "ollama" if impersonate_override else None
-    logger.info(f"get_ai_response: force_provider={fp} impersonate={impersonate_override is not None}")
-    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id, force_provider=fp)
+    logger.info(f"get_ai_response: impersonate={impersonate_override is not None}")
+    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
     logger.info(f"AI response: provider={ai_provider} model={ai_model} len={len(ai_text) if ai_text else 0}")
     if not ai_text:
         ai_text = _fallback_response(character, emotion)
@@ -2490,7 +2489,10 @@ def process_message(user_id, character_id, text, username="Utente",
         is_fallback = False
 
     if not is_fallback and not client_storage:
+        model_prefix = f"[{ai_provider}/{ai_model}]" if ai_model else ""
+        display_text = f"{model_prefix} {ai_text}" if model_prefix else ai_text
         add_message(user_id, character_id, "assistant", ai_text)
+        ai_text = display_text
 
     if not client_storage:
         try:
@@ -3199,12 +3201,18 @@ async def on_stream_message(sid, data):
     is_fallback = False
 
     try:
-        fp = "ollama" if impersonate_override else None
-        for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id, force_provider=fp):
-            ai_text += token
+        model_sent = False
+        for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id):
+            if not model_sent and model:
+                model_prefix = f"[{pid}/{model}] "
+                ai_text += model_prefix + token
+                await sio.emit("stream token", {"token": model_prefix + token, "text": ai_text}, room=sid)
+                model_sent = True
+            else:
+                ai_text += token
+                await sio.emit("stream token", {"token": token, "text": ai_text}, room=sid)
             ai_provider = pid
             ai_model = model
-            await sio.emit("stream token", {"token": token, "text": ai_text}, room=sid)
     except Exception as e:
         await sio.emit("stream error", {"message": str(e)}, room=sid)
         return
@@ -3213,7 +3221,7 @@ async def on_stream_message(sid, data):
         ai_text = _fallback_response(character, emotion)
         ai_provider = "fallback"
         is_fallback = True
-        await sio.emit("stream token", {"token": ai_text, "text": ai_text}, room=sid)
+        await sio.emit("stream token", {"token": f"[fallback] {ai_text}", "text": f"[fallback] {ai_text}"}, room=sid)
 
     add_message(user_id, character_id, "assistant", ai_text)
 
