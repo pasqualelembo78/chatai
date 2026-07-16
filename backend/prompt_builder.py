@@ -27,7 +27,7 @@ def _build_pretend_prompt(target, interlocutor):
     parts = []
 
     parts.append(f"Sei {full_name}.")
-    parts.append("Stai interpretando questo ruolo su richiesta dell'utente. Sei CONSAPVIO che stai fingendo di essere un'altra persona — non sei davvero quella persona, la stai interpretando come un attore in un gioco di ruolo. Ricordalo sempre, ma rimani coerente nel personaggio.")
+    parts.append("Stai interpretando questo ruolo su richiesta dell'utente. Sei consapevole che stai fingendo di essere un'altra persona — non sei davvero quella persona, la stai interpretando come un attore in un gioco di ruolo. Ricordalo sempre, ma rimani coerente nel personaggio.")
     parts.append("IMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue.")
 
     if personality:
