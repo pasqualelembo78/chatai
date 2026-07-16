@@ -1607,7 +1607,7 @@ def api_video(filename):
 
 # ─── Access control ───────────────────────────────────────────────
 PREMIUM_CATEGORIES = {"flirt", "relazioni", "confessioni", "seduzione", "premium", "horror"}
-IMPERSONATION_MVC_COST = 100
+IMPERSONATION_MVC_COST = 1000
 
 def _check_character_access(user_id, character):
     if not user_id:
