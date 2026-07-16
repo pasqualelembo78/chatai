@@ -751,7 +751,15 @@ def _gemini_generate_stream(messages, model, user_id=None):
         elif m["role"] == "assistant":
             chat.append({"role": "model", "parts": [{"text": m["content"]}]})
     try:
-        body = {"contents": chat}
+        body = {
+            "contents": chat,
+            "safety_settings": [
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+            ]
+        }
         if system:
             body["system_instruction"] = {"parts": [{"text": system}]}
         resp = requests.post(
@@ -1270,7 +1278,15 @@ def _gemini_generate(messages, model, user_id=None):
             chat.append({"role": "model", "parts": [{"text": m["content"]}]})
 
     try:
-        body = {"contents": chat}
+        body = {
+            "contents": chat,
+            "safety_settings": [
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+            ]
+        }
         if system:
             body["system_instruction"] = {"parts": [{"text": system}]}
 
