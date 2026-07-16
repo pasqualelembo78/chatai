@@ -192,7 +192,14 @@ if [ "$SKIP_PY" = false ]; then
     # Verifica file Python
     python3 -c "
 import py_compile, sys, os
-files = ['app.py', 'auth_fastapi.py', 'storage.py', 'db.py', 'ai_engine.py', 'prompt_builder.py', 'evolution_engine.py', 'audio_utils.py', 'image_utils.py', 'avatar_tool.py', 'security_utils.py', 'characters.py']
+files = ['app.py', 'app_models.py', 'app_socket.py', 'chat_engine.py', 'auth_fastapi.py', 'db.py', 'prompt_builder.py', 'evolution_engine.py', 'audio_utils.py', 'image_utils.py', 'security_utils.py', 'characters.py']
+dirs = ['storage', 'ai_engine', 'avatar', 'app_routes']
+import os
+for d in dirs:
+    if os.path.isdir(d):
+        for f in os.listdir(d):
+            if f.endswith('.py'):
+                files.append(os.path.join(d, f))
 for f in files:
     if os.path.exists(f):
         py_compile.compile(f, doraise=True)
@@ -895,7 +902,7 @@ else
     echo -e "    ${YELLOW}systemctl non disponibile, avvio diretto...${NC}"
     fuser -k "${PORT}/tcp" 2>/dev/null || true
     cd "$ROOT_DIR/backend"
-    nohup venv/bin/python3 server.py > /tmp/chatai.log 2>&1 &
+    nohup venv/bin/python3 -m uvicorn app:socket_app --host 0.0.0.0 --port ${PORT:-5000} > /tmp/chatai.log 2>&1 &
     echo $! > /tmp/chatai.pid
     cd "$ROOT_DIR"
     echo -e "    ${GREEN}Server started in background (PID $(cat /tmp/chatai.pid))${NC}"
