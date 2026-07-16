@@ -540,7 +540,10 @@ def build_messages(character, emotion, relationship, personality, world_state, u
                 })
 
     for msg in (history or [])[-MAX_HISTORY_MESSAGES:]:
-        if msg["role"] in ("user", "assistant"):
+        if not isinstance(msg, dict):
+            continue
+        role = msg.get("role")
+        if role in ("user", "assistant"):
             messages.append(msg)
 
     messages.append({"role": "user", "content": user_text})

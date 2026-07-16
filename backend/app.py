@@ -105,8 +105,14 @@ async def lifespan(application):
     init_db()
     init_auth_db()
     init_group_chat_tables()
-    init_provider()
-    rebuild_free_model_chain()
+    try:
+        init_provider()
+    except Exception as e:
+        logger.error(f"init_provider FAILED (continuing): {e}")
+    try:
+        rebuild_free_model_chain()
+    except Exception as e:
+        logger.error(f"rebuild_free_model_chain FAILED (continuing): {e}")
     threading.Thread(target=_cleanup_loop, daemon=True).start()
     threading.Thread(target=_cleanup_expired_tokens, daemon=True).start()
     threading.Thread(target=_free_port_background, args=(int(os.environ.get("PORT", 5000)),), daemon=True).start()

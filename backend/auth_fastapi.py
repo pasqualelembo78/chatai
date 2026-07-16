@@ -105,8 +105,11 @@ def ensure_admin_account():
 def _get_jwt_secret():
     secret = os.environ.get("JWT_SECRET", "")
     if not secret:
-        secret = hashlib.sha256(str(uuid.uuid4()).encode()).hexdigest()
-        os.environ["JWT_SECRET"] = secret
+        # Never silently generate a per-process random secret: it would make
+        # tokens minted by one worker invalid on another and expire on restart.
+        raise RuntimeError(
+            "JWT_SECRET non impostato. Imposta JWT_SECRET in .env (chiave esadecimale sicura)."
+        )
     return secret
 
 def _base64url_encode(data):

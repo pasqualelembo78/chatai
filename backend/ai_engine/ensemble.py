@@ -99,6 +99,12 @@ def _ensemble_parallel_stream(messages, user_id=None):
         elif msg_type == "error":
             if winner is None:
                 continue
+            # The winning provider errored mid-stream: stop all workers and
+            # end the stream instead of blocking until the 60s timeout.
+            for evt in stop_events.values():
+                evt.set()
+            logger.warning(f"ensemble: vincitore {winner[0]}/{winner[1]} in errore, interrompo lo stream")
+            break
 
     for t in threads:
         t.join(timeout=5)

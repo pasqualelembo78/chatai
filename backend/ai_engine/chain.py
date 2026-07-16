@@ -76,7 +76,7 @@ def _discover_groq_models():
     )
     if not data:
         return []
-    available = [m["id"] for m in data.get("data", [])]
+    available = [m.get("id") for m in data.get("data", []) if isinstance(m, dict) and m.get("id")]
     priority = [
         "llama-3.3-70b-versatile",
         "llama-3.1-8b-instant",
@@ -103,7 +103,11 @@ def _discover_openrouter_free_models():
         return []
     available = {}
     for m in data.get("data", []):
-        mid = m["id"]
+        if not isinstance(m, dict):
+            continue
+        mid = m.get("id")
+        if not mid:
+            continue
         pricing = m.get("pricing", {})
         prompt_cost = float(pricing.get("prompt", "999"))
         completion_cost = float(pricing.get("completion", "999"))
