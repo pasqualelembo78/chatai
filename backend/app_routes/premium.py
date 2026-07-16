@@ -15,9 +15,8 @@ from storage import (
     get_new_user_bonus, claim_new_user_bonus,
     get_or_create_referral_code, claim_referral_bonus,
     get_daily_share_count, add_social_share,
-    get_checkin_streak, get_streak_30_status,
+    get_streak_30_status,
     claim_streak_30_day, calculate_streak_reward,
-    claim_streak_milestone,
     credit_referral_first_message,
     audit_log,
     get_daily_message_status, unlock_unlimited_messages,
@@ -123,7 +122,7 @@ async def api_daily_checkin(request: Request, user: AuthUser = Depends(jwt_requi
         "already_checked": not success,
         "earned": earned if success else 0,
         "streak": status["current_day"],
-        "reward": status["reward"],
+        "reward": earned if success else 0,
         "total_earned": status["total_earned"],
     }
 

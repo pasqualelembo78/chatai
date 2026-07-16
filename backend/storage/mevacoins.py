@@ -13,6 +13,10 @@ def get_mevacoins_balance(user_id):
 
 
 def add_mevacoins(user_id, amount, reason, conn=None, cur=None):
+    if amount <= 0:
+        # Earns must be positive; negative adjustments must go through
+        # spend_mevacoins. Rejecting here prevents silent balance underflow.
+        raise ValueError(f"add_mevacoins amount must be > 0, got {amount}")
     owned_conn = conn is None
     if owned_conn:
         conn = get_conn()

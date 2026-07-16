@@ -34,11 +34,18 @@ def evaluate_evolution(user_id, character_id, character, user_text, emotion, evo
             evo["unlocked_stages"].append(sid)
             logger.info(f"Evolution: user={user_id} char={character_id} stage={sid}")
 
+    # A milestone that grants MevaCoins must have a cooldown (or be one_shot),
+    # otherwise it would re-pay on every matching message (MVC farm). If a
+    # reward milestone omits both, fall back to a safe default cooldown.
+    DEFAULT_MILESTONE_COOLDOWN = 20
+
     for m in milestones:
         mid = m.get("id", "")
         if m.get("one_shot") and evo["flags"].get(mid):
             continue
         cooldown = m.get("cooldown_messages", 0)
+        if m.get("effect", {}).get("mevacoins") and not m.get("one_shot") and not cooldown:
+            cooldown = DEFAULT_MILESTONE_COOLDOWN
         if cooldown and evo["flags"].get(f"last_{mid}", 0) > evo["total_messages"] - cooldown:
             continue
         if not _check_condition(m, user_text, emotion, evo):

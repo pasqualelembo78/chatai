@@ -45,19 +45,20 @@ def claim_referral_bonus(user_id, code):
     conn = get_conn()
     try:
         cur = conn.cursor()
-        cur.execute(
-            "SELECT 1 FROM referral_earnings WHERE referred_id=%s AND bonus_type='signup'",
-            (user_id,)
-        )
-        already = cur.fetchone()
-        if already:
+        # Gate on the unique (referred_id, bonus_type) row first. This makes the
+        # signup bonus usable at most once per user even if two different codes
+        # are submitted concurrently (the constraint rejects the second INSERT).
+        try:
+            cur.execute(
+                "INSERT INTO referral_earnings (referrer_id, referred_id, bonus_type, amount) "
+                "VALUES (%s, %s, 'signup', 100)",
+                (referrer_id, user_id)
+            )
+        except psycopg2.errors.UniqueViolation:
+            conn.rollback()
             return False, "gia_utilizzato"
         add_mevacoins(referrer_id, 100, f"referral_signup:{user_id}", conn=conn, cur=cur)
         add_mevacoins(user_id, 50, "referral_bonus", conn=conn, cur=cur)
-        cur.execute(
-            "INSERT INTO referral_earnings (referrer_id, referred_id, bonus_type, amount) VALUES (%s, %s, 'signup', 100)",
-            (referrer_id, user_id)
-        )
         conn.commit()
         return True, "ok"
     except Exception as e:
@@ -105,10 +106,10 @@ def get_daily_share_count(user_id):
     try:
         cur = conn.cursor()
         cur.execute(
-            "SELECT COUNT(*) FROM social_shares WHERE user_id=%s AND share_date=%s", (user_id, today)
+            "SELECT COUNT(*) AS count FROM social_shares WHERE user_id=%s AND share_date=%s", (user_id, today)
         )
         row = cur.fetchone()
-        return row[0] if row else 0
+        return row["count"] if row else 0
     finally:
         put_conn(conn)
 
@@ -119,18 +120,29 @@ def add_social_share(user_id, platform=""):
     try:
         cur = conn.cursor()
         cur.execute(
-            "SELECT COUNT(*) FROM social_shares WHERE user_id=%s AND share_date=%s", (user_id, today)
+            "SELECT COUNT(*) AS count FROM social_shares WHERE user_id=%s AND share_date=%s", (user_id, today)
         )
         row = cur.fetchone()
-        count = row[0] if row else 0
-        if count >= 3:
+        if (row["count"] if row else 0) >= 3:
             return False, "limite_giornaliero"
         cur.execute(
             "INSERT INTO social_shares (user_id, share_date, platform) VALUES (%s, %s, %s)",
             (user_id, today, platform)
         )
+        # Re-check the cap inside the same transaction so the payout stays
+        # consistent with the recorded shares (no orphan payout / over-limit).
+        cur.execute(
+            "SELECT COUNT(*) AS count FROM social_shares WHERE user_id=%s AND share_date=%s", (user_id, today)
+        )
+        row = cur.fetchone()
+        if (row["count"] if row else 0) > 3:
+            conn.rollback()
+            return False, "limite_giornaliero"
+        add_mevacoins(user_id, 30, f"social_share:{today}", conn=conn, cur=cur)
         conn.commit()
+        return True, "ok"
+    except Exception as e:
+        conn.rollback()
+        return False, str(e)
     finally:
         put_conn(conn)
-    add_mevacoins(user_id, 30, f"social_share:{today}")
-    return True, "ok"

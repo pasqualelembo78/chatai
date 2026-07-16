@@ -155,26 +155,46 @@ def refund_message(user_id):
 def unlock_unlimited_messages(user_id, cost=None):
     """Spend ``cost`` MevaCoins to permanently lift the daily message limit.
 
-    Returns ``(ok: bool, msg: str)``.
+    Returns ``(ok: bool, msg: str)``. The charge is gated on the unlock upsert
+    so concurrent calls can never deduct the cost twice for a single unlock.
     """
     if cost is None:
         cost = DAILY_UNLOCK_MVC_COST
-    if not spend_mevacoins(user_id, cost, "unlock:daily_messages_unlimited"):
-        return False, "saldo_insufficiente"
     conn = get_conn()
     try:
         cur = conn.cursor()
+        # First, claim the unlock row. Only a NEW unlock (rowcount==1) is charged;
+        # an already-unlocked row (rowcount==0) is free and idempotent.
         cur.execute(
             """INSERT INTO user_message_unlock (user_id, unlocked, unlocked_at)
                VALUES (%s, 1, CURRENT_TIMESTAMP)
-               ON CONFLICT (user_id) DO UPDATE SET unlocked=1, unlocked_at=CURRENT_TIMESTAMP""",
+               ON CONFLICT (user_id) DO UPDATE SET unlocked=1, unlocked_at=CURRENT_TIMESTAMP
+               WHERE user_message_unlock.unlocked = 0""",
             (user_id,)
         )
+        if cur.rowcount == 0:
+            # Already unlocked previously -> nothing to charge.
+            conn.commit()
+            return True, "unlocked"
+        # Deduct the cost within the same transaction; roll back the unlock if
+        # the user can't afford it.
+        cur.execute(
+            "UPDATE mevacoins SET balance = balance - %s, updated_at = CURRENT_TIMESTAMP "
+            "WHERE user_id = %s AND balance >= %s",
+            (cost, user_id, cost)
+        )
+        if cur.rowcount == 0:
+            conn.rollback()
+            return False, "saldo_insufficiente"
+        cur.execute(
+            "INSERT INTO mevacoins_transactions (user_id, amount, reason) VALUES (%s, %s, %s)",
+            (user_id, -cost, "unlock:daily_messages_unlimited")
+        )
         conn.commit()
+        return True, "unlocked"
     except Exception as e:
         logger.error(f"unlock_unlimited_messages FAILED user={user_id} error={e}")
         conn.rollback()
         return False, "db_error"
     finally:
         put_conn(conn)
-    return True, "unlocked"

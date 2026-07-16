@@ -20,22 +20,21 @@ def claim_new_user_bonus(user_id, day_number):
     conn = get_conn()
     try:
         cur = conn.cursor()
+        # Atomic claim: only the caller that flips claimed 0->1 wins the payout.
         cur.execute(
-            "SELECT claimed FROM new_user_bonus WHERE user_id=%s AND day_number=%s",
+            "UPDATE new_user_bonus SET claimed=1 WHERE user_id=%s AND day_number=%s AND claimed=0",
             (user_id, day_number)
         )
-        row = cur.fetchone()
-        if not row or row["claimed"]:
+        if cur.rowcount == 0:
             return False
-        cur.execute(
-            "UPDATE new_user_bonus SET claimed=1 WHERE user_id=%s AND day_number=%s",
-            (user_id, day_number)
-        )
+        add_mevacoins(user_id, 30, f"bonus_nuovo_utente_giorno_{day_number}", conn=conn, cur=cur)
         conn.commit()
+        return True
+    except Exception:
+        conn.rollback()
+        return False
     finally:
         put_conn(conn)
-    add_mevacoins(user_id, 30, f"bonus_nuovo_utente_giorno_{day_number}")
-    return True
 
 
 def init_new_user_bonus(user_id):
@@ -61,13 +60,25 @@ def unlock_content(user_id, content_type, content_id, amount):
     conn = get_conn()
     try:
         cur = conn.cursor()
-        cur.execute("UPDATE mevacoins SET balance = balance - %s, updated_at = CURRENT_TIMESTAMP WHERE user_id = %s AND balance >= %s", (amount, user_id, amount))
-        if cur.rowcount == 0:
-            return False, "saldo_insufficiente"
+        # Atomic gate: only the first unlock of this content wins. If it was
+        # already unlocked (or a concurrent caller won), we don't charge.
         cur.execute(
-            "INSERT INTO content_unlocks (user_id, content_type, content_id, spent_amount) VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING",
+            "INSERT INTO content_unlocks (user_id, content_type, content_id, spent_amount) "
+            "VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING",
             (user_id, content_type, content_id, amount)
         )
+        if cur.rowcount == 0:
+            conn.commit()
+            return True, "ok"
+        # Deduct only now; if the user can't pay, roll back the unlock too.
+        cur.execute(
+            "UPDATE mevacoins SET balance = balance - %s, updated_at = CURRENT_TIMESTAMP "
+            "WHERE user_id = %s AND balance >= %s",
+            (amount, user_id, amount)
+        )
+        if cur.rowcount == 0:
+            conn.rollback()
+            return False, "saldo_insufficiente"
         cur.execute(
             "INSERT INTO mevacoins_transactions (user_id, amount, reason) VALUES (%s, %s, %s)",
             (user_id, -amount, f"unlock:{content_type}:{content_id}")

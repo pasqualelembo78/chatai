@@ -387,10 +387,6 @@ def register_socket_handlers(sio):
         evo_updates = evaluate_evolution(user_id, character_id, character, text, emotion, evo)
         if evo_updates["relationship_deltas"]:
             update_relationship(user_id, character_id, evo_updates["relationship_deltas"])
-        reward = evo_updates.get("mevacoins_reward", 0)
-        if reward:
-            from storage import add_mevacoins
-            add_mevacoins(user_id, reward, f"milestone:{character_id}")
         if evo_updates["trait_modifiers"]:
             pers = get_personality(character_id, character.get("core_traits", {}))
             for trait, delta in evo_updates["trait_modifiers"].items():
@@ -439,6 +435,14 @@ def register_socket_handlers(sio):
             learned["personality_drift"][trait] = round(clamped, 2)
 
         update_evolution(user_id, character_id, evo)
+
+        # Grant the MevaCoins milestone reward only after the evolution flags
+        # (one_shot / cooldown) have been persisted, so a later failure can't
+        # re-trigger the same reward.
+        reward = evo_updates.get("mevacoins_reward", 0)
+        if reward:
+            from storage import add_mevacoins
+            add_mevacoins(user_id, reward, f"milestone:{character_id}")
 
         new_name = _detect_character_rename(text)
         if new_name:

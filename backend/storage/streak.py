@@ -12,17 +12,18 @@ def daily_checkin(user_id):
     try:
         cur = conn.cursor()
         cur.execute(
-            "SELECT * FROM daily_checkins WHERE user_id=%s AND checkin_date=%s",
+            "INSERT INTO daily_checkins (user_id, checkin_date) VALUES (%s, %s) "
+            "ON CONFLICT (user_id, checkin_date) DO NOTHING",
             (user_id, today)
         )
-        row = cur.fetchone()
-        if row:
-            return {"already_checked": True, "redeemed": bool(row["redeemed"])}
-        cur.execute(
-            "INSERT INTO daily_checkins (user_id, checkin_date) VALUES (%s, %s)",
-            (user_id, today)
-        )
+        if cur.rowcount == 0:
+            # Already checked in today (or concurrent insert won) -> no payout.
+            conn.commit()
+            return {"already_checked": True, "redeemed": False}
         conn.commit()
+    except Exception:
+        conn.rollback()
+        return {"already_checked": True, "redeemed": False}
     finally:
         put_conn(conn)
     add_mevacoins(user_id, 15, "checkin_giornaliero")
@@ -222,12 +223,9 @@ def claim_streak_30_day(user_id, day=None):
                 target_day = check_day
                 break
 
-        if broken:
-            log.info(f"claim_streak_30: user={user_id} streak broken at day={target_day}, resetting prior entries")
-            cur.execute(
-                "UPDATE streak_30days SET claimed=0 WHERE user_id=%s AND day_number < %s",
-                (user_id, target_day)
-            )
+        # NOTE: intentionally do NOT reset already-claimed days to 0.
+        # `claimed` is a permanent record of what was paid; resetting it would
+        # let users re-claim (and re-earn) previously paid days after a break.
 
         if day is None or day <= 0:
             day = target_day
@@ -236,31 +234,23 @@ def claim_streak_30_day(user_id, day=None):
             log.warning(f"claim_streak_30: user={user_id} invalid day={day}")
             return False, 0, "giorno_non_valido"
 
-        cur.execute(
-            "SELECT claimed, claimed_at FROM streak_30days WHERE user_id=%s AND day_number=%s",
-            (user_id, day)
-        )
-        row = cur.fetchone()
-        if row and row["claimed"] == 1:
-            claim_date = _parse_claimed_date(row.get("claimed_at"))
-            if claim_date == today:
-                log.info(f"claim_streak_30: user={user_id} day={day} already claimed today")
-                return False, 0, "gia_riscosso"
-
         earned = calculate_streak_reward(day)
-
         now = datetime.now(timezone.utc)
 
-        if row:
-            cur.execute(
-                "UPDATE streak_30days SET claimed=1, claimed_at=%s WHERE user_id=%s AND day_number=%s",
-                (now, user_id, day)
-            )
-        else:
-            cur.execute(
-                "INSERT INTO streak_30days (user_id, day_number, claimed, claimed_at) VALUES (%s, %s, 1, %s)",
-                (user_id, day, now)
-            )
+        # Atomic claim: only pay out when this call actually flips the day from
+        # unclaimed (0) to claimed (1). Concurrent calls collide here and only
+        # one wins the payout; a day already claimed (1) yields rowcount 0.
+        cur.execute(
+            "INSERT INTO streak_30days (user_id, day_number, claimed, claimed_at) "
+            "VALUES (%s, %s, 1, %s) "
+            "ON CONFLICT (user_id, day_number) DO UPDATE SET claimed=1, claimed_at=EXCLUDED.claimed_at "
+            "WHERE streak_30days.claimed = 0",
+            (user_id, day, now)
+        )
+        if cur.rowcount == 0:
+            # Already claimed today (or previously) -> no payout.
+            conn.commit()
+            return False, 0, "gia_riscosso"
 
         reason = f"streak_giorno_{day}" + ("_super" if day == 30 else "")
         cur.execute(

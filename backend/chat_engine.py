@@ -661,9 +661,6 @@ def process_message(user_id, character_id, text, username="Utente",
     if not client_storage:
         if evo_updates["relationship_deltas"]:
             update_relationship(user_id, character_id, evo_updates["relationship_deltas"])
-        reward = evo_updates.get("mevacoins_reward", 0)
-        if reward:
-            add_mevacoins(user_id, reward, f"milestone:{character_id}")
         if evo_updates["trait_modifiers"]:
             # Phase 2: Update per-user personality
             update_user_personality_db(user_id, character_id, evo_updates["trait_modifiers"])
@@ -675,7 +672,12 @@ def process_message(user_id, character_id, text, username="Utente",
             if any(v != 0 for v in pers_deltas.values()):
                 # Phase 2: Update per-user personality
                 update_user_personality_db(user_id, character_id, pers_deltas)
+        # Persist the evolution flags (one_shot / cooldown) BEFORE granting the
+        # MevaCoins reward, so a failure after payout can't re-trigger it.
         update_evolution(user_id, character_id, evo)
+        reward = evo_updates.get("mevacoins_reward", 0)
+        if reward:
+            add_mevacoins(user_id, reward, f"milestone:{character_id}")
 
     learned = evo.setdefault("learned", {"topics": [], "personality_drift": {}, "new_skills": []})
     knowledge = character.get("knowledge_domains", {})

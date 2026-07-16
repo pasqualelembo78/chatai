@@ -177,6 +177,10 @@ def init_db():
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        try:
+            cur.execute("ALTER TABLE mevacoins ADD CONSTRAINT chk_mevacoins_balance_nonneg CHECK (balance >= 0)")
+        except Exception:
+            conn.rollback()
         cur.execute("""
             CREATE TABLE IF NOT EXISTS mevacoins_transactions (
                 id SERIAL PRIMARY KEY,
@@ -231,6 +235,11 @@ def init_db():
                 PRIMARY KEY (referrer_id, referred_id, bonus_type)
             )
         """)
+        # A user can be referred (signup bonus) by at most one referrer.
+        cur.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS uni_referral_referred "
+            "ON referral_earnings (referred_id, bonus_type)"
+        )
         cur.execute("""
             CREATE TABLE IF NOT EXISTS social_shares (
                 id SERIAL PRIMARY KEY,
