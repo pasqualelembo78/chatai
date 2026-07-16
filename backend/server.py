@@ -1403,7 +1403,7 @@ def on_stream_message(data):
     is_fallback = False
 
     try:
-        for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id):
+        for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id, force_provider="ollama" if impersonate_override else None):
             ai_text += token
             ai_provider = pid
             ai_model = model
@@ -2015,7 +2015,7 @@ def process_message(user_id, character_id, text, username="Utente",
         impersonate_override=impersonate_override,
     )
 
-    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
+    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id, force_provider="ollama" if impersonate_override else None)
     if not ai_text:
         logger.error("get_ai_response(): tutti i modelli della catena gratuita hanno fallito")
         ai_text = _fallback_response(character, emotion)

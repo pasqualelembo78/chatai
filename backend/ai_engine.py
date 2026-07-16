@@ -621,7 +621,20 @@ def _ensemble_parallel_stream(messages, user_id=None):
         logger.warning("ensemble: tutti i provider falliti")
 
 
-def get_ai_response(messages, user_id=None):
+def get_ai_response(messages, user_id=None, force_provider=None):
+    # ── Force provider (es. impersonification → locale) ──
+    if force_provider and force_provider in PROVIDERS and _provider_ready(force_provider):
+        fp = PROVIDERS[force_provider]
+        fmodel = fp.get("models", [{}])[0].get("id") if fp.get("models") else None
+        if fmodel:
+            try:
+                result = fp["generate"](messages, fmodel, user_id=user_id)
+                if result:
+                    logger.info(f"Risposta AI da {force_provider}/{fmodel} (force_provider)")
+                    return result, force_provider, fmodel
+            except Exception as e:
+                logger.warning(f"  force_provider {force_provider}/{fmodel} errore ({e}), fallback catena normale")
+
     # ── Determina la catena di provider per le chat ──
     # Priorita: CHAT_PROVIDER env → preferenza utente → FORCE_LOCAL_FIRST → catena normale
     
@@ -874,8 +887,29 @@ def _stream_wrapper(gen_func):
     return wrapper
 
 
-def get_ai_response_stream(messages, user_id=None):
+def get_ai_response_stream(messages, user_id=None, force_provider=None):
     """Generator: tenta provider in catena con streaming, yielda (token, provider_id, model)."""
+
+    # ── Force provider (es. impersonification → locale) ──
+    if force_provider and force_provider in PROVIDERS and _provider_ready(force_provider):
+        fp = PROVIDERS[force_provider]
+        fmodel = fp.get("models", [{}])[0].get("id") if fp.get("models") else None
+        if fmodel:
+            stream_fn = fp.get("generate_stream") or fp.get("generate")
+            try:
+                if stream_fn == fp.get("generate"):
+                    result = stream_fn(messages, fmodel, user_id=user_id)
+                    if result:
+                        logger.info(f"Risposta AI da {force_provider}/{fmodel} (force_provider, sync)")
+                        yield result, force_provider, fmodel
+                        return
+                else:
+                    for token in stream_fn(messages, fmodel, user_id=user_id):
+                        yield token, force_provider, fmodel
+                    logger.info(f"Risposta AI da {force_provider}/{fmodel} (force_provider, stream)")
+                    return
+            except Exception as e:
+                logger.warning(f"  force_provider {force_provider}/{fmodel} errore ({e}), fallback catena normale")
 
     # 0. Ensemble parallelo (se abilitato)
     if ENSEMBLE_ENABLED:
