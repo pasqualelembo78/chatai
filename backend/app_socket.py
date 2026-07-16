@@ -29,7 +29,7 @@ import ai_engine
 import image_utils
 import security_utils
 from auth_fastapi import socket_authenticate
-from storage import check_and_count_message
+from storage import check_and_count_message, refund_message
 from chat_engine import (
     _detect_pretend, _find_character_by_name, _build_ad_hoc_character,
     IMPERSONATION_MVC_COST,
@@ -50,6 +50,16 @@ user_rooms = {}
 user_names = {}
 greeted_users = set()
 socket_auth_map = {}
+
+
+def _default_character_id():
+    """Return the first available character id, or None if no characters exist.
+
+    Avoids `list_characters()[0]['id']` raising IndexError when the character
+    catalogue is empty (e.g. data failed to load).
+    """
+    chars = list_characters()
+    return chars[0]["id"] if chars else None
 
 
 def register_socket_handlers(sio):
@@ -95,12 +105,21 @@ def register_socket_handlers(sio):
             return
         user_id = auth_data["user_id"]
         username = data.get("username", "Utente")
-        character_id = data.get("character", list_characters()[0]["id"])
+        character_id = data.get("character", _default_character_id())
         user_rooms[sid] = user_id
         user_names[sid] = username
         character = get_character(character_id)
         character_name = character["name"] if character else "AI"
         await sio.enter_room(sid, user_id)
+        if not character:
+            await sio.emit("login", {
+                "numUsers": len(user_sessions),
+                "username": username,
+                "user_id": user_id,
+                "character_id": character_id,
+                "character_name": character_name
+            }, room=sid)
+            return
         await sio.emit("login", {
             "numUsers": len(user_sessions),
             "username": username,
@@ -137,7 +156,7 @@ def register_socket_handlers(sio):
             }, room=sid)
             return
         text = data.get("message", "")
-        character_id = data.get("character", list_characters()[0]["id"])
+        character_id = data.get("character", _default_character_id())
         image_b64 = data.get("image", "")
         image_mime = data.get("image_mime", "image/jpeg")
         if not text and not image_b64:
@@ -155,6 +174,7 @@ def register_socket_handlers(sio):
                                  image_base64=image_b64, image_mime=image_mime,
                                  is_favorite=data.get("is_favorite", False))
         if not result:
+            refund_message(user_id)
             await sio.emit("error", {"message": "Character not found"}, room=sid)
             return
         await sio.emit("new message", {
@@ -223,7 +243,7 @@ def register_socket_handlers(sio):
             await sio.emit("stream error", {"message": "Not logged in"}, room=sid)
             return
         text = data.get("message", "")
-        character_id = data.get("character", list_characters()[0]["id"])
+        character_id = data.get("character", _default_character_id())
         image_b64 = data.get("image", "")
         image_mime = data.get("image_mime", "image/jpeg")
         if not text and not image_b64:
@@ -335,6 +355,7 @@ def register_socket_handlers(sio):
                     "impersonating": False, "impersonate_target": "",
                     "premium_required": True, "unlock_cost": IMPERSONATION_MVC_COST,
                 }, room=sid)
+                refund_message(user_id)
                 return
             target_char = _find_character_by_name(pretend_target)
             if not target_char:
@@ -519,7 +540,7 @@ def register_socket_handlers(sio):
         user_id = user_rooms.get(sid)
         if not user_id:
             return
-        character_id = data.get("character", list_characters()[0]["id"])
+        character_id = data.get("character", _default_character_id())
         character = get_character(character_id)
         if character:
             await sio.emit("typing", {"username": character["name"]}, room=sid)
@@ -529,7 +550,7 @@ def register_socket_handlers(sio):
         user_id = user_rooms.get(sid)
         if not user_id:
             return
-        character_id = data.get("character", list_characters()[0]["id"])
+        character_id = data.get("character", _default_character_id())
         character = get_character(character_id)
         if character:
             await sio.emit("stop typing", {"username": character["name"]}, room=sid)

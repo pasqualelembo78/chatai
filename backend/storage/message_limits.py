@@ -127,6 +127,31 @@ def check_and_count_message(user_id):
     return True, get_daily_message_status(user_id)
 
 
+def refund_message(user_id):
+    """Revert one counted message (e.g. when generation is blocked/fails).
+
+    No-op for admins/unlocked users. Safe to call even if nothing was counted.
+    """
+    role = get_user_role(user_id)
+    if _is_unlimited(user_id, role):
+        return
+    today = date.today().isoformat()
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE user_daily_messages SET count = GREATEST(count - 1, 0) "
+            "WHERE user_id=%s AND day=%s",
+            (user_id, today)
+        )
+        conn.commit()
+    except Exception as e:
+        logger.warning(f"refund_message FAILED user={user_id} error={e}")
+        conn.rollback()
+    finally:
+        put_conn(conn)
+
+
 def unlock_unlimited_messages(user_id, cost=None):
     """Spend ``cost`` MevaCoins to permanently lift the daily message limit.
 

@@ -13,7 +13,19 @@ def get_character_demographics(character_id):
         put_conn(conn)
 
 
+# Columns that may be written via update_character_demographics. Any other key
+# is rejected to prevent SQL injection through interpolated identifiers.
+_ALLOWED_DEMO_COLUMNS = {
+    "gender", "gender_display", "sexual_orientation", "sexual_orientation_display",
+    "birth_date", "birth_place", "species", "age_static",
+}
+
+
 def update_character_demographics(character_id, **kwargs):
+    # Only allow known columns; reject anything else before it reaches SQL.
+    for k in kwargs:
+        if k not in _ALLOWED_DEMO_COLUMNS:
+            raise ValueError(f"colonna non consentita: {k}")
     conn = get_conn()
     try:
         cur = conn.cursor()
@@ -22,7 +34,7 @@ def update_character_demographics(character_id, **kwargs):
         if existing:
             sets = ", ".join(f"{k}=%s" for k in kwargs)
             cur.execute(f"UPDATE character_demographics SET {sets} WHERE character_id=%s",
-                         list(kwargs.values()) + [character_id])
+                        list(kwargs.values()) + [character_id])
         else:
             kwargs["character_id"] = character_id
             cols = ", ".join(kwargs.keys())

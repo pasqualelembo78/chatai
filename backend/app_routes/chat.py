@@ -79,7 +79,8 @@ class TtsRequest(BaseModel):
 @router.post("/chat")
 @limiter.limit("60/minute")
 async def api_chat(request: Request, body: ChatRequest, user: AuthUser = Depends(jwt_required)):
-    character_id = body.character or list_characters()[0]["id"]
+    chars = list_characters()
+    character_id = body.character or (chars[0]["id"] if chars else None)
     text = body.text
     username = body.username
 
@@ -102,7 +103,7 @@ async def api_chat(request: Request, body: ChatRequest, user: AuthUser = Depends
     if char and not _check_character_access(user.user_id, char):
         raise HTTPException(403, "premium_required")
 
-    from storage import check_and_count_message
+    from storage import check_and_count_message, refund_message
     allowed, status = check_and_count_message(user.user_id)
     if not allowed:
         raise HTTPException(
@@ -127,6 +128,7 @@ async def api_chat(request: Request, body: ChatRequest, user: AuthUser = Depends
                              client_state=client_state,
                              is_favorite=body.is_favorite)
     if not result:
+        refund_message(user.user_id)
         raise HTTPException(404, "character not found")
 
     resp = {

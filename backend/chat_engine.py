@@ -549,12 +549,15 @@ def process_message(user_id, character_id, text, username="Utente",
     emotion, intensity, emotions = detect_emotion(text)
 
     if client_storage:
-        relationship = client_state.get("relationship", get_relationship(user_id, character_id))
-        personality = client_state.get("personality", get_personality(character_id, character.get("core_traits", {})))
-        history = memory_context if memory_context is not None else client_state.get("history", [])
-        shifts = client_state.get("shifts", [])
-        evo = client_state.get("evolution", get_evolution(user_id, character_id))
-        summaries = client_state.get("summaries", [])
+        _cs_rel = client_state.get("relationship")
+        relationship = _cs_rel if isinstance(_cs_rel, dict) else get_relationship(user_id, character_id)
+        _cs_per = client_state.get("personality")
+        personality = _cs_per if isinstance(_cs_per, dict) else get_personality(character_id, character.get("core_traits", {}))
+        history = memory_context if memory_context is not None else (client_state.get("history") or [])
+        shifts = client_state.get("shifts") or []
+        _cs_evo = client_state.get("evolution")
+        evo = _cs_evo if isinstance(_cs_evo, dict) and "flags" in _cs_evo else get_evolution(user_id, character_id)
+        summaries = client_state.get("summaries") or []
     else:
         relationship = get_relationship(user_id, character_id)
         # Phase 2: Use per-user personality (falls back to shared if not yet personalized)
