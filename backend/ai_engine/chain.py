@@ -99,6 +99,11 @@ def _discover_openrouter_free_models():
         pricing = m.get("pricing", {})
         prompt_cost = float(pricing.get("prompt", "999"))
         completion_cost = float(pricing.get("completion", "999"))
+        # Mantiene solo modelli chat (output testuale), esclude audio/immagini/musica
+        modality = m.get("architecture", {}).get("modality", "text->text")
+        out_modality = modality.split("->")[-1]
+        if "text" not in out_modality or out_modality != "text":
+            continue
         available[mid] = {"prompt_cost": prompt_cost, "completion_cost": completion_cost}
 
     priority = [
@@ -174,6 +179,8 @@ def rebuild_free_model_chain():
 
     global FREE_MODEL_CHAIN
     FREE_MODEL_CHAIN = chain
+    import ai_engine as _ae
+    _ae.FREE_MODEL_CHAIN = chain
     logger.info(f"Catena modelli dinamica: {len(chain)} entry")
     for p, m in chain:
         logger.info(f"  {p}/{m}")

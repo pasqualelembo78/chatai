@@ -849,6 +849,30 @@ if [ "$SKIP_APK" = false ]; then
     echo -e "    Java: $(java -version 2>&1 | head -1)"
     echo ""
 
+    # ─── Release keystore (idempotente: genera solo se assente) ──
+    KEYSTORE_FILE="$ROOT_DIR/app/release.keystore"
+    KEYSTORE_PASS="Ch4tA1_R3l34s3!"
+    KEY_ALIAS="chatai"
+    if [ ! -f "$KEYSTORE_FILE" ]; then
+        echo -e "    ${YELLOW}Release keystore assente — lo genero...${NC}"
+        if command -v keytool &>/dev/null; then
+            if keytool -genkeypair -v \
+                -keystore "$KEYSTORE_FILE" \
+                -alias "$KEY_ALIAS" \
+                -keyalg RSA -keysize 2048 -validity 10000 \
+                -storepass "$KEYSTORE_PASS" -keypass "$KEYSTORE_PASS" \
+                -dname "CN=ChatAI, OU=Dev, O=IntelliGame, L=Unknown, ST=Unknown, C=IT"; then
+                echo -e "    ${GREEN}Release keystore creato: $KEYSTORE_FILE${NC}"
+            else
+                echo -e "    ${RED}Generazione keystore fallita — la firma della release fallirà.${NC}"
+            fi
+        else
+            echo -e "    ${RED}keytool non trovato — impossibile firmare la release APK/AAB.${NC}"
+        fi
+    else
+        echo -e "    ${GREEN}Release keystore già presente: $KEYSTORE_FILE${NC}"
+    fi
+
     # Build AAB (Play Store)
     echo -e "    ${YELLOW}Building AAB...${NC}"
     ./gradlew bundleRelease --no-daemon --console=plain
