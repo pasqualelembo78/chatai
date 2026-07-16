@@ -146,6 +146,8 @@ def _user_age_range(age):
     """Converte età numerica in fascia d'età testuale."""
     if age is None:
         return ""
+    if age < 15:
+        return "giovane (preadolescenziale)"
     if age < 18:
         return "giovane (minorenne)"
     if age < 25:

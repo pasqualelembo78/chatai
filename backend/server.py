@@ -518,8 +518,8 @@ def api_create_character():
     if not data or not data.get("name"):
         return jsonify({"error": "name required"}), 400
     age = data.get("age", 0)
-    if not isinstance(age, int) or age < 18:
-        return jsonify({"error": "L'età deve essere almeno 18 anni"}), 400
+    if not isinstance(age, int) or age < 15:
+        return jsonify({"error": "L'età deve essere almeno 15 anni"}), 400
     char = create_user_character(g.user_id, data)
     from storage import audit_log
     audit_log(g.user_id, "character.create", char['id'], request.remote_addr or "", request.headers.get("User-Agent", ""))

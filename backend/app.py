@@ -1040,8 +1040,8 @@ async def api_create_character(
     if not data.get("name"):
         raise HTTPException(400, "name required")
     age = data.get("age", 0)
-    if not isinstance(age, int) or age < 18:
-        raise HTTPException(400, "L'età deve essere almeno 18 anni")
+    if not isinstance(age, int) or age < 15:
+        raise HTTPException(400, "L'età deve essere almeno 15 anni")
     char = create_user_character(user.user_id, data)
     from storage import audit_log
     audit_log(user.user_id, "character.create", char['id'],

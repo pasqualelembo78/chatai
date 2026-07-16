@@ -457,7 +457,7 @@ def _convert_charactercodex(hf_char, index):
     return {
         "id": _make_id(name) + f"_hf{index}",
         "name": _truncate(name, 40),
-        "age": random.randint(18, 35),
+        "age": random.randint(15, 35),
         "role": _truncate(genre or media_type, 40),
         "category": category,
         "avatar": _pick_emoji(category),
@@ -506,7 +506,7 @@ def _convert_characterhub(hf_char, index):
     return {
         "id": _make_id(name) + f"_ch{index}",
         "name": _truncate(name, 40),
-        "age": random.randint(18, 35),
+        "age": random.randint(15, 35),
         "role": _truncate(genre or media_type, 40),
         "category": category,
         "avatar": _pick_emoji(category),
@@ -547,7 +547,7 @@ def _convert_lmsys(hf_char, index):
     return {
         "id": _make_id(name) + f"_lm{index}",
         "name": _truncate(name, 40),
-        "age": random.randint(18, 35),
+        "age": random.randint(15, 35),
         "role": _truncate(genre, 40),
         "category": category,
         "avatar": _pick_emoji(category),
@@ -596,7 +596,7 @@ def _convert_maltezos(hf_char, index):
     return {
         "id": _make_id(name) + f"_ml{index}",
         "name": _truncate(name, 40),
-        "age": random.randint(18, 35),
+        "age": random.randint(15, 35),
         "role": _truncate(genre or media_type, 40),
         "category": category,
         "avatar": _pick_emoji(category),
