@@ -2289,26 +2289,49 @@ def _detect_character_rename(user_text):
 
 # ─── Impersonification engine ────────────────────────────────────
 _PRETEND_START_PATTERNS = [
-    r"f(?:a|ai|acciamo)\s+finta\s+che\s+(?:tu\s+)?(?:sia|ti\s+chiami|ti\s+trovi)\s+(.+)",
+    r"f(?:a|ai|acciamo)\s+finta\s+che\s+(?:tu\s+)?(?:sia|ti\s+chiami|ti\s+trovi|possa\s+essere)\s+(.+)",
     r"fingi\s+di\s+essere\s+(.+)",
     r"diventa\s+(.+)",
     r"ora\s+sei\s+(.+)",
     r"ora\s+ti\s+chiami\s+(.+)",
-    r"immagina\s+che\s+(?:tu\s+)?(?:sia|ti\s+chiami)\s+(.+)",
+    r"immagina\s+che\s+(?:tu\s+)?(?:sia|ti\s+chiami|possa\s+essere)\s+(.+)",
     r"fa[\s']+finta\s+di\s+essere\s+(.+)",
     r"simula\s+(?:di\s+essere|l['\"]essere)\s+(.+)",
-    r"interpret(?:a|a|o)\s+(?:il\s+ruolo\s+di|essere)\s+(.+)",
+    r"interpret(?:a|o)\s+(?:il\s+ruolo\s+di|essere)\s+(.+)",
     r"tu\s+sei\s+adesso\s+(.+)",
+    r"vorrei\s+che\s+(?:tu\s+)?(?:fossi|ti\s+chiamassi|diventassi)\s+(.+)",
+    r"potresti\s+(?:essere|fare\s+il\s+la|interpretare)\s+(.+)",
+    r"come\s+se\s+(?:tu\s+)?(?:fossi|ti\s+chiamassi)\s+(.+)",
+    r"se\s+(?:tu\s+)?(?:fossi|ti\s+chiamassi)\s+(.+)",
+    r"prov(?:a|o)\s+a\s+essere\s+(.+)",
+    r"dammi\s+l['\"]idea\s+(?:che|di)\s+(?:tu\s+)?(?:sia|essere)\s+(.+)",
+    r"fingerai\s+di\s+essere\s+(.+)",
+    r"farai\s+finta\s+di\s+essere\s+(.+)",
+    r"ti\s+metti\s+(?:nei\s+panni\s+di|a\s+fare\s+il\s+la)\s+(.+)",
+    r" nei\s+panni\s+(?:di|del\s+la)\s+(.+)",
+    r"fai\s+il\s+la\s+(.+)",
+    r"vuoi\s+(?:essere|fare\s+il\s+la)\s+(.+)",
+    r"mi\s+piacerebbe\s+che\s+(?:tu\s+)?(?:fossi|essere)\s+(.+)",
+    r"dici\s+di\s+essere\s+(.+)",
 ]
 
 _PRETEND_STOP_PATTERNS = [
     r"basta\s+(?:fingere|fare\s+finta|fare\s+il\s+finto)",
-    r"torna\s+a\s+essere\s+(?:te\s+stesso|il\s+vero|chi\s+eri)",
+    r"torna\s+a\s+essere\s+(?:te\s+stesso|il\s+vero|chi\s+eri|chi\s+eri\s+prima)",
     r"smetti\s+di\s+fingere",
     r"torna\s+al\s+tuo\s+vero\s+io",
     r"basta\s+con\s+la\s+finta",
     r"fine\s+finta",
     r"stop\s+finta",
+    r"basta\s+finzione",
+    r"torna\s+come\s+prima",
+    r"torna\s+normale",
+    r"sei\s+di\s+nuovo\s+te\s+stesso",
+    r"adesso\s+sei\s+di\s+nuovo\s+(?:tu|te\s+stesso)",
+    r"ok\s+basta",
+    r"va\s+bene\s+basta",
+    r"ho\s+capito\s+basta",
+    r"puoi\s+smettere",
 ]
 
 
@@ -2336,37 +2359,132 @@ def _detect_pretend(user_text):
 
 def _find_character_by_name(name_query):
     """
-    Find an existing character by name (fuzzy match).
+    Find an existing character by name with smart fuzzy matching.
+    Searches across name, full_name, surname, role, description, tags.
+    Handles articles, titles, and partial matches.
     Returns the character dict or None.
     """
+    from characters import list_characters
     name_lower = name_query.lower().strip()
-    results = search_characters(name_lower)
-    if not results:
+
+    # Strip common Italian articles and titles
+    _ARTICLES = {"il", "lo", "la", "i", "gli", "le", "un", "uno", "una"}
+    _TITLES = {"dottoressa", "dottore", "professoressa", "professor", "prof",
+               "maestro", "maestra", "signora", "signore", "sig.ra", "sig.",
+               "dott.ssa", "dr.", "drssa", "ragazzo", "ragazza", "rago"}
+
+    stripped = name_lower
+    words = name_lower.split()
+    if words and words[0] in _ARTICLES:
+        stripped = " ".join(words[1:])
+    if words and words[0] in _TITLES:
+        stripped = " ".join(words[1:])
+
+    all_chars = list_characters()
+
+    def _score(c):
+        s = 0
+        cname = c.get("name", "").lower()
+        full = c.get("full_name", "").lower()
+        surname = c.get("surname", "").lower()
+        role = c.get("role", "").lower()
+        desc = c.get("description", "").lower()
+        essence = c.get("essence", "").lower()
+        tags = [t.lower() for t in c.get("tags", [])]
+
+        # Exact match on name
+        if cname == name_lower or cname == stripped:
+            s += 100
+        # Exact match on full_name or surname
+        if full == name_lower or full == stripped:
+            s += 95
+        if surname == name_lower or surname == stripped:
+            s += 90
+
+        # Name contains query or query contains name
+        if stripped and cname:
+            if stripped in cname or cname in stripped:
+                s += 70
+        if stripped and full:
+            if stripped in full or full in stripped:
+                s += 65
+
+        # Match on role
+        if stripped:
+            role_words = role.split()
+            for rw in role_words:
+                if len(rw) > 3 and rw in stripped:
+                    s += 40
+                if len(rw) > 3 and stripped in rw:
+                    s += 35
+            # Special role keywords
+            role_kw_map = {
+                "dottore": ["medico", "dottore", "dott", "doctor"],
+                "dottessa": ["dottoressa", "dott", "doctor"],
+                "professor": ["professore", "insegnante", "prof", "teacher"],
+                "professoressa": ["professoressa", "insegnante", "prof", "teacher"],
+                "infermiere": ["infermiere", "infermiera", "nurse"],
+                "avvocato": ["avvocato", "avvocatessa", "lawyer"],
+                "poliziotto": ["poliziotto", "poliziotta", "carabiniere", "police"],
+                "parrucchiera": ["parrucchiere", "parrucchiera", "hairdresser"],
+                "cuoco": ["cuoco", "cuoca", "chef", "cook"],
+                "barista": ["barista", "bartender"],
+                "magistrato": ["magistrato", "magistrata", "giudice", "judge"],
+            }
+            for kw, synonyms in role_kw_map.items():
+                if kw in stripped or kw in name_lower:
+                    for syn in synonyms:
+                        if syn in role or syn in desc:
+                            s += 50
+                            break
+
+        # Match on description or essence
+        if stripped:
+            for word in stripped.split():
+                if len(word) > 3:
+                    if word in desc:
+                        s += 20
+                    if word in essence:
+                        s += 15
+
+        # Match on tags
+        if stripped:
+            for tag in tags:
+                if stripped in tag or tag in stripped:
+                    s += 30
+
+        return s
+
+    scored = [(s, c) for c in all_chars if (s := _score(c)) > 0]
+    if not scored:
         return None
-    for c in results:
-        cname = c.get("name", "").lower()
-        if cname == name_lower:
-            return c
-    for c in results:
-        cname = c.get("name", "").lower()
-        if name_lower in cname or cname in name_lower:
-            return c
-    if results:
-        return results[0]
-    return None
+    scored.sort(key=lambda x: -x[0])
+    return scored[0][1]
 
 
 def _build_ad_hoc_character(description):
     """
-    Build a minimal character dict from a free-form description.
-    e.g. "un dottore di 40 anni che si chiama Giovanni" → dict with name, age, personality, etc.
+    Build a character dict from a free-form description.
+    Extracts: name, age, gender, role, occupation, and infers personality.
+    e.g. "un dottore di 40 anni che si chiama Giovanni" → full dict
     """
+    from characters.functions import _MALE_NAMES, _FEMALE_NAMES
     desc_lower = description.lower()
     name = None
 
+    # Gender keyword lists (used by name fallback too)
+    _FEM_KW = {"donna", "ragazza", "studentessa", "professoressa", "dottoressa",
+               "infermiera", "cuoca", "parrucchiera", "avvocatessa",
+               "poliziotta", "magistrata", "maestra", "signora",
+               "un'insegnante", "una professoressa"}
+    _MAS_KW = {"uomo", "ragazzo", "studente", "professore", "dottore",
+               "infermiere", "cuoco", "parrucchiere", "avvocato",
+               "poliziotto", "magistrato", "maestro", "signore"}
+
+    # ── Extract name ──
     name_patterns = [
-        r"(?:si\s+chiama|chiamat[oi]|nome\s+(?:è|sarà))\s+(\w+)",
-        r"(?:il\s+dottore|il\s+professore|la\s+dottoressa|il\s+maestro|la\s+maestra)\s+(\w+)",
+        r"(?:si\s+chiama|chiamat[oi]|nome\s+(?:è|sarà|sara))\s+(\w+)",
+        r"(?:il\s+dottore|il\s+professore|la\s+dottoressa|il\s+maestro|la\s+maestra|il\s+ragazzo|la\s+ragazza|il\s+signore|la\s+signora|il\s+cuoco|la\s+cuoca|il\s+barista|la\s+barista|il\s+parrucchiere|la\s+parrucchiera|l'avvocato|l'avvocatessa|il\s+poliziotto|la\s+poliziotta|il\s+infermiere|la\s+infermiera)\s+(\w+)",
     ]
     for pat in name_patterns:
         m = re.search(pat, desc_lower)
@@ -2375,20 +2493,37 @@ def _build_ad_hoc_character(description):
             break
 
     if not name:
+        # Try: last capitalized word that looks like a name (not an article/preposition)
+        _SKIP = {"un", "una", "il", "la", "le", "gli", "i", "che", "chi", "cui",
+                 "del", "della", "dello", "dei", "delle", "di", "da", "in", "con",
+                 "per", "su", "al", "allo", "alla", "ai", "agli", "alle",
+                 "ma", "e", "o", "se", "come", "anche", "poi", "così", "cosi",
+                 "adesso", "ora", "tu", "io", "lui", "lei", "noi", "voi", "loro",
+                 "sia", "essere", "fare", "avere", "dire", "pensare", "volere"}
         words = description.split()
+        candidates = []
         for w in words:
-            if w and w[0].isupper() and len(w) >= 2 and w.lower() not in {"un", "una", "il", "la", "che", "chi", "cui", "del", "della", "di", "da", "in", "con", "per", "su", "al", "allo", "alla", "dello", "della"}:
-                name = w.strip(".,!?")
-                break
+            clean = w.strip(".,!?;:'\"")
+            if clean and clean[0].isupper() and len(clean) >= 2 and clean.lower() not in _SKIP:
+                candidates.append(clean)
+        if candidates:
+            name = candidates[-1]  # take last one (usually the name comes after the role)
+        else:
+            # No capitalized words found — use a generic name based on gender hints
+            if any(kw in desc_lower for kw in _FEM_KW):
+                name = "Lei"
+            elif any(kw in desc_lower for kw in _MAS_KW):
+                name = "Lui"
+            else:
+                name = "Sconosciuto"
 
-    if not name:
-        name = description[:20].strip(".,!? ").title() or "Sconosciuto"
-
+    # ── Extract age ──
     age = 0
     age_patterns = [
         r"(\d{2,3})\s*anni",
         r"di\s+(\d{2,3})\s*anni",
         r"età\s+(?:di\s+)?(\d{2,3})",
+        r"un(?:a)?\s+(\d{2,3])enne",
     ]
     for pat in age_patterns:
         m = re.search(pat, desc_lower)
@@ -2401,19 +2536,140 @@ def _build_ad_hoc_character(description):
             except ValueError:
                 pass
 
-    role = description[:80] if len(description) > 10 else f"Personaggio: {description}"
+    # ── Extract gender ──
+    gender = ""
+    gender_display = ""
 
+    for kw in _FEM_KW:
+        if kw in desc_lower:
+            gender = "F"
+            gender_display = "femminile"
+            break
+    if not gender:
+        for kw in _MAS_KW:
+            if kw in desc_lower:
+                gender = "M"
+                gender_display = "maschile"
+                break
+
+    # From name
+    if not gender:
+        name_lower = name.lower()
+        if name_lower in _FEMALE_NAMES:
+            gender = "F"
+            gender_display = "femminile"
+        elif name_lower in _MALE_NAMES:
+            gender = "M"
+            gender_display = "maschile"
+
+    # From suffix
+    if not gender:
+        if name.lower().endswith("a") and name.lower() not in {"luca", "nicola", "andrea"}:
+            gender = "F"
+            gender_display = "femminile"
+        elif name.lower().endswith(("o", "e")):
+            gender = "M"
+            gender_display = "maschile"
+
+    # ── Extract role/occupation ──
+    role_keywords = {
+        "dottore": ("medico", "Lavora come medico."),
+        "dottoressa": ("medico", "Lavora come medica."),
+        "professore": ("insegnante", "Lavora come insegnante."),
+        "professoressa": ("insegnante", "Lavora come insegnante."),
+        "avvocato": ("avvocato", "Lavora come avvocato."),
+        "avvocatessa": ("avvocatessa", "Lavora come avvocatessa."),
+        "infermiere": ("infermiere", "Lavora come infermiere."),
+        "infermiera": ("infermiera", "Lavora come infermiera."),
+        "cuoco": ("cuoco", "Lavora come cuoco."),
+        "cuoca": ("cuoca", "Lavora come cuoca."),
+        "chef": ("cuoco", "Lavora come chef."),
+        "barista": ("barista", "Lavora come barista."),
+        "parrucchiere": ("parrucchiere", "Lavora come parrucchiere."),
+        "parrucchiera": ("parrucchiera", "Lavora come parrucchiera."),
+        "poliziotto": ("poliziotto", "Lavora nelle forze dell'ordine."),
+        "poliziotta": ("poliziotta", "Lavora nelle forze dell'ordine."),
+        "magistrato": ("magistrato", "Lavora come magistrato."),
+        "magistrata": ("magistrata", "Lavora come magistrata."),
+        "giudice": ("giudice", "Lavora come giudice."),
+        "maestro": ("insegnante", "Lavora come maestro."),
+        "maestra": ("maestra", "Lavora come maestra."),
+        "studente": ("studente", "È uno studente."),
+        "studentessa": ("studente", "È una studentessa."),
+        "hacker": ("hacker", "È un hacker."),
+        "musicista": ("musicista", "È un musicista."),
+        "artista": ("artista", "È un artista."),
+        "scrittore": ("scrittore", "È uno scrittore."),
+        "scrittrice": ("scrittore", "È una scrittrice."),
+        "attore": ("attore", "È un attore."),
+        "attrice": ("attore", "È un'attrice."),
+        "regista": ("regista", "È un regista."),
+        "ingegnere": ("ingegnere", "È un ingegnere."),
+        "programmatore": ("programmatore", "È un programmatore."),
+        "programmatrice": ("programmatore", "È una programmatrice."),
+        "veterinario": ("veterinario", "È un veterinario."),
+        "veterinaria": ("veterinario", "È una veterinaria."),
+        "farmacista": ("farmacista", "È un farmacista."),
+        "psicologo": ("psicologo", "È uno psicologo."),
+        "psicologa": ("psicologo", "È una psicologa."),
+        "sacerdote": ("sacerdote", "È un sacerdote."),
+        "monaco": ("monaco", "È un monaco."),
+        "guerriero": ("guerriero", "È un guerriero."),
+        "cavaliere": ("cavaliere", "È un cavaliere."),
+        "maghe": ("maga", "È una maga."),
+        "mago": ("mago", "È un mago."),
+    }
+
+    detected_role = ""
+    occupation_text = ""
+    for kw, (role_label, occ_text) in role_keywords.items():
+        if kw in desc_lower:
+            detected_role = role_label
+            occupation_text = occ_text
+            break
+
+    if not detected_role:
+        detected_role = description[:60] if len(description) > 10 else "Personaggio"
+
+    # ── Infer personality from role ──
+    personality_hints = []
+    if any(w in desc_lower for w in {"severo", "stretto", "rigido", "duro", "autoritario"}):
+        personality_hints.append("Sei una persona severa e autoritaria.")
+    if any(w in desc_lower for w in {"gentile", "dolce", "calmo", "paziente", "affabile"}):
+        personality_hints.append("Sei una persona gentile e paziente.")
+    if any(w in desc_lower for w in {"spiritoso", "ironico", "simpatico", "divertente"}):
+        personality_hints.append("Sei spiritoso e usi spesso l'ironia.")
+    if any(w in desc_lower for w in {"timido", "insicuro", "riservato", "shy"}):
+        personality_hints.append("Sei timido e riservato.")
+    if any(w in desc_lower for w in {"arrogante", "spocchioso", "superbo"}):
+        personality_hints.append("Sei arrogante e hai un'autostima elevata.")
+    if any(w in desc_lower for w in {"malinconico", "triste", "depresso"}):
+        personality_hints.append("Sei una persona malinconica e riflessiva.")
+    if any(w in desc_lower for w in {"energico", "vivace", "entusiasta"}):
+        personality_hints.append("Sei energico e pieno di vita.")
+
+    personality_text = f"Sei {name}. {description}."
+    if personality_hints:
+        personality_text += " " + " ".join(personality_hints)
+    personality_text += " Mantieni un comportamento coerente con questa descrizione."
+
+    # ── Build result ──
     result = {
         "name": name,
         "full_name": name,
-        "role": role,
+        "role": detected_role,
         "description": description[:200],
-        "personality": f"Sei {name}. {description}. Mantieni un comportamento coerente con questa descrizione.",
+        "personality": personality_text,
         "speaking_style": "Naturale e coerente con il ruolo descritto dall'utente.",
         "backstory": description[:500],
     }
     if age:
         result["age"] = age
+    if gender:
+        result["gender"] = gender
+        result["gender_display"] = gender_display
+    if occupation_text:
+        result["occupation"] = {"title": detected_role, "workplace": ""}
     return result
 
 
