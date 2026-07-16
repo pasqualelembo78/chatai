@@ -47,6 +47,15 @@ def _cleanup_loop():
         except Exception:
             pass
 
+def _model_chain_refresh_loop():
+    while True:
+        time.sleep(86400)
+        try:
+            rebuild_free_model_chain()
+            logger.info("Catena modelli free aggiornata (refresh giornaliero)")
+        except Exception as e:
+            logger.warning(f"Refresh giornaliero catena modelli fallito: {e}")
+
 def _free_port_background(port):
     import subprocess, signal
     try:
@@ -101,6 +110,7 @@ async def lifespan(application):
     threading.Thread(target=_cleanup_loop, daemon=True).start()
     threading.Thread(target=_cleanup_expired_tokens, daemon=True).start()
     threading.Thread(target=_free_port_background, args=(int(os.environ.get("PORT", 5000)),), daemon=True).start()
+    threading.Thread(target=_model_chain_refresh_loop, daemon=True).start()
     logger.info("ChatAI FastAPI started")
     yield
     logger.info("ChatAI FastAPI shutting down")
