@@ -1209,6 +1209,7 @@ def on_stream_message(data):
     original_character = character
     evo = get_evolution(user_id, character_id)
     pretend_action, pretend_target = _detect_pretend(text) if text else (None, None)
+    logger.info(f"Pretend detect: action={pretend_action} target={pretend_target} user={user_id} char={character_id}")
 
     if pretend_action == "STOP":
         evo["flags"]["impersonating"] = False
@@ -1403,7 +1404,9 @@ def on_stream_message(data):
     is_fallback = False
 
     try:
-        for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id, force_provider="ollama" if impersonate_override else None):
+        fp = "ollama" if impersonate_override else None
+        logger.info(f"Stream get_ai_response: force_provider={fp} impersonate={impersonate_override is not None}")
+        for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id, force_provider=fp):
             ai_text += token
             ai_provider = pid
             ai_model = model
@@ -1766,6 +1769,7 @@ def process_message(user_id, character_id, text, username="Utente",
     impersonate_override = None
     original_character = character
     pretend_action, pretend_target = _detect_pretend(text) if text else (None, None)
+    logger.info(f"API Pretend detect: action={pretend_action} target={pretend_target} user={user_id} char={character_id}")
 
     if client_storage:
         evo = client_state.get("evolution", get_evolution(user_id, character_id))
@@ -2015,7 +2019,10 @@ def process_message(user_id, character_id, text, username="Utente",
         impersonate_override=impersonate_override,
     )
 
-    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id, force_provider="ollama" if impersonate_override else None)
+    fp = "ollama" if impersonate_override else None
+    logger.info(f"API get_ai_response: force_provider={fp} impersonate={impersonate_override is not None}")
+    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id, force_provider=fp)
+    logger.info(f"API AI response: provider={ai_provider} model={ai_model} len={len(ai_text) if ai_text else 0}")
     if not ai_text:
         logger.error("get_ai_response(): tutti i modelli della catena gratuita hanno fallito")
         ai_text = _fallback_response(character, emotion)

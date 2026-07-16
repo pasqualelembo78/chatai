@@ -628,12 +628,19 @@ def get_ai_response(messages, user_id=None, force_provider=None):
         fmodel = fp.get("models", [{}])[0].get("id") if fp.get("models") else None
         if fmodel:
             try:
+                logger.info(f"force_provider: provo {force_provider}/{fmodel}")
                 result = fp["generate"](messages, fmodel, user_id=user_id)
                 if result:
                     logger.info(f"Risposta AI da {force_provider}/{fmodel} (force_provider)")
                     return result, force_provider, fmodel
+                else:
+                    logger.warning(f"  force_provider {force_provider}/{fmodel}: generate ha restituito None")
             except Exception as e:
                 logger.warning(f"  force_provider {force_provider}/{fmodel} errore ({e}), fallback catena normale")
+        else:
+            logger.warning(f"  force_provider {force_provider}: nessun modello disponibile")
+    elif force_provider:
+        logger.warning(f"  force_provider {force_provider}: provider non pronto (ready={_provider_ready(force_provider) if force_provider in PROVIDERS else 'non registrato'})")
 
     # ── Determina la catena di provider per le chat ──
     # Priorita: CHAT_PROVIDER env → preferenza utente → FORCE_LOCAL_FIRST → catena normale
@@ -1101,8 +1108,10 @@ def _ollama_local_models():
 
 def _ollama_generate(messages, model, user_id=None):
     if not _ensure_ollama():
+        logger.error(f"Ollama non disponibile")
         return None
     try:
+        logger.info(f"Ollama: invio a {model}, {len(messages)} messaggi")
         resp = requests.post(
             OLLAMA_URL,
             json={"model": model, "messages": messages, "options": OLLAMA_OPTIONS, "stream": False},
@@ -1110,8 +1119,14 @@ def _ollama_generate(messages, model, user_id=None):
         )
         resp.encoding = "utf-8"
         if resp.status_code == 200:
-            return resp.json()["message"]["content"]
-        logger.error(f"Ollama error: {resp.status_code} {resp.text}")
+            content = resp.json().get("message", {}).get("content", "")
+            if content:
+                logger.info(f"Ollama: risposta ricevuta ({len(content)} chars)")
+                return content
+            else:
+                logger.warning(f"Ollama: risposta vuota da {model}")
+                return None
+        logger.error(f"Ollama error: {resp.status_code} {resp.text[:300]}")
         return None
     except Exception as e:
         logger.error(f"Ollama request failed: {e}")
