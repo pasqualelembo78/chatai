@@ -6,9 +6,9 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from avatar_tool import (
-    parse_characters, generate_image_free, save_avatar, 
-    update_characters_py, generate_italian_biography, 
+from avatar import (
+    parse_characters, generate_image_free, save_avatar,
+    update_characters_py, generate_italian_biography,
     update_characters_py_full, get_prompt
 )
 

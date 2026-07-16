@@ -452,7 +452,7 @@ def generate_family(name, surname):
         sib_name = random.choice(male_names if is_male else female_names)
         siblings.append({
             "name": f"{sib_name} {surname}",
-            "age": random.randint(max(18, name_age - 10), min(60, name_age + 10)) if 'name_age' in dir() else random.randint(20, 40),
+            "age": random.randint(max(15, name_age - 10), min(60, name_age + 10)) if 'name_age' in dir() else random.randint(20, 40),
             "relationship": "fratello" if is_male else "sorella",
         })
     family["siblings"] = siblings

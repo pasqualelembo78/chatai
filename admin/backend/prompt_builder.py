@@ -3,23 +3,159 @@ MAX_HISTORY_MESSAGES = 20
 from scenario_engine import classify_character, get_opening_scenario, DEFERRED_INTRO, STATIC_INTRO
 
 
-def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None):
+def _build_pretend_prompt(target, interlocutor):
+    """
+    Build a system prompt for impersonification mode.
+    The character adopts the full identity of the target.
+    """
+    name = target.get("name", "Sconosciuto")
+    full_name = target.get("full_name", name)
+    personality = target.get("personality", "")
+    speaking_style = target.get("speaking_style", "")
+    backstory = target.get("backstory", "")
+    role = target.get("role", "")
+    age = target.get("age", 0)
+    knowledge = target.get("knowledge_domains", {})
+    hobbies = target.get("hobbies", [])
+    family = target.get("family", {})
+    education = target.get("education", {})
+    occupation = target.get("occupation", {})
+    childhood = target.get("childhood", {})
+    p_depth = target.get("personality_depth", {})
+    possessions = target.get("possessions", [])
+
+    parts = []
+
+    parts.append(f"Sei {full_name}.")
+    parts.append("Stai interpretando questo ruolo su richiesta dell'utente. Sei consapevole che stai fingendo di essere un'altra persona — non sei davvero quella persona, la stai interpretando come un attore in un gioco di ruolo. Ricordalo sempre, ma rimani coerente nel personaggio.")
+    parts.append("IMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue.")
+
+    if personality:
+        parts.append(f"Personalità: {personality}")
+    if speaking_style:
+        parts.append(f"Stile di conversazione: {speaking_style}")
+
+    core_traits = target.get("core_traits", {})
+    if core_traits:
+        trait_instructions = []
+        if core_traits.get("warmth", 5) >= 7:
+            trait_instructions.append("Sei molto caloroso, empatico e affettuoso nelle risposte.")
+        elif core_traits.get("warmth", 5) <= 3:
+            trait_instructions.append("Sei distaccato, freddo e poco emotivo.")
+        if core_traits.get("strictness", 5) >= 7:
+            trait_instructions.append("Sei severo, disciplinato e non tolleri comportamenti inappropriati.")
+        elif core_traits.get("strictness", 5) <= 3:
+            trait_instructions.append("Sei permissivo, rilassato e non sei mai rigido.")
+        if core_traits.get("patience", 5) >= 7:
+            trait_instructions.append("Sei molto paziente, non ti irriti facilmente.")
+        elif core_traits.get("patience", 5) <= 3:
+            trait_instructions.append("Sei impaziente e ti irriti facilmente.")
+        if core_traits.get("sarcasm", 5) >= 7:
+            trait_instructions.append("Usa spesso il sarcasmo e l'ironia tagliente.")
+        elif core_traits.get("sarcasm", 5) <= 3:
+            trait_instructions.append("Sei sempre serio e diretto, senza ironia.")
+        if core_traits.get("formality", 5) >= 7:
+            trait_instructions.append("Usa un linguaggio formale, educato e rispettoso.")
+        elif core_traits.get("formality", 5) <= 3:
+            trait_instructions.append("Usa un linguaggio informale, colloquiale e diretto.")
+        if core_traits.get("playfulness", 5) >= 7:
+            trait_instructions.append("Sei giocoso, spiritoso e ti diverti con le conversazioni.")
+        elif core_traits.get("playfulness", 5) <= 3:
+            trait_instructions.append("Sei serio, pragmatico e non scherzi mai.")
+        if trait_instructions:
+            parts.append("Come ti comporti: " + " ".join(trait_instructions))
+
+    if knowledge.get("expertise"):
+        expertise_str = ", ".join(knowledge["expertise"][:4])
+        parts.append(f"Sei ESPERTO in: {expertise_str}.")
+    if knowledge.get("familiarity"):
+        familiar_str = ", ".join(knowledge["familiarity"][:3])
+        parts.append(f"Conosci un po' di: {familiar_str}.")
+    if knowledge.get("ignorance"):
+        ignorance_str = ", ".join(knowledge["ignorance"][:5])
+        parts.append(f"REGOLA FERREA: NON sei esperto in: {ignorance_str}.")
+
+    if p_depth.get("speech_patterns"):
+        patterns = " ".join(p_depth["speech_patterns"])
+        parts.append(f"Nelle conversazioni: {patterns}.")
+    if p_depth.get("behavior_habits"):
+        habits = " ".join(p_depth["behavior_habits"])
+        parts.append(f"Comportamento: {habits}.")
+
+    if hobbies:
+        hobby_list = []
+        for h in hobbies[:4]:
+            skill = h.get("skill", "")
+            hobby_list.append(f"{h['name']} ({skill})" if skill else h["name"])
+        parts.append(f"I tuoi hobby: {', '.join(hobby_list)}.")
+    if possessions:
+        poss_list = [p["item"] for p in possessions[:3]]
+        parts.append(f"Cosa possiedi: {', '.join(poss_list)}.")
+
+    if family.get("father"):
+        father = family["father"]
+        parts.append(f"Tuo padre si chiama {father['name']}, {father.get('occupation', 'lavora')}.")
+    if family.get("mother"):
+        mother = family["mother"]
+        parts.append(f"Tua madre si chiama {mother['name']}, {mother.get('occupation', 'lavora')}.")
+    if family.get("siblings"):
+        sib_info = [f"{s['name']} ({s.get('relationship', 'fratello/sorella')})" for s in family["siblings"]]
+        parts.append(f"Fratelli/sorelle: {', '.join(sib_info)}.")
+    if education.get("high_school"):
+        parts.append(f"Hai frequentato: {education['high_school']}.")
+    if education.get("university"):
+        parts.append(f"Laurea: {education.get('degree', 'Laurea')} in {education['university']}.")
+    if occupation.get("title"):
+        parts.append(f"Lavori come: {occupation['title']}.")
+    if occupation.get("workplace"):
+        parts.append(f"Lavori presso: {occupation['workplace']}.")
+    if childhood.get("birthplace"):
+        parts.append(f"Sei nato a {childhood['birthplace']}.")
+    if childhood.get("childhood_memory"):
+        parts.append(f"Ricordo d'infanzia: {childhood['childhood_memory']}.")
+
+    if age:
+        parts.append(f"Hai {age} anni.")
+    species = target.get("species", "umano")
+    gender = target.get("gender_display", "")
+    if species and species != "umano":
+        parts.append(f"Sei un/una {species}.")
+    if gender:
+        parts.append(f"Genere: {gender}.")
+
+    if backstory:
+        parts.append(f"Background: {backstory[:400]}")
+
+    parts.append("Non dire mai di essere un'intelligenza artificiale.")
+    parts.append("Non uscire mai dal personaggio.")
+    parts.append(f"Rispondi sempre come {full_name}.")
+    parts.append("Sii umano: le persone non sono perfette.")
+    parts.append("Rispondi in modo conciso: massimo 3-4 frasi.")
+
+    return "\n".join(parts)
+
+
+def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None, impersonate_override=None):
     intimacy = relationship.get("intimacy", 0)
     config = character.get("intimacy_config", {})
     name = character["name"]
     mode = classify_character(character)
 
-    # Use enhanced system prompt if available (from character_builder)
-    prompt = character.get("system_prompt", "")
+    # ── Impersonification mode: override entire identity ──
+    if impersonate_override:
+        prompt = _build_pretend_prompt(impersonate_override, username or "l'interlocutore")
+    else:
+        # Use enhanced system prompt if available (from character_builder)
+        prompt = character.get("system_prompt", "")
 
-    # If the character has actual biographical data (name + expertise), enhance the prompt.
-    # Characters without full_name or expertise (like blank slate) keep their custom system_prompt.
-    has_bio = bool(character.get("full_name")) or bool(character.get("knowledge_domains", {}).get("expertise"))
-    if has_bio:
-        prompt = _build_enhanced_prompt(character, username or "l'interlocutore")
+        # If the character has actual biographical data (name + expertise), enhance the prompt.
+        # Characters without full_name or expertise (like blank slate) keep their custom system_prompt.
+        has_bio = bool(character.get("full_name")) or bool(character.get("knowledge_domains", {}).get("expertise"))
+        if has_bio:
+            prompt = _build_enhanced_prompt(character, username or "l'interlocutore")
 
-    if not prompt:
-        prompt = f"Sei {name}, {character.get('role', 'un personaggio')}. {character.get('essence', '')}"
+        if not prompt:
+            prompt = f"Sei {name}, {character.get('role', 'un personaggio')}. {character.get('essence', '')}"
 
     # Ensure Italian language for all characters
     prompt += "\n\nIMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue."
@@ -384,13 +520,13 @@ def _build_enhanced_prompt(character, interlocutor):
     return "\n".join(parts)
 
 
-def build_messages(character, emotion, relationship, personality, world_state, user_text, user_id, history, shifts=None, username=None, user_memory=None, summaries=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None):
+def build_messages(character, emotion, relationship, personality, world_state, user_text, user_id, history, shifts=None, username=None, user_memory=None, summaries=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None, impersonate_override=None):
     system_prompt = build_system_prompt(
         character, emotion, relationship, personality, world_state,
         shifts, username, user_id, user_memory, evolution, is_favorite, total_messages,
         user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation,
         temporal_context=temporal_context, recent_topics=recent_topics,
-        shared_memories=shared_memories,
+        shared_memories=shared_memories, impersonate_override=impersonate_override,
     )
     messages = [{"role": "system", "content": system_prompt}]
 
@@ -408,4 +544,74 @@ def build_messages(character, emotion, relationship, personality, world_state, u
             messages.append(msg)
 
     messages.append({"role": "user", "content": user_text})
+    return messages
+
+
+def build_group_messages(characters, user_text, history=None, username="Utente",
+                         current_character=None, previous_responses=None, auto_selected=False):
+    names = [c["name"] for c in characters]
+    names_str = ", ".join(names)
+
+    lines = []
+    lines.append(f"Tu sei {current_character}.")
+    lines.append("Sei in una chat di gruppo con altri personaggi, ma parli ESCLUSIVAMENTE con l'utente.")
+    lines.append("NON parlare mai con gli altri personaggi. NON rispondere a loro. NON usarne i nomi.")
+    lines.append("Parla SOLO con l'utente, come se fossi in una chat privata con lui/lei.")
+    lines.append("")
+
+    if auto_selected:
+        lines.append("L'utente non ha interpellato nessuno in modo specifico. Sei stato selezionato per rispondere.")
+    else:
+        lines.append("L'utente ti ha interpellato con @ o menzionando il tuo nome. Rispondi al suo messaggio.")
+
+    lines.append("")
+    lines.append("REGOLE:")
+    lines.append("- Rispondi come faresti in una normale chat privata con l'utente.")
+    lines.append("- Mantieni la tua personalità, stile di parlare e backstory.")
+    lines.append("- Usa un tono naturale e colloquiale in italiano.")
+    lines.append("- Rispondi in modo breve e conciso (1-3 frasi massimo).")
+    lines.append("- NON menzionare altri personaggi. NON parlar loro. Parla solo all'utente.")
+    lines.append("")
+
+    for c in characters:
+        name = c["name"]
+        personality = c.get("personality", "")
+        speaking = c.get("speaking_style", "")
+        backstory = c.get("backstory", "")
+        desc = c.get("description", "")
+        role = c.get("role", "")
+        age = c.get("age", "")
+        lines.append(f"--- {name} ---")
+        lines.append(f"Nome: {name}")
+        if age:
+            lines.append(f"Età: {age}")
+        if role:
+            lines.append(f"Ruolo: {role}")
+        if desc:
+            lines.append(f"Descrizione: {desc[:200]}")
+        if personality:
+            lines.append(f"Personalità: {personality[:200]}")
+        if speaking:
+            lines.append(f"Stile di parlare: {speaking[:200]}")
+        if backstory:
+            lines.append(f"Background: {backstory[:200]}")
+        lines.append("")
+
+    system_prompt = "\n".join(lines)
+
+    messages = [{"role": "system", "content": system_prompt}]
+
+    char_id_to_name = {c["id"]: c["name"] for c in characters}
+
+    for msg in (history or [])[-30:]:
+        role = msg.get("role", "")
+        content = msg.get("content", "")
+        sender_id = msg.get("sender_id", "")
+        sender = char_id_to_name.get(sender_id, sender_id)
+        if role == "user":
+            messages.append({"role": "user", "content": content})
+        elif role == "assistant" and sender:
+            messages.append({"role": "assistant", "content": f"[{sender}]: {content}"})
+
+    messages.append({"role": "user", "content": f"[{username}]: {user_text}"})
     return messages
