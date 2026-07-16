@@ -183,6 +183,8 @@ def index():
             "evolution": "/evolution?character_id=Y",
             "conversations": "/conversations",
             "premium": "/premium/check",
+            "unlock_impersonation": "/user/unlock/impersonation (POST)",
+            "impersonation_status": "/user/unlock/impersonation/status (GET)",
             "stream_chat": "Socket.IO con token auth"
         }
     })
@@ -833,7 +835,12 @@ def api_chat():
         "ai_model": result.get("ai_model", ""),
         "character_id": character_id,
         "character_name": result["character"]["name"],
+        "impersonating": result.get("impersonating", False),
+        "impersonate_target": result.get("impersonate_target", ""),
     }
+    if result.get("premium_required"):
+        resp["premium_required"] = True
+        resp["unlock_cost"] = result.get("unlock_cost", 0)
     mem_updates = result.get("memory_updates", {})
     if mem_updates:
         resp["memory_updates"] = mem_updates
@@ -1124,7 +1131,12 @@ def on_new_message(data):
         "ai_model": result.get("ai_model", ""),
         "is_roleplay": True,
         "is_fallback": result.get("is_fallback", False),
+        "impersonating": result.get("impersonating", False),
+        "impersonate_target": result.get("impersonate_target", ""),
     }
+    if result.get("premium_required"):
+        response_data["premium_required"] = True
+        response_data["unlock_cost"] = result.get("unlock_cost", 0)
     if mem_updates:
         response_data["memory_updates"] = mem_updates
     if evo_updates.get("new_stage") or evo_updates.get("unlocked"):
@@ -1192,9 +1204,75 @@ def on_stream_message(data):
             emit("new message", payload, room=request.sid)
         return
 
+    # ─── Impersonification detection ─────────────────────────────
+    impersonate_override = None
+    original_character = character
+    evo = get_evolution(user_id, character_id)
+    pretend_action, pretend_target = _detect_pretend(text) if text else (None, None)
+
+    if pretend_action == "STOP":
+        evo["flags"]["impersonating"] = False
+        evo["flags"]["impersonate_target"] = ""
+        update_evolution(user_id, character_id, evo)
+        logger.info(f"Pretend stop: user={user_id} char={character_id}")
+    elif pretend_action == "START" and pretend_target:
+        if not is_content_unlocked(user_id, "feature", "impersonation"):
+            char_name = character.get("name", "io")
+            premium_msg = (
+                f"*{char_name} scuote la testa.* "
+                f"Mi dispiace, ma questa è una funzionalità premium. "
+                f"Per finta di essere qualcun altro devi sbloccarla con {IMPERSONATION_MVC_COST} MevaCoins. "
+                f"Vai nelle impostazioni per sbloccarla!"
+            )
+            emit("stream start", {
+                "username": character["name"],
+                "user_message": text,
+                "emotion": "neutro",
+                "intensity": 0.0,
+            }, room=request.sid)
+            emit("stream token", {"token": premium_msg, "text": premium_msg}, room=request.sid)
+            emit("stream complete", {
+                "username": character["name"],
+                "message": premium_msg,
+                "emotion": "neutro",
+                "ai_provider": "system",
+                "ai_model": "",
+                "is_roleplay": True,
+                "is_fallback": False,
+                "impersonating": False,
+                "impersonate_target": "",
+                "premium_required": True,
+                "unlock_cost": IMPERSONATION_MVC_COST,
+            }, room=request.sid)
+            return
+        target_char = _find_character_by_name(pretend_target)
+        if not target_char:
+            target_char = _build_ad_hoc_character(pretend_target)
+        evo["flags"]["impersonating"] = True
+        evo["flags"]["impersonate_target"] = pretend_target
+        evo["flags"]["impersonate_data"] = target_char
+        evo["flags"]["original_character_id"] = character_id
+        update_evolution(user_id, character_id, evo)
+        impersonate_override = target_char
+        character = {**character, **target_char}
+        logger.info(f"Pretend start: user={user_id} char={character_id} target={pretend_target}")
+    elif evo.get("flags", {}).get("impersonating"):
+        saved_target = evo["flags"].get("impersonate_target", "")
+        saved_data = evo["flags"].get("impersonate_data")
+        if saved_data:
+            impersonate_override = saved_data
+            character = {**original_character, **saved_data}
+        elif saved_target:
+            target_char = _find_character_by_name(saved_target)
+            if target_char:
+                impersonate_override = target_char
+                character = {**original_character, **target_char}
+
     emotion, intensity, emotions = detect_emotion(text)
     relationship = get_relationship(user_id, character_id)
     personality = get_personality(character_id, character.get("core_traits", {}))
+    if impersonate_override and impersonate_override.get("core_traits"):
+        personality = {**impersonate_override["core_traits"]}
     world_state = get_world_state()
     memory_context = data.get("memory_context")
     user_memory = data.get("user_memory")
@@ -1216,7 +1294,6 @@ def on_stream_message(data):
     if is_first:
         credit_referral_first_message(user_id)
 
-    evo = get_evolution(user_id, character_id)
     evo_updates = evaluate_evolution(user_id, character_id, character, text, emotion, evo)
     if evo_updates["relationship_deltas"]:
         update_relationship(user_id, character_id, evo_updates["relationship_deltas"])
@@ -1284,7 +1361,7 @@ def on_stream_message(data):
         update_evolution(user_id, character_id, evo)
         logger.info(f"Rename: user={user_id} char={character_id} new_name={new_name}")
 
-    if evo.get("flags", {}).get("custom_name"):
+    if evo.get("flags", {}).get("custom_name") and not impersonate_override:
         character = {**character, "name": evo["flags"]["custom_name"]}
 
     memory_updates = _extract_memory_updates(user_id, text, character, character_id)
@@ -1301,6 +1378,7 @@ def on_stream_message(data):
     summaries = get_memories(user_id, character_id, limit=5)
     evo["dialog_hints"] = evo_updates.get("dialog_hints", [])
     evo["_just_unlocked"] = evo_updates.get("unlocked", [])
+
     user_is_favorite = data.get("is_favorite", False)
     _total_msgs = count_messages(user_id, character_id)
     messages = build_messages(
@@ -1308,7 +1386,8 @@ def on_stream_message(data):
         relationship, personality, world_state, text, user_id, history,
         shifts, username, user_memory=user_memory, summaries=summaries,
         evolution=evo, is_favorite=user_is_favorite, total_messages=_total_msgs,
-        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation
+        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation,
+        impersonate_override=impersonate_override,
     )
 
     emit("stream start", {
@@ -1363,6 +1442,8 @@ def on_stream_message(data):
             "new_stage": evo_updates.get("new_stage"),
             "unlocked": evo_updates.get("unlocked", []),
         },
+        "impersonating": evo.get("flags", {}).get("impersonating", False),
+        "impersonate_target": evo.get("flags", {}).get("impersonate_target", ""),
     }, room=request.sid)
 
 @socketio.on("stream stop")
@@ -1526,6 +1607,7 @@ def api_video(filename):
 
 # ─── Access control ───────────────────────────────────────────────
 PREMIUM_CATEGORIES = {"flirt", "relazioni", "confessioni", "seduzione", "premium", "horror"}
+IMPERSONATION_MVC_COST = 100
 
 def _check_character_access(user_id, character):
     if not user_id:
@@ -1680,6 +1762,71 @@ def process_message(user_id, character_id, text, username="Utente",
             else:
                 text = "[IMAGE: " + image_desc + "]"
 
+    # ─── Impersonification detection ─────────────────────────────
+    impersonate_override = None
+    original_character = character
+    pretend_action, pretend_target = _detect_pretend(text) if text else (None, None)
+
+    if client_storage:
+        evo = client_state.get("evolution", get_evolution(user_id, character_id))
+    else:
+        evo = get_evolution(user_id, character_id)
+
+    if pretend_action == "STOP":
+        evo["flags"]["impersonating"] = False
+        evo["flags"]["impersonate_target"] = ""
+        evo["flags"].pop("impersonate_data", None)
+        if not client_storage:
+            update_evolution(user_id, character_id, evo)
+        logger.info(f"Pretend stop: user={user_id} char={character_id}")
+    elif pretend_action == "START" and pretend_target:
+        if not is_content_unlocked(user_id, "feature", "impersonation"):
+            char_name = character.get("name", "io")
+            premium_msg = (
+                f"*{char_name} scuote la testa.* "
+                f"Mi dispiace, ma questa è una funzionalità premium. "
+                f"Per finta di essere qualcun altro devi sbloccarla con {IMPERSONATION_MVC_COST} MevaCoins. "
+                f"Vai nelle impostazioni per sbloccarla!"
+            )
+            return {
+                "ai_text": premium_msg,
+                "ai_provider": "system",
+                "ai_model": "",
+                "is_fallback": False,
+                "emotion": "neutro",
+                "intensity": 0.0,
+                "character": character,
+                "memory_updates": None,
+                "evo_updates": {"new_stage": None, "unlocked": []},
+                "impersonating": False,
+                "impersonate_target": "",
+                "premium_required": True,
+                "unlock_cost": IMPERSONATION_MVC_COST,
+            }
+        target_char = _find_character_by_name(pretend_target)
+        if not target_char:
+            target_char = _build_ad_hoc_character(pretend_target)
+        evo["flags"]["impersonating"] = True
+        evo["flags"]["impersonate_target"] = pretend_target
+        evo["flags"]["impersonate_data"] = target_char
+        evo["flags"]["original_character_id"] = character_id
+        if not client_storage:
+            update_evolution(user_id, character_id, evo)
+        impersonate_override = target_char
+        character = {**character, **target_char}
+        logger.info(f"Pretend start: user={user_id} char={character_id} target={pretend_target}")
+    elif evo.get("flags", {}).get("impersonating"):
+        saved_target = evo["flags"].get("impersonate_target", "")
+        saved_data = evo["flags"].get("impersonate_data")
+        if saved_data:
+            impersonate_override = saved_data
+            character = {**original_character, **saved_data}
+        elif saved_target:
+            target_char = _find_character_by_name(saved_target)
+            if target_char:
+                impersonate_override = target_char
+                character = {**original_character, **target_char}
+
     emotion, intensity, emotions = detect_emotion(text)
 
     # ─── Load state: client-provided or server DB ──────────────
@@ -1688,7 +1835,6 @@ def process_message(user_id, character_id, text, username="Utente",
         personality = client_state.get("personality", get_personality(character_id, character.get("core_traits", {})))
         history = memory_context if memory_context is not None else client_state.get("history", [])
         shifts = client_state.get("shifts", [])
-        evo = client_state.get("evolution", get_evolution(user_id, character_id))
         summaries = client_state.get("summaries", [])
     else:
         relationship = get_relationship(user_id, character_id)
@@ -1697,6 +1843,9 @@ def process_message(user_id, character_id, text, username="Utente",
         shifts = get_recent_shifts(user_id, character_id)
         evo = get_evolution(user_id, character_id)
         summaries = get_memories(user_id, character_id, limit=5)
+
+    if impersonate_override and impersonate_override.get("core_traits"):
+        personality = {**impersonate_override["core_traits"]}
 
     world_state = get_world_state()
     user_prefs = get_user_preferences(user_id)
@@ -1830,13 +1979,13 @@ def process_message(user_id, character_id, text, username="Utente",
 
     # ─── Rename detection: l'utente assegna un nome al personaggio ──
     new_name = _detect_character_rename(text)
-    if new_name:
+    if new_name and not impersonate_override:
         evo["flags"]["custom_name"] = new_name
         if not client_storage:
             update_evolution(user_id, character_id, evo)
         logger.info(f"Rename: user={user_id} char={character_id} new_name={new_name}")
 
-    if evo.get("flags", {}).get("custom_name"):
+    if evo.get("flags", {}).get("custom_name") and not impersonate_override:
         character = {**character, "name": evo["flags"]["custom_name"]}
 
     # ─── Memory extraction ─────────────────────────────────────
@@ -1862,7 +2011,8 @@ def process_message(user_id, character_id, text, username="Utente",
         relationship, personality, world_state, text, user_id, history,
         shifts, username, user_memory=user_memory, summaries=summaries,
         evolution=evo, is_favorite=is_favorite, total_messages=_total_msgs,
-        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation
+        user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation,
+        impersonate_override=impersonate_override,
     )
 
     ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
@@ -1897,6 +2047,8 @@ def process_message(user_id, character_id, text, username="Utente",
             "new_stage": evo_updates.get("new_stage"),
             "unlocked": evo_updates.get("unlocked", []),
         },
+        "impersonating": evo.get("flags", {}).get("impersonating", False),
+        "impersonate_target": evo.get("flags", {}).get("impersonate_target", ""),
     }
 
     # ─── Return updated state for client-side storage ──────────
@@ -2135,6 +2287,136 @@ def _detect_character_rename(user_text):
     return None
 
 
+# ─── Impersonification engine ────────────────────────────────────
+_PRETEND_START_PATTERNS = [
+    r"f(?:a|ai|acciamo)\s+finta\s+che\s+(?:tu\s+)?(?:sia|ti\s+chiami|ti\s+trovi)\s+(.+)",
+    r"fingi\s+di\s+essere\s+(.+)",
+    r"diventa\s+(.+)",
+    r"ora\s+sei\s+(.+)",
+    r"ora\s+ti\s+chiami\s+(.+)",
+    r"immagina\s+che\s+(?:tu\s+)?(?:sia|ti\s+chiami)\s+(.+)",
+    r"fa[\s']+finta\s+di\s+essere\s+(.+)",
+    r"simula\s+(?:di\s+essere|l['\"]essere)\s+(.+)",
+    r"interpret(?:a|a|o)\s+(?:il\s+ruolo\s+di|essere)\s+(.+)",
+    r"tu\s+sei\s+adesso\s+(.+)",
+]
+
+_PRETEND_STOP_PATTERNS = [
+    r"basta\s+(?:fingere|fare\s+finta|fare\s+il\s+finto)",
+    r"torna\s+a\s+essere\s+(?:te\s+stesso|il\s+vero|chi\s+eri)",
+    r"smetti\s+di\s+fingere",
+    r"torna\s+al\s+tuo\s+vero\s+io",
+    r"basta\s+con\s+la\s+finta",
+    r"fine\s+finta",
+    r"stop\s+finta",
+]
+
+
+def _detect_pretend(user_text):
+    """
+    Detect impersonification triggers in user text.
+    Returns: ("START", target_description) | ("STOP", None) | None
+    """
+    text_lower = user_text.lower().strip()
+
+    for pattern in _PRETEND_STOP_PATTERNS:
+        m = re.search(pattern, text_lower)
+        if m:
+            return "STOP", None
+
+    for pattern in _PRETEND_START_PATTERNS:
+        m = re.search(pattern, text_lower)
+        if m:
+            target = m.group(1).strip()
+            target = target.rstrip(".!?,;")
+            return "START", target
+
+    return None
+
+
+def _find_character_by_name(name_query):
+    """
+    Find an existing character by name (fuzzy match).
+    Returns the character dict or None.
+    """
+    name_lower = name_query.lower().strip()
+    results = search_characters(name_lower)
+    if not results:
+        return None
+    for c in results:
+        cname = c.get("name", "").lower()
+        if cname == name_lower:
+            return c
+    for c in results:
+        cname = c.get("name", "").lower()
+        if name_lower in cname or cname in name_lower:
+            return c
+    if results:
+        return results[0]
+    return None
+
+
+def _build_ad_hoc_character(description):
+    """
+    Build a minimal character dict from a free-form description.
+    e.g. "un dottore di 40 anni che si chiama Giovanni" → dict with name, age, personality, etc.
+    """
+    desc_lower = description.lower()
+    name = None
+
+    name_patterns = [
+        r"(?:si\s+chiama|chiamat[oi]|nome\s+(?:è|sarà))\s+(\w+)",
+        r"(?:il\s+dottore|il\s+professore|la\s+dottoressa|il\s+maestro|la\s+maestra)\s+(\w+)",
+    ]
+    for pat in name_patterns:
+        m = re.search(pat, desc_lower)
+        if m:
+            name = m.group(1).strip().capitalize()
+            break
+
+    if not name:
+        words = description.split()
+        for w in words:
+            if w and w[0].isupper() and len(w) >= 2 and w.lower() not in {"un", "una", "il", "la", "che", "chi", "cui", "del", "della", "di", "da", "in", "con", "per", "su", "al", "allo", "alla", "dello", "della"}:
+                name = w.strip(".,!?")
+                break
+
+    if not name:
+        name = description[:20].strip(".,!? ").title() or "Sconosciuto"
+
+    age = 0
+    age_patterns = [
+        r"(\d{2,3})\s*anni",
+        r"di\s+(\d{2,3})\s*anni",
+        r"età\s+(?:di\s+)?(\d{2,3})",
+    ]
+    for pat in age_patterns:
+        m = re.search(pat, desc_lower)
+        if m:
+            try:
+                age = int(m.group(1))
+                if 1 <= age <= 150:
+                    break
+                age = 0
+            except ValueError:
+                pass
+
+    role = description[:80] if len(description) > 10 else f"Personaggio: {description}"
+
+    result = {
+        "name": name,
+        "full_name": name,
+        "role": role,
+        "description": description[:200],
+        "personality": f"Sei {name}. {description}. Mantieni un comportamento coerente con questa descrizione.",
+        "speaking_style": "Naturale e coerente con il ruolo descritto dall'utente.",
+        "backstory": description[:500],
+    }
+    if age:
+        result["age"] = age
+    return result
+
+
 def _extract_teaching_topic(user_text):
     """Extract a topic label from a user teaching message."""
     text_lower = user_text.lower()
@@ -2280,6 +2562,27 @@ def api_mevacoins_spend():
     from storage import audit_log
     audit_log(g.user_id, "mevacoins.spend", f"{content_type}:{content_id} cost={amount}", request.remote_addr or "", request.headers.get("User-Agent", ""))
     return jsonify({"status": "ok", "unlocked": True})
+
+
+@app.route("/user/unlock/impersonation", methods=["POST"])
+@jwt_required
+def api_unlock_impersonation():
+    if is_content_unlocked(g.user_id, "feature", "impersonation"):
+        return jsonify({"status": "already_unlocked"})
+    ok, msg = unlock_content(g.user_id, "feature", "impersonation", IMPERSONATION_MVC_COST)
+    if not ok:
+        return jsonify({"error": msg}), 400 if msg == "saldo_insufficiente" else 500
+    from storage import audit_log
+    audit_log(g.user_id, "mevacoins.spend", f"feature:impersonation cost={IMPERSONATION_MVC_COST}", request.remote_addr or "", request.headers.get("User-Agent", ""))
+    logger.info(f"User {g.user_id} unlocked impersonation feature for {IMPERSONATION_MVC_COST} MVC")
+    return jsonify({"status": "ok", "unlocked": True, "cost": IMPERSONATION_MVC_COST})
+
+
+@app.route("/user/unlock/impersonation/status", methods=["GET"])
+@jwt_required
+def api_impersonation_status():
+    unlocked = is_content_unlocked(g.user_id, "feature", "impersonation")
+    return jsonify({"unlocked": unlocked, "cost": IMPERSONATION_MVC_COST})
 
 
 @app.route("/user/mevacoins/new-user-bonus", methods=["GET"])

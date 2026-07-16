@@ -124,6 +124,7 @@ FEATURES = {
     "video_gen": {"name": "Generazione Video", "mvc_cost": 100},
     "premium_voice": {"name": "Messaggi Vocali Premium", "mvc_cost": 30},
     "extended_memory": {"name": "Memoria Estesa", "mvc_cost": 80},
+    "group_chat": {"name": "Chat di Gruppo", "mvc_cost": 40},
 }
 
 _CHAT_GEN_MODEL = "black-forest-labs/FLUX.1-schnell"
@@ -1610,6 +1611,9 @@ async def create_group_chat(request: Request, body: CreateGroupChatRequest, user
         raise HTTPException(400, "Servono almeno 2 personaggi per una chat di gruppo")
     if len(character_ids) > 8:
         raise HTTPException(400, "Massimo 8 personaggi per chat di gruppo")
+    if not is_content_unlocked(user.user_id, "feature", "group_chat"):
+        feat = FEATURES["group_chat"]
+        raise HTTPException(403, f"Per usare Chat di Gruppo serve sbloccare la funzionalità ({feat['mvc_cost']} MVC). Vai nella sezione Guadagna MVC.")
     from storage import create_group_chat as _cgc, audit_log
     chat = _cgc(user.user_id, name, character_ids)
     audit_log(user.user_id, "group_chat.create", f"name={name} chars={len(character_ids)}",
@@ -1697,6 +1701,9 @@ async def get_group_participants(chat_id: int, user: AuthUser = Depends(jwt_requ
 @app.post("/group-chats/{chat_id}/participants")
 async def invite_to_group(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
     from storage import get_group_chat as _ggc, create_group_invitation as _ci, audit_log
+    if not is_content_unlocked(user.user_id, "feature", "group_chat"):
+        feat = FEATURES["group_chat"]
+        raise HTTPException(403, f"Per usare Chat di Gruppo serve sbloccare la funzionalità ({feat['mvc_cost']} MVC). Vai nella sezione Guadagna MVC.")
     chat = _ggc(chat_id)
     if not chat:
         raise HTTPException(404, "Chat di gruppo non trovata")
@@ -1727,6 +1734,9 @@ async def list_pending_invitations(user: AuthUser = Depends(jwt_required)):
 @app.post("/user/invitations/{invitation_id}/respond")
 async def respond_to_invitation(invitation_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
     from storage import respond_to_invitation as _ri, audit_log
+    if not is_content_unlocked(user.user_id, "feature", "group_chat"):
+        feat = FEATURES["group_chat"]
+        raise HTTPException(403, f"Per usare Chat di Gruppo serve sbloccare la funzionalità ({feat['mvc_cost']} MVC). Vai nella sezione Guadagna MVC.")
     data = await request.json()
     accept = data.get("accept", False)
     chat_id = _ri(invitation_id, user.user_id, accept)
@@ -1761,6 +1771,9 @@ async def search_users(q: str, user: AuthUser = Depends(jwt_required)):
 
 @app.post("/group-chats/{chat_id}/message")
 async def send_group_message(chat_id: int, request: Request, user: AuthUser = Depends(jwt_required)):
+    if not is_content_unlocked(user.user_id, "feature", "group_chat"):
+        feat = FEATURES["group_chat"]
+        raise HTTPException(403, f"Per usare Chat di Gruppo serve sbloccare la funzionalità ({feat['mvc_cost']} MVC). Vai nella sezione Guadagna MVC.")
     data = await request.json()
     text = data.get("text", "").strip()
     if not text:

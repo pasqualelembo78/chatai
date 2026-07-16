@@ -1612,6 +1612,10 @@ def is_content_unlocked(user_id, content_type, content_id):
     conn = get_conn()
     try:
         cur = conn.cursor()
+        cur.execute("SELECT role FROM users WHERE id = %s", (user_id,))
+        user_row = cur.fetchone()
+        if user_row and user_row["role"] == "admin":
+            return True
         cur.execute(
             "SELECT 1 FROM content_unlocks WHERE user_id=%s AND content_type=%s AND content_id=%s",
             (user_id, content_type, content_id)
