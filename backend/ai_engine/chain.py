@@ -187,6 +187,19 @@ def rebuild_free_model_chain():
     chain.append(("github", "Llama-3.3-70B-Instruct"))
     chain.append(("github", "DeepSeek-R1"))
 
+    # Auto-inclusione di tutti i provider free pronti (chiave presente / keyless)
+    # aggiunge es. HuggingFace, Pollinations, Cloudflare, llamacpp senza硬编码
+    _already = {pid for pid, _ in chain}
+    for pid, provider in PROVIDERS.items():
+        if pid in ("ollama", "openrouter", "groq", "gemini", "mistral", "github"):
+            continue
+        if not provider.get("free", False):
+            continue
+        if not provider.get("has_key", lambda: False)():
+            continue
+        for m in provider.get("models", []):
+            chain.append((pid, m["id"]))
+
     global FREE_MODEL_CHAIN
     FREE_MODEL_CHAIN = chain
     import ai_engine as _ae
