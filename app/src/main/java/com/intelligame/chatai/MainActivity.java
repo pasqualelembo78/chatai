@@ -155,7 +155,52 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        updateConsentMenu();
         checkPendingInvitations();
+    }
+
+    private void updateConsentMenu() {
+        if (navView == null) return;
+        MenuItem consentItem = navView.getMenu().findItem(R.id.nav_consent);
+        if (consentItem != null) {
+            consentItem.setVisible(((ChatApplication) getApplication()).getAdManager().isPrivacyOptionsRequired());
+        }
+    }
+
+    private void confirmDeleteAccount() {
+        new AlertDialog.Builder(this)
+                .setTitle("Elimina account")
+                .setMessage("Questa operazione cancellerà permanentemente il tuo account e tutti i dati associati (conversazioni, personaggi, MeVaCoin). L'operazione non è reversibile. Continuare?")
+                .setCancelable(true)
+                .setPositiveButton("Elimina", (d, w) -> deleteAccount())
+                .setNegativeButton("Annulla", null)
+                .show();
+    }
+
+    private void deleteAccount() {
+        ChatApplication app = (ChatApplication) getApplication();
+        String baseUrl = app.getPrefs().getServerUrl().replace("/chat", "");
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                        baseUrl + "/user/delete", "POST", "", 8000);
+                mainHandler.post(() -> {
+                    if (resp.statusCode == 200) {
+                        Toast.makeText(MainActivity.this, "Account eliminato", Toast.LENGTH_SHORT).show();
+                        mAuth.clear();
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Errore eliminazione (codice " + resp.statusCode + ")", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> Toast.makeText(MainActivity.this,
+                        "Errore eliminazione: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        });
     }
 
     private void checkPendingInvitations() {
@@ -256,6 +301,12 @@ public class MainActivity extends AppCompatActivity {
             showGuideDialog();
         } else if (id == R.id.nav_info) {
             showInfoDialog();
+        } else if (id == R.id.nav_legal) {
+            startActivity(new Intent(MainActivity.this, LegalActivity.class));
+        } else if (id == R.id.nav_consent) {
+            ((ChatApplication) getApplication()).getAdManager().showPrivacyOptionsForm(MainActivity.this, null);
+        } else if (id == R.id.nav_delete_account) {
+            confirmDeleteAccount();
         } else if (id == R.id.nav_playstore) {
             openPlayStore();
         } else if (id == R.id.nav_logout) {

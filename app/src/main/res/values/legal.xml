@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Legal / Privacy section -->
+    <string name="legal_title">Privacy e Legali</string>
+    <string name="back">Indietro</string>
+
+    <string name="legal_privacy_title">Informativa sulla Privacy</string>
+    <string name="legal_gdpr_title">GDPR e i tuoi diritti</string>
+    <string name="legal_terms_title">Termini di Servizio</string>
+    <string name="legal_ads_title">Informativa sugli annunci</string>
+
+</resources>

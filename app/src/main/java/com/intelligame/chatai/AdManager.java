@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,11 @@ import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentForm;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.FormError;
+import com.google.android.ump.UserMessagingPlatform;
 
 public class AdManager implements Application.ActivityLifecycleCallbacks {
 
@@ -45,6 +51,9 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     private boolean mInitialized = false;
     private int mMessageCount = 0;
     private Activity mCurrentActivity;
+    private Application mApp;
+    private ConsentInformation mConsentInformation;
+    private boolean mConsentHandled = false;
 
     // Callback per rewarded ad
     public interface RewardedCallback {
@@ -52,7 +61,12 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
         void onRewardedFailed();
     }
 
+    public interface RewardedReadyListener {
+        void onRewardedReady();
+    }
+
     private RewardedCallback mRewardedCallback;
+    private RewardedReadyListener mRewardedReadyListener;
 
     private AdManager() {}
 
@@ -66,20 +80,132 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     // ── Initialization ──────────────────────────────────────────────
 
     public void init(Application app) {
-        if (mInitialized) return;
+        mApp = app;
+        app.registerActivityLifecycleCallbacks(this);
+    }
+
+    /**
+     * Richiede il consenso (UMP) prima di inizializzare MobileAds e precaricare gli annunci.
+     * Mostra il modulo di consenzi se richiesto (EEA/Regno Unito). onComplete viene chiamato
+     * al termine della gestione del consenso (modulo chiuso o non necessario).
+     */
+    public void initConsent(final Activity activity, final Runnable onComplete) {
+        if (mConsentHandled) {
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+        if (!mAdsEnabled || mApp == null) {
+            mConsentHandled = true;
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+
+        mConsentInformation = UserMessagingPlatform.getConsentInformation(mApp);
+
+        ConsentRequestParameters params = new ConsentRequestParameters.Builder()
+                .setTagForUnderAgeOfConsent(false)
+                .build();
+
+        mConsentInformation.requestConsentInfoUpdate(activity, params,
+                new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
+                    @Override
+                    public void onConsentInfoUpdateSuccess() {
+                        showConsentFormIfRequired(activity, onComplete);
+                    }
+                },
+                new ConsentInformation.OnConsentInfoUpdateFailureListener() {
+                    @Override
+                    public void onConsentInfoUpdateFailure(FormError formError) {
+                        // Procedi comunque: gli annunci saranno non personalizzati di default
+                        finishConsent(onComplete);
+                    }
+                });
+    }
+
+    private void showConsentFormIfRequired(final Activity activity, final Runnable onComplete) {
+        UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity,
+                new ConsentForm.OnConsentFormDismissedListener() {
+                    @Override
+                    public void onConsentFormDismissed(FormError formError) {
+                        finishConsent(onComplete);
+                    }
+                });
+    }
+
+    private void finishConsent(Runnable onComplete) {
+        mConsentHandled = true;
+        initMobileAds();
+        if (onComplete != null) onComplete.run();
+    }
+
+    /**
+     * @return true se l'utente deve poter riaprire il modulo privacy (EEA/Regno Unito, stato REQUIRED).
+     */
+    public boolean isPrivacyOptionsRequired() {
+        return mConsentInformation != null
+                && mConsentInformation.getPrivacyOptionsRequirementStatus()
+                    == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
+    }
+
+    /**
+     * Mostra il modulo "Gestisci consenso" per permettere all'utente di modificare/revocare
+     * le scelte sulla personalizzazione degli annunci.
+     */
+    public void showPrivacyOptionsForm(final Activity activity, final Runnable onComplete) {
+        if (mConsentInformation == null) {
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+        if (mConsentInformation.getPrivacyOptionsRequirementStatus()
+                != ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED) {
+            Toast.makeText(activity,
+                    "La gestione del consenso non è al momento disponibile.",
+                    Toast.LENGTH_SHORT).show();
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+        UserMessagingPlatform.loadConsentForm(
+                activity,
+                new UserMessagingPlatform.OnConsentFormLoadSuccessListener() {
+                    @Override
+                    public void onConsentFormLoadSuccess(ConsentForm form) {
+                        form.show(activity, new ConsentForm.OnConsentFormDismissedListener() {
+                            @Override
+                            public void onConsentFormDismissed(FormError formError) {
+                                if (formError != null) {
+                                    Toast.makeText(activity,
+                                            "Impossibile aprire il modulo consenso.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                if (onComplete != null) onComplete.run();
+                            }
+                        });
+                    }
+                },
+                new UserMessagingPlatform.OnConsentFormLoadFailureListener() {
+                    @Override
+                    public void onConsentFormLoadFailure(FormError formError) {
+                        Toast.makeText(activity,
+                                "Impossibile caricare il modulo consenso.",
+                                Toast.LENGTH_SHORT).show();
+                        if (onComplete != null) onComplete.run();
+                    }
+                });
+    }
+
+    private void initMobileAds() {
+        if (mInitialized || mApp == null) return;
         mInitialized = true;
 
-        MobileAds.initialize(app, new OnInitializationCompleteListener() {
+        MobileAds.initialize(mApp, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus status) {}
         });
 
-        app.registerActivityLifecycleCallbacks(this);
-
         // Preload ads
-        preloadInterstitial(app);
-        preloadRewarded(app);
-        preloadAppOpen(app);
+        preloadInterstitial(mApp);
+        preloadRewarded(mApp);
+        preloadAppOpen(mApp);
     }
 
     // ── Banner ──────────────────────────────────────────────────────
@@ -181,6 +307,9 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
                     @Override
                     public void onAdLoaded(@NonNull RewardedAd ad) {
                         mRewardedAd = ad;
+                        if (mRewardedReadyListener != null) {
+                            mRewardedReadyListener.onRewardedReady();
+                        }
                         mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                             @Override
                             public void onAdDismissedFullScreenContent() {
@@ -198,6 +327,10 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError error) {
                         mRewardedAd = null;
+                        if (context != null) {
+                            new android.os.Handler(android.os.Looper.getMainLooper())
+                                    .postDelayed(() -> preloadRewarded(context), 15000);
+                        }
                     }
                 });
     }
@@ -221,6 +354,13 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
     public boolean isRewardedReady() {
         return mRewardedAd != null && mAdsEnabled;
+    }
+
+    public void setRewardedReadyListener(RewardedReadyListener listener) {
+        mRewardedReadyListener = listener;
+        if (listener != null && isRewardedReady()) {
+            listener.onRewardedReady();
+        }
     }
 
     // ── App Open Ad ─────────────────────────────────────────────────

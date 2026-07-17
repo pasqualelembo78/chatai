@@ -32,8 +32,6 @@ public class OnboardingActivity extends Activity {
 
     private Button genderM, genderF, genderNB;
     private Button userGenderF, userGenderM, userGenderNB;
-    private android.widget.EditText userAgeInput;
-    private Button age18_24, age25_34, age35_44, age45_plus;
     private Button confirmButton;
     private TextView interestCounter;
 
@@ -56,12 +54,6 @@ public class OnboardingActivity extends Activity {
         userGenderF = findViewById(R.id.user_gender_f);
         userGenderM = findViewById(R.id.user_gender_m);
         userGenderNB = findViewById(R.id.user_gender_nb);
-        userAgeInput = findViewById(R.id.user_age_input);
-
-        age18_24 = findViewById(R.id.age_18_24);
-        age25_34 = findViewById(R.id.age_25_34);
-        age35_44 = findViewById(R.id.age_35_44);
-        age45_plus = findViewById(R.id.age_45_plus);
 
         confirmButton = findViewById(R.id.btn_onboarding_confirm);
         interestCounter = findViewById(R.id.interest_counter);
@@ -126,20 +118,6 @@ public class OnboardingActivity extends Activity {
         userGenderM.setOnClickListener(userGenderListener);
         userGenderNB.setOnClickListener(userGenderListener);
 
-        // Age listeners (single select)
-        View.OnClickListener ageListener = v -> {
-            resetAgeSelection();
-            selectChip((Button) v);
-            if (v == age18_24) selectedAge = "18-24";
-            else if (v == age25_34) selectedAge = "25-34";
-            else if (v == age35_44) selectedAge = "35-44";
-            else if (v == age45_plus) selectedAge = "45+";
-        };
-        age18_24.setOnClickListener(ageListener);
-        age25_34.setOnClickListener(ageListener);
-        age35_44.setOnClickListener(ageListener);
-        age45_plus.setOnClickListener(ageListener);
-
         // Tag listeners (multi select, max 3)
         for (Button btn : tagButtons) {
             btn.setOnClickListener(v -> {
@@ -180,14 +158,6 @@ public class OnboardingActivity extends Activity {
         userGender = null;
     }
 
-    private void resetAgeSelection() {
-        deselectChip(age18_24);
-        deselectChip(age25_34);
-        deselectChip(age35_44);
-        deselectChip(age45_plus);
-        selectedAge = null;
-    }
-
     private void selectChip(Button btn) {
         btn.setBackgroundTintList(
                 ColorStateList.valueOf(
@@ -221,9 +191,7 @@ public class OnboardingActivity extends Activity {
                     JSONObject prefs = new JSONObject(httpResp.body);
 
                     String savedGenderInterest = prefs.optString("gender_interest", "");
-                    String savedAgeRange = prefs.optString("age_range", "");
                     String savedUserGender = prefs.optString("user_gender", "");
-                    int savedUserAge = prefs.optInt("user_age", 0);
 
                     runOnUiThread(() -> {
                         // Restore gender_interest selection
@@ -242,22 +210,6 @@ public class OnboardingActivity extends Activity {
                             selectChip(userGenderM); userGender = "male";
                         } else if ("non-binary".equals(savedUserGender)) {
                             selectChip(userGenderNB); userGender = "non-binary";
-                        }
-
-                        // Restore user_age
-                        if (savedUserAge > 0) {
-                            userAgeInput.setText(String.valueOf(savedUserAge));
-                        }
-
-                        // Restore age_range selection
-                        if ("18-24".equals(savedAgeRange)) {
-                            selectChip(age18_24); selectedAge = "18-24";
-                        } else if ("25-34".equals(savedAgeRange)) {
-                            selectChip(age25_34); selectedAge = "25-34";
-                        } else if ("35-44".equals(savedAgeRange)) {
-                            selectChip(age35_44); selectedAge = "35-44";
-                        } else if ("45+".equals(savedAgeRange)) {
-                            selectChip(age45_plus); selectedAge = "45+";
                         }
 
                         // Restore interest tags
@@ -294,20 +246,8 @@ public class OnboardingActivity extends Activity {
 
                 JSONObject body = new JSONObject();
                 body.put("gender_interest", selectedGender);
-                if (selectedAge != null) {
-                    body.put("age_range", selectedAge);
-                }
                 if (userGender != null) {
                     body.put("user_gender", userGender);
-                }
-                String ageText = userAgeInput.getText().toString().trim();
-                if (!ageText.isEmpty()) {
-                    try {
-                        int age = Integer.parseInt(ageText);
-                        if (age >= 18 && age <= 100) {
-                            body.put("user_age", age);
-                        }
-                    } catch (NumberFormatException ignored) {}
                 }
                 JSONArray interestsArr = new JSONArray();
                 for (String s : selectedInterests) {

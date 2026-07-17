@@ -25,6 +25,7 @@ from storage import (
 from evolution_engine import evaluate_evolution
 from prompt_builder import build_messages
 from ai_engine import get_ai_response
+from content_safety import moderate_output
 import ai_engine
 import image_utils
 import security_utils
@@ -182,6 +183,7 @@ def register_socket_handlers(sio):
         }, room=sid)
         mem_updates = result.get("memory_updates", {})
         evo_updates = result.get("evo_updates", {})
+        result["ai_text"] = moderate_output(result.get("ai_text", ""))[0]
         response_data = {
             "username": result["character"].get("name", "AI"),
             "message": result["ai_text"],
@@ -282,6 +284,7 @@ def register_socket_handlers(sio):
                                      image_base64=image_b64, image_mime=image_mime,
                                      is_favorite=data.get("is_favorite", False))
             if result:
+                result["ai_text"] = moderate_output(result.get("ai_text", ""))[0]
                 payload = {
                     "username": character["name"],
                     "message": result["ai_text"],
@@ -511,6 +514,8 @@ def register_socket_handlers(sio):
             ai_provider = "fallback"
             is_fallback = True
             await sio.emit("stream token", {"token": f"[fallback] {ai_text}", "text": f"[fallback] {ai_text}"}, room=sid)
+
+        ai_text, _blocked = moderate_output(ai_text)
 
         add_message(user_id, character_id, "assistant", ai_text)
 

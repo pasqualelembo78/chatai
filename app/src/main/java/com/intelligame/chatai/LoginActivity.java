@@ -3,7 +3,6 @@ package com.intelligame.chatai;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -15,13 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONObject;
 
@@ -32,15 +25,11 @@ import java.net.URL;
 
 public class LoginActivity extends Activity {
 
-    private static final int RC_GOOGLE_SIGN_IN = 100;
-
-    private SignInButton mGoogleSignInButton;
     private EditText mUsernameView;
     private EditText mEmailView;
     private EditText mPasswordView;
     private EditText mServerUrlView;
     private EditText mReferralCodeView;
-    private EditText mBirthDateView;
     private CheckBox mAgeConfirmCheckbox;
     private Button mLoginButton;
     private TextView mToggleAuthMode;
@@ -48,8 +37,6 @@ public class LoginActivity extends Activity {
 
     private AuthManager mAuth;
     private PrefsManager mPrefs;
-    private GoogleSignInClient mGoogleSignInClient;
-    private String mGoogleClientId;
     private boolean mIsSignupMode = false;
 
     @Override
@@ -74,15 +61,11 @@ public class LoginActivity extends Activity {
     }
 
     private void initViews() {
-        mGoogleSignInButton = findViewById(R.id.google_sign_in_button);
-        mGoogleSignInButton.setVisibility(View.GONE);
-
         mUsernameView = findViewById(R.id.username_input);
         mEmailView = findViewById(R.id.email_input);
         mPasswordView = findViewById(R.id.password_input);
         mServerUrlView = findViewById(R.id.server_url_input);
         mReferralCodeView = findViewById(R.id.referral_code_input);
-        mBirthDateView = findViewById(R.id.birth_date_input);
         mAgeConfirmCheckbox = findViewById(R.id.age_confirm_checkbox);
         mLoginButton = findViewById(R.id.login_button);
         mProgressBar = findViewById(R.id.auth_progress);
@@ -109,8 +92,6 @@ public class LoginActivity extends Activity {
         if (!savedUsername.isEmpty() && !savedUsername.startsWith("user_")) {
             mUsernameView.setText(savedUsername);
         }
-
-        fetchGoogleClientId();
     }
 
     private void toggleAuthMode() {
@@ -119,13 +100,11 @@ public class LoginActivity extends Activity {
             mLoginButton.setText("REGISTRATI");
             mToggleAuthMode.setText("Hai già account? Accedi");
             mEmailView.setVisibility(View.VISIBLE);
-            mBirthDateView.setVisibility(View.VISIBLE);
             mAgeConfirmCheckbox.setVisibility(View.VISIBLE);
         } else {
             mLoginButton.setText("ACCEDI");
             mToggleAuthMode.setText("Non hai account? Registrati");
             mEmailView.setVisibility(View.GONE);
-            mBirthDateView.setVisibility(View.GONE);
             mAgeConfirmCheckbox.setVisibility(View.GONE);
         }
     }
@@ -211,18 +190,14 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        // Age verification: must confirm 18+ and provide a valid birth date.
+        // Age verification: basta confermare di essere maggiorenni.
         if (!mAgeConfirmCheckbox.isChecked()) {
             Toast.makeText(LoginActivity.this,
                     "Devi confermare di avere almeno 18 anni.", Toast.LENGTH_LONG).show();
             setLoading(false);
             return;
         }
-        final String birthDate = parseAndValidateBirthDate();
-        if (birthDate == null) {
-            setLoading(false);
-            return;
-        }
+        final String birthDate = getAdultBirthDate();
 
         setLoading(true);
         final String serverUrl = getEffectiveServerUrl();
@@ -251,79 +226,6 @@ public class LoginActivity extends Activity {
                 });
     }
 
-    private void fetchGoogleClientId() {
-        new Thread(() -> {
-            try {
-                String serverUrl = getEffectiveServerUrl();
-                URL url = new URL(serverUrl + "/auth/google/client-id");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(5000);
-                int code = conn.getResponseCode();
-                if (code == 200) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder resp = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) resp.append(line);
-                    reader.close();
-                    conn.disconnect();
-                    JSONObject obj = new JSONObject(resp.toString());
-                    mGoogleClientId = obj.optString("client_id", "");
-                    runOnUiThread(() -> {
-                        if (!mGoogleClientId.isEmpty()) {
-                            mGoogleSignInButton.setVisibility(View.VISIBLE);
-                            mGoogleSignInButton.setOnClickListener(v -> signInWithGoogle());
-                        }
-                    });
-                }
-            } catch (Exception ignored) {}
-        }).start();
-    }
-
-    private void signInWithGoogle() {
-        if (mGoogleClientId == null || mGoogleClientId.isEmpty()) {
-            Toast.makeText(this,
-                    "Google Sign-In non disponibile. Usa l'accesso senza password.",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(mGoogleClientId)
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_GOOGLE_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                String idToken = account.getIdToken();
-                if (idToken != null) {
-                    final String serverUrl = getEffectiveServerUrl();
-                    final String referralCode = mReferralCodeView.getText().toString().trim();
-                    setLoading(true);
-                    mAuth.loginWithGoogle(idToken, serverUrl,
-                            referralCode.isEmpty() ? null : referralCode, null,
-                            googleAuthCallback(idToken, serverUrl,
-                                    referralCode.isEmpty() ? null : referralCode, true));
-                } else {
-                    Toast.makeText(this, "Errore: id_token nullo", Toast.LENGTH_SHORT).show();
-                }
-            } catch (ApiException e) {
-                setLoading(false);
-                Toast.makeText(this, "Google Sign-In fallito: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     private String getEffectiveServerUrl() {
         String url = mServerUrlView.getText().toString().trim();
         if (url.isEmpty()) {
@@ -332,131 +234,10 @@ public class LoginActivity extends Activity {
         return url;
     }
 
-    private String parseAndValidateBirthDate() {
-        String raw = mBirthDateView.getText().toString().trim();
-        if (raw.isEmpty()) {
-            mBirthDateView.setError("Inserisci la data di nascita");
-            mBirthDateView.requestFocus();
-            return null;
-        }
-        java.text.DateFormat[] fmts = {
-                new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.ITALY),
-                new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY)
-        };
-        java.util.Date birth = null;
-        for (java.text.DateFormat f : fmts) {
-            try { birth = f.parse(raw); break; } catch (Exception ignored) {}
-        }
-        if (birth == null) {
-            mBirthDateView.setError("Formato non valido (GG/MM/AAAA)");
-            mBirthDateView.requestFocus();
-            return null;
-        }
-        java.util.Calendar b = java.util.Calendar.getInstance();
-        b.setTime(birth);
-        java.util.Calendar now = java.util.Calendar.getInstance();
-        int age = now.get(java.util.Calendar.YEAR) - b.get(java.util.Calendar.YEAR);
-        if (now.get(java.util.Calendar.DAY_OF_YEAR) < b.get(java.util.Calendar.DAY_OF_YEAR)) {
-            age--;
-        }
-        if (age < 18) {
-            Toast.makeText(LoginActivity.this,
-                    "L'iscrizione è riservata agli utenti di almeno 18 anni.",
-                    Toast.LENGTH_LONG).show();
-            return null;
-        }
-        return new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY).format(birth);
-    }
-
-    private String validateBirthDateString(String raw) {
-        if (raw.isEmpty()) {
-            Toast.makeText(this, "Inserisci la data di nascita", Toast.LENGTH_LONG).show();
-            return null;
-        }
-        java.text.DateFormat[] fmts = {
-                new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.ITALY),
-                new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY)
-        };
-        java.util.Date birth = null;
-        for (java.text.DateFormat f : fmts) {
-            try { birth = f.parse(raw); break; } catch (Exception ignored) {}
-        }
-        if (birth == null) {
-            Toast.makeText(this, "Formato non valido (GG/MM/AAAA)", Toast.LENGTH_LONG).show();
-            return null;
-        }
-        java.util.Calendar b = java.util.Calendar.getInstance();
-        b.setTime(birth);
-        java.util.Calendar now = java.util.Calendar.getInstance();
-        int age = now.get(java.util.Calendar.YEAR) - b.get(java.util.Calendar.YEAR);
-        if (now.get(java.util.Calendar.DAY_OF_YEAR) < b.get(java.util.Calendar.DAY_OF_YEAR)) {
-            age--;
-        }
-        if (age < 18) {
-            Toast.makeText(this, "L'iscrizione è riservata agli utenti di almeno 18 anni.", Toast.LENGTH_LONG).show();
-            return null;
-        }
-        return new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY).format(birth);
-    }
-
-    private AuthManager.AuthCallback googleAuthCallback(final String idToken, final String serverUrl,
-                                                        final String referralCode, final boolean allowAgePrompt) {
-        return new AuthManager.AuthCallback() {
-            @Override
-            public void onSuccess(String accessToken, String refreshToken, String userId, String username, String role, String email) {
-                runOnUiThread(() -> {
-                    setLoading(false);
-                    saveServerUrl(serverUrl);
-                    Toast.makeText(LoginActivity.this,
-                            "Benvenuto, " + username + "!", Toast.LENGTH_SHORT).show();
-                    checkAndRedirect(serverUrl);
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> {
-                    String e = error == null ? "" : error.toLowerCase();
-                    if (allowAgePrompt && (e.contains("18") || e.contains("età")
-                            || e.contains("minoren") || e.contains("riservata"))) {
-                        showGoogleAgeDialog(idToken, serverUrl, referralCode);
-                    } else {
-                        setLoading(false);
-                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        };
-    }
-
-    private void showGoogleAgeDialog(final String idToken, final String serverUrl, final String referralCode) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("Verifica età (obbligatoria)");
-        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
-        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.setPadding(50, 40, 50, 10);
-        final android.widget.EditText dob = new android.widget.EditText(this);
-        dob.setHint("Data di nascita (GG/MM/AAAA)");
-        dob.setInputType(InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE);
-        final android.widget.CheckBox cb = new android.widget.CheckBox(this);
-        cb.setText("Confermo di avere almeno 18 anni");
-        layout.addView(dob);
-        layout.addView(cb);
-        builder.setView(layout);
-        builder.setCancelable(false);
-        builder.setPositiveButton("CONFERMA", (d, w) -> {
-            if (!cb.isChecked()) {
-                Toast.makeText(LoginActivity.this,
-                        "Devi confermare di avere almeno 18 anni.", Toast.LENGTH_LONG).show();
-                return;
-            }
-            String bd = validateBirthDateString(dob.getText().toString().trim());
-            if (bd == null) return;
-            mAuth.loginWithGoogle(idToken, serverUrl, referralCode, bd,
-                    googleAuthCallback(idToken, serverUrl, referralCode, false));
-        });
-        builder.setNegativeButton("ANNULLA", (d, w) -> setLoading(false));
-        builder.show();
+    private String getAdultBirthDate() {
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        c.add(java.util.Calendar.YEAR, -18);
+        return new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY).format(c.getTime());
     }
 
     private void saveServerUrl(String url) {
@@ -476,7 +257,7 @@ public class LoginActivity extends Activity {
                 .setMessage(
                         "Aria raccoglie i seguenti dati:\n\n"
                         + "• Username — scelto all'accesso\n"
-                        + "• Email — solo se utilizzi Google Sign-In\n"
+                        + "• Email — utilizzata per la registrazione e il recupero account\n"
                         + "• Messaggi di chat — testo delle conversazioni\n"
                         + "• Audio — solo per trascrizione vocale, cancellato dopo 5 minuti\n"
                         + "• Immagini — solo per descrizione AI, cancellate dopo 5 minuti\n\n"

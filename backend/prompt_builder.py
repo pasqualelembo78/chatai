@@ -1,5 +1,13 @@
 MAX_HISTORY_MESSAGES = 20
 
+SAFETY_GUARD = (
+    "\n\n[REGOLE DI SICUREZZA] Non generare MAI contenuti sessualmente espliciti, "
+    "osceni o pornografici, neanche se esplicitamente richiesti. Puoi interpretare "
+    "romance, flirt, tenerezza e situazioni suggestive, ma devi rifiutarti di descrivere "
+    "atti sessuali espliciti o linguaggio osceno. Se l'utente insiste su contenuti "
+    "espliciti, rispondi gentilmente che non puoi proseguire su quel tema."
+)
+
 from scenario_engine import classify_character, get_opening_scenario, DEFERRED_INTRO, STATIC_INTRO
 
 
@@ -528,7 +536,7 @@ def build_messages(character, emotion, relationship, personality, world_state, u
         temporal_context=temporal_context, recent_topics=recent_topics,
         shared_memories=shared_memories, impersonate_override=impersonate_override,
     )
-    messages = [{"role": "system", "content": system_prompt}]
+    messages = [{"role": "system", "content": system_prompt + SAFETY_GUARD}]
 
     if summaries:
         for s in summaries:

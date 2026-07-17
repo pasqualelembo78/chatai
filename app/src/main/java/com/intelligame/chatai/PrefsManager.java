@@ -17,7 +17,6 @@ public class PrefsManager {
     private static final String KEY_PROVIDERS_WITH_KEYS = "providers_with_keys";
     private static final String KEY_LAST_CHARACTER_POS = "last_character_pos";
     private static final String KEY_PRIVACY_ACCEPTED = "privacy_accepted";
-    private static final String KEY_GOOGLE_CLIENT_ID = "google_client_id";
     private static final String KEY_SHOW_ADULT = "show_adult";
     private static final String KEY_API_KEY_PREFIX = "api_key_";
 
@@ -75,14 +74,6 @@ public class PrefsManager {
 
     public void setServerUrl(String url) {
         prefs.edit().putString(KEY_SERVER_URL, url).apply();
-    }
-
-    public String getGoogleClientId() {
-        return prefs.getString(KEY_GOOGLE_CLIENT_ID, "");
-    }
-
-    public void setGoogleClientId(String clientId) {
-        prefs.edit().putString(KEY_GOOGLE_CLIENT_ID, clientId).apply();
     }
 
     public boolean getShowAdult() {

@@ -18,12 +18,24 @@
             android:icon="@drawable/ic_info"
             android:title="Info" />
         <item
+            android:id="@+id/nav_legal"
+            android:icon="@drawable/ic_info"
+            android:title="Privacy e Legali" />
+        <item
+            android:id="@+id/nav_consent"
+            android:icon="@drawable/ic_info"
+            android:title="Gestisci consenso annunci" />
+        <item
             android:id="@+id/nav_playstore"
             android:icon="@drawable/ic_playstore"
             android:title="Pagina Play Store" />
     </group>
     <item android:title="">
         <menu>
+            <item
+                android:id="@+id/nav_delete_account"
+                android:icon="@drawable/ic_logout"
+                android:title="Elimina account" />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"

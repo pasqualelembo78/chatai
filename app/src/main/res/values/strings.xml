@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Aria - AI Chat</string>
+    <string name="splash_loading">Caricamento…</string>
     <string name="action_leave">Leave</string>
     <string name="action_send">Send</string>
     <string name="action_settings">Settings</string>

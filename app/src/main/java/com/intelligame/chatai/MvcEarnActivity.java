@@ -77,6 +77,9 @@ public class MvcEarnActivity extends AppCompatActivity {
         btnWatchAd.setOnClickListener(v -> showRewardedAd());
         updateRewardedButton();
 
+        app.getAdManager().setRewardedReadyListener(() ->
+                mainHandler.post(MvcEarnActivity.this::updateRewardedButton));
+
         btnUnlockCategories.setOnClickListener(v -> showCategoryDialog());
         btnUnlockImageGen.setOnClickListener(v -> attemptUnlockFeature("image_gen", 50, "Generazione Immagini"));
         btnUnlockVideoGen.setOnClickListener(v -> attemptUnlockFeature("video_gen", 100, "Generazione Video"));
@@ -90,6 +93,7 @@ public class MvcEarnActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ((ChatApplication) getApplication()).getAdManager().setRewardedReadyListener(null);
         if (executor != null) executor.shutdownNow();
     }
 

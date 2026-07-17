@@ -78,6 +78,13 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize">
         </activity>
+
+        <activity
+            android:name=".LegalActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

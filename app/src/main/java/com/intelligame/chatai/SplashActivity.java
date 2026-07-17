@@ -5,20 +5,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.VideoView;
-import android.widget.MediaController;
 import android.app.Activity;
 import android.view.WindowManager;
+import android.widget.VideoView;
 
 public class SplashActivity extends Activity {
 
-    private static final int SPLASH_DURATION_MS = 3000;
+    private static final int SPLASH_DURATION_MS = 5000;
+
+    private boolean mCanProceed = false;
+    private boolean mConsentDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Fullscreen
         getWindow().setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -33,10 +34,25 @@ public class SplashActivity extends Activity {
             videoView.start();
         });
 
+        ((ChatApplication) getApplication()).getAdManager().initConsent(this, new Runnable() {
+            @Override
+            public void run() {
+                mConsentDone = true;
+                maybeProceed();
+            }
+        });
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            mCanProceed = true;
+            maybeProceed();
+        }, SPLASH_DURATION_MS);
+    }
+
+    private void maybeProceed() {
+        if (mCanProceed && mConsentDone && !isFinishing()) {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        }, SPLASH_DURATION_MS);
+        }
     }
 }
