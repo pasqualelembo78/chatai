@@ -42,6 +42,11 @@ class DuplicatesRequest(BaseModel):
     filepath: str = "backend/characters.py"
 
 
+class AvatarGenRequest(BaseModel):
+    limit: int = 50
+    force: bool = False
+
+
 class RoleRequest(BaseModel):
     role: str = "user"
 
@@ -148,6 +153,24 @@ async def admin_clean_duplicates(request: Request, body: DuplicatesRequest, user
               request.client.host if request.client else "",
               request.headers.get("User-Agent", ""))
     return result
+
+
+@router.post("/avatars/generate")
+async def admin_avatars_generate(request: Request, body: AvatarGenRequest, user: AuthUser = Depends(admin_required)):
+    from avatar_gen_runner import start_avatar_generation
+    result = start_avatar_generation(limit=body.limit, force=body.force)
+    if "error" in result:
+        raise HTTPException(400, result["error"])
+    audit_log(user.user_id, "admin.avatars_generate", f"limit={body.limit} force={body.force}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return result
+
+
+@router.get("/avatars/status")
+async def admin_avatars_status(user: AuthUser = Depends(admin_required)):
+    from avatar_gen_runner import get_avatar_status
+    return get_avatar_status()
 
 
 @router.get("/stats")

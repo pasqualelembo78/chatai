@@ -33,13 +33,17 @@ import java.util.concurrent.Executors;
 public class ImportActivity extends AppCompatActivity {
 
     private LinearLayout sourcesContainer;
-    private TextInputEditText fieldCount, fieldGenre;
+    private TextInputEditText fieldCount, fieldGenre, fieldAvatarLimit;
     private Spinner spinnerPreset;
-    private MaterialButton btnImport, btnScanDuplicates, btnCleanDuplicates;
+    private MaterialButton btnImport, btnScanDuplicates, btnCleanDuplicates, btnGenerateAvatars;
     private ProgressBar progressBar;
     private TextView progressText, progressStats, resultTitle, resultDetails;
     private TextView duplicatesCount, duplicatesDetails;
     private LinearLayout progressSection, resultSection, duplicatesResult;
+
+    private ProgressBar progressBarAvatar;
+    private TextView progressTextAvatar, progressStatsAvatar, resultTitleAvatar, resultDetailsAvatar;
+    private LinearLayout progressSectionAvatar, resultSectionAvatar;
 
     private String baseUrl;
     private String selectedSource = "charactercodex";
@@ -49,6 +53,9 @@ public class ImportActivity extends AppCompatActivity {
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private boolean isImporting = false;
     private Runnable progressRunnable;
+
+    private boolean isGeneratingAvatars = false;
+    private Runnable avatarProgressRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +86,21 @@ public class ImportActivity extends AppCompatActivity {
         resultSection = findViewById(R.id.result_section);
         duplicatesResult = findViewById(R.id.duplicates_result);
 
+        fieldAvatarLimit = findViewById(R.id.field_avatar_limit);
+        btnGenerateAvatars = findViewById(R.id.btn_generate_avatars);
+        progressBarAvatar = findViewById(R.id.progress_bar_avatar);
+        progressTextAvatar = findViewById(R.id.progress_text_avatar);
+        progressStatsAvatar = findViewById(R.id.progress_stats_avatar);
+        progressSectionAvatar = findViewById(R.id.progress_section_avatar);
+        resultSectionAvatar = findViewById(R.id.result_section_avatar);
+        resultTitleAvatar = findViewById(R.id.result_title_avatar);
+        resultDetailsAvatar = findViewById(R.id.result_details_avatar);
+
         btnBack.setOnClickListener(v -> finish());
         btnImport.setOnClickListener(v -> startImport());
         btnScanDuplicates.setOnClickListener(v -> scanDuplicates());
         btnCleanDuplicates.setOnClickListener(v -> cleanDuplicates());
+        btnGenerateAvatars.setOnClickListener(v -> generateAvatars());
 
         // Preset counts
         String[] presets = {"100", "500", "1000", "2000", "5000", "10000", "Tutti"};
@@ -299,6 +317,125 @@ public class ImportActivity extends AppCompatActivity {
             }
         };
         mainHandler.postDelayed(progressRunnable, 1000);
+    }
+
+    private void generateAvatars() {
+        if (isGeneratingAvatars) return;
+
+        String limitStr = fieldAvatarLimit.getText().toString().trim();
+        int limit = limitStr.isEmpty() ? 50 : Integer.parseInt(limitStr);
+
+        isGeneratingAvatars = true;
+        btnGenerateAvatars.setEnabled(false);
+        btnGenerateAvatars.setText("Generazione in corso...");
+        progressSectionAvatar.setVisibility(View.VISIBLE);
+        resultSectionAvatar.setVisibility(View.GONE);
+        progressBarAvatar.setProgress(0);
+        progressTextAvatar.setText("Avvio generazione avatar...");
+
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("limit", limit);
+
+                String response = httpPost(baseUrl + "/admin/avatars/generate", body.toString());
+                if (response == null) {
+                    mainHandler.post(() -> {
+                        isGeneratingAvatars = false;
+                        btnGenerateAvatars.setEnabled(true);
+                        btnGenerateAvatars.setText("Genera Avatar (Bio + Scenario)");
+                        Snackbar.make(findViewById(android.R.id.content),
+                            "Errore: impossibile avviare la generazione", Snackbar.LENGTH_LONG).show();
+                    });
+                    return;
+                }
+
+                startAvatarPolling();
+
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    isGeneratingAvatars = false;
+                    btnGenerateAvatars.setEnabled(true);
+                    btnGenerateAvatars.setText("Genera Avatar (Bio + Scenario)");
+                    Snackbar.make(findViewById(android.R.id.content),
+                        "Errore: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+                });
+            }
+        });
+    }
+
+    private void startAvatarPolling() {
+        avatarProgressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!isGeneratingAvatars) return;
+
+                executor.execute(() -> {
+                    try {
+                        String json = httpGet(baseUrl + "/admin/avatars/status");
+                        if (json != null) {
+                            JSONObject status = new JSONObject(json);
+                            boolean running = status.optBoolean("running", false);
+                            int progress = status.optInt("progress", 0);
+                            int total = status.optInt("total", 0);
+                            int generated = status.optInt("generated", 0);
+                            int bios = status.optInt("bios", 0);
+                            int errors = status.optInt("errors", 0);
+                            String message = status.optString("message", "");
+
+                            mainHandler.post(() -> {
+                                if (total > 0) {
+                                    int pct = (int) ((progress * 100.0) / total);
+                                    progressBarAvatar.setProgress(pct);
+                                } else {
+                                    progressBarAvatar.setIndeterminate(true);
+                                }
+                                progressTextAvatar.setText(message);
+                                progressStatsAvatar.setText(String.format(
+                                    "Avatar: %d/%d | Bio: %d | Errori: %d",
+                                    generated, total, bios, errors));
+
+                                if (!running) {
+                                    isGeneratingAvatars = false;
+                                    btnGenerateAvatars.setEnabled(true);
+                                    btnGenerateAvatars.setText("Genera Avatar (Bio + Scenario)");
+                                    progressBarAvatar.setIndeterminate(false);
+                                    showAvatarResult(status);
+                                } else {
+                                    mainHandler.postDelayed(this, 2000);
+                                }
+                            });
+                        } else {
+                            mainHandler.postDelayed(this, 2000);
+                        }
+                    } catch (Exception e) {
+                        mainHandler.postDelayed(this, 3000);
+                    }
+                });
+            }
+        };
+        mainHandler.postDelayed(avatarProgressRunnable, 1000);
+    }
+
+    private void showAvatarResult(JSONObject status) {
+        resultSectionAvatar.setVisibility(View.VISIBLE);
+        int generated = status.optInt("generated", 0);
+        int bios = status.optInt("bios", 0);
+        int errors = status.optInt("errors", 0);
+
+        if (generated > 0) {
+            resultTitleAvatar.setText("✅ Avatar generati!");
+            resultTitleAvatar.setTextColor(getResources().getColor(R.color.status_connected));
+        } else {
+            resultTitleAvatar.setText("Nessun avatar generato");
+            resultTitleAvatar.setTextColor(getResources().getColor(R.color.status_warning));
+        }
+
+        StringBuilder details = new StringBuilder();
+        details.append("Avatar: ").append(generated).append("\n");
+        details.append("Biografie: ").append(bios).append("\n");
+        details.append("Errori: ").append(errors);
+        resultDetailsAvatar.setText(details.toString());
     }
 
     private void showResult(JSONObject status) {
