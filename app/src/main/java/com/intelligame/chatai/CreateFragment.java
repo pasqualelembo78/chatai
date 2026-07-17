@@ -43,7 +43,7 @@ public class CreateFragment extends Fragment {
     private MaterialButton btnCreate;
     private TextView statusText;
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private AuthManager mAuth;
 

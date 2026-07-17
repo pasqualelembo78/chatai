@@ -47,7 +47,7 @@ public class MvcEarnActivity extends AppCompatActivity {
 
     private String baseUrl;
     private AuthManager mAuth;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override

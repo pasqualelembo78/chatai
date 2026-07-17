@@ -36,7 +36,7 @@ public class GroupChatListFragment extends Fragment {
     private RecyclerView groupChatList;
     private TextView emptyText;
     private ProgressBar loadingBar;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private AuthManager mAuth;
     private String baseUrl;
@@ -490,7 +490,7 @@ public class GroupChatListFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (executor == null || executor.isShutdown()) {
-            executor = Executors.newSingleThreadExecutor();
+            executor = new SafeExecutor();
         }
     }
 

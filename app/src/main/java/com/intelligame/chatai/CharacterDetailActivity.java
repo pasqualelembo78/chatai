@@ -71,7 +71,7 @@ public class CharacterDetailActivity extends AppCompatActivity {
     private String currentEmoji;
     private boolean isFavorite = false;
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = new SafeExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override

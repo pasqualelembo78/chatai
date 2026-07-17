@@ -54,7 +54,7 @@ public class GroupChatFragment extends Fragment {
     private List<MessageItem> messages = new ArrayList<>();
     private Map<String, String> charIdToName = new HashMap<>();
     private Map<String, String> userIdToName = new HashMap<>();
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private volatile boolean sending = false;
     private volatile boolean isCancelled = false;
@@ -693,7 +693,7 @@ public class GroupChatFragment extends Fragment {
         super.onStart();
         isCancelled = false;
         if (executor == null || executor.isShutdown()) {
-            executor = Executors.newSingleThreadExecutor();
+            executor = new SafeExecutor();
         }
     }
 

@@ -1,6 +1,7 @@
 package com.intelligame.chatai;
 
 import android.app.Application;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -21,6 +22,9 @@ public class ChatApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        int nightMode = getSharedPreferences("chatai_theme", MODE_PRIVATE)
+            .getInt("night_mode", AppCompatDelegate.MODE_NIGHT_YES);
+        AppCompatDelegate.setDefaultNightMode(nightMode);
         mPrefs = new PrefsManager(this);
         mLocalDb = new LocalDatabaseHelper(this);
         mCurrentUrl = mPrefs.getServerUrl();

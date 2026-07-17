@@ -1413,5 +1413,317 @@
     "ts": "2026-07-16T05:26:58",
     "bio": true,
     "scenario": true
+  },
+  "hikaru_shindou_hf4403": {
+    "avatar": true,
+    "ts": "2026-07-17T04:20:04",
+    "bio": true,
+    "scenario": true
+  },
+  "nero_vanetti_hf4432": {
+    "avatar": true,
+    "ts": "2026-07-17T04:20:49",
+    "bio": true,
+    "scenario": true
+  },
+  "toru_oikawa_hf4479": {
+    "avatar": true,
+    "ts": "2026-07-17T04:21:34",
+    "bio": true,
+    "scenario": true
+  },
+  "haru_hf4483": {
+    "avatar": true,
+    "ts": "2026-07-17T04:22:19",
+    "bio": true,
+    "scenario": true
+  },
+  "naofumi_iwatani_hf4497": {
+    "avatar": true,
+    "ts": "2026-07-17T04:23:04",
+    "bio": true,
+    "scenario": true
+  },
+  "sakura_hf4523": {
+    "avatar": true,
+    "ts": "2026-07-17T04:23:49",
+    "bio": true,
+    "scenario": true
+  },
+  "mizuki_ashiya_hf4528": {
+    "avatar": true,
+    "ts": "2026-07-17T04:24:35",
+    "bio": true,
+    "scenario": true
+  },
+  "william_james_moriarty_hf4550": {
+    "avatar": true,
+    "ts": "2026-07-17T04:25:20",
+    "bio": true,
+    "scenario": true
+  },
+  "slaine_troyard_hf4566": {
+    "avatar": true,
+    "ts": "2026-07-17T04:26:03",
+    "bio": true,
+    "scenario": true
+  },
+  "hayao_miyazaki_hf4568": {
+    "avatar": true,
+    "ts": "2026-07-17T04:26:49",
+    "bio": true,
+    "scenario": true
+  },
+  "ukyo_saionji_hf4597": {
+    "avatar": true,
+    "ts": "2026-07-17T04:27:34",
+    "bio": true,
+    "scenario": true
+  },
+  "akira_okuzaki_hf4598": {
+    "avatar": true,
+    "ts": "2026-07-17T04:28:19",
+    "bio": true,
+    "scenario": true
+  },
+  "sesshomaru_hf4599": {
+    "avatar": true,
+    "ts": "2026-07-17T04:29:08",
+    "bio": true,
+    "scenario": true
+  },
+  "genta_shinken_gold_hf4603": {
+    "avatar": true,
+    "ts": "2026-07-17T04:29:49",
+    "bio": true,
+    "scenario": true
+  },
+  "rinko_yamato_hf4632": {
+    "avatar": true,
+    "ts": "2026-07-17T04:30:34",
+    "bio": true,
+    "scenario": true
+  },
+  "akane_tendo_hf4686": {
+    "avatar": true,
+    "ts": "2026-07-17T04:31:19",
+    "bio": true,
+    "scenario": true
+  },
+  "starscream_hf4716": {
+    "avatar": true,
+    "ts": "2026-07-17T04:32:04",
+    "bio": true,
+    "scenario": true
+  },
+  "makoto_ariga_hf4721": {
+    "avatar": true,
+    "ts": "2026-07-17T04:32:49",
+    "bio": true,
+    "scenario": true
+  },
+  "hanamichi_sakuragi_hf4724": {
+    "avatar": true,
+    "ts": "2026-07-17T04:33:34",
+    "bio": true,
+    "scenario": true
+  },
+  "haruka_nanami_hf4726": {
+    "avatar": true,
+    "ts": "2026-07-17T04:34:25",
+    "bio": true,
+    "scenario": true
+  },
+  "otohime_hf4733": {
+    "avatar": true,
+    "ts": "2026-07-17T04:35:10",
+    "bio": true,
+    "scenario": true
+  },
+  "rem_hf4735": {
+    "avatar": true,
+    "ts": "2026-07-17T04:35:53",
+    "bio": true,
+    "scenario": true
+  },
+  "reborn_hf4751": {
+    "avatar": true,
+    "ts": "2026-07-17T04:36:34",
+    "bio": true,
+    "scenario": true
+  },
+  "yoshihiro_togashi_hf4755": {
+    "avatar": true,
+    "ts": "2026-07-17T04:37:19",
+    "bio": true,
+    "scenario": true
+  },
+  "sanemi_shinazugawa_hf4788": {
+    "avatar": true,
+    "ts": "2026-07-17T04:38:04",
+    "bio": true,
+    "scenario": true
+  },
+  "rukia_kuchiki_hf4816": {
+    "avatar": true,
+    "ts": "2026-07-17T04:38:49",
+    "bio": true,
+    "scenario": true
+  },
+  "nobita_nobi_hf4827": {
+    "avatar": true,
+    "ts": "2026-07-17T04:39:34",
+    "bio": true,
+    "scenario": true
+  },
+  "satou_matsuzaka_hf4853": {
+    "avatar": true,
+    "ts": "2026-07-17T04:40:19",
+    "bio": true,
+    "scenario": true
+  },
+  "kobeni_yonomori_hf4864": {
+    "avatar": true,
+    "ts": "2026-07-17T04:41:05",
+    "bio": true,
+    "scenario": true
+  },
+  "luna_hf4887": {
+    "avatar": true,
+    "ts": "2026-07-17T04:41:49",
+    "bio": true,
+    "scenario": true
+  },
+  "keiji_nakazawa_hf4891": {
+    "avatar": true,
+    "ts": "2026-07-17T04:42:34",
+    "bio": true,
+    "scenario": true
+  },
+  "shoto_todoroki_hf4901": {
+    "avatar": true,
+    "ts": "2026-07-17T04:43:19",
+    "bio": true,
+    "scenario": true
+  },
+  "shiki_senri_hf4930": {
+    "avatar": true,
+    "ts": "2026-07-17T04:44:04",
+    "bio": true,
+    "scenario": true
+  },
+  "rei_ogami_hf4942": {
+    "avatar": true,
+    "ts": "2026-07-17T04:44:49",
+    "bio": true,
+    "scenario": true
+  },
+  "shigeo_mob_kageyama_hf4946": {
+    "avatar": true,
+    "ts": "2026-07-17T04:45:34",
+    "bio": true,
+    "scenario": true
+  },
+  "kyo_hf4949": {
+    "avatar": true,
+    "ts": "2026-07-17T04:46:19",
+    "bio": true,
+    "scenario": true
+  },
+  "tsukimi_kurashita_hf4983": {
+    "avatar": true,
+    "ts": "2026-07-17T04:47:04",
+    "bio": true,
+    "scenario": true
+  },
+  "yuko_kanoe_hf4998": {
+    "avatar": true,
+    "ts": "2026-07-17T04:47:49",
+    "bio": true,
+    "scenario": true
+  },
+  "ceo_riccardo": {
+    "avatar": true,
+    "ts": "2026-07-17T04:48:34",
+    "bio": true,
+    "scenario": true
+  },
+  "coach_martina": {
+    "avatar": true,
+    "ts": "2026-07-17T04:49:19",
+    "bio": true,
+    "scenario": true
+  },
+  "kenneth_parcell_hf709": {
+    "avatar": true,
+    "ts": "2026-07-17T04:50:04",
+    "bio": true,
+    "scenario": true
+  },
+  "jerry_gergich_garry_larry_terry_hf1544": {
+    "avatar": true,
+    "ts": "2026-07-17T04:50:49",
+    "bio": true,
+    "scenario": true
+  },
+  "misato_katsuragi_hf1648": {
+    "avatar": true,
+    "ts": "2026-07-17T04:51:34",
+    "bio": true,
+    "scenario": true
+  },
+  "mayumi_tanaka_hf1658": {
+    "avatar": true,
+    "ts": "2026-07-17T04:52:19",
+    "bio": true,
+    "scenario": true
+  },
+  "yukari_tanizaki_hf1735": {
+    "avatar": true,
+    "ts": "2026-07-17T04:53:04",
+    "bio": true,
+    "scenario": true
+  },
+  "koyomi_araragi_hf1926": {
+    "avatar": true,
+    "ts": "2026-07-17T04:53:49",
+    "bio": true,
+    "scenario": true
+  },
+  "walter_white_heisenberg_hf2029": {
+    "avatar": true,
+    "ts": "2026-07-17T04:54:34",
+    "bio": true,
+    "scenario": true
+  },
+  "tracy_jordan_hf2582": {
+    "avatar": true,
+    "ts": "2026-07-17T04:55:18",
+    "bio": true,
+    "scenario": true
+  },
+  "raymond_holt_hf2771": {
+    "avatar": true,
+    "ts": "2026-07-17T04:56:03",
+    "bio": true,
+    "scenario": true
+  },
+  "amy_brookheimer_hf3828": {
+    "avatar": true,
+    "ts": "2026-07-17T04:56:49",
+    "bio": true,
+    "scenario": true
+  },
+  "ben_wyatt_hf4995": {
+    "avatar": true,
+    "ts": "2026-07-17T04:57:34",
+    "bio": true,
+    "scenario": true
+  },
+  "valentina_confessioni": {
+    "avatar": true,
+    "ts": "2026-07-17T05:14:01",
+    "bio": true,
+    "scenario": true
   }
 }

@@ -1,10 +1,13 @@
 package com.intelligame.chatai;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -15,13 +18,19 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,11 +42,17 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView navView;
     private View fragmentContainer;
+    private DrawerLayout drawerLayout;
+    private NavigationView navDrawer;
+    private MaterialToolbar topAppBar;
     private AuthManager mAuth;
     private AdManager mAdManager;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private int pendingInvitations = 0;
+
+    private static final String PREFS_THEME = "chatai_theme";
+    private static final String KEY_THEME_MODE = "night_mode";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +82,12 @@ public class MainActivity extends AppCompatActivity {
 
         navView = findViewById(R.id.nav_view);
         fragmentContainer = findViewById(R.id.fragment_container);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navDrawer = findViewById(R.id.nav_drawer);
+        topAppBar = findViewById(R.id.top_app_bar);
+
+        topAppBar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        navDrawer.setNavigationItemSelectedListener(this::onDrawerItemSelected);
 
         View root = findViewById(R.id.coordinator);
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
@@ -217,6 +238,89 @@ public class MainActivity extends AppCompatActivity {
             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
             .replace(R.id.fragment_container, fragment, tag);
         transaction.commit();
+    }
+
+    private boolean isNightMode() {
+        int mode = getPreferences(MODE_PRIVATE).getInt(KEY_THEME_MODE, AppCompatDelegate.MODE_NIGHT_YES);
+        return mode == AppCompatDelegate.MODE_NIGHT_YES;
+    }
+
+    private boolean onDrawerItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        drawerLayout.closeDrawers();
+        if (id == R.id.nav_profile) {
+            switchFragment(new ProfileFragment(), "profile");
+        } else if (id == R.id.nav_theme) {
+            toggleNightMode();
+        } else if (id == R.id.nav_guide) {
+            showGuideDialog();
+        } else if (id == R.id.nav_info) {
+            showInfoDialog();
+        } else if (id == R.id.nav_playstore) {
+            openPlayStore();
+        } else if (id == R.id.nav_logout) {
+            logout();
+        }
+        return true;
+    }
+
+    private void toggleNightMode() {
+        boolean night = isNightMode();
+        int newMode = night ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
+        getPreferences(MODE_PRIVATE).edit().putInt(KEY_THEME_MODE, newMode).apply();
+        final String msg = night ? "Tema chiaro" : "Tema scuro";
+        drawerLayout.postDelayed(() -> {
+            AppCompatDelegate.setDefaultNightMode(newMode);
+            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+        }, 200);
+    }
+
+    private void showInfoDialog() {
+        String version = "1.0";
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            version = pInfo.versionName;
+        } catch (Exception ignored) {
+        }
+        String server = ((ChatApplication) getApplication()).getPrefs().getServerUrl();
+        new AlertDialog.Builder(this)
+            .setTitle("Info")
+            .setMessage("ChatAI\nVersione: " + version + "\nServer: " + server)
+            .setPositiveButton("OK", null)
+            .show();
+    }
+
+    private void showGuideDialog() {
+        String text = "Benvenuto in ChatAI!\n\n"
+            + "• Home: scorri i personaggi e toccali per chattare.\n"
+            + "• Categorie: sblocca le categorie con i MevaCoins.\n"
+            + "• Daily bonus: ritira la ricompensa giornaliera per guadagnare MVC.\n"
+            + "• MevaCoins: usa i MVC per sbloccare categorie e funzionalità extra.\n"
+            + "• Menu ☰ in alto a sinistra: Profilo, Cambio tema, Guida, Info.";
+        new AlertDialog.Builder(this)
+            .setTitle("Guida")
+            .setMessage(text)
+            .setPositiveButton("OK", null)
+            .show();
+    }
+
+    private void openPlayStore() {
+        String pkg = getPackageName();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + pkg));
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=" + pkg)));
+        }
+    }
+
+    private void logout() {
+        mAuth.clear();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     public void openChat(String characterId, String characterName) {

@@ -1,5 +1,6 @@
 package com.intelligame.chatai;
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import com.google.android.material.snackbar.Snackbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,7 +37,7 @@ public class CategoriesFragment extends Fragment {
 
     private AuthManager mAuth;
     private String baseUrl;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = new SafeExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private List<CatItem> categories = new ArrayList<>();
@@ -171,15 +174,15 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void loadCharactersForCategory(String categoryId, boolean locked) {
-        if (locked) {
-            // TODO: show unlock dialog
-            return;
-        }
-        showingCharacters = true;
         CatItem selected = null;
         for (CatItem c : categories) {
             if (c.id.equals(categoryId)) { selected = c; break; }
         }
+        if (locked) {
+            if (selected != null) showUnlockDialog(selected);
+            return;
+        }
+        showingCharacters = true;
         titleText.setText(selected != null ? selected.icon + " " + selected.name : "Personaggi");
         backButton.setText("\u2190");
 
@@ -220,6 +223,76 @@ public class CategoriesFragment extends Fragment {
         backButton.setText("\u2190");
         categoriesRecycler.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         categoriesRecycler.setAdapter(gridAdapter);
+    }
+
+    private void showUnlockDialog(CatItem cat) {
+        executor.execute(() -> {
+            final int balance = fetchBalance();
+            mainHandler.post(() -> {
+                if (!isAdded() || getContext() == null) return;
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle(cat.icon + " " + cat.name);
+                if (balance < cat.mvcCost) {
+                    builder.setMessage("Servono " + cat.mvcCost + " MVC per sbloccare questa categoria.\nHai " + balance + " MVC.");
+                    builder.setPositiveButton("Guadagna MVC", (d, w) -> {
+                        Intent intent = new Intent(getActivity(), MvcEarnActivity.class);
+                        startActivity(intent);
+                    });
+                    builder.setNegativeButton("Annulla", null);
+                } else {
+                    builder.setMessage("Sbloccare questa categoria per " + cat.mvcCost + " MVC?\nHai " + balance + " MVC.");
+                    builder.setPositiveButton("Sblocca", (d, w) -> unlockCategory(cat));
+                    builder.setNegativeButton("Annulla", null);
+                }
+                builder.show();
+            });
+        });
+    }
+
+    private int fetchBalance() {
+        try {
+            AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins", "GET", null, 10000);
+            if (resp.statusCode == 200 && resp.body != null) {
+                JSONObject obj = new JSONObject(resp.body);
+                return obj.optInt("balance", 0);
+            }
+        } catch (Exception ignored) {
+        }
+        return 0;
+    }
+
+    private void unlockCategory(CatItem cat) {
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("content_type", "category");
+                body.put("content_id", cat.id);
+                body.put("amount", cat.mvcCost);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/spend", "POST", body.toString(), 10000);
+                if (resp.statusCode == 200) {
+                    JSONObject obj = new JSONObject(resp.body);
+                    if (obj.optBoolean("unlocked", false)) {
+                        cat.locked = false;
+                        mainHandler.post(() -> {
+                            gridAdapter.notifyDataSetChanged();
+                            showSnackbar("Categoria sbloccata!");
+                            loadCharactersForCategory(cat.id, false);
+                        });
+                        return;
+                    }
+                }
+                mainHandler.post(() -> showSnackbar("MVC insufficienti o errore"));
+            } catch (Exception e) {
+                mainHandler.post(() -> showSnackbar("Errore: " + e.getMessage()));
+            }
+        });
+    }
+
+    private void showSnackbar(String msg) {
+        View root = getView();
+        if (root != null) {
+            Snackbar.make(root, msg, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     private String httpGetWithAuthRefresh(String urlString) {

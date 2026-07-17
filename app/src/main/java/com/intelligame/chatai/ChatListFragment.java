@@ -30,7 +30,7 @@ public class ChatListFragment extends Fragment {
 
     private RecyclerView chatList;
     private TextView emptyText;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private String baseUrl;
     private String userId;

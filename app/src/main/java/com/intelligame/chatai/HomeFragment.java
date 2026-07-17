@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -65,8 +66,8 @@ public class HomeFragment extends Fragment {
 
     private String baseUrl;
     private String selectedCategoryId;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final ExecutorService rewardExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = new SafeExecutor();
+    private final ExecutorService rewardExecutor = new SafeExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private boolean isSearching = false;
@@ -130,18 +131,29 @@ public class HomeFragment extends Fragment {
         charactersPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                if (!isSearching && hasMoreCharacters && !isLoadingMore) {
-                    if (position >= characters.size() - 2) {
-                        isLoadingMore = true;
-                        pagerAdapter.setShowLoading(true);
-                        loadCharactersPage(selectedCategoryId, charactersOffset, false);
+                final int pos = position;
+                charactersPager.post(() -> {
+                    if (!isAdded()) return;
+                    if (!isSearching && hasMoreCharacters && !isLoadingMore) {
+                        if (pos >= characters.size() - 2) {
+                            isLoadingMore = true;
+                            pagerAdapter.setShowLoading(true);
+                            loadCharactersPage(selectedCategoryId, charactersOffset, false);
+                        }
                     }
-                }
+                });
             }
         });
 
         searchFiltersRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         searchFilterAdapter = new SearchFilterAdapter(searchFilters, filter -> {
+            if (filter.id != null) {
+                Category full = findCategoryById(filter.id);
+                if (full != null && full.locked && full.mvcCost > 0) {
+                    showUnlockDialog(full);
+                    return;
+                }
+            }
             selectedSearchFilterId = filter.id;
             applySearchFilter();
         });
@@ -341,15 +353,19 @@ public class HomeFragment extends Fragment {
         hasMoreCharacters = true;
         isLoadingMore = false;
         characters.clear();
-        pagerAdapter.setShowLoading(false);
-        pagerAdapter.notifyDataSetChanged();
+        charactersPager.post(() -> {
+            if (!isAdded()) return;
+            pagerAdapter.setShowLoading(false);
+            pagerAdapter.notifyDataSetChanged();
+        });
         hideEmptyState();
         loadCharactersPage(categoryId, 0, true);
     }
 
     private void loadCharactersPage(String categoryId, int offset, boolean initial) {
         if (initial) {
-            mainHandler.post(() -> {
+            charactersPager.post(() -> {
+                if (!isAdded()) return;
                 searchProgress.setVisibility(View.VISIBLE);
                 showLoadingOverlay("Caricamento personaggi…");
                 updateLoadingProgress(2, 3, "Caricamento personaggi…");
@@ -378,7 +394,8 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 final boolean hasMore = list.size() >= PAGE_SIZE;
-                mainHandler.post(() -> {
+                charactersPager.post(() -> {
+                    if (!isAdded()) return;
                     searchProgress.setVisibility(View.GONE);
                     if (initial) {
                         characters.clear();
@@ -411,7 +428,8 @@ public class HomeFragment extends Fragment {
                     }
                 });
             } catch (Exception e) {
-                mainHandler.post(() -> {
+                charactersPager.post(() -> {
+                    if (!isAdded()) return;
                     searchProgress.setVisibility(View.GONE);
                     if (initial) {
                         loadOfflineCharacters();
@@ -616,8 +634,52 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private Category findCategoryById(String id) {
+        if (id == null) return null;
+        for (Category c : categories) {
+            if (id.equals(c.id)) return c;
+        }
+        return null;
+    }
+
+    private void showUnlockDialog(Category cat) {
+        executor.execute(() -> {
+            final int balance = fetchBalance();
+            mainHandler.post(() -> {
+                if (!isAdded() || getContext() == null) return;
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setTitle(cat.icon + " " + cat.name);
+                if (balance < cat.mvcCost) {
+                    builder.setMessage("Servono " + cat.mvcCost + " MVC per sbloccare questa categoria.\nHai " + balance + " MVC.");
+                    builder.setPositiveButton("Guadagna MVC", (d, w) -> {
+                        Intent intent = new Intent(getActivity(), MvcEarnActivity.class);
+                        startActivity(intent);
+                    });
+                    builder.setNegativeButton("Annulla", null);
+                } else {
+                    builder.setMessage("Sbloccare questa categoria per " + cat.mvcCost + " MVC?\nHai " + balance + " MVC.");
+                    builder.setPositiveButton("Sblocca", (d, w) -> unlockCategory(cat));
+                    builder.setNegativeButton("Annulla", null);
+                }
+                builder.show();
+            });
+        });
+    }
+
+    private int fetchBalance() {
+        try {
+            AuthManager.HttpResponse resp = mAuth.requestWithRefresh(baseUrl + "/user/mevacoins", "GET", null, 10000);
+            if (resp.statusCode == 200 && resp.body != null) {
+                JSONObject obj = new JSONObject(resp.body);
+                return obj.optInt("balance", 0);
+            }
+        } catch (Exception ignored) {
+        }
+        return 0;
+    }
+
     private void showSnackbar(String msg) {
-        com.google.android.material.snackbar.Snackbar.make(requireView(), msg, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(requireView(), msg, Snackbar.LENGTH_SHORT).show();
     }
 
     private String httpGet(String urlString) {

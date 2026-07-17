@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand -->
+    <color name="primary">#7C4DFF</color>
+    <color name="primary_dark">#651FFF</color>
+    <color name="primary_light">#B388FF</color>
+    <color name="secondary">#03DAC6</color>
+    <color name="tertiary">#FF6E40</color>
+
+    <!-- Surfaces (dark theme) -->
+    <color name="surface">#1E1E2E</color>
+    <color name="surface_container">#2A2A3E</color>
+    <color name="surface_variant">#3A3A4E</color>
+    <color name="surface_card">#252538</color>
+    <color name="background">#13131F</color>
+    <color name="background_dark">#0D0D16</color>
+
+    <!-- On-surface text -->
+    <color name="on_primary">#FFFFFF</color>
+    <color name="on_secondary">#000000</color>
+    <color name="on_surface">#E8E8F0</color>
+    <color name="on_surface_variant">#A0A0B8</color>
+    <color name="on_surface_dim">#6B6B80</color>
+
+    <!-- Outline -->
+    <color name="outline">#3A3A4E</color>
+    <color name="outline_variant">#2A2A3E</color>
+    <color name="error">#FF5252</color>
+    <color name="error_container">#3E1A1A</color>
+
+    <!-- Chat bubbles -->
+    <color name="chat_bubble_user">#7C4DFF</color>
+    <color name="chat_bubble_ai">#2A2A3E</color>
+    <color name="chat_bubble_system">#1E1E2E</color>
+    <color name="chat_text_user">#FFFFFF</color>
+    <color name="chat_text_ai">#E8E8F0</color>
+    <color name="chat_bubble_surface">#33FFFFFF</color>
+
+    <!-- Status -->
+    <color name="status_connected">#4CAF50</color>
+    <color name="status_disconnected">#FF5252</color>
+    <color name="status_connecting">#FF9800</color>
+    <color name="status_warning">#FFC107</color>
+    <color name="status_loading">#9E9E9E</color>
+
+    <!-- UI surfaces -->
+    <color name="category_chip_bg">#2A2A3E</color>
+    <color name="category_chip_selected">#7C4DFF</color>
+    <color name="search_bar_bg">#2A2A3E</color>
+    <color name="bottom_nav_bg">#1A1A2E</color>
+
+    <!-- Content labels -->
+    <color name="adult_red">#FF1744</color>
+    <color name="adult_red_dark">#B71C1C</color>
+    <color name="verified_badge">#4CAF50</color>
+    <color name="online_dot">#4CAF50</color>
+
+    <!-- Semantic text colors -->
+    <color name="text_hint">#808090</color>
+    <color name="text_hint_on_dark">#80FFFFFF</color>
+    <color name="text_timestamp">#B0B0C0</color>
+    <color name="text_provider">#9A9AB0</color>
+    <color name="text_empty_state">#B0FFFFFF</color>
+    <color name="text_link">#B388FF</color>
+    <color name="text_over_image">#E0FFFFFF</color>
+    <color name="text_over_image_dim">#B0FFFFFF</color>
+    <color name="text_game_subtitle">#80FFFFFF</color>
+
+    <!-- Overlay / scrim -->
+    <color name="overlay_header_start">#E6000000</color>
+    <color name="overlay_header_end">#99000000</color>
+    <color name="overlay_input_bar">#CC1A1A2E</color>
+    <color name="overlay_image_preview">#80000000</color>
+    <color name="overlay_scrim">#66000000</color>
+    <color name="chat_overlay_bg">#73000000</color>
+    <color name="bubble_ai_immersive">#99000000</color>
+    <color name="bubble_scenario">#B3000000</color>
+
+    <!-- Icon / button surfaces -->
+    <color name="icon_button_surface">#33FFFFFF</color>
+    <color name="chip_surface">#1AFFFFFF</color>
+    <color name="chip_border">#33FFFFFF</color>
+    <color name="badge_surface">#22000000</color>
+    <color name="badge_border">#33FFFFFF</color>
+    <color name="outline_button_border">#FFFFFF</color>
+
+    <!-- Gradient -->
+    <color name="login_gradient_start">#1A0A2E</color>
+    <color name="login_gradient_end">#FF6E40</color>
+
+    <!-- Username colors -->
+    <color name="username0">#E21400</color>
+    <color name="username1">#91580F</color>
+    <color name="username2">#F8A700</color>
+    <color name="username3">#F78B00</color>
+    <color name="username4">#58DC00</color>
+    <color name="username5">#287B00</color>
+    <color name="username6">#A8F07A</color>
+    <color name="username7">#4AE8C4</color>
+    <color name="username8">#3B88EB</color>
+    <color name="username9">#3824AA</color>
+    <color name="username10">#A700FF</color>
+    <color name="username11">#D300E7</color>
+</resources>

@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 public class DailyBonusDialog extends DialogFragment {
 
     private static final String TAG = "DailyBonusDialog";
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @NonNull

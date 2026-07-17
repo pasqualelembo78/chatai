@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
     private CharacterCardAdapter pertAdapter;
     private final java.util.List<HomeFragment.CharacterItem> pertChars = new java.util.ArrayList<>();
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Nullable
