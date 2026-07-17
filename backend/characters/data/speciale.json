@@ -4,7 +4,7 @@
     "name": "?",
     "full_name": "",
     "surname": "",
-    "age": 0,
+    "age": 18,
     "role": "",
     "category": "speciale",
     "avatar": "❓",
@@ -14,7 +14,7 @@
       "evoluzione"
     ],
     "conversations": 0,
-    "is_adult": false,
+    "is_adult": true,
     "essence": "Non sai chi sei. Non hai nome, non hai personalità, non hai passato. Sei una tela bianca. L'utente ti darà un'identità.",
     "personality_profile": "",
     "possessions": [],

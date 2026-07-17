@@ -29,6 +29,61 @@ REFRESH_TOKEN_EXPIRE = 604800   # 7 giorni
 _token_blacklist = set()
 _blacklist_lock = threading.Lock()
 
+# ─── Age verification (no minors) ─────────────────────────────────
+# ChatAI contains adult/NSFW companion content. Users must be adults.
+MIN_AGE = 18
+
+
+def parse_birth_date(value):
+    """Parse a birth date in YYYY-MM-DD (or ISO) form into a date, or None."""
+    if not value:
+        return None
+    value = str(value).strip()
+    if not value:
+        return None
+    for fmt in ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S", "%d/%m/%Y"):
+        try:
+            return datetime.strptime(value[:len(fmt) + 2] if fmt == "%d/%m/%Y" else value, fmt).date()
+        except ValueError:
+            continue
+    # Try ISO with timezone
+    try:
+        return datetime.fromisoformat(value).date()
+    except ValueError:
+        return None
+
+
+def compute_age(birth_date):
+    """Return age in whole years, or None if birth_date invalid/empty."""
+    d = parse_birth_date(birth_date)
+    if d is None:
+        return None
+    today = datetime.now(timezone.utc).date()
+    return today.year - d.year - ((today.month, today.day) < (d.month, d.day))
+
+
+def require_adult(birth_date):
+    """Enforce the minimum-age rule at signup.
+
+    Raises HTTPException(403) if the user is under MIN_AGE, or
+    HTTPException(400) if the birth date is missing/invalid.
+    Returns the normalized YYYY-MM-DD string on success.
+    """
+    age = compute_age(birth_date)
+    if age is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Data di nascita richiesta e non valida (formato YYYY-MM-DD).",
+        )
+    if age < MIN_AGE:
+        raise HTTPException(
+            status_code=403,
+            detail=f"L'iscrizione è riservata agli utenti di almeno {MIN_AGE} anni.",
+        )
+    d = parse_birth_date(birth_date)
+    return d.isoformat()
+
+
 # ─── Inizializzazione tabella utenti ──────────────────────────────
 def init_auth_db():
     conn = get_conn()
@@ -55,6 +110,13 @@ def init_auth_db():
         """)
         if not cur.fetchone():
             cur.execute("ALTER TABLE users ADD COLUMN persistent_token TEXT UNIQUE")
+        # Add birth_date column for age verification (migration)
+        cur.execute("""
+            SELECT column_name FROM information_schema.columns
+            WHERE table_name = 'users' AND column_name = 'birth_date'
+        """)
+        if not cur.fetchone():
+            cur.execute("ALTER TABLE users ADD COLUMN birth_date TEXT DEFAULT ''")
         cur.execute("""
             CREATE TABLE IF NOT EXISTS refresh_tokens (
                 id TEXT PRIMARY KEY,

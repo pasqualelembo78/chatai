@@ -16,7 +16,7 @@ from auth_fastapi import (
     GOOGLE_CLIENT_ID, _verify_google_token,
     generate_password_hash, check_password_hash,
     revoke_refresh_token, _verify_jwt, _blacklist_lock, _token_blacklist,
-    reauth_from_persistent_token,
+    reauth_from_persistent_token, require_adult,
 )
 
 limiter = Limiter(key_func=get_remote_address)
@@ -27,6 +27,7 @@ router = APIRouter(prefix="/auth")
 class GoogleLoginRequest(BaseModel):
     id_token: str = ""
     referral_code: str = ""
+    birth_date: str = ""
 
 
 class RegisterRequest(BaseModel):
@@ -34,6 +35,7 @@ class RegisterRequest(BaseModel):
     email: str = ""
     password: str = ""
     referral_code: str = ""
+    birth_date: str = ""
 
 
 class LoginRequest(BaseModel):
@@ -44,6 +46,7 @@ class LoginRequest(BaseModel):
 class LocalLoginRequest(BaseModel):
     username: str = ""
     referral_code: str = ""
+    birth_date: str = ""
 
 
 class RefreshRequest(BaseModel):
@@ -103,6 +106,8 @@ async def google_login(body: GoogleLoginRequest):
             except Exception:
                 pass
         else:
+            # Age verification only applies to new accounts.
+            birth_date = require_adult(body.birth_date)
             user_id = str(uuid.uuid4())
             username = name
             base_name = username
@@ -113,8 +118,8 @@ async def google_login(body: GoogleLoginRequest):
                 suffix += 1
                 cur.execute("SELECT id FROM users WHERE username = %s", (username,))
             cur.execute(
-                "INSERT INTO users (id, username, password_hash, role, google_id, email) VALUES (%s, %s, '', 'user', %s, %s)",
-                (user_id, username, google_id, email)
+                "INSERT INTO users (id, username, password_hash, role, google_id, email, birth_date) VALUES (%s, %s, '', 'user', %s, %s, %s)",
+                (user_id, username, google_id, email, birth_date)
             )
             conn.commit()
             if referral_code:
@@ -160,6 +165,9 @@ async def register(request: Request, body: RegisterRequest):
     if email and not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
         raise HTTPException(400, "Email non valida")
 
+    # Age verification: only adults (>=18) may register.
+    birth_date = require_adult(body.birth_date)
+
     conn = get_conn()
     try:
         cur = conn.cursor()
@@ -172,8 +180,8 @@ async def register(request: Request, body: RegisterRequest):
                 raise HTTPException(409, "Email già registrata")
         user_id = str(uuid.uuid4())
         password_hash = generate_password_hash(password, method="scrypt")
-        cur.execute("INSERT INTO users (id, username, password_hash, email, role) VALUES (%s, %s, %s, %s, 'user')",
-                    (user_id, username, password_hash, email))
+        cur.execute("INSERT INTO users (id, username, password_hash, email, role, birth_date) VALUES (%s, %s, %s, %s, 'user', %s)",
+                    (user_id, username, password_hash, email, birth_date))
         conn.commit()
     finally:
         put_conn(conn)
@@ -283,9 +291,11 @@ async def local_login(body: LocalLoginRequest):
             cur.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = %s", (user_id,))
             conn.commit()
         else:
+            # Age verification only applies to new accounts.
+            birth_date = require_adult(body.birth_date)
             user_id = str(uuid.uuid4())
-            cur.execute("INSERT INTO users (id, username, password_hash, role) VALUES (%s, %s, '', 'user')",
-                        (user_id, username))
+            cur.execute("INSERT INTO users (id, username, password_hash, role, birth_date) VALUES (%s, %s, '', 'user', %s)",
+                        (user_id, username, birth_date))
             conn.commit()
             if referral_code:
                 from storage import claim_referral_bonus as _crb
