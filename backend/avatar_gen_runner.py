@@ -27,6 +27,7 @@ _state = {
     "log": [],
 }
 
+_proc = None  # active subprocess.Popen, guarded by _lock
 _MAX_LOG = 200
 
 
@@ -80,10 +81,15 @@ def start_avatar_generation(limit=50, force=False):
     if not os.path.isfile(tool):
         return {"error": f"avatar_tool.py non trovato in {backend_dir}"}
 
+    # Use the same virtualenv that generate_avatars.sh provisions (it has
+    # requests/pillow/pydotenv). Fall back to system python3 only if missing.
+    venv_py = os.path.join(backend_dir, "venv", "bin", "python3")
+    python_bin = venv_py if os.path.isfile(venv_py) else "python3"
+
     env = _load_env(os.path.join(backend_dir, ".env"))
 
     cmd = [
-        "python3", tool,
+        python_bin, tool,
         "--generate-all",
         "--model", "pollinations",
         "--bio",
@@ -93,6 +99,7 @@ def start_avatar_generation(limit=50, force=False):
         cmd.append("--force")
 
     def _run():
+        global _proc
         _set(
             running=True,
             progress=0,
@@ -104,15 +111,21 @@ def start_avatar_generation(limit=50, force=False):
             log=[],
         )
         try:
-            proc = subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                cwd=backend_dir,
-                env=env,
-                text=True,
-                bufsize=1,
-            )
+            try:
+                proc = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    cwd=backend_dir,
+                    env=env,
+                    text=True,
+                    bufsize=1,
+                )
+            except FileNotFoundError as e:
+                _set(running=False, message=f"Python non trovato: {e}")
+                return
+            with _lock:
+                _proc = proc
             total_re = re.compile(r"Genero avatar per (\d+) personaggi")
             for line in proc.stdout:
                 line = line.rstrip("\n")
@@ -134,19 +147,42 @@ def start_avatar_generation(limit=50, force=False):
                     _set(errors=_state["errors"] + 1, message=line.strip())
 
             proc.wait()
+            with _lock:
+                _proc = None
             if proc.returncode == 0:
                 _set(running=False, message="Generazione avatar completata!")
+            elif proc.returncode == -9:
+                _set(running=False, message="Generazione interrotta dall'utente.")
             else:
                 _set(
                     running=False,
                     message=f"Generazione terminata con codice {proc.returncode}",
                 )
         except Exception as e:  # pragma: no cover - defensive
+            with _lock:
+                _proc = None
             _set(running=False, message=f"Errore generazione avatar: {e}")
 
     thread = threading.Thread(target=_run, daemon=True)
     thread.start()
     return {"status": "started", "limit": limit, "force": force}
+
+
+def stop_avatar_generation():
+    """Terminate a running avatar generation, if any."""
+    with _lock:
+        proc = _proc
+    if proc is None:
+        return {"status": "not_running"}
+    proc.terminate()  # SIGTERM; avatar_tool flushes what it has so far
+    try:
+        proc.wait(timeout=10)
+    except Exception:
+        proc.kill()
+    with _lock:
+        _proc = None
+    _set(running=False, message="Generazione interrotta dall'utente.")
+    return {"status": "stopped"}
 
 
 if __name__ == "__main__":

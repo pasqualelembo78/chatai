@@ -44,6 +44,7 @@ public class ImportActivity extends AppCompatActivity {
     private ProgressBar progressBarAvatar;
     private TextView progressTextAvatar, progressStatsAvatar, resultTitleAvatar, resultDetailsAvatar;
     private LinearLayout progressSectionAvatar, resultSectionAvatar;
+    private MaterialButton btnStopAvatars;
 
     private String baseUrl;
     private String selectedSource = "charactercodex";
@@ -95,6 +96,8 @@ public class ImportActivity extends AppCompatActivity {
         resultSectionAvatar = findViewById(R.id.result_section_avatar);
         resultTitleAvatar = findViewById(R.id.result_title_avatar);
         resultDetailsAvatar = findViewById(R.id.result_details_avatar);
+        btnStopAvatars = findViewById(R.id.btn_stop_avatars);
+        btnStopAvatars.setOnClickListener(v -> stopAvatars());
 
         btnBack.setOnClickListener(v -> finish());
         btnImport.setOnClickListener(v -> startImport());
@@ -330,6 +333,7 @@ public class ImportActivity extends AppCompatActivity {
         btnGenerateAvatars.setText("Generazione in corso...");
         progressSectionAvatar.setVisibility(View.VISIBLE);
         resultSectionAvatar.setVisibility(View.GONE);
+        btnStopAvatars.setVisibility(View.VISIBLE);
         progressBarAvatar.setProgress(0);
         progressTextAvatar.setText("Avvio generazione avatar...");
 
@@ -399,9 +403,11 @@ public class ImportActivity extends AppCompatActivity {
                                     isGeneratingAvatars = false;
                                     btnGenerateAvatars.setEnabled(true);
                                     btnGenerateAvatars.setText("Genera Avatar (Bio + Scenario)");
+                                    btnStopAvatars.setVisibility(View.GONE);
                                     progressBarAvatar.setIndeterminate(false);
                                     showAvatarResult(status);
                                 } else {
+                                    btnStopAvatars.setVisibility(View.VISIBLE);
                                     mainHandler.postDelayed(this, 2000);
                                 }
                             });
@@ -415,6 +421,32 @@ public class ImportActivity extends AppCompatActivity {
             }
         };
         mainHandler.postDelayed(avatarProgressRunnable, 1000);
+    }
+
+    private void stopAvatars() {
+        if (!isGeneratingAvatars) return;
+
+        btnStopAvatars.setEnabled(false);
+        btnStopAvatars.setText("Interruzione...");
+        progressTextAvatar.setText("Interruzione in corso...");
+
+        executor.execute(() -> {
+            try {
+                httpPost(baseUrl + "/admin/avatars/stop", "{}");
+            } catch (Exception ignored) {
+            }
+            // The polling loop will pick up running=false on the next tick and
+            // refresh the UI; fall back to forcing the UI update shortly after.
+            mainHandler.postDelayed(() -> {
+                isGeneratingAvatars = false;
+                btnGenerateAvatars.setEnabled(true);
+                btnGenerateAvatars.setText("Genera Avatar (Bio + Scenario)");
+                btnStopAvatars.setVisibility(View.GONE);
+                btnStopAvatars.setEnabled(true);
+                btnStopAvatars.setText("Interrompi");
+                progressBarAvatar.setIndeterminate(false);
+            }, 1500);
+        });
     }
 
     private void showAvatarResult(JSONObject status) {

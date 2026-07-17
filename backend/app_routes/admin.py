@@ -173,6 +173,16 @@ async def admin_avatars_status(user: AuthUser = Depends(admin_required)):
     return get_avatar_status()
 
 
+@router.post("/avatars/stop")
+async def admin_avatars_stop(request: Request, user: AuthUser = Depends(admin_required)):
+    from avatar_gen_runner import stop_avatar_generation
+    result = stop_avatar_generation()
+    audit_log(user.user_id, "admin.avatars_stop", f"result={result.get('status')}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return result
+
+
 @router.get("/stats")
 async def admin_stats(user: AuthUser = Depends(admin_required)):
     return get_admin_stats()
