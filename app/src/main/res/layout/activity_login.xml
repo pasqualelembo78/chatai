@@ -126,6 +126,31 @@
                         android:padding="14dp"
                         android:layout_marginBottom="12dp"/>
 
+                    <EditText
+                        android:id="@+id/birth_date_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Data di nascita (GG/MM/AAAA)"
+                        android:textColorHint="@color/on_surface_variant"
+                        android:textColor="@color/on_surface"
+                        android:inputType="date"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:background="@drawable/edittext_bg"
+                        android:padding="14dp"
+                        android:layout_marginBottom="8dp"
+                        android:visibility="gone"/>
+
+                    <CheckBox
+                        android:id="@+id/age_confirm_checkbox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Confermo di avere almeno 18 anni"
+                        android:textSize="13sp"
+                        android:textColor="@color/on_surface"
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone"/>
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/login_button"
                         android:layout_width="match_parent"

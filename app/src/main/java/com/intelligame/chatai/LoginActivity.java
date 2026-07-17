@@ -3,11 +3,13 @@ package com.intelligame.chatai;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -38,6 +40,8 @@ public class LoginActivity extends Activity {
     private EditText mPasswordView;
     private EditText mServerUrlView;
     private EditText mReferralCodeView;
+    private EditText mBirthDateView;
+    private CheckBox mAgeConfirmCheckbox;
     private Button mLoginButton;
     private TextView mToggleAuthMode;
     private ProgressBar mProgressBar;
@@ -78,6 +82,8 @@ public class LoginActivity extends Activity {
         mPasswordView = findViewById(R.id.password_input);
         mServerUrlView = findViewById(R.id.server_url_input);
         mReferralCodeView = findViewById(R.id.referral_code_input);
+        mBirthDateView = findViewById(R.id.birth_date_input);
+        mAgeConfirmCheckbox = findViewById(R.id.age_confirm_checkbox);
         mLoginButton = findViewById(R.id.login_button);
         mProgressBar = findViewById(R.id.auth_progress);
         mToggleAuthMode = findViewById(R.id.toggle_auth_mode);
@@ -113,10 +119,14 @@ public class LoginActivity extends Activity {
             mLoginButton.setText("REGISTRATI");
             mToggleAuthMode.setText("Hai già account? Accedi");
             mEmailView.setVisibility(View.VISIBLE);
+            mBirthDateView.setVisibility(View.VISIBLE);
+            mAgeConfirmCheckbox.setVisibility(View.VISIBLE);
         } else {
             mLoginButton.setText("ACCEDI");
             mToggleAuthMode.setText("Non hai account? Registrati");
             mEmailView.setVisibility(View.GONE);
+            mBirthDateView.setVisibility(View.GONE);
+            mAgeConfirmCheckbox.setVisibility(View.GONE);
         }
     }
 
@@ -201,10 +211,23 @@ public class LoginActivity extends Activity {
             return;
         }
 
+        // Age verification: must confirm 18+ and provide a valid birth date.
+        if (!mAgeConfirmCheckbox.isChecked()) {
+            Toast.makeText(LoginActivity.this,
+                    "Devi confermare di avere almeno 18 anni.", Toast.LENGTH_LONG).show();
+            setLoading(false);
+            return;
+        }
+        final String birthDate = parseAndValidateBirthDate();
+        if (birthDate == null) {
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         final String serverUrl = getEffectiveServerUrl();
         mAuth.register(username, email, password, serverUrl,
-                referralCode.isEmpty() ? null : referralCode,
+                referralCode.isEmpty() ? null : referralCode, birthDate,
                 new AuthManager.AuthCallback() {
                     @Override
                     public void onSuccess(String accessToken, String refreshToken,
@@ -287,27 +310,10 @@ public class LoginActivity extends Activity {
                     final String serverUrl = getEffectiveServerUrl();
                     final String referralCode = mReferralCodeView.getText().toString().trim();
                     setLoading(true);
-                    mAuth.loginWithGoogle(idToken, serverUrl, referralCode.isEmpty() ? null : referralCode, new AuthManager.AuthCallback() {
-                        @Override
-                        public void onSuccess(String accessToken, String refreshToken,
-                                              String userId, String username, String role, String email) {
-                            runOnUiThread(() -> {
-                                setLoading(false);
-                                saveServerUrl(serverUrl);
-                                Toast.makeText(LoginActivity.this,
-                                        "Benvenuto, " + username + "!", Toast.LENGTH_SHORT).show();
-                                checkAndRedirect(serverUrl);
-                            });
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            runOnUiThread(() -> {
-                                setLoading(false);
-                                Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
-                            });
-                        }
-                    });
+                    mAuth.loginWithGoogle(idToken, serverUrl,
+                            referralCode.isEmpty() ? null : referralCode, null,
+                            googleAuthCallback(idToken, serverUrl,
+                                    referralCode.isEmpty() ? null : referralCode, true));
                 } else {
                     Toast.makeText(this, "Errore: id_token nullo", Toast.LENGTH_SHORT).show();
                 }
@@ -324,6 +330,133 @@ public class LoginActivity extends Activity {
             url = mPrefs.getServerUrl();
         }
         return url;
+    }
+
+    private String parseAndValidateBirthDate() {
+        String raw = mBirthDateView.getText().toString().trim();
+        if (raw.isEmpty()) {
+            mBirthDateView.setError("Inserisci la data di nascita");
+            mBirthDateView.requestFocus();
+            return null;
+        }
+        java.text.DateFormat[] fmts = {
+                new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.ITALY),
+                new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY)
+        };
+        java.util.Date birth = null;
+        for (java.text.DateFormat f : fmts) {
+            try { birth = f.parse(raw); break; } catch (Exception ignored) {}
+        }
+        if (birth == null) {
+            mBirthDateView.setError("Formato non valido (GG/MM/AAAA)");
+            mBirthDateView.requestFocus();
+            return null;
+        }
+        java.util.Calendar b = java.util.Calendar.getInstance();
+        b.setTime(birth);
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        int age = now.get(java.util.Calendar.YEAR) - b.get(java.util.Calendar.YEAR);
+        if (now.get(java.util.Calendar.DAY_OF_YEAR) < b.get(java.util.Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+        if (age < 18) {
+            Toast.makeText(LoginActivity.this,
+                    "L'iscrizione è riservata agli utenti di almeno 18 anni.",
+                    Toast.LENGTH_LONG).show();
+            return null;
+        }
+        return new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY).format(birth);
+    }
+
+    private String validateBirthDateString(String raw) {
+        if (raw.isEmpty()) {
+            Toast.makeText(this, "Inserisci la data di nascita", Toast.LENGTH_LONG).show();
+            return null;
+        }
+        java.text.DateFormat[] fmts = {
+                new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.ITALY),
+                new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY)
+        };
+        java.util.Date birth = null;
+        for (java.text.DateFormat f : fmts) {
+            try { birth = f.parse(raw); break; } catch (Exception ignored) {}
+        }
+        if (birth == null) {
+            Toast.makeText(this, "Formato non valido (GG/MM/AAAA)", Toast.LENGTH_LONG).show();
+            return null;
+        }
+        java.util.Calendar b = java.util.Calendar.getInstance();
+        b.setTime(birth);
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        int age = now.get(java.util.Calendar.YEAR) - b.get(java.util.Calendar.YEAR);
+        if (now.get(java.util.Calendar.DAY_OF_YEAR) < b.get(java.util.Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+        if (age < 18) {
+            Toast.makeText(this, "L'iscrizione è riservata agli utenti di almeno 18 anni.", Toast.LENGTH_LONG).show();
+            return null;
+        }
+        return new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY).format(birth);
+    }
+
+    private AuthManager.AuthCallback googleAuthCallback(final String idToken, final String serverUrl,
+                                                        final String referralCode, final boolean allowAgePrompt) {
+        return new AuthManager.AuthCallback() {
+            @Override
+            public void onSuccess(String accessToken, String refreshToken, String userId, String username, String role, String email) {
+                runOnUiThread(() -> {
+                    setLoading(false);
+                    saveServerUrl(serverUrl);
+                    Toast.makeText(LoginActivity.this,
+                            "Benvenuto, " + username + "!", Toast.LENGTH_SHORT).show();
+                    checkAndRedirect(serverUrl);
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    String e = error == null ? "" : error.toLowerCase();
+                    if (allowAgePrompt && (e.contains("18") || e.contains("età")
+                            || e.contains("minoren") || e.contains("riservata"))) {
+                        showGoogleAgeDialog(idToken, serverUrl, referralCode);
+                    } else {
+                        setLoading(false);
+                        Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        };
+    }
+
+    private void showGoogleAgeDialog(final String idToken, final String serverUrl, final String referralCode) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Verifica età (obbligatoria)");
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.setPadding(50, 40, 50, 10);
+        final android.widget.EditText dob = new android.widget.EditText(this);
+        dob.setHint("Data di nascita (GG/MM/AAAA)");
+        dob.setInputType(InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE);
+        final android.widget.CheckBox cb = new android.widget.CheckBox(this);
+        cb.setText("Confermo di avere almeno 18 anni");
+        layout.addView(dob);
+        layout.addView(cb);
+        builder.setView(layout);
+        builder.setCancelable(false);
+        builder.setPositiveButton("CONFERMA", (d, w) -> {
+            if (!cb.isChecked()) {
+                Toast.makeText(LoginActivity.this,
+                        "Devi confermare di avere almeno 18 anni.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            String bd = validateBirthDateString(dob.getText().toString().trim());
+            if (bd == null) return;
+            mAuth.loginWithGoogle(idToken, serverUrl, referralCode, bd,
+                    googleAuthCallback(idToken, serverUrl, referralCode, false));
+        });
+        builder.setNegativeButton("ANNULLA", (d, w) -> setLoading(false));
+        builder.show();
     }
 
     private void saveServerUrl(String url) {

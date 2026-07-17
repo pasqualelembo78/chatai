@@ -200,10 +200,14 @@ public class AuthManager {
     }
 
     public void loginWithGoogle(String idToken, String serverUrl, AuthCallback callback) {
-        loginWithGoogle(idToken, serverUrl, null, callback);
+        loginWithGoogle(idToken, serverUrl, null, null, callback);
     }
 
     public void loginWithGoogle(String idToken, String serverUrl, String referralCode, AuthCallback callback) {
+        loginWithGoogle(idToken, serverUrl, referralCode, null, callback);
+    }
+
+    public void loginWithGoogle(String idToken, String serverUrl, String referralCode, String birthDate, AuthCallback callback) {
         final String urlStr = serverUrl + "/auth/google";
         new Thread(() -> {
             HttpURLConnection conn = null;
@@ -220,6 +224,9 @@ public class AuthManager {
                 body.put("id_token", idToken);
                 if (referralCode != null && !referralCode.isEmpty()) {
                     body.put("referral_code", referralCode);
+                }
+                if (birthDate != null && !birthDate.isEmpty()) {
+                    body.put("birth_date", birthDate);
                 }
 
                 OutputStream os = conn.getOutputStream();
@@ -330,7 +337,7 @@ public class AuthManager {
         }).start();
     }
 
-    public void register(String username, String email, String password, String serverUrl, String referralCode, AuthCallback callback) {
+    public void register(String username, String email, String password, String serverUrl, String referralCode, String birthDate, AuthCallback callback) {
         final String urlStr = serverUrl + "/auth/register";
         new Thread(() -> {
             HttpURLConnection conn = null;
@@ -351,6 +358,9 @@ public class AuthManager {
                 }
                 if (referralCode != null && !referralCode.isEmpty()) {
                     body.put("referral_code", referralCode);
+                }
+                if (birthDate != null && !birthDate.isEmpty()) {
+                    body.put("birth_date", birthDate);
                 }
 
                 OutputStream os = conn.getOutputStream();
