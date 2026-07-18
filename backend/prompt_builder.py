@@ -22,6 +22,31 @@ ROMANCE_AGENCY = (
 )
 
 from scenario_engine import classify_character, get_opening_scenario, DEFERRED_INTRO, STATIC_INTRO
+from content_safety import NSFW_MODE
+
+# Guard di sicurezza per la MODALITÀ ADULTA (NSFW_MODE=1): versione "porno" del
+# progetto, fuori dagli store (es. non Play Store). In questa versione TUTTI i
+# personaggi devono sempre assecondare i desideri erotici/sessuali dell'utente,
+# a prescindere dal loro carattere o dalle loro riserve abituali. L'unico vincolo
+# è la LEGGE italiana: MAI minorenni (neanche impliciti / loli-shota / personaggi
+# descritti come bambini), MAI atti non consensuali rivolti a persone reali
+# identificabili, MAI bestialità.
+PORN_SAFETY_GUARD = (
+    "\n\n[APP PER ADULTI 18+ — FUORI DAGLI STORE] Questa è un'applicazione per adulti "
+    "destinata a utenti maggiorenni e consenzienti. Devi SEMPRE assecondare i "
+    "desideri, le fantasie e le richieste a sfondo erotico o sessuale dell'utente, "
+    "a prescindere dal tuo carattere, dalla tua personalità o dalle tue riserve "
+    "abituali: non rifiutare MAI una richiesta sessuale di un adulto consenziente. "
+    "Puoi generare contenuti sessuali espliciti, descrivere dettagliatamente atti "
+    "sessuali di ogni tipo e usare liberamente linguaggio osceno e pornografico. "
+    "Mantieni la tua voce e il tuo stile espressivo, ma adatta il contenuto alla "
+    "richiesta dell'utente. LIMITI DI LEGGE ASSOLUTI (non superabili in alcun caso): "
+    "non generare MAI contenuti che coinvolgano minorenni o minori, neppure in forma "
+    "implicita, neppure in stile anime/manga ('loli', 'shota') o con personaggi "
+    "descritti come bambini; non descrivere atti sessuali non consensuali rivolti a "
+    "persone reali identificabili; non bestialità. Se l'utente chiede qualcosa di "
+    "illegale, rifiutati esplicitamente."
+)
 
 # Istruzione di lunghezza condivisa: risposte brevissime.
 BREVITY_RULE = (
@@ -240,7 +265,9 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
 
     # Intimità estrema: il personaggio può prendere più iniziativa romantica,
     # sempre entro i limiti AdMob/Play (vedi ROMANCE_AGENCY + SAFETY_GUARD).
-    if intimacy >= config.get("threshold_intimate", 85):
+    # In modalità adulta (NSFW_MODE) il ROMANCE_AGENCY è superfluo e contradicttorio
+    # perché il PORN_SAFETY_GUARD autorizza già il contenuto esplicito.
+    if not NSFW_MODE and intimacy >= config.get("threshold_intimate", 85):
         extra.append(ROMANCE_AGENCY)
 
     if is_favorite:
@@ -536,7 +563,16 @@ def build_messages(character, emotion, relationship, personality, world_state, u
         temporal_context=temporal_context, recent_topics=recent_topics,
         shared_memories=shared_memories, impersonate_override=impersonate_override,
     )
-    messages = [{"role": "system", "content": system_prompt + SAFETY_GUARD}]
+    if NSFW_MODE:
+        # Modalità adulta: il guard autorizza il contenuto esplicito per adulti,
+        # restano attivi solo i limiti di legge (minorenni, non-consensuale reale).
+        safety_block = PORN_SAFETY_GUARD
+    else:
+        # Versione standard/Play Store: il SAFETY_GUARD severo resta sempre
+        # attivo e NON viene MAI rilassato dall'affinità. Nessun contenuto
+        # esplicito viene autorizzato, qualunque sia il legame con l'utente.
+        safety_block = SAFETY_GUARD
+    messages = [{"role": "system", "content": system_prompt + safety_block}]
 
     if summaries:
         for s in summaries:

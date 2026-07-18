@@ -25,7 +25,8 @@ from storage import (
 from evolution_engine import evaluate_evolution
 from prompt_builder import build_messages
 from ai_engine import get_ai_response
-from content_safety import moderate_output
+from content_safety import moderate_output, PORN_LANGUAGE_THRESHOLD, NSFW_MODE
+from prompt_builder import SAFETY_GUARD
 import ai_engine
 import image_utils
 import security_utils
@@ -183,7 +184,9 @@ def register_socket_handlers(sio):
         }, room=sid)
         mem_updates = result.get("memory_updates", {})
         evo_updates = result.get("evo_updates", {})
-        result["ai_text"] = moderate_output(result.get("ai_text", ""))[0]
+        rel = get_relationship(user_id, character_id)
+        result["ai_text"] = moderate_output(
+            result.get("ai_text", ""), affinity=rel.get("affinity", 0))[0]
         response_data = {
             "username": result["character"].get("name", "AI"),
             "message": result["ai_text"],
@@ -284,7 +287,9 @@ def register_socket_handlers(sio):
                                      image_base64=image_b64, image_mime=image_mime,
                                      is_favorite=data.get("is_favorite", False))
             if result:
-                result["ai_text"] = moderate_output(result.get("ai_text", ""))[0]
+                rel = get_relationship(user_id, character_id)
+                result["ai_text"] = moderate_output(
+                    result.get("ai_text", ""), affinity=rel.get("affinity", 0))[0]
                 payload = {
                     "username": character["name"],
                     "message": result["ai_text"],
@@ -492,17 +497,26 @@ def register_socket_handlers(sio):
         ai_model = ""
         is_fallback = False
 
+        # Gate server-side: se l'affinità non ha ancora sbloccato il linguaggio
+        # pornografico, i token NON vengono inviati in live all'app. Il testo resta
+        # bufferizzato lato server e viene trasmesso SOLO dopo la moderazione finale,
+        # così nulla di non autorizzato arriva direttamente e visibile all'utente.
+        affinity_now = relationship.get("affinity", 0) if relationship else 0
+        live_stream = affinity_now >= PORN_LANGUAGE_THRESHOLD
+
         try:
             model_sent = False
             for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id):
                 if not model_sent and model:
                     model_prefix = f"[{pid}/{model}] "
                     ai_text += model_prefix + token
-                    await sio.emit("stream token", {"token": model_prefix + token, "text": ai_text}, room=sid)
+                    if live_stream:
+                        await sio.emit("stream token", {"token": model_prefix + token, "text": ai_text}, room=sid)
                     model_sent = True
                 else:
                     ai_text += token
-                    await sio.emit("stream token", {"token": token, "text": ai_text}, room=sid)
+                    if live_stream:
+                        await sio.emit("stream token", {"token": token, "text": ai_text}, room=sid)
                 ai_provider = pid
                 ai_model = model
         except Exception as e:
@@ -515,7 +529,13 @@ def register_socket_handlers(sio):
             is_fallback = True
             await sio.emit("stream token", {"token": f"[fallback] {ai_text}", "text": f"[fallback] {ai_text}"}, room=sid)
 
-        ai_text, _blocked = moderate_output(ai_text)
+        # Moderazione server-side con l'affinità aggiornata (post-messaggio).
+        rel = get_relationship(user_id, character_id)
+        ai_text, _blocked = moderate_output(ai_text, affinity=rel.get("affinity", 0))
+        # Se non era in live-stream, invia il testo già moderato come un unico token
+        # in modo che il client completi comunque la visualizzazione.
+        if not live_stream and not is_fallback:
+            await sio.emit("stream token", {"token": ai_text, "text": ai_text}, room=sid)
 
         add_message(user_id, character_id, "assistant", ai_text)
 
@@ -579,6 +599,10 @@ def _generate_greeting(character, character_name, username=None, user_id=None):
     sp = build_system_prompt(character, {"emotion": "neutral", "intensity": 0}, rel, pers, ws,
                              username=username, user_gender=user_gender, user_age=user_age,
                              sexual_orientation=sexual_orientation)
+    # In modalità standard (Play Store) allega il SAFETY_GUARD anche ai saluti,
+    # così nessun personaggio genera contenuti espliciti fin dal primo messaggio.
+    if not NSFW_MODE:
+        sp = sp + SAFETY_GUARD
 
     msg_count = count_messages(user_id, character["id"]) if user_id else 0
     if msg_count == 0:

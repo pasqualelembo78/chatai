@@ -28,9 +28,11 @@ from storage import (
     search_users as _su,
     add_group_message as _agm,
     get_blocked_users,
+    get_relationship,
 )
 from characters import get_character
 from chat_engine import FEATURES
+from content_safety import moderate_output
 
 logger = logging.getLogger(__name__)
 
@@ -301,6 +303,9 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
                 loop.run_in_executor(None, _sync_generate),
                 timeout=90
             )
+            # Gate server-side: nulla di non autorizzato arriva al client.
+            rel = get_relationship(user.user_id, char["id"])
+            reply, _blocked = moderate_output(reply, affinity=rel.get("affinity", 0))
             return reply
         except asyncio.TimeoutError:
             logger.warning(f"Group chat: timeout generazione risposta per {char['name']}")
