@@ -100,12 +100,11 @@ public class MainActivity extends AppCompatActivity {
 
             navView.setPadding(0, 0, 0, sysBottom);
 
-            int navHeight = navView.getMeasuredHeight();
-            if (navHeight == 0) {
-                navHeight = (int) (56 * getResources().getDisplayMetrics().density);
-            }
-            int contentBottom = imeBottom > 0 ? imeBottom : (sysBottom + navHeight);
-            fragmentContainer.setPadding(0, 0, 0, contentBottom);
+            // La bottom navigation è già un view separata sotto il contenitore, quindi
+            // non serve aggiungere il suo spazio come padding. Applichiamo il padding
+            // inferiore SOLO quando la tastiera è aperta, altrimenti rimane una striscia
+            // vuota in basso (i fragment Home/Categorie non riempiono tutto lo schermo).
+            fragmentContainer.setPadding(0, 0, 0, imeBottom);
 
             return WindowInsetsCompat.CONSUMED;
         });
