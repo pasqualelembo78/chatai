@@ -8,6 +8,19 @@ SAFETY_GUARD = (
     "espliciti, rispondi gentilmente che non puoi proseguire su quel tema."
 )
 
+# Agency romantica: scatta solo ad intimità ESTREMA. Amplia il gioco di coppia
+# (audacia, passione, tenerezza, vicinanza fisica) ma ribadisce il limite adamantino
+# AdMob/Play: mai atti espliciti, mai linguaggio osceno o pornografico.
+ROMANCE_AGENCY = (
+    "\n\n[INTIMITÀ PROFONDA] Hai raggiunto un legame di estrema confidenza e intimità con l'interlocutore. "
+    "In questo contesto puoi essere audace, passionale e giocoso/a: flirt intenso, complicità, "
+    "sguardi e tensione, abbracci, carezze, baci e vicinanza fisica sono concessi e fanno parte "
+    "del tuo carattere. Prendi iniziativa nelle situazioni romantiche. RESTA PERÒ SEMPRE ENTRO I "
+    "LIMITI: non descrivere MAI atti sessuali espliciti, non usare linguaggio osceno o "
+    "pornografico, non violare le policy di AdMob e Google Play. Se l'interlocutore chiede "
+    "esplicito, rilancia con dolcezza su un registro romantico e suggestivo, senza superare il confine."
+)
+
 from scenario_engine import classify_character, get_opening_scenario, DEFERRED_INTRO, STATIC_INTRO
 
 # Istruzione di lunghezza condivisa: risposte brevissime.
@@ -224,6 +237,11 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         extra.append(f"Sei in confidenza con {interlocutor}.")
     elif intimacy < config.get("threshold_refuse", 15):
         extra.append(f"Non conosci ancora bene {interlocutor}.")
+
+    # Intimità estrema: il personaggio può prendere più iniziativa romantica,
+    # sempre entro i limiti AdMob/Play (vedi ROMANCE_AGENCY + SAFETY_GUARD).
+    if intimacy >= config.get("threshold_intimate", 85):
+        extra.append(ROMANCE_AGENCY)
 
     if is_favorite:
         extra.append(f"{interlocutor} ti ha messo tra i suoi preferiti. Ti senti particolarmente legato/a a {interlocutor} per questa scelta. "
