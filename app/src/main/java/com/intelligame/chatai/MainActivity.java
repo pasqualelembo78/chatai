@@ -92,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
         View root = findViewById(R.id.coordinator);
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
             int sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
-            int imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
+            // Only account for the keyboard when it is actually visible. Some OEMs report a
+            // non-zero IME inset even with the keyboard closed, which would otherwise shrink
+            // the fragment container to ~half the screen and leave empty space at the bottom.
+            int imeBottom = insets.isVisible(WindowInsetsCompat.Type.ime())
+                    ? insets.getInsets(WindowInsetsCompat.Type.ime()).bottom : 0;
 
             navView.setPadding(0, 0, 0, sysBottom);
 
