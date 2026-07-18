@@ -31,6 +31,7 @@ from storage import (
 )
 from characters import get_character
 from chat_engine import FEATURES
+from content_safety import moderate_output
 
 logger = logging.getLogger(__name__)
 
@@ -294,7 +295,9 @@ async def send_group_message(chat_id: int, request: Request, user: AuthUser = De
                 else:
                     token = token_data
                 full_response += token
-            return full_response.strip()
+            # Blocco lato server garantito anche in chat di gruppo.
+            reply, _blocked = moderate_output(full_response.strip())
+            return reply
         try:
             loop = asyncio.get_event_loop()
             reply = await asyncio.wait_for(

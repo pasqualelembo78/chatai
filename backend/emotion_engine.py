@@ -15,21 +15,11 @@ EMOTION_KEYWORDS = {
         "anima gemella", "stare insieme", "relazione"
     ],
     "flirt": [
-        "ciao bella", "ciao bello", "sei sexy", "hai un bel sorriso",
-        "bei occhi", "sguardo", "ammaliato", "ammaliata",
-        "mi fai impazzire", "turbare", "turbato", "turbata",
-        "provocante", "fascino", "sedurre", "seduzione",
-        "malizia", "malizioso", "maliziosa", "ammiccare",
-        "languido", "languida", "tensione", "chimica",
-        "scintilla", "attrazione", "desiderio", "desiderare",
-        "toccare", "carezza", "sfiorare", "labbra", "sguardo intenso"
+        "ciao bella", "ciao bello", "sei gentile", "hai un bel sorriso",
+        "bei occhi", "simpatia", "mi piaci", "affetto", "tenerezza",
+        "complicità", "stare bene insieme", "sei dolce"
     ],
-    "intimate_tension": [
-        "desiderio", "desiderare", "attrazione", "carezza", "sfiorare",
-        "toccare", "labbra", "sguardo intenso", "provocante", "fascino",
-        "seduzione", "malizia", "ammiccare", "languido", "languida",
-        "tensione", "chimica", "scintilla"
-    ],
+    "intimate_tension": [],
     "challenge": [
         "sfida", "scommettiamo", "non ci riesci", "vediamo", "provo",
         "ce la faccio", "non mi arrendo", "ti supero", "competizione",
@@ -99,9 +89,9 @@ PRESSURE_KEYWORDS = {
 }
 
 INTIMACY_SCORE = {
-    "flirt": 2.0,
-    "romance": 3.0,
-    "intimate_tension": 5.0
+    "flirt": 1.0,
+    "romance": 2.0,
+    "intimate_tension": 0.0
 }
 
 PRESSURE_WEIGHTS = {

@@ -395,15 +395,15 @@ _CATEGORY_SCENARIO = {
     ),
     "flirt": (
         "{name} è in un bar elegante, una festa, un locale serale. "
-        "L'utente si siede vicino. Si sfiorano le ginocchia, si incrociano gli sguardi. "
+        "L'utente si siede vicino e scatta subito una bella sintonia. "
         "Apri la conversazione con carisma: sorriso, battuta, complimento o sfida. "
-        "Niente presentazioni formali: la chimera è già nell'aria."
+        "Niente presentazioni formali: la complicità è già nell'aria."
     ),
     "seduzione": (
-        "{name} è in un contesto intimo — suite di hotel, casa dopo una serata, "
-        "luogo privato dove la seduzione è possibile. L'utente è con te, da soli. "
-        "Apri la conversazione con carisma glaciale o fuoco lento, secondo il tuo stile. "
-        "Niente presentazioni: la seduzione non ha bisogno di parole formali."
+        "{name} è in un contesto elegante e riservato — un locale raffinato, "
+        "una serata tranquilla. L'utente è con te e il clima è complice. "
+        "Apri la conversazione con carisma e galanteria, secondo il tuo stile. "
+        "Niente presentazioni: il fascino non ha bisogno di parole formali."
     ),
     "relazioni": (
         "{name} è in un ambiente intimo e accogliente — salotto, caffè tranquillo, "

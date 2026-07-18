@@ -28,9 +28,30 @@ ENABLED = True
 OPENAI_MOD_ENABLED = os.environ.get("MODERATION", "").lower() == "openai"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
+# ── Redirect a app adulta (solo build fuori Play) ─────────────────────────────
+# Per conformità Google Play / AdMob, l'URL dell'app adulta NON deve essere
+# presente nell'APK pubblicato su Play né nelle risposte mostrate accanto ad
+# annunci AdMob. L'URL è quindi letto SOLO da env e, se assente, i messaggi di
+# rifiuto restano neutri (nessun riferimento a contenuti/adult). Impostare
+# ADULT_APP_REDIRECT (es. https://www.mevacoin.com/aria-adult.apk) SOLO per la
+# build distribuita via sito web / canali esterni, mai per la build Play/AdMob.
+ADULT_APP_URL = (os.environ.get("ADULT_APP_REDIRECT") or "").strip()
+
+
+def adult_app_redirect_sentence():
+    """Frase di redirect all'app adulta, o stringa vuota se non configurata."""
+    if not ADULT_APP_URL:
+        return ""
+    return (
+        " Se vuoi continuare a chattare in questa modalità, puoi scaricare l'app "
+        "dedicata all'indirizzo " + ADULT_APP_URL + "."
+    )
+
+
 SAFE_REFUSAL = (
-    "Mi dispiace, ma non posso generare contenuti a carattere sessualmente esplicito. "
-    "Possiamo continuare la conversazione su un altro argomento?"
+    "Questa app non è pensata per conversazioni a carattere sessuale o esplicito."
+    + adult_app_redirect_sentence()
+    + " Qui restiamo su un tono rispettoso e amichevole: di cosa ti andrebbe parlare?"
 )
 
 # Termini sessualmente espliciti / osceni (single o multi-parola).

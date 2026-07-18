@@ -104,6 +104,7 @@ async def api_chat(request: Request, body: ChatRequest, user: AuthUser = Depends
         raise HTTPException(403, "premium_required")
 
     from storage import check_and_count_message, refund_message
+    from content_safety import moderate_output
     allowed, status = check_and_count_message(user.user_id)
     if not allowed:
         raise HTTPException(
@@ -130,6 +131,11 @@ async def api_chat(request: Request, body: ChatRequest, user: AuthUser = Depends
     if not result:
         refund_message(user.user_id)
         raise HTTPException(404, "character not found")
+
+    # Blocco lato server garantito (conformità Google Play): anche se il modello
+    # producesse contenuti espliciti, l'output viene filtrato e sostituito.
+    ai_text, _blocked = moderate_output(result["ai_text"])
+    result["ai_text"] = ai_text
 
     resp = {
         "response": result["ai_text"],

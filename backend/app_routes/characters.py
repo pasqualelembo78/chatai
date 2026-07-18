@@ -299,6 +299,10 @@ async def api_create_character(
     age = data.get("age", 0)
     if not isinstance(age, int) or age < 15:
         raise HTTPException(400, "L'età deve essere almeno 15 anni")
+    # I personaggi adult/NSFW non sono creabili da questa sezione (scarico nuovi
+    # personaggi): l'app dedicata è www.mevacoin.com/aria-adult.apk. Ogni eventuale
+    # flag is_adult inviato dal client viene ignorato e forzato a False.
+    data["is_adult"] = False
     char = create_user_character(user.user_id, data)
     audit_log(user.user_id, "character.create", char['id'],
               request.client.host if request.client else "",

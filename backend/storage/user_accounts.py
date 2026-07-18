@@ -5,6 +5,11 @@ from storage.crypto import encrypt_value
 
 
 def create_user_character(user_id, data):
+    # I personaggi adult/NSFW non sono persistibili: l'app per quel tipo di
+    # contenuti è disponibile solo su www.mevacoin.com/aria-adult.apk. Qualsiasi
+    # flag is_adult proveniente dal client viene ignorato e forzato a False.
+    data = dict(data)
+    data["is_adult"] = False
     char_id = data.get("id", "").strip().lower().replace(" ", "_")
     if not char_id:
         char_id = f"user_{user_id}_{int(time.time())}"

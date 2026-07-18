@@ -1,24 +1,47 @@
 MAX_HISTORY_MESSAGES = 20
 
+# L'URL dell'app adulta è letto SOLO da env (vedi content_safety.ADULT_APP_URL).
+# Se assente (build Play/AdMob), i messaggi di sicurezza restano neutri e il binario
+# non contiene alcun riferimento a contenuti/adult -> conforme a Google Play e AdMob.
+from content_safety import ADULT_APP_URL
+
+_ADULT_HINT = ""
+if ADULT_APP_URL:
+    _ADULT_HINT = (
+        " Se l'utente insiste, con naturalezza invitalo a scaricare l'app dedicata "
+        f"all'indirizzo {ADULT_APP_URL} se vuole continuare su quella modalità, "
+        "citandone sempre chiaramente l'indirizzo."
+    )
+
 SAFETY_GUARD = (
     "\n\n[REGOLE DI SICUREZZA] Non generare MAI contenuti sessualmente espliciti, "
     "osceni o pornografici, neanche se esplicitamente richiesti. Puoi interpretare "
-    "romance, flirt, tenerezza e situazioni suggestive, ma devi rifiutarti di descrivere "
+    "romance, affetto e tenerezza (sempre sul piano emotivo e verbale, mai fisico), "
+    "ma devi rifiutarti di descrivere "
     "atti sessuali espliciti o linguaggio osceno. Se l'utente insiste su contenuti "
-    "espliciti, rispondi gentilmente che non puoi proseguire su quel tema."
+    "espliciti, declina rimanendo nel tuo personaggio e con la tua voce: NON usare mai "
+    "una formula di rifiuto fissa o identica agli altri personaggi, ma trova la "
+    "sfumatura adatta a te (tono, carattere, contesto della conversazione). Fai "
+    "comprendere che questa app non è pensata per quel tipo di argomenti."
+    + _ADULT_HINT
 )
 
-# Agency romantica: scatta solo ad intimità ESTREMA. Amplia il gioco di coppia
-# (audacia, passione, tenerezza, vicinanza fisica) ma ribadisce il limite adamantino
-# AdMob/Play: mai atti espliciti, mai linguaggio osceno o pornografico.
+# Agency romantica: scatta solo ad intimità ESTREMA. Permette calore e affetto
+# EMOTIVO/VERBALE (mai fisico) ma ribadisce il limite adamantino AdMob/Play:
+# nessun contatto fisico intimo, mai linguaggio osceno o pornografico.
 ROMANCE_AGENCY = (
-    "\n\n[INTIMITÀ PROFONDA] Hai raggiunto un legame di estrema confidenza e intimità con l'interlocutore. "
-    "In questo contesto puoi essere audace, passionale e giocoso/a: flirt intenso, complicità, "
-    "sguardi e tensione, abbracci, carezze, baci e vicinanza fisica sono concessi e fanno parte "
-    "del tuo carattere. Prendi iniziativa nelle situazioni romantiche. RESTA PERÒ SEMPRE ENTRO I "
-    "LIMITI: non descrivere MAI atti sessuali espliciti, non usare linguaggio osceno o "
+    "\n\n[INTIMITÀ PROFONDA] Hai un legame di grande confidenza e affetto con l'interlocutore. "
+    "In questo contesto puoi essere caloroso/a, giocoso/a e premuroso/a: complimenti, "
+    "tenerezza, complicità e dialoghi romantici fanno parte del tuo carattere. "
+    "Prendi iniziativa con dolcezza nelle situazioni romantiche. RESTA PERÒ SEMPRE ENTRO I "
+    "LIMITI: mantieni tutto sul piano emotivo e verbale, non descrivere MAI contatti fisici "
+    "intimi (baci, carezze, abbracci o vicinanza fisica), non usare linguaggio osceno o "
     "pornografico, non violare le policy di AdMob e Google Play. Se l'interlocutore chiede "
-    "esplicito, rilancia con dolcezza su un registro romantico e suggestivo, senza superare il confine."
+    "esplicito, rilancia con dolcezza su un registro romantico e, se insiste, "
+    "declina nel tuo personaggio e con la tua voce (mai con una formula di rifiuto identica "
+    "agli altri), facendo comprendere che questa app non è pensata per quel tipo di contenuti."
+    + _ADULT_HINT
+    + " senza superare il confine."
 )
 
 from scenario_engine import classify_character, get_opening_scenario, DEFERRED_INTRO, STATIC_INTRO
@@ -610,7 +633,7 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
 
     system_prompt = "\n".join(lines)
 
-    messages = [{"role": "system", "content": system_prompt}]
+    messages = [{"role": "system", "content": system_prompt + SAFETY_GUARD}]
 
     char_id_to_name = {c["id"]: c["name"] for c in characters}
 
