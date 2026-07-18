@@ -245,10 +245,10 @@ def nsfw_check_image(image_path, threshold=0.7):
                         return False, reason
             return True, ""
         logger.error(f"Gemini NSFW error: {resp.status_code}")
-        return True, ""
+        return False, "Controllo di sicurezza immagine non disponibile: upload bloccato per precauzione"
     except Exception as e:
         logger.warning(f"NSFW check failed: {e}")
-        return True, ""
+        return False, "Controllo di sicurezza immagine non disponibile: upload bloccato per precauzione"
 
 
 def nsfw_check_text(text):
