@@ -272,6 +272,10 @@ public class MvcEarnActivity extends AppCompatActivity {
 
     private void claimBonus(int dayNumber) {
         int reward = calculateReward(dayNumber);
+        runWithRewardedAd(() -> performBonusClaim(dayNumber, reward), "Video non disponibile");
+    }
+
+    private void performBonusClaim(int dayNumber, int reward) {
         executor.execute(() -> {
             try {
                 JSONObject body = new JSONObject();
@@ -638,7 +642,11 @@ public class MvcEarnActivity extends AppCompatActivity {
 
     private void doCheckin() {
         btnCheckin.setEnabled(false);
-        btnCheckin.setText("...");
+        btnCheckin.setText("Guarda il video...");
+        runWithRewardedAd(this::performCheckinClaim, "Video non disponibile: check-in diretto");
+    }
+
+    private void performCheckinClaim() {
         executor.execute(() -> {
             try {
                 JSONObject body = new JSONObject();
@@ -687,6 +695,32 @@ public class MvcEarnActivity extends AppCompatActivity {
                     Snackbar.make(findViewById(android.R.id.content),
                             "Errore: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                 });
+            }
+        });
+    }
+
+    /**
+     * Mostra un video rewarded; alla fine (o se non disponibile) esegue l'azione di riscatto.
+     * Fallback diretto se l'annuncio non è pronto, per non bloccare l'utente in assenza di fill.
+     */
+    private void runWithRewardedAd(Runnable onGranted, String fallbackMsg) {
+        ChatApplication app = (ChatApplication) getApplication();
+        AdManager adManager = app.getAdManager();
+        if (!adManager.isRewardedReady()) {
+            onGranted.run();
+            return;
+        }
+        adManager.showRewarded(this, new AdManager.RewardedCallback() {
+            @Override
+            public void onRewardEarned(int amount) {
+                onGranted.run();
+            }
+
+            @Override
+            public void onRewardedFailed() {
+                mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                        fallbackMsg, Snackbar.LENGTH_SHORT).show());
+                onGranted.run();
             }
         });
     }

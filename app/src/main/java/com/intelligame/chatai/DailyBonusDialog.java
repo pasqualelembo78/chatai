@@ -14,6 +14,8 @@ import androidx.fragment.app.DialogFragment;
 
 import org.json.JSONObject;
 
+import com.intelligame.chatai.AdManager;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -94,6 +96,32 @@ public class DailyBonusDialog extends DialogFragment {
     }
 
     private void claimDailyBonus() {
+        ChatApplication app = (ChatApplication) requireActivity().getApplication();
+        AdManager adManager = app.getAdManager();
+        if (adManager.isRewardedReady()) {
+            adManager.showRewarded(requireActivity(), new AdManager.RewardedCallback() {
+                @Override
+                public void onRewardEarned(int amount) {
+                    performClaim();
+                }
+
+                @Override
+                public void onRewardedFailed() {
+                    mainHandler.post(() -> {
+                        if (isAdded()) {
+                            android.widget.Toast.makeText(getContext(),
+                                    "Video non disponibile: riscatto diretto", android.widget.Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    performClaim();
+                }
+            });
+        } else {
+            performClaim();
+        }
+    }
+
+    private void performClaim() {
         executor.execute(() -> {
             try {
                 ChatApplication app = (ChatApplication) requireActivity().getApplication();
