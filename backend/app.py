@@ -1,6 +1,16 @@
 """ChatAI FastAPI application — slim entry point."""
 
 import os
+
+# Carica le variabili da .env PRIMA di ogni altro import che legga l'ambiente
+# a import-time (es. content_safety, db). Garantisce che DATABASE_URL/REDIS_URL
+# siano disponibili anche se systemd non inietta EnvironmentFile.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
+
 import sys
 import logging
 import threading
