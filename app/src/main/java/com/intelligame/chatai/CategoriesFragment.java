@@ -42,7 +42,6 @@ public class CategoriesFragment extends Fragment {
 
     private List<CatItem> categories = new ArrayList<>();
     private CategoryGridAdapter gridAdapter;
-    private boolean matureEnabled = false;
 
     private boolean showingCharacters = false;
     private List<HomeFragment.CharacterItem> currentCategoryCharacters = new ArrayList<>();
@@ -51,10 +50,10 @@ public class CategoriesFragment extends Fragment {
     // Model for categories with count and locked status
     static class CatItem {
         String id, name, icon;
-        boolean locked, premium, adult;
+        boolean locked, premium;
         int mvcCost, characterCount;
 
-        CatItem(String id, String name, String icon, boolean locked, boolean premium, int mvcCost, int characterCount, boolean adult) {
+        CatItem(String id, String name, String icon, boolean locked, boolean premium, int mvcCost, int characterCount) {
             this.id = id;
             this.name = name;
             this.icon = icon;
@@ -62,11 +61,6 @@ public class CategoriesFragment extends Fragment {
             this.premium = premium;
             this.mvcCost = mvcCost;
             this.characterCount = characterCount;
-            this.adult = adult;
-        }
-
-        CatItem(String id, String name, String icon, boolean locked, boolean premium, int mvcCost, int characterCount) {
-            this(id, name, icon, locked, premium, mvcCost, characterCount, false);
         }
     }
 
@@ -90,8 +84,6 @@ public class CategoriesFragment extends Fragment {
         loadingProgress = view.findViewById(R.id.loading_progress);
         backButton = view.findViewById(R.id.back_button);
         titleText = view.findViewById(R.id.title_text);
-
-        matureEnabled = ((ChatApplication) requireActivity().getApplication()).getPrefs().getShowAdult();
 
         backButton.setOnClickListener(v -> {
             if (showingCharacters) {
@@ -129,8 +121,7 @@ public class CategoriesFragment extends Fragment {
                             obj.optBoolean("locked", false),
                             obj.optBoolean("premium", false),
                             obj.optInt("mvc_cost", 0),
-                            obj.optInt("character_count", 0),
-                            false
+                            obj.optInt("character_count", 0)
                         ));
                     }
                     mainHandler.post(() -> {

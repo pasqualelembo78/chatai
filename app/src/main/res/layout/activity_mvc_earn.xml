@@ -231,7 +231,7 @@
             android:layout_marginTop="12dp"
             android:orientation="vertical">
 
-            <!-- Feature 1: Hot Categories -->
+            <!-- Feature 1: Categorie -->
             <LinearLayout
                 android:id="@+id/feature_card_categories"
                 android:layout_width="match_parent"
@@ -260,7 +260,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Categorie Hot"
+                        android:text="Categorie"
                         android:textColor="@color/on_surface"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -268,7 +268,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Flirt, Relazioni, Seduzione e altre categorie premium"
+                        android:text="Categorie premium esclusive per i tuoi personaggi preferiti"
                         android:textColor="@color/on_surface_variant"
                         android:textSize="12sp" />
 

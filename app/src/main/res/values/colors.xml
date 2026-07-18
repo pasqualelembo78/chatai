@@ -50,8 +50,6 @@
     <color name="bottom_nav_bg">#FFFFFF</color>
 
     <!-- Content labels -->
-    <color name="adult_red">#D50000</color>
-    <color name="adult_red_dark">#B71C1C</color>
     <color name="verified_badge">#2E7D32</color>
     <color name="online_dot">#2E7D32</color>
 

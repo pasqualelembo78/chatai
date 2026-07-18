@@ -567,11 +567,7 @@ public class MvcEarnActivity extends AppCompatActivity {
 
     private void showCategoryDialog() {
         String[][] cats = {
-                {"horror", "Horror", "200"},
-                {"flirt", "Flirt", "300"},
-                {"relazioni", "Relazioni", "300"},
-                {"confessioni", "Confessioni", "300"},
-                {"seduzione", "Seduzione", "500"}
+                {"horror", "Horror", "200"}
         };
         StringBuilder msg = new StringBuilder("Scegli quale categoria sbloccare:\n\n");
         for (String[] c : cats) {
@@ -583,7 +579,7 @@ public class MvcEarnActivity extends AppCompatActivity {
             items[i] = cats[i][1] + " (" + cats[i][2] + " MVC)";
         }
         new AlertDialog.Builder(this)
-                .setTitle("Sblocca Categorie Hot")
+                .setTitle("Sblocca Categorie")
                 .setMessage(msg.toString())
                 .setItems(items, (d, which) -> {
                     String catId = cats[which][0];

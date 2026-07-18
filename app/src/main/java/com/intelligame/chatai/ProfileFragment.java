@@ -43,7 +43,6 @@ public class ProfileFragment extends Fragment {
     private MaterialButton btnSaveNickname, btnSaveServer, btnResetAll, btnImportManage;
     private TextView nicknameStatus, serverStatus, resetStatus;
     private TextView mevacoinsBalance;
-    private SwitchCompat switchAdultContent;
     private View adminDivider;
     private android.widget.LinearLayout adminSection;
 
@@ -281,16 +280,6 @@ public class ProfileFragment extends Fragment {
                     shareStatusText.setVisibility(View.VISIBLE);
                 });
             }
-        });
-    }
-
-    private void saveAdultPreference(boolean showAdult) {
-        executor.execute(() -> {
-            try {
-                JSONObject body = new JSONObject();
-                body.put("show_adult", showAdult);
-                mAuth.requestWithRefresh(baseUrl + "/user/preferences", "PUT", body.toString(), 5000);
-            } catch (Exception ignored) {}
         });
     }
 

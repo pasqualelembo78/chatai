@@ -439,16 +439,16 @@ public class HomeFragment extends Fragment {
         characters.clear();
         characters.add(new CharacterItem("ginecologa", "Dottoressa", "\uD83D\uDC69\u200D\u2695\uFE0F", null,
             "Una professionista pronta ad ascoltarti", new String[]{"medico", "professionale"},
-            15420, "romance", false));
+            15420, "romance"));
         characters.add(new CharacterItem("infermiera", "Infermiera", "\uD83D\uDC69\u200D\uD83C\uDF93", null,
             "Dolce e premurosa, sempre al tuo fianco", new String[]{"cura", "dolcezza"},
-            8930, "romance", false));
+            8930, "romance"));
         characters.add(new CharacterItem("maga", "Maga Serena", "\uD83E\uDDD9\u200D\u2640\uFE0F", null,
             "Potente maga con un cuore d'oro", new String[]{"magia", "fantasy"},
-            12500, "fantasy", false));
+            12500, "fantasy"));
         characters.add(new CharacterItem("cavaliere", "Cavaliere Oscuro", "\uD83D\uDEE1\uFE0F", null,
             "Protettore delle terre dimenticate", new String[]{"cavaliere", "epico"},
-            7600, "fantasy", false));
+            7600, "fantasy"));
         Cache.characters = new ArrayList<>(characters);
         pagerAdapter.notifyDataSetChanged();
     }
@@ -799,10 +799,9 @@ public class HomeFragment extends Fragment {
         public final String[] tags;
         public final int conversationsCount;
         public final String category;
-        public final boolean isAdult;
 
         public CharacterItem(String id, String name, String emoji, String avatarImage, String description,
-                             String[] tags, int conversationsCount, String category, boolean isAdult) {
+                             String[] tags, int conversationsCount, String category) {
             this.id = id;
             this.name = name;
             this.emoji = emoji;
@@ -811,7 +810,6 @@ public class HomeFragment extends Fragment {
             this.tags = tags;
             this.conversationsCount = conversationsCount;
             this.category = category;
-            this.isAdult = isAdult;
         }
 
         public static CharacterItem fromJson(JSONObject obj) {
@@ -830,8 +828,7 @@ public class HomeFragment extends Fragment {
             }
             int conversations = obj.optInt("conversations", 0);
             String category = obj.optString("category", "");
-            boolean isAdult = obj.optBoolean("is_adult", false);
-            return new CharacterItem(id, name, emoji, avatarImage, description, tags, conversations, category, isAdult);
+            return new CharacterItem(id, name, emoji, avatarImage, description, tags, conversations, category);
         }
 
         public String getTagsString() {

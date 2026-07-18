@@ -54,7 +54,6 @@ public class CreateFragment extends Fragment {
     private TextInputEditText fieldDescription, fieldTags, fieldEssence, fieldPersonality;
     private TextInputEditText fieldSpeakingStyle, fieldBackstory, fieldHobbies, fieldSystemPrompt;
     private Spinner fieldCategory;
-    private CheckBox fieldIsAdult;
     private MaterialButton btnCreate;
     private TextView statusText;
 
@@ -267,7 +266,6 @@ public class CreateFragment extends Fragment {
         fieldBackstory.setText("");
         fieldHobbies.setText("");
         fieldSystemPrompt.setText("");
-        fieldIsAdult.setChecked(false);
         fieldCategory.setSelection(0);
     }
 
