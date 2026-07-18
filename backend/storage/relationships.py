@@ -18,6 +18,20 @@ def get_relationship(user_id, character_id):
         put_conn(conn)
 
 
+def get_user_intimacies(user_id):
+    """Mappa {character_id: intimacy} per tutti i personaggi di un utente (1 query)."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT character_id, intimacy FROM relationships WHERE user_id=%s",
+            (user_id,)
+        )
+        return {row["character_id"]: int(row["intimacy"]) for row in cur.fetchall()}
+    finally:
+        put_conn(conn)
+
+
 def update_relationship(user_id, character_id, deltas):
     current = get_relationship(user_id, character_id)
     for k, v in deltas.items():

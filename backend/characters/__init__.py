@@ -14,10 +14,10 @@ _ENRICH_CACHE_TTL = 300  # 5 minutes
 _DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
 _CHAR_FILES = [
-    "amicizia", "anime", "business", "confessioni", "creativi", "cucina",
-    "detective", "esperti", "fantasy", "flirt", "gamer", "horror",
+    "amicizia", "anime", "business", "creativi", "cucina",
+    "detective", "esperti", "fantasy", "gamer", "horror",
     "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
-    "relazioni", "romantici", "sci_fi", "scuola", "seduzione",
+    "romantici", "sci_fi", "scuola",
     "sopravvivenza", "speciale", "sport", "storia", "supereroi",
     "tecnici", "tecnologia", "viaggi",
 ]

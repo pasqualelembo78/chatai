@@ -209,6 +209,42 @@
             android:textSize="12sp"
             android:visibility="gone" />
 
+        <!-- Intimità (visibile prima di chattare) -->
+        <LinearLayout
+            android:id="@+id/detail_intimacy_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&#x2764;"
+                android:textSize="16sp"
+                android:textColor="@color/primary" />
+
+            <TextView
+                android:id="@+id/detail_intimacy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/on_surface"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/detail_intimacy_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:textColor="@color/on_surface_dim"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
         <!-- Action Buttons Row -->
         <LinearLayout
             android:layout_width="match_parent"

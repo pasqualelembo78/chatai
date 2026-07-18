@@ -15,11 +15,35 @@ from storage import (
     get_user_unlocks, get_user_preferences, audit_log,
     set_verified_birth_year, is_age_verified, flag_user,
 )
+from storage.relationships import get_user_intimacies, describe_intimacy_level
 from ai_engine import get_active_config, set_active, clear_model_cache, rebuild_free_model_chain, test_provider_connection
 import ai_engine
 from auth_fastapi import jwt_required, jwt_optional, AuthUser
 
 router = APIRouter()
+
+_DEFAULT_INTIMACY_CFG = {"threshold_refuse": 15, "threshold_accept": 50}
+
+
+def _attach_intimacy(chars, user_id):
+    """Arricchisce i personaggi con il livello di intimità dell'utente corrente.
+    Ritorna NUOVE copie dei dict (non muta la cache globale dei personaggi)."""
+    if not user_id:
+        return chars
+    intimacies = get_user_intimacies(user_id)
+    out = []
+    for c in chars:
+        cc = dict(c)
+        intimacy = int(intimacies.get(c.get("id"), 0))
+        cfg = c.get("intimacy_config") or {}
+        safe_cfg = {
+            "threshold_refuse": cfg.get("threshold_refuse", 15),
+            "threshold_accept": cfg.get("threshold_accept", 50),
+        }
+        cc["intimacy"] = intimacy
+        cc["intimacy_label"] = describe_intimacy_level(intimacy, safe_cfg)
+        out.append(cc)
+    return out
 
 
 class ConfigRequest(BaseModel):
@@ -164,6 +188,8 @@ async def api_characters(
                              [c for c in chars if not _gender_match(c) and not _unknown_gender(c)])
         except Exception:
             pass
+    if user_id:
+        chars = _attach_intimacy(chars, user_id)
     return chars[offset:offset + limit]
 
 
@@ -192,6 +218,8 @@ async def api_search_characters(
                 results = matching + unknown + rest
         except Exception:
             pass
+    if user_id:
+        results = _attach_intimacy(results, user_id)
     return results
 
 
@@ -297,6 +325,11 @@ async def api_character_detail(
             else:
                 formatted.append(str(h))
         char = {**char, "hobbies": formatted}
+    if user and user.user_id:
+        intimacies = get_user_intimacies(user.user_id)
+        intimacy = int(intimacies.get(char.get("id"), 0))
+        char = {**char, "intimacy": intimacy,
+                "intimacy_label": describe_intimacy_level(intimacy, char.get("intimacy_config") or _DEFAULT_INTIMACY_CFG)}
     return char
 
 

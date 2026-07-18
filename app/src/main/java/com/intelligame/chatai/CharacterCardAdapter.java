@@ -94,6 +94,13 @@ public class CharacterCardAdapter extends RecyclerView.Adapter<CharacterCardAdap
         holder.tags.setText(character.getTagsString());
         holder.conversations.setText(character.getConversationsString() + " chat");
 
+        if (character.intimacy > 0 && holder.intimacy != null) {
+            holder.intimacy.setVisibility(View.VISIBLE);
+            holder.intimacy.setText("\u2764 " + character.intimacy + "%");
+        } else if (holder.intimacy != null) {
+            holder.intimacy.setVisibility(View.GONE);
+        }
+
         boolean isFav = favoriteIds.contains(character.id);
         holder.favoriteButton.setImageResource(
             isFav ? R.drawable.ic_favorite_filled : R.drawable.ic_favorite_border
@@ -135,6 +142,7 @@ public class CharacterCardAdapter extends RecyclerView.Adapter<CharacterCardAdap
         final TextView description;
         final TextView tags;
         final TextView conversations;
+        final TextView intimacy;
         final ImageButton favoriteButton;
         final com.google.android.material.button.MaterialButton chatButton;
 
@@ -147,6 +155,7 @@ public class CharacterCardAdapter extends RecyclerView.Adapter<CharacterCardAdap
             description = itemView.findViewById(R.id.card_description);
             tags = itemView.findViewById(R.id.card_tags);
             conversations = itemView.findViewById(R.id.card_conversations);
+            intimacy = itemView.findViewById(R.id.card_intimacy);
             favoriteButton = itemView.findViewById(R.id.card_favorite_button);
             chatButton = itemView.findViewById(R.id.card_chat_button);
         }

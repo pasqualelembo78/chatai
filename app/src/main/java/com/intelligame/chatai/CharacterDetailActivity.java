@@ -46,6 +46,8 @@ public class CharacterDetailActivity extends AppCompatActivity {
     private TextView ageRole, categoryBadge;
     private TextView statsInteractions, statsLikes;
     private TextView backstory, hobbies, personality, scenario;
+    private LinearLayout intimacyContainer;
+    private TextView intimacyText, intimacyLabel;
     private CardView backstoryCard, scenarioCard, evolutionCard;
     private TextView evoStageIcon, evoStageName, evoProgressText;
     private TextView evoUnlockedLabel, evoUnlockedList, evoNextLabel, evoNextName;
@@ -154,6 +156,9 @@ public class CharacterDetailActivity extends AppCompatActivity {
 
         // Evolution
         evolutionCard = findViewById(R.id.detail_evolution_card);
+        intimacyContainer = findViewById(R.id.detail_intimacy_container);
+        intimacyText = findViewById(R.id.detail_intimacy);
+        intimacyLabel = findViewById(R.id.detail_intimacy_label);
         evoStageIcon = findViewById(R.id.detail_evo_stage_icon);
         evoStageName = findViewById(R.id.detail_evo_stage_name);
         evoProgressText = findViewById(R.id.detail_evo_progress_text);
@@ -531,6 +536,14 @@ public class CharacterDetailActivity extends AppCompatActivity {
 
         // Generate introductory questions
         generateIntroductoryQuestions(charName, charRole, desc);
+
+        // Intimità (fallback dai dati del personaggio, prima di chattare)
+        int intimacy = obj.optInt("intimacy", -1);
+        if (intimacy >= 0 && intimacyContainer != null && intimacyText != null && intimacyLabel != null) {
+            intimacyContainer.setVisibility(View.VISIBLE);
+            intimacyText.setText("Intimità " + intimacy + "%");
+            intimacyLabel.setText(intimacyLabel(intimacy));
+        }
     }
 
     private void generateIntroductoryQuestions(String name, String role, String description) {
@@ -562,6 +575,14 @@ public class CharacterDetailActivity extends AppCompatActivity {
         return String.valueOf(count);
     }
 
+    private String intimacyLabel(int intimacy) {
+        if (intimacy <= 0) return "Sconosciuti";
+        else if (intimacy < 15) return "Conoscenza superficiale";
+        else if (intimacy < 50) return "Confidenza crescente";
+        else if (intimacy < 80) return "Relazione intima";
+        else return "Relazione profonda";
+    }
+
     private String stageIcon(String stageId) {
         switch (stageId) {
             case "base": return "🌱";
@@ -580,6 +601,13 @@ public class CharacterDetailActivity extends AppCompatActivity {
     private void bindEvolution(JSONObject evo, JSONArray stages) {
         if (evo == null) return;
         try {
+            int intimacy = evo.optInt("intimacy", evo.optInt("intimacy_peak", 0));
+            if (intimacyContainer != null && intimacyText != null && intimacyLabel != null) {
+                intimacyContainer.setVisibility(View.VISIBLE);
+                intimacyText.setText("Intimità " + intimacy + "%");
+                intimacyLabel.setText(intimacyLabel(intimacy));
+            }
+
             String currentStage = evo.optString("current_stage", "base");
             int totalMessages = evo.optInt("total_messages", 0);
 

@@ -799,6 +799,8 @@ public class HomeFragment extends Fragment {
         public final String[] tags;
         public final int conversationsCount;
         public final String category;
+        public int intimacy = 0;
+        public String intimacyLabel = "";
 
         public CharacterItem(String id, String name, String emoji, String avatarImage, String description,
                              String[] tags, int conversationsCount, String category) {
@@ -828,7 +830,10 @@ public class HomeFragment extends Fragment {
             }
             int conversations = obj.optInt("conversations", 0);
             String category = obj.optString("category", "");
-            return new CharacterItem(id, name, emoji, avatarImage, description, tags, conversations, category);
+            CharacterItem item = new CharacterItem(id, name, emoji, avatarImage, description, tags, conversations, category);
+            item.intimacy = obj.optInt("intimacy", 0);
+            item.intimacyLabel = obj.optString("intimacy_label", "");
+            return item;
         }
 
         public String getTagsString() {
