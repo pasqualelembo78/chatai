@@ -24,18 +24,11 @@ EMOTION_KEYWORDS = {
         "scintilla", "attrazione", "desiderio", "desiderare",
         "toccare", "carezza", "sfiorare", "labbra", "sguardo intenso"
     ],
-    "sexual_direct": [
-        "scopare", "fottere", "chiavare", "pompino", "succhiare",
-        "sesso", "orgasmo", "penetrare", "erezione", "eccitato",
-        "eccitata", "nudo", "nuda", "spogliare", "spogliarsi",
-        "letto", "fare l'amore", "massaggio erotico", "bocca",
-        "lingua", "umido", "bagnata", "dietro", "culo",
-        "tette", "seno", "cazzo", "fica", "sborrare",
-        "masturbare", "masturbarsi", "porno", "hard",
-        "sessuale", "erotico", "eccitante", "lussuria",
-        "libidine", "lubrico", "osceno", "porco", "porca",
-        "sporco", "sporca", "perversione", "perverso", "perversa",
-        "bordello", "puttana", "zoccola"
+    "intimate_tension": [
+        "desiderio", "desiderare", "attrazione", "carezza", "sfiorare",
+        "toccare", "labbra", "sguardo intenso", "provocante", "fascino",
+        "seduzione", "malizia", "ammiccare", "languido", "languida",
+        "tensione", "chimica", "scintilla"
     ],
     "challenge": [
         "sfida", "scommettiamo", "non ci riesci", "vediamo", "provo",
@@ -108,7 +101,7 @@ PRESSURE_KEYWORDS = {
 INTIMACY_SCORE = {
     "flirt": 2.0,
     "romance": 3.0,
-    "sexual_direct": 5.0
+    "intimate_tension": 5.0
 }
 
 PRESSURE_WEIGHTS = {
