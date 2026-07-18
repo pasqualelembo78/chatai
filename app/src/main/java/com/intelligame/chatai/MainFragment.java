@@ -262,7 +262,7 @@ public class MainFragment extends Fragment {
 
         mBannerAdContainer = (FrameLayout) view.findViewById(R.id.banner_ad_container);
 
-        // Show banner ad if not premium
+        // Banner se non premium
         ChatApplication app = (ChatApplication) requireActivity().getApplication();
         mAdManager = app.getAdManager();
         PremiumManager pm = app.getPremiumManager();
@@ -1241,7 +1241,7 @@ public class MainFragment extends Fragment {
         addThinking(mCharacterName != null ? mCharacterName : "AI");
         mSocket.emit("stream message", payload);
 
-        // Show interstitial every 8 messages (if not premium)
+        // Interstitial ogni 8 messaggi (se non premium)
         PremiumManager pm2 = ((ChatApplication) requireActivity().getApplication()).getPremiumManager();
         if (getActivity() != null && (pm2 == null || !pm2.isPremium())) {
             mAdManager.onMessageSent(getActivity());

@@ -119,68 +119,6 @@
                         android:padding="14dp"
                         android:layout_marginBottom="12dp"/>
 
-                    <LinearLayout
-                        android:id="@+id/birth_date_row"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Data di nascita"
-                            android:textSize="13sp"
-                            android:textColor="@color/on_surface"
-                            android:layout_marginEnd="8dp"/>
-
-                        <EditText
-                            android:id="@+id/birth_day"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="GG"
-                            android:inputType="number"
-                            android:maxLength="2"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:background="@drawable/edittext_bg"
-                            android:padding="12dp"
-                            android:textColor="@color/on_surface"/>
-
-                        <EditText
-                            android:id="@+id/birth_month"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="8dp"
-                            android:hint="MM"
-                            android:inputType="number"
-                            android:maxLength="2"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:background="@drawable/edittext_bg"
-                            android:padding="12dp"
-                            android:textColor="@color/on_surface"/>
-
-                        <EditText
-                            android:id="@+id/birth_year"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1.4"
-                            android:layout_marginStart="8dp"
-                            android:hint="AAAA"
-                            android:inputType="number"
-                            android:maxLength="4"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:background="@drawable/edittext_bg"
-                            android:padding="12dp"
-                            android:textColor="@color/on_surface"/>
-                    </LinearLayout>
-
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/login_button"
                         android:layout_width="match_parent"

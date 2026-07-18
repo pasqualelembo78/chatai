@@ -223,7 +223,7 @@ def list_characters(include_adult=False):
 
 
 def get_categories():
-    return CATEGORIES
+    return [c for c in CATEGORIES if not c.get("adult")]
 
 
 _CAT_CACHE = {}
@@ -251,14 +251,12 @@ def search_characters(query):
     from storage import get_all_user_characters
     predefined = [_enrich(c) for c in CHARACTERS if query in c["name"].lower() or query in c.get("description", "").lower() or any(query in t.lower() for t in c.get("tags", []))]
     user_chars = [c for c in get_all_user_characters() if query in c["name"].lower() or query in c.get("description", "").lower() or any(query in t.lower() for t in c.get("tags", []))]
-    return predefined + user_chars
+    return [c for c in (predefined + user_chars) if not c.get("is_adult")]
 
 
 def get_adult_characters():
-    from storage import get_all_user_characters
-    predefined = [_enrich(c) for c in CHARACTERS if c.get("is_adult", False)]
-    user_chars = [c for c in get_all_user_characters() if c.get("is_adult")]
-    return predefined + user_chars
+    # Contenuti adulti rimossi dall'app: non esposti piu'.
+    return []
 
 
 def filter_characters_by_gender(characters, gender_interest):

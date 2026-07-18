@@ -104,7 +104,7 @@ async def api_characters(
     user: Optional[AuthUser] = Depends(jwt_optional),
 ):
     user_id = user.user_id if user else None
-    include_adult = bool(user_id) and is_age_verified(user_id)
+    include_adult = False
     if category == "per_te":
         from characters import list_characters as _lc
         all_chars = _lc(include_adult=include_adult)
@@ -197,30 +197,8 @@ async def api_search_characters(
 
 @router.get("/characters/adult")
 async def api_adult_characters(user: Optional[AuthUser] = Depends(jwt_optional)):
-    user_id = user.user_id if user else None
-    if not user_id:
-        return []
-    # Gate età lato server: i contenuti per adulti sono esposti SOLO se l'utente
-    # ha verificato un'eta' >= 18 anni. Nessun contenuto adulto per utenti non verificati.
-    if not is_age_verified(user_id):
-        return []
-    chars = get_adult_characters()
-    unlocks = {u["content_id"] for u in get_user_unlocks(user_id) if u["content_type"] == "category"}
-    cats = get_categories()
-    cat_cost = {c["id"]: c.get("mvc_cost", 0) for c in cats}
-    chars = [c for c in chars if not cat_cost.get(c.get("category"), 0) or c["category"] in unlocks]
-    try:
-        prefs = get_user_preferences(user_id)
-        gender = prefs.get("gender_interest", "")
-        if gender and gender != "non binario":
-            from characters import infer_character_sex
-            matching = [c for c in chars if infer_character_sex(c) == gender]
-            unknown = [c for c in chars if infer_character_sex(c) == ""]
-            rest = [c for c in chars if infer_character_sex(c) not in (gender, "")]
-            chars = matching + unknown + rest
-    except Exception:
-        pass
-    return chars
+    # Contenuti adulti rimossi dall'app: endpoint sempre vuoto.
+    return []
 
 
 class AgeVerificationRequest(BaseModel):
@@ -308,8 +286,8 @@ async def api_character_detail(
     char = get_character(char_id)
     if not char:
         raise HTTPException(404, "not found")
-    if char.get("is_adult") and not (user and is_age_verified(user.user_id)):
-        raise HTTPException(403, "Verifica l'età per accedere a questo contenuto")
+    if char.get("is_adult"):
+        raise HTTPException(403, "Contenuto non disponibile")
     if "hobbies" in char and isinstance(char["hobbies"], list):
         formatted = []
         for h in char["hobbies"]:
@@ -330,8 +308,8 @@ async def api_character_core(
     char = get_character(char_id)
     if not char:
         raise HTTPException(404, "not found")
-    if char.get("is_adult") and not (user and is_age_verified(user.user_id)):
-        raise HTTPException(403, "Verifica l'età per accedere a questo contenuto")
+    if char.get("is_adult"):
+        raise HTTPException(403, "Contenuto non disponibile")
     core_fields = [
         "id", "name", "full_name", "surname", "age", "role", "category",
         "avatar", "description", "tags", "essence", "personality",

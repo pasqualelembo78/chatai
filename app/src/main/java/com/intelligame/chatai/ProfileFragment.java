@@ -95,8 +95,7 @@ public class ProfileFragment extends Fragment {
         mevacoinsBalance = view.findViewById(R.id.mevacoins_balance_text);
         Button btnRicarica = view.findViewById(R.id.btn_ricarica);
         Button btnGuadagna = view.findViewById(R.id.btn_guadagna);
-        Button btnEditPrefs = view.findViewById(R.id.btn_edit_preferences);
-        switchAdultContent = view.findViewById(R.id.switch_adult_content);
+        Button         btnEditPrefs = view.findViewById(R.id.btn_edit_preferences);
         adminDivider = view.findViewById(R.id.admin_divider);
         adminSection = view.findViewById(R.id.admin_section);
         btnImportManage = view.findViewById(R.id.btn_import_manage);
@@ -112,16 +111,6 @@ public class ProfileFragment extends Fragment {
 
         fieldNickname.setText(prefs.getUsername());
         fieldServerUrl.setText(prefs.getServerUrl());
-
-        // Adult content switch
-        switchAdultContent.setChecked(prefs.getShowAdult());
-        switchAdultContent.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.setShowAdult(isChecked);
-            saveAdultPreference(isChecked);
-            Snackbar.make(requireView(),
-                isChecked ? "Contenuti adulti attivati" : "Contenuti adulti disattivati",
-                Snackbar.LENGTH_SHORT).show();
-        });
 
         btnSaveNickname.setOnClickListener(v -> saveNickname());
         btnSaveServer.setOnClickListener(v -> saveServerUrl());
@@ -169,24 +158,13 @@ public class ProfileFragment extends Fragment {
         preferitiRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         pertRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        boolean ageVerified = prefs.getAdultBirthYear() > 0;
         preferitiAdapter = new CharacterCardAdapter(preferitiChars, character -> {
-            if (character.isAdult && !ageVerified) {
-                AdultConfirmDialog dialog = new AdultConfirmDialog(() -> openCharacterDetail(character));
-                dialog.show(getParentFragmentManager(), "adult_confirm");
-            } else {
-                openCharacterDetail(character);
-            }
+            openCharacterDetail(character);
         }, (character, isFavorite) -> toggleFavorite(character, isFavorite));
         preferitiRecycler.setAdapter(preferitiAdapter);
 
         pertAdapter = new CharacterCardAdapter(pertChars, character -> {
-            if (character.isAdult && !ageVerified) {
-                AdultConfirmDialog dialog = new AdultConfirmDialog(() -> openCharacterDetail(character));
-                dialog.show(getParentFragmentManager(), "adult_confirm");
-            } else {
-                openCharacterDetail(character);
-            }
+            openCharacterDetail(character);
         }, (character, isFavorite) -> toggleFavorite(character, isFavorite));
         pertRecycler.setAdapter(pertAdapter);
 

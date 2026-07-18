@@ -264,7 +264,7 @@ public class AuthManager {
         }).start();
     }
 
-    public void register(String username, String email, String password, String serverUrl, String referralCode, String birthDate, AuthCallback callback) {
+    public void register(String username, String email, String password, String serverUrl, String referralCode, AuthCallback callback) {
         final String urlStr = serverUrl + "/auth/register";
         new Thread(() -> {
             HttpURLConnection conn = null;
@@ -285,9 +285,6 @@ public class AuthManager {
                 }
                 if (referralCode != null && !referralCode.isEmpty()) {
                     body.put("referral_code", referralCode);
-                }
-                if (birthDate != null && !birthDate.isEmpty()) {
-                    body.put("birth_date", birthDate);
                 }
 
                 OutputStream os = conn.getOutputStream();

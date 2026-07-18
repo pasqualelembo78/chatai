@@ -114,14 +114,6 @@ public class PrefsManager {
         return getBlockedUsers().contains(userId);
     }
 
-    public void setAdultBirthYear(int year) {
-        prefs.edit().putInt("adult_birth_year", year).apply();
-    }
-
-    public int getAdultBirthYear() {
-        return prefs.getInt("adult_birth_year", 0);
-    }
-
     public Set<String> getProvidersWithKeys() {
         return prefs.getStringSet(KEY_PROVIDERS_WITH_KEYS, new HashSet<String>());
     }

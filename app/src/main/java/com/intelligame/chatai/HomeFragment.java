@@ -108,17 +108,10 @@ public class HomeFragment extends Fragment {
         emptyStateSubtitle = view.findViewById(R.id.empty_state_subtitle);
         searchFiltersRecycler = view.findViewById(R.id.search_filters_recycler);
 
-        boolean ageVerified = app.getPrefs().getAdultBirthYear() > 0;
-
         pagerAdapter = new CharacterPagerAdapter(characters, new CharacterPagerAdapter.OnPageClickListener() {
             @Override
             public void onCharacterClick(CharacterItem character) {
-                if (character.isAdult && !ageVerified) {
-                    AdultConfirmDialog dialog = new AdultConfirmDialog(() -> openCharacterDetail(character));
-                    dialog.show(getParentFragmentManager(), "adult_confirm");
-                } else {
-                    openCharacterDetail(character);
-                }
+                openCharacterDetail(character);
             }
 
             @Override

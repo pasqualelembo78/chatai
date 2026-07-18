@@ -335,15 +335,6 @@
             android:textSize="14sp"
             android:gravity="top" />
 
-        <CheckBox
-            android:id="@+id/field_is_adult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Contenuto per adulti"
-            android:textColor="@color/adult_red"
-            android:textSize="14sp" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_create"
             android:layout_width="match_parent"

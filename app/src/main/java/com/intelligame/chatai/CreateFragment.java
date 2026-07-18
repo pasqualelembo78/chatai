@@ -91,7 +91,6 @@ public class CreateFragment extends Fragment {
         fieldBackstory = view.findViewById(R.id.field_backstory);
         fieldHobbies = view.findViewById(R.id.field_hobbies);
         fieldSystemPrompt = view.findViewById(R.id.field_system_prompt);
-        fieldIsAdult = view.findViewById(R.id.field_is_adult);
         btnCreate = view.findViewById(R.id.btn_create);
         statusText = view.findViewById(R.id.status_text);
 
@@ -207,7 +206,6 @@ public class CreateFragment extends Fragment {
                     ? "💬" : fieldAvatar.getText().toString().trim());
                 body.put("description", fieldDescription.getText().toString().trim());
                 body.put("tags", tagsArr);
-                body.put("is_adult", fieldIsAdult.isChecked());
                 body.put("essence", fieldEssence.getText().toString().trim());
                 body.put("personality", fieldPersonality.getText().toString().trim());
                 body.put("speaking_style", fieldSpeakingStyle.getText().toString().trim());
