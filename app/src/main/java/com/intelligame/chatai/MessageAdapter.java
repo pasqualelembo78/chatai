@@ -380,18 +380,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 try {
                     ChatApplication app = (ChatApplication) ctx.getApplicationContext();
                     String baseUrl = app.getPrefs().getServerUrl();
-                    String userId = app.getPrefs().getUsername();
 
                     org.json.JSONObject body = new org.json.JSONObject();
-                    body.put("reported_by", userId);
-                    body.put("character_id", characterId != null ? characterId : "");
-                    body.put("message_text", message.getMessage() != null ? message.getMessage() : "");
-                    body.put("reported_user", message.getUsername() != null ? message.getUsername() : "");
+                    body.put("content_type", "message");
+                    body.put("content_id", characterId != null ? characterId : "");
+                    body.put("reason", "Contenuto inappropriato");
+                    body.put("snippet", message.getMessage() != null ? message.getMessage() : "");
 
                     AuthManager.HttpResponse httpResp = app.getAuthManager().requestWithRefresh(
-                        baseUrl.replace("/chat", "") + "/user/report", "POST", body.toString(), 5000);
+                        baseUrl + "/report", "POST", body.toString(), 8000);
 
-                    if (httpResp.statusCode == 200 || httpResp.statusCode == 201) {
+                    if (httpResp.statusCode >= 200 && httpResp.statusCode < 300) {
                         mReportButton.post(() ->
                             Toast.makeText(ctx, "Segnalazione inviata. Grazie.", Toast.LENGTH_SHORT).show()
                         );

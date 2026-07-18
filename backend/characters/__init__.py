@@ -207,16 +207,19 @@ _LIST_CACHE = {"data": None, "ts": 0}
 _LIST_CACHE_TTL = 60  # 1 minute
 
 
-def list_characters():
+def list_characters(include_adult=False):
     now = time.time()
     if _LIST_CACHE["data"] and now - _LIST_CACHE["ts"] < _LIST_CACHE_TTL:
-        return _LIST_CACHE["data"]
-    from storage import get_all_user_characters
-    uchars = get_all_user_characters()
-    result = [_enrich(c) for c in CHARACTERS] + uchars
-    _LIST_CACHE["data"] = result
-    _LIST_CACHE["ts"] = now
-    return result
+        cached = _LIST_CACHE["data"]
+    else:
+        from storage import get_all_user_characters
+        uchars = get_all_user_characters()
+        cached = [_enrich(c) for c in CHARACTERS] + uchars
+        _LIST_CACHE["data"] = cached
+        _LIST_CACHE["ts"] = now
+    if include_adult:
+        return cached
+    return [c for c in cached if not c.get("is_adult")]
 
 
 def get_categories():
@@ -227,17 +230,20 @@ _CAT_CACHE = {}
 _CAT_CACHE_TTL = 60
 
 
-def get_characters_by_category(category_id):
+def get_characters_by_category(category_id, include_adult=False):
     now = time.time()
     cached = _CAT_CACHE.get(category_id)
     if cached and now - cached["ts"] < _CAT_CACHE_TTL:
-        return cached["data"]
-    from storage import get_all_user_characters
-    predefined = [_enrich(c) for c in CHARACTERS if c["category"] == category_id]
-    user_chars = [c for c in get_all_user_characters() if c.get("category") == category_id]
-    result = predefined + user_chars
-    _CAT_CACHE[category_id] = {"data": result, "ts": now}
-    return result
+        result = cached["data"]
+    else:
+        from storage import get_all_user_characters
+        predefined = [_enrich(c) for c in CHARACTERS if c["category"] == category_id]
+        user_chars = [c for c in get_all_user_characters() if c.get("category") == category_id]
+        result = predefined + user_chars
+        _CAT_CACHE[category_id] = {"data": result, "ts": now}
+    if include_adult:
+        return result
+    return [c for c in result if not c.get("is_adult")]
 
 
 def search_characters(query):

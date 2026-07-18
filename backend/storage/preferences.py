@@ -14,6 +14,7 @@ def get_user_preferences(user_id):
             user_age = row["user_age"] if row["user_age"] else 0
             gender_interest = row["gender_interest"]
             orientation = derive_sexual_orientation(user_gender, gender_interest)
+            verified_birth_year = row["verified_birth_year"] if row.get("verified_birth_year") else 0
             return {
                 "gender_interest": gender_interest,
                 "age_range": row["age_range"],
@@ -21,11 +22,59 @@ def get_user_preferences(user_id):
                 "show_adult": bool(row["show_adult"]),
                 "user_gender": user_gender,
                 "user_age": user_age,
+                "verified_birth_year": verified_birth_year,
+                "age_verified": _is_adult_from_birth_year(verified_birth_year),
                 "sexual_orientation": orientation,
             }
-        return {"gender_interest": "", "age_range": "", "interest_tags": [], "show_adult": False, "user_gender": "", "user_age": 0, "sexual_orientation": ""}
+        return {"gender_interest": "", "age_range": "", "interest_tags": [], "show_adult": False, "user_gender": "", "user_age": 0,
+                "verified_birth_year": 0, "age_verified": False, "sexual_orientation": ""}
     finally:
         put_conn(conn)
+
+
+def _is_adult_from_birth_year(birth_year):
+    if not birth_year:
+        return False
+    try:
+        return (2026 - int(birth_year)) >= 18
+    except (ValueError, TypeError):
+        return False
+
+
+def set_verified_birth_year(user_id, birth_year):
+    """Memorizza l'anno di nascita verificato (inserito dall'utente nel dialog 18+).
+
+    Restituisce True se l'utente risulta maggiorenne (>=18 anni), False altrimenti.
+    Il valore e' la base del gate età lato server per i contenuti per adulti.
+    """
+    try:
+        birth_year = int(birth_year)
+    except (ValueError, TypeError):
+        return False
+    import datetime
+    current_year = datetime.datetime.utcnow().year
+    if birth_year < 1900 or birth_year > current_year:
+        return False
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            """INSERT INTO user_preferences (user_id, verified_birth_year, updated_at)
+               VALUES (%s, %s, CURRENT_TIMESTAMP)
+               ON CONFLICT (user_id) DO UPDATE SET
+               verified_birth_year=EXCLUDED.verified_birth_year,
+               updated_at=EXCLUDED.updated_at""",
+            (user_id, birth_year),
+        )
+        conn.commit()
+    finally:
+        put_conn(conn)
+    return _is_adult_from_birth_year(birth_year)
+
+
+def is_age_verified(user_id):
+    prefs = get_user_preferences(user_id)
+    return bool(prefs.get("age_verified"))
 
 
 def save_user_preferences(user_id, data):

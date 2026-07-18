@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -70,13 +72,23 @@ public class AdultConfirmDialog extends DialogFragment {
                 return;
             }
 
-            // Salva la verifica età nelle preferenze
+            // Salva la verifica età in locale (cache UX) e la registra lato server.
+            // Il gate 18+ e' fatto valere sul server: i contenuti per adulti non sono
+            // raggiungibili da minori nemmeno modificando le preferenze locali.
             Context ctx = requireContext();
-            if (ctx != null) {
-                try {
-                    ChatApplication app = (ChatApplication) ctx.getApplicationContext();
-                    app.getPrefs().setAdultBirthYear(birthYear);
-                } catch (Exception ignored) {}
+            ChatApplication app = ctx != null ? (ChatApplication) ctx.getApplicationContext() : null;
+            if (app != null) {
+                app.getPrefs().setAdultBirthYear(birthYear);
+                final int finalBirthYear = birthYear;
+                new Thread(() -> {
+                    try {
+                        JSONObject body = new JSONObject();
+                        body.put("birth_year", finalBirthYear);
+                        app.getAuthManager().requestWithRefresh(
+                                app.getPrefs().getServerUrl() + "/me/verify-age",
+                                "POST", body.toString(), 8000);
+                    } catch (Exception ignored) {}
+                }).start();
             }
 
             if (listener != null) {

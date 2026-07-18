@@ -1725,5 +1725,297 @@
     "ts": "2026-07-17T05:14:01",
     "bio": true,
     "scenario": true
+  },
+  "leon_confessioni": {
+    "avatar": true,
+    "ts": "2026-07-17T15:36:53",
+    "bio": true,
+    "scenario": true
+  },
+  "narratore_interattivo": {
+    "avatar": true,
+    "ts": "2026-07-17T15:37:59",
+    "bio": true,
+    "scenario": true
+  },
+  "game_master": {
+    "avatar": true,
+    "ts": "2026-07-17T15:39:37",
+    "bio": true,
+    "scenario": true
+  },
+  "sceneggiatore": {
+    "avatar": true,
+    "ts": "2026-07-17T15:41:14",
+    "bio": true,
+    "scenario": true
+  },
+  "costruttore_mondi": {
+    "avatar": true,
+    "ts": "2026-07-17T15:42:52",
+    "bio": true,
+    "scenario": true
+  },
+  "werner_heisenberg_hf5": {
+    "avatar": true,
+    "ts": "2026-07-17T15:43:54",
+    "bio": true,
+    "scenario": true
+  },
+  "tintin_hf6": {
+    "avatar": true,
+    "ts": "2026-07-17T15:45:32",
+    "bio": true,
+    "scenario": true
+  },
+  "thor_hf8": {
+    "avatar": true,
+    "ts": "2026-07-17T15:47:09",
+    "bio": true,
+    "scenario": true
+  },
+  "wonder_woman_diana_prince_hf10": {
+    "avatar": true,
+    "ts": "2026-07-17T15:48:47",
+    "bio": true,
+    "scenario": true
+  },
+  "tomoya_okazaki_hf19": {
+    "avatar": true,
+    "ts": "2026-07-17T15:49:49",
+    "bio": true,
+    "scenario": true
+  },
+  "eowyn_hf21": {
+    "avatar": true,
+    "ts": "2026-07-17T15:50:35",
+    "bio": true,
+    "scenario": true
+  },
+  "rosa_parks_hf22": {
+    "avatar": true,
+    "ts": "2026-07-17T15:51:19",
+    "bio": true,
+    "scenario": true
+  },
+  "dr_ethan_martin_hf24": {
+    "avatar": true,
+    "ts": "2026-07-17T15:52:07",
+    "bio": true,
+    "scenario": true
+  },
+  "robbie_robertson_hf26": {
+    "avatar": true,
+    "ts": "2026-07-17T15:52:53",
+    "bio": true,
+    "scenario": true
+  },
+  "nicki_minaj_hf28": {
+    "avatar": true,
+    "ts": "2026-07-17T15:53:36",
+    "bio": true,
+    "scenario": true
+  },
+  "zlata_filipovi_hf31": {
+    "avatar": true,
+    "ts": "2026-07-17T15:54:20",
+    "bio": true,
+    "scenario": true
+  },
+  "billie_joe_mcallister_hf37": {
+    "avatar": true,
+    "ts": "2026-07-17T15:55:07",
+    "bio": true,
+    "scenario": true
+  },
+  "john_reese_hf38": {
+    "avatar": true,
+    "ts": "2026-07-17T15:55:49",
+    "bio": true,
+    "scenario": true
+  },
+  "the_black_annis_hf40": {
+    "avatar": true,
+    "ts": "2026-07-17T15:57:28",
+    "bio": true,
+    "scenario": true
+  },
+  "richard_hammond_hf48": {
+    "avatar": true,
+    "ts": "2026-07-17T15:59:05",
+    "bio": true,
+    "scenario": true
+  },
+  "darth_vader_anakin_skywalker_hf49": {
+    "avatar": true,
+    "ts": "2026-07-17T16:00:44",
+    "bio": true,
+    "scenario": true
+  },
+  "kathryn_bigelow_hf50": {
+    "avatar": true,
+    "ts": "2026-07-17T16:02:21",
+    "bio": true,
+    "scenario": true
+  },
+  "robert_k_merton_hf51": {
+    "avatar": true,
+    "ts": "2026-07-17T16:03:26",
+    "bio": true,
+    "scenario": true
+  },
+  "patti_smith_hf53": {
+    "avatar": true,
+    "ts": "2026-07-17T16:05:03",
+    "bio": true,
+    "scenario": true
+  },
+  "jane_goodall_hf62": {
+    "avatar": true,
+    "ts": "2026-07-17T16:06:41",
+    "bio": true,
+    "scenario": true
+  },
+  "nicole_richie_hf64": {
+    "avatar": true,
+    "ts": "2026-07-17T16:08:23",
+    "bio": true,
+    "scenario": true
+  },
+  "keith_richards_hf67": {
+    "avatar": true,
+    "ts": "2026-07-17T16:10:05",
+    "bio": true,
+    "scenario": true
+  },
+  "john_barleycorn_hf68": {
+    "avatar": true,
+    "ts": "2026-07-17T16:10:55",
+    "bio": true,
+    "scenario": true
+  },
+  "nina_sayers_hf70": {
+    "avatar": true,
+    "ts": "2026-07-17T16:12:33",
+    "bio": true,
+    "scenario": true
+  },
+  "yossarian_hf71": {
+    "avatar": true,
+    "ts": "2026-07-17T16:14:10",
+    "bio": true,
+    "scenario": true
+  },
+  "charles_dexter_ward_hf72": {
+    "avatar": true,
+    "ts": "2026-07-17T16:15:48",
+    "bio": true,
+    "scenario": true
+  },
+  "luke_skywalker_hf75": {
+    "avatar": true,
+    "ts": "2026-07-17T16:16:54",
+    "bio": true,
+    "scenario": true
+  },
+  "galileo_galilei_hf76": {
+    "avatar": true,
+    "ts": "2026-07-17T16:17:38",
+    "bio": true,
+    "scenario": true
+  },
+  "beyonc_hf78": {
+    "avatar": true,
+    "ts": "2026-07-17T16:18:20",
+    "bio": true,
+    "scenario": true
+  },
+  "cathy_hf79": {
+    "avatar": true,
+    "ts": "2026-07-17T16:19:05",
+    "bio": true,
+    "scenario": true
+  },
+  "dr_ian_malcolm_hf80": {
+    "avatar": true,
+    "ts": "2026-07-17T16:19:51",
+    "bio": true,
+    "scenario": true
+  },
+  "bobby_flay_hf82": {
+    "avatar": true,
+    "ts": "2026-07-17T16:20:36",
+    "bio": true,
+    "scenario": true
+  },
+  "avram_hershko_hf84": {
+    "avatar": true,
+    "ts": "2026-07-17T16:21:18",
+    "bio": true,
+    "scenario": true
+  },
+  "lara_croft_hf86": {
+    "avatar": true,
+    "ts": "2026-07-17T16:22:04",
+    "bio": true,
+    "scenario": true
+  },
+  "captain_jack_sparrow_hf88": {
+    "avatar": true,
+    "ts": "2026-07-17T16:22:48",
+    "bio": true,
+    "scenario": true
+  },
+  "henri_matisse_hf89": {
+    "avatar": true,
+    "ts": "2026-07-17T16:23:34",
+    "bio": true
+  },
+  "petrushka_hf93": {
+    "avatar": true,
+    "ts": "2026-07-17T16:24:18",
+    "bio": true,
+    "scenario": true
+  },
+  "andrea_sachs_hf98": {
+    "avatar": true,
+    "ts": "2026-07-17T16:25:17",
+    "bio": true,
+    "scenario": true
+  },
+  "buffy_summers_hf101": {
+    "avatar": true,
+    "ts": "2026-07-17T16:26:00",
+    "bio": true
+  },
+  "kanye_west_hf102": {
+    "avatar": true,
+    "ts": "2026-07-17T16:26:49",
+    "bio": true
+  },
+  "jemma_simmons_hf104": {
+    "avatar": true,
+    "ts": "2026-07-17T16:27:31",
+    "bio": true
+  },
+  "amelia_earhart_hf106": {
+    "avatar": true,
+    "ts": "2026-07-17T16:28:28",
+    "bio": true
+  },
+  "wendell_berry_hf108": {
+    "avatar": true,
+    "ts": "2026-07-17T16:29:06",
+    "bio": true
+  },
+  "lindsey_vonn_hf109": {
+    "avatar": true,
+    "ts": "2026-07-17T16:29:50",
+    "bio": true
+  },
+  "dr_caldwell_esselstyn_hf111": {
+    "avatar": true,
+    "ts": "2026-07-17T16:30:30",
+    "bio": true
   }
 }

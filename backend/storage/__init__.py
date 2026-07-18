@@ -63,6 +63,7 @@ from storage.evolution import (
 )
 from storage.preferences import (
     get_user_preferences, save_user_preferences, derive_sexual_orientation,
+    set_verified_birth_year, is_age_verified,
 )
 from storage.mevacoins import (
     get_mevacoins_balance, add_mevacoins,

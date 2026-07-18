@@ -166,9 +166,15 @@ def init_db():
                 show_adult INTEGER DEFAULT 0,
                 user_gender TEXT DEFAULT '',
                 user_age INTEGER DEFAULT 0,
+                verified_birth_year INTEGER DEFAULT 0,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        # Migrazione: aggiunge verified_birth_year se manca (tabelle esistenti).
+        try:
+            cur.execute("ALTER TABLE user_preferences ADD COLUMN verified_birth_year INTEGER DEFAULT 0")
+        except Exception:
+            pass
         cur.execute("""
             CREATE TABLE IF NOT EXISTS mevacoins (
                 user_id TEXT PRIMARY KEY,

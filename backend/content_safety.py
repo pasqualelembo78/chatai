@@ -2,8 +2,9 @@
 
 Google Play vieta i contenuti sessualmente espliciti/pornografici anche per app 18+.
 Questo modulo fornisce un filtro euristico (senza dipendenze esterne) che:
-  - blocca l'output dell'AI se contiene linguaggio sessuale esplicito;
-  - può essere disattivato via env CONTENT_SAFETY=0.
+  - blocca l'output dell'AI se contiene linguaggio sessuale esplicito.
+Il filtro è SEMPRE ATTIVO in produzione e non può essere disattivato: la conformità
+a Google Play richiede che il blocco dei contenuti espliciti sia garantito lato server.
 Il filtro è una misura di base: la vera garanzia resta nel system prompt di sicurezza
 (iniettato in prompt_builder.build_messages) e nell'uso di provider AI conformi.
 """
@@ -11,8 +12,19 @@ import os
 import re
 import json
 import urllib.request
+import logging
 
-ENABLED = os.environ.get("CONTENT_SAFETY", "1") != "0"
+logger = logging.getLogger("content_safety")
+
+# Il filtro è sempre attivo. L'env CONTENT_SAFETY=0 è accettato SOLO in ambiente
+# di sviluppo esplicito (ENV=dev) e viene comunque registrato come anomalia.
+_DEV_ENV = os.environ.get("ENV", "").lower() in ("dev", "development", "local")
+if os.environ.get("CONTENT_SAFETY", "1") == "0" and not _DEV_ENV:
+    logger.error(
+        "CONTENT_SAFETY=0 ignorato in produzione: il filtro dei contenuti "
+        "espliciti resta OBBLIGATORIAMENTE attivo per conformità Google Play."
+    )
+ENABLED = True
 OPENAI_MOD_ENABLED = os.environ.get("MODERATION", "").lower() == "openai"
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 

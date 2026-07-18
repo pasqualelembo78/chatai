@@ -13,6 +13,7 @@ from storage import (
     is_user_premium, set_user_premium,
     create_user_character, get_user_characters, delete_user_character,
     get_user_unlocks, get_user_preferences, audit_log,
+    set_verified_birth_year, is_age_verified, flag_user,
 )
 from ai_engine import get_active_config, set_active, clear_model_cache, rebuild_free_model_chain, test_provider_connection
 import ai_engine
@@ -103,9 +104,10 @@ async def api_characters(
     user: Optional[AuthUser] = Depends(jwt_optional),
 ):
     user_id = user.user_id if user else None
+    include_adult = bool(user_id) and is_age_verified(user_id)
     if category == "per_te":
         from characters import list_characters as _lc
-        all_chars = _lc()
+        all_chars = _lc(include_adult=include_adult)
         if user_id:
             prefs = get_user_preferences(user_id)
             interests = [t.lower() for t in prefs.get("interest_tags", [])]
@@ -118,7 +120,7 @@ async def api_characters(
         else:
             chars = all_chars
     else:
-        chars = get_characters_by_category(category) if category else list_characters()
+        chars = get_characters_by_category(category, include_adult=include_adult) if category else list_characters(include_adult=include_adult)
 
     if user_id:
         unlocks = {u["content_id"] for u in get_user_unlocks(user_id) if u["content_type"] == "category"}
@@ -195,10 +197,14 @@ async def api_search_characters(
 
 @router.get("/characters/adult")
 async def api_adult_characters(user: Optional[AuthUser] = Depends(jwt_optional)):
-    chars = get_adult_characters()
     user_id = user.user_id if user else None
     if not user_id:
         return []
+    # Gate età lato server: i contenuti per adulti sono esposti SOLO se l'utente
+    # ha verificato un'eta' >= 18 anni. Nessun contenuto adulto per utenti non verificati.
+    if not is_age_verified(user_id):
+        return []
+    chars = get_adult_characters()
     unlocks = {u["content_id"] for u in get_user_unlocks(user_id) if u["content_type"] == "category"}
     cats = get_categories()
     cat_cost = {c["id"]: c.get("mvc_cost", 0) for c in cats}
@@ -215,6 +221,59 @@ async def api_adult_characters(user: Optional[AuthUser] = Depends(jwt_optional))
     except Exception:
         pass
     return chars
+
+
+class AgeVerificationRequest(BaseModel):
+    birth_year: int
+
+
+@router.post("/me/verify-age")
+async def api_verify_age(
+    body: AgeVerificationRequest,
+    user: AuthUser = Depends(jwt_required),
+):
+    """Verifica l'eta' dell'utente (self-asserted) e la memorizza lato server.
+
+    Conforme al pattern di app companion su Google Play: il gate 18+ e' fatto
+    valere sul server, non solo lato client, perche' i contenuti per adulti non
+    siano raggiungibili da minori modificando preferenze locali.
+    """
+    ok = set_verified_birth_year(user.user_id, body.birth_year)
+    return {"success": True, "age_verified": ok}
+
+
+class ReportRequest(BaseModel):
+    content_type: str  # "character" | "message"
+    content_id: str
+    reason: str
+    snippet: str = ""
+
+
+@router.post("/report")
+async def api_report(
+    body: ReportRequest,
+    user: AuthUser = Depends(jwt_required),
+):
+    """Segnalazione contenuti da parte degli utenti (conformità Google Play UGC).
+
+    I flag finiscono in moderation_flags e sono visibili agli admin. Il
+    content_type distingue personaggio da messaggio; content_id e' l'id del
+    soggetto segnalato, reason e' la motivazione scelta dall'utente.
+    """
+    if not body.content_id or not body.reason:
+        raise HTTPException(400, "Dati segnalazione mancanti")
+    if body.content_type not in ("character", "message"):
+        body.content_type = "other"
+    flag_user(
+        user_id=body.content_id,
+        reason=body.reason,
+        content_type=body.content_type,
+        content_snippet=(body.snippet or "")[:200],
+        severity="medium",
+        flagged_by=user.user_id,
+    )
+    audit_log(user.user_id, "content.report", f"{body.content_type}:{body.content_id}", "", "")
+    return {"success": True}
 
 
 @router.get("/characters/user")
@@ -242,10 +301,15 @@ async def api_create_character(
 
 
 @router.get("/characters/{char_id}")
-async def api_character_detail(char_id: str):
+async def api_character_detail(
+    char_id: str,
+    user: Optional[AuthUser] = Depends(jwt_optional),
+):
     char = get_character(char_id)
     if not char:
         raise HTTPException(404, "not found")
+    if char.get("is_adult") and not (user and is_age_verified(user.user_id)):
+        raise HTTPException(403, "Verifica l'età per accedere a questo contenuto")
     if "hobbies" in char and isinstance(char["hobbies"], list):
         formatted = []
         for h in char["hobbies"]:
@@ -259,10 +323,15 @@ async def api_character_detail(char_id: str):
 
 
 @router.get("/characters/{char_id}/core")
-async def api_character_core(char_id: str):
+async def api_character_core(
+    char_id: str,
+    user: Optional[AuthUser] = Depends(jwt_optional),
+):
     char = get_character(char_id)
     if not char:
         raise HTTPException(404, "not found")
+    if char.get("is_adult") and not (user and is_age_verified(user.user_id)):
+        raise HTTPException(403, "Verifica l'età per accedere a questo contenuto")
     core_fields = [
         "id", "name", "full_name", "surname", "age", "role", "category",
         "avatar", "description", "tags", "essence", "personality",

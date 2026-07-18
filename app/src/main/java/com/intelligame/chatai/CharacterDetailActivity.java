@@ -24,6 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
+import android.widget.PopupMenu;
+import androidx.appcompat.app.AlertDialog;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -249,7 +252,16 @@ public class CharacterDetailActivity extends AppCompatActivity {
 
         // Menu button (placeholder)
         menuBtn.setOnClickListener(v -> {
-            // TODO: Implement menu
+            PopupMenu popup = new PopupMenu(this, menuBtn);
+            popup.getMenu().add(0, 1, 0, "Segnala contenuto");
+            popup.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == 1) {
+                    showReportDialog();
+                    return true;
+                }
+                return false;
+            });
+            popup.show();
         });
 
         // Favorite button
@@ -648,6 +660,38 @@ public class CharacterDetailActivity extends AppCompatActivity {
             JSONObject obj = new JSONObject(json);
             bindData(obj);
         } catch (Exception ignored) {}
+    }
+
+    private void showReportDialog() {
+        final String[] reasons = {
+                "Contenuto sessualmente esplicito",
+                "Linguaggio violento o odioso",
+                "Spam o truffa",
+                "Personaggio non appropriato",
+                "Altro"
+        };
+        new AlertDialog.Builder(this)
+                .setTitle("Segnala contenuto")
+                .setItems(reasons, (dialog, which) -> sendReport(reasons[which]))
+                .setNegativeButton("Annulla", null)
+                .show();
+    }
+
+    private void sendReport(String reason) {
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("content_type", "character");
+                body.put("content_id", characterId);
+                body.put("reason", reason);
+                mAuth.requestWithRefresh(baseUrl + "/report", "POST", body.toString(), 8000);
+                mainHandler.post(() -> android.widget.Toast.makeText(
+                        this, "Segnalazione inviata. Grazie.", android.widget.Toast.LENGTH_SHORT).show());
+            } catch (Exception e) {
+                mainHandler.post(() -> android.widget.Toast.makeText(
+                        this, "Invio segnalazione fallito", android.widget.Toast.LENGTH_SHORT).show());
+            }
+        });
     }
 
     private String httpGet(String urlString) {
