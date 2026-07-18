@@ -160,4 +160,8 @@ public class PrefsManager {
     public void setPrivacyAccepted(boolean accepted) {
         prefs.edit().putBoolean(KEY_PRIVACY_ACCEPTED, accepted).apply();
     }
+
+    public void clearAll() {
+        prefs.edit().clear().apply();
+    }
 }

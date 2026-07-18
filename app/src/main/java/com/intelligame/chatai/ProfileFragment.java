@@ -49,7 +49,9 @@ public class ProfileFragment extends Fragment {
 
     private TextView referralCodeText;
     private MaterialButton btnCopyReferral, btnShareReferral, btnSocialShare;
+    private MaterialButton btnDeleteAccount;
     private TextView shareStatusText;
+    private TextView deleteAccountStatus;
 
     private String baseUrl;
     private String userId;
@@ -105,6 +107,9 @@ public class ProfileFragment extends Fragment {
         btnSocialShare = view.findViewById(R.id.btn_social_share);
         shareStatusText = view.findViewById(R.id.share_status_text);
 
+        btnDeleteAccount = view.findViewById(R.id.btn_delete_account);
+        deleteAccountStatus = view.findViewById(R.id.delete_account_status);
+
         fieldNickname.setText(prefs.getUsername());
         fieldServerUrl.setText(prefs.getServerUrl());
 
@@ -139,6 +144,8 @@ public class ProfileFragment extends Fragment {
         btnCopyReferral.setOnClickListener(v -> copyReferralCode());
         btnShareReferral.setOnClickListener(v -> shareReferral());
         btnSocialShare.setOnClickListener(v -> doSocialShare());
+
+        btnDeleteAccount.setOnClickListener(v -> confirmDeleteAccount());
 
         // Admin section - show only for admin/moderator roles
         String role = mAuth.getRole();
@@ -339,6 +346,54 @@ public class ProfileFragment extends Fragment {
         serverStatus.setTextColor(getResources().getColor(R.color.status_connected));
         serverStatus.setVisibility(View.VISIBLE);
         Snackbar.make(requireView(), "Server: " + url, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void confirmDeleteAccount() {
+        new AlertDialog.Builder(requireContext())
+            .setTitle("Elimina account")
+            .setMessage("L'account e tutti i dati associati (personaggi, conversazioni, cronologia) verranno cancellati in modo permanente e irreversibile.\n\nVuoi procedere?")
+            .setPositiveButton("Elimina", (dialog, which) -> deleteAccount())
+            .setNegativeButton("Annulla", null)
+            .show();
+    }
+
+    private void deleteAccount() {
+        btnDeleteAccount.setEnabled(false);
+        deleteAccountStatus.setText("Eliminazione in corso...");
+        deleteAccountStatus.setVisibility(View.VISIBLE);
+
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(
+                    baseUrl + "/user/delete", "POST", "{}", 10000);
+                boolean serverOk = httpResp.statusCode >= 200 && httpResp.statusCode < 300;
+
+                try {
+                    app.getLocalDb().resetAll();
+                } catch (Exception ignored) {}
+
+                prefs.clearAll();
+
+                mainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    if (serverOk) {
+                        Toast.makeText(getContext(), "Account eliminato", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Account eliminato (locale)", Toast.LENGTH_LONG).show();
+                    }
+                    Intent intent = new Intent(requireActivity(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    requireActivity().finish();
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    if (!isAdded()) return;
+                    btnDeleteAccount.setEnabled(true);
+                    deleteAccountStatus.setText("\u274c Errore: " + e.getMessage());
+                });
+            }
+        });
     }
 
     private void confirmReset() {

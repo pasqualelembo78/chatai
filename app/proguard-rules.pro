@@ -36,3 +36,18 @@
     public static int d(...);
     public static int i(...);
 }
+
+# Keep AuthManager (token storage / network layer)
+-keep class com.intelligame.chatai.AuthManager { *; }
+
+# Keep Parcelable implementations (avoid missing CREATOR after obfuscation)
+-keep class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+# Keep Application subclass and manifest-registered components by name
+-keep public class com.intelligame.chatai.ChatApplication
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends androidx.fragment.app.Fragment
