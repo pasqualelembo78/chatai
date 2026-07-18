@@ -656,6 +656,11 @@ def build_group_messages(characters, user_text, history=None, username="Utente",
 
     system_prompt = "\n".join(lines)
 
+    # In modalità adulta allega anche qui il PORN_SAFETY_GUARD, così i personaggi
+    # di gruppo assecondano l'utente e possono essere espliciti come in chat privata.
+    if NSFW_MODE:
+        system_prompt += PORN_SAFETY_GUARD
+
     messages = [{"role": "system", "content": system_prompt}]
 
     char_id_to_name = {c["id"]: c["name"] for c in characters}

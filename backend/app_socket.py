@@ -599,9 +599,12 @@ def _generate_greeting(character, character_name, username=None, user_id=None):
     sp = build_system_prompt(character, {"emotion": "neutral", "intensity": 0}, rel, pers, ws,
                              username=username, user_gender=user_gender, user_age=user_age,
                              sexual_orientation=sexual_orientation)
-    # In modalità standard (Play Store) allega il SAFETY_GUARD anche ai saluti,
-    # così nessun personaggio genera contenuti espliciti fin dal primo messaggio.
-    if not NSFW_MODE:
+    # In modalità standard (Play Store) allega il SAFETY_GUARD ai saluti; in
+    # modalità adulta allega il PORN_SAFETY_GUARD, così il personaggio è esplicito
+    # fin dal primo messaggio.
+    if NSFW_MODE:
+        sp = sp + PORN_SAFETY_GUARD
+    else:
         sp = sp + SAFETY_GUARD
 
     msg_count = count_messages(user_id, character["id"]) if user_id else 0
