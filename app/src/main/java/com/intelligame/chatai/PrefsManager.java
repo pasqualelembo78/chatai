@@ -17,7 +17,9 @@ public class PrefsManager {
     private static final String KEY_PROVIDERS_WITH_KEYS = "providers_with_keys";
     private static final String KEY_LAST_CHARACTER_POS = "last_character_pos";
     private static final String KEY_PRIVACY_ACCEPTED = "privacy_accepted";
+    private static final String KEY_TOS_ACCEPTED = "tos_accepted";
     private static final String KEY_SHOW_ADULT = "show_adult";
+    private static final String KEY_BLOCKED_USERS = "blocked_users";
     private static final String KEY_API_KEY_PREFIX = "api_key_";
 
     private static final String DEFAULT_SERVER_URL = "http://82.165.218.56:5000";
@@ -82,6 +84,34 @@ public class PrefsManager {
 
     public void setShowAdult(boolean show) {
         prefs.edit().putBoolean(KEY_SHOW_ADULT, show).apply();
+    }
+
+    public boolean isTosAccepted() {
+        return prefs.getBoolean(KEY_TOS_ACCEPTED, false);
+    }
+
+    public void setTosAccepted(boolean accepted) {
+        prefs.edit().putBoolean(KEY_TOS_ACCEPTED, accepted).apply();
+    }
+
+    public Set<String> getBlockedUsers() {
+        return new HashSet<>(prefs.getStringSet(KEY_BLOCKED_USERS, new HashSet<String>()));
+    }
+
+    public void addBlockedUser(String userId) {
+        Set<String> set = getBlockedUsers();
+        set.add(userId);
+        prefs.edit().putStringSet(KEY_BLOCKED_USERS, set).apply();
+    }
+
+    public void removeBlockedUser(String userId) {
+        Set<String> set = getBlockedUsers();
+        set.remove(userId);
+        prefs.edit().putStringSet(KEY_BLOCKED_USERS, set).apply();
+    }
+
+    public boolean isUserBlocked(String userId) {
+        return getBlockedUsers().contains(userId);
     }
 
     public void setAdultBirthYear(int year) {

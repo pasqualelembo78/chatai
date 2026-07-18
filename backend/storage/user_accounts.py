@@ -170,3 +170,57 @@ def update_user_role(user_id, role):
         return cur.rowcount > 0
     finally:
         put_conn(conn)
+
+
+def block_user(blocker_id, blocked_id):
+    if blocker_id == blocked_id:
+        return False
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO blocked_users (blocker_id, blocked_id) VALUES (%s, %s) "
+            "ON CONFLICT (blocker_id, blocked_id) DO NOTHING",
+            (blocker_id, blocked_id)
+        )
+        conn.commit()
+        return True
+    finally:
+        put_conn(conn)
+
+
+def unblock_user(blocker_id, blocked_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "DELETE FROM blocked_users WHERE blocker_id=%s AND blocked_id=%s",
+            (blocker_id, blocked_id)
+        )
+        conn.commit()
+        return cur.rowcount > 0
+    finally:
+        put_conn(conn)
+
+
+def get_blocked_users(blocker_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT blocked_id FROM blocked_users WHERE blocker_id=%s", (blocker_id,))
+        return [r["blocked_id"] for r in cur.fetchall()]
+    finally:
+        put_conn(conn)
+
+
+def is_blocked(blocker_id, blocked_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT 1 FROM blocked_users WHERE blocker_id=%s AND blocked_id=%s",
+            (blocker_id, blocked_id)
+        )
+        return cur.fetchone() is not None
+    finally:
+        put_conn(conn)

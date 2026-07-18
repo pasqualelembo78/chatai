@@ -31,8 +31,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,7 +46,9 @@ public class GroupChatFragment extends Fragment {
     private int chatId;
     private String chatName;
     private AuthManager mAuth;
+    private PrefsManager prefs;
     private String baseUrl;
+    private final Set<String> blockedUsers = new HashSet<>();
     private RecyclerView messagesList;
     private EditText messageInput;
     private Button btnSend;
@@ -93,7 +97,9 @@ public class GroupChatFragment extends Fragment {
 
         ChatApplication app = (ChatApplication) requireActivity().getApplication();
         mAuth = app.getAuthManager();
+        prefs = app.getPrefs();
         baseUrl = app.getCurrentUrl();
+        blockedUsers.addAll(prefs.getBlockedUsers());
 
         titleView = view.findViewById(R.id.group_title);
         subtitleView = view.findViewById(R.id.group_subtitle);
@@ -121,6 +127,7 @@ public class GroupChatFragment extends Fragment {
 
         btnSend.setOnClickListener(v -> sendMessage());
 
+        loadBlockedUsers();
         loadMessages();
     }
 
@@ -157,6 +164,11 @@ public class GroupChatFragment extends Fragment {
                             item.content = m.optString("content", "");
                             item.timestamp = m.optString("timestamp", "");
                             item.senderName = resolveSenderName(item, idToName);
+                            if ("user".equals(item.senderType)
+                                    && !item.senderId.equals(mAuth.getUserId())
+                                    && blockedUsers.contains(item.senderId)) {
+                                continue;
+                            }
                             items.add(item);
                         }
                     }
@@ -429,13 +441,36 @@ public class GroupChatFragment extends Fragment {
         for (String pid : participantIds) {
             String displayName = userIdToName.get(pid);
             if (displayName == null) displayName = pid.length() > 8 ? pid.substring(0, 8) + "..." : pid;
+
+            LinearLayout partRow = new LinearLayout(getContext());
+            partRow.setOrientation(LinearLayout.HORIZONTAL);
+            partRow.setPadding(0, 8, 0, 8);
+
             TextView partView = new TextView(getContext());
             partView.setText("✕ " + displayName);
-            partView.setPadding(0, 8, 0, 8);
+            partView.setPadding(0, 0, 16, 0);
             partView.setTextColor(Color.parseColor("#FF8A80"));
             partView.setTextSize(14);
             partView.setOnClickListener(v -> removeParticipant(pid));
-            container.addView(partView);
+            partRow.addView(partView);
+
+            TextView blockBtn = new TextView(getContext());
+            if (blockedUsers.contains(pid)) {
+                blockBtn.setText("(Sblocca)");
+                blockBtn.setTextColor(Color.parseColor("#81C784"));
+            } else {
+                blockBtn.setText("(Blocca)");
+                blockBtn.setTextColor(Color.parseColor("#FF8A80"));
+            }
+            blockBtn.setTextSize(14);
+            final String fpid = pid;
+            blockBtn.setOnClickListener(v -> {
+                if (blockedUsers.contains(fpid)) unblockUser(fpid);
+                else blockUser(fpid);
+            });
+            partRow.addView(blockBtn);
+
+            container.addView(partRow);
         }
 
         TextView addPartLabel = new TextView(getContext());
@@ -652,15 +687,83 @@ public class GroupChatFragment extends Fragment {
             .show();
     }
 
+    private void loadBlockedUsers() {
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                    baseUrl + "/users/blocked", "GET", null, 5000);
+                if (resp.statusCode == 200) {
+                    JSONObject obj = new JSONObject(resp.body);
+                    JSONArray arr = obj.optJSONArray("blocked");
+                    if (arr != null) {
+                        final Set<String> serverBlocked = new HashSet<>();
+                        for (int i = 0; i < arr.length(); i++) {
+                            serverBlocked.add(arr.getString(i));
+                        }
+                        mainHandler.post(() -> {
+                            blockedUsers.addAll(serverBlocked);
+                            if (prefs != null) {
+                                for (String id : serverBlocked) prefs.addBlockedUser(id);
+                            }
+                        });
+                    }
+                }
+            } catch (Exception ignored) {}
+        });
+    }
+
+    private void blockUser(String userId) {
+        if (prefs != null) {
+            prefs.addBlockedUser(userId);
+            blockedUsers.add(userId);
+        }
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("blocked_id", userId);
+                mAuth.requestWithRefresh(baseUrl + "/users/block", "POST", body.toString(), 5000);
+            } catch (Exception ignored) {}
+        });
+        Toast.makeText(getContext(), "Utente bloccato", Toast.LENGTH_SHORT).show();
+        loadMessages();
+    }
+
+    private void unblockUser(String userId) {
+        if (prefs != null) {
+            prefs.removeBlockedUser(userId);
+            blockedUsers.remove(userId);
+        }
+        executor.execute(() -> {
+            try {
+                mAuth.requestWithRefresh(baseUrl + "/users/block/" + userId, "DELETE", null, 5000);
+            } catch (Exception ignored) {}
+        });
+        Toast.makeText(getContext(), "Utente sbloccato", Toast.LENGTH_SHORT).show();
+        loadMessages();
+    }
+
     private void showContextMenu(View anchor, MessageItem item) {
         PopupMenu popup = new PopupMenu(anchor.getContext(), anchor);
         popup.getMenu().add(0, 1, 0, "Copia messaggio");
+        if ("user".equals(item.senderType) && !item.senderId.equals(mAuth.getUserId())) {
+            if (blockedUsers.contains(item.senderId)) {
+                popup.getMenu().add(0, 2, 0, "Sblocca utente");
+            } else {
+                popup.getMenu().add(0, 3, 0, "Blocca utente");
+            }
+        }
         popup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == 1) {
                 ClipboardManager clipboard = (ClipboardManager) anchor.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("message", item.content);
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(anchor.getContext(), "Messaggio copiato", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (menuItem.getItemId() == 2) {
+                unblockUser(item.senderId);
+                return true;
+            } else if (menuItem.getItemId() == 3) {
+                blockUser(item.senderId);
                 return true;
             }
             return false;

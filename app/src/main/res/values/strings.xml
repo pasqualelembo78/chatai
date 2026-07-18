@@ -294,4 +294,9 @@
     <string name="loading_categories">Caricamento categorie…</string>
     <string name="loading_progress">(%1$d di %2$d)</string>
 
+    <string name="tos_title">Termini di Servizio</string>
+    <string name="tos_accept">Accetto i Termini di Servizio</string>
+    <string name="tos_decline">Annulla</string>
+    <string name="tos_required">Devi accettare i Termini di Servizio per creare personaggi.</string>
+
 </resources>

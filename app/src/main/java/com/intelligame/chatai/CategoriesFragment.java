@@ -42,6 +42,7 @@ public class CategoriesFragment extends Fragment {
 
     private List<CatItem> categories = new ArrayList<>();
     private CategoryGridAdapter gridAdapter;
+    private boolean matureEnabled = false;
 
     private boolean showingCharacters = false;
     private List<HomeFragment.CharacterItem> currentCategoryCharacters = new ArrayList<>();
@@ -50,10 +51,10 @@ public class CategoriesFragment extends Fragment {
     // Model for categories with count and locked status
     static class CatItem {
         String id, name, icon;
-        boolean locked, premium;
+        boolean locked, premium, adult;
         int mvcCost, characterCount;
 
-        CatItem(String id, String name, String icon, boolean locked, boolean premium, int mvcCost, int characterCount) {
+        CatItem(String id, String name, String icon, boolean locked, boolean premium, int mvcCost, int characterCount, boolean adult) {
             this.id = id;
             this.name = name;
             this.icon = icon;
@@ -61,8 +62,15 @@ public class CategoriesFragment extends Fragment {
             this.premium = premium;
             this.mvcCost = mvcCost;
             this.characterCount = characterCount;
+            this.adult = adult;
+        }
+
+        CatItem(String id, String name, String icon, boolean locked, boolean premium, int mvcCost, int characterCount) {
+            this(id, name, icon, locked, premium, mvcCost, characterCount, false);
         }
     }
+
+    private static final String OPTIN_ID = "__mature_optin__";
 
     @Nullable
     @Override
@@ -82,6 +90,8 @@ public class CategoriesFragment extends Fragment {
         loadingProgress = view.findViewById(R.id.loading_progress);
         backButton = view.findViewById(R.id.back_button);
         titleText = view.findViewById(R.id.title_text);
+
+        matureEnabled = ((ChatApplication) requireActivity().getApplication()).getPrefs().getShowAdult();
 
         backButton.setOnClickListener(v -> {
             if (showingCharacters) {
@@ -112,6 +122,8 @@ public class CategoriesFragment extends Fragment {
                         JSONObject obj = arr.getJSONObject(i);
                         String id = obj.optString("id");
                         if ("per_te".equals(id)) continue;
+                        boolean adult = obj.optBoolean("adult", false);
+                        if (adult && !matureEnabled) continue;
                         list.add(new CatItem(
                             id,
                             obj.optString("name"),
@@ -119,9 +131,11 @@ public class CategoriesFragment extends Fragment {
                             obj.optBoolean("locked", false),
                             obj.optBoolean("premium", false),
                             obj.optInt("mvc_cost", 0),
-                            obj.optInt("character_count", 0)
+                            obj.optInt("character_count", 0),
+                            adult
                         ));
                     }
+                    addMatureOptInIfNeeded(list);
                     mainHandler.post(() -> {
                         categories.clear();
                         categories.addAll(list);
@@ -152,14 +166,14 @@ public class CategoriesFragment extends Fragment {
         categories.add(new CatItem("anime", "Anime", "\uD83C\uDFB5", false, false, 0, 0));
         categories.add(new CatItem("gamer", "Gamer", "\uD83C\uDFAE", false, false, 0, 0));
         categories.add(new CatItem("detective", "Detective", "\uD83D\uDD75\uFE0F", false, false, 0, 0));
-        categories.add(new CatItem("flirt", "Flirt", "\uD83D\uDE08", true, false, 300, 0));
-        categories.add(new CatItem("seduzione", "Seduzione", "\uD83D\uDE08", true, false, 500, 0));
+        if (matureEnabled) categories.add(new CatItem("flirt", "Flirt", "\uD83D\uDE08", true, false, 300, 0, true));
+        if (matureEnabled) categories.add(new CatItem("seduzione", "Seduzione", "\uD83D\uDE08", true, false, 500, 0, true));
         categories.add(new CatItem("sport", "Sport", "\u26BD", false, false, 0, 0));
         categories.add(new CatItem("cucina", "Cucina", "\uD83C\uDF73", false, false, 0, 0));
         categories.add(new CatItem("medicina", "Medicina", "\uD83C\uDFE5", false, false, 0, 0));
         categories.add(new CatItem("tecnologia", "Tecnologia", "\uD83D\uDCBB", false, false, 0, 0));
         categories.add(new CatItem("creativi", "Creativi", "\uD83C\uDFA8", false, false, 0, 0));
-        categories.add(new CatItem("relazioni", "Relazioni", "\uD83D\uDC91", true, false, 300, 0));
+        if (matureEnabled) categories.add(new CatItem("relazioni", "Relazioni", "\uD83D\uDC91", true, false, 300, 0, true));
         categories.add(new CatItem("motivazione", "Motivazione", "\uD83D\uDCAA", false, false, 0, 0));
         categories.add(new CatItem("scuola", "Scuola", "\uD83C\uDF93", false, false, 0, 0));
         categories.add(new CatItem("viaggi", "Viaggi", "\uD83D\uDEE2\uFE0F", false, false, 0, 0));
@@ -168,9 +182,24 @@ public class CategoriesFragment extends Fragment {
         categories.add(new CatItem("storia", "Storia", "\uD83C\uDFDB\uFE0F", false, false, 0, 0));
         categories.add(new CatItem("supereroi", "Supereroi", "\uD83D\uDEE1\uFE0F", false, false, 0, 0));
         categories.add(new CatItem("sci_fi", "Fantascienza", "\uD83D\uDE80", false, false, 0, 0));
-        categories.add(new CatItem("confessioni", "Confessioni", "\uD83D\uDE48", true, false, 300, 0));
+        if (matureEnabled) categories.add(new CatItem("confessioni", "Confessioni", "\uD83D\uDE48", true, false, 300, 0, true));
         categories.add(new CatItem("premium", "Premium", "\uD83D\uDC8E", false, true, 0, 0));
+        addMatureOptInIfNeeded(categories);
         gridAdapter.notifyDataSetChanged();
+    }
+
+    private void addMatureOptInIfNeeded(List<CatItem> list) {
+        if (matureEnabled) return;
+        list.add(new CatItem(OPTIN_ID, "Mostra contenuti maturi", "\uD83D\uDD1E", false, false, 0, 0, false));
+    }
+
+    private void showMatureOptIn() {
+        AdultConfirmDialog dlg = new AdultConfirmDialog(() -> {
+            matureEnabled = true;
+            ((ChatApplication) requireActivity().getApplication()).getPrefs().setShowAdult(true);
+            loadCategories();
+        });
+        dlg.show(getParentFragmentManager(), "mature_optin");
     }
 
     private void loadCharactersForCategory(String categoryId, boolean locked) {
@@ -330,6 +359,14 @@ public class CategoriesFragment extends Fragment {
             holder.icon.setText(cat.icon);
             holder.name.setText(cat.name);
 
+            if (OPTIN_ID.equals(cat.id)) {
+                holder.name.setPaintFlags(holder.name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.count.setText("Sblocca contenuti per adulti");
+                holder.count.setTextColor(0xFF7C4DFF); // primary
+                holder.itemView.setAlpha(1.0f);
+                return;
+            }
+
             if (cat.characterCount > 0) {
                 holder.count.setText(cat.characterCount + " personaggi");
             } else {
@@ -347,7 +384,13 @@ public class CategoriesFragment extends Fragment {
                 holder.itemView.setAlpha(1.0f);
             }
 
-            holder.itemView.setOnClickListener(v -> loadCharactersForCategory(cat.id, cat.locked));
+            holder.itemView.setOnClickListener(v -> {
+                if (OPTIN_ID.equals(cat.id)) {
+                    showMatureOptIn();
+                    return;
+                }
+                loadCharactersForCategory(cat.id, cat.locked);
+            });
         }
 
         @Override

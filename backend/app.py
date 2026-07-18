@@ -144,6 +144,7 @@ from app_routes.premium import router as premium_router
 from app_routes.admin import router as admin_router
 from app_routes.group_chat import router as group_chat_router
 from app_routes.chat import router as chat_router
+from app_routes.users import router as users_router
 
 app.include_router(public_router)
 app.include_router(auth_router)
@@ -154,6 +155,7 @@ app.include_router(premium_router)
 app.include_router(admin_router)
 app.include_router(group_chat_router)
 app.include_router(chat_router)
+app.include_router(users_router)
 
 # ─── Socket.IO ───────────────────────────────────────────────────
 from app_socket import register_socket_handlers

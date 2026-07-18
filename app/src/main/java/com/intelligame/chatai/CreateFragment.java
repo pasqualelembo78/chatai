@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
@@ -35,6 +36,20 @@ import java.util.concurrent.Executors;
 
 public class CreateFragment extends Fragment {
 
+    private static final String TOS_TEXT =
+            "Benvenuto in Aria - AI Chat. Utilizzando l'app accetti i seguenti Termini.\n\n" +
+            "1. Eta. L'app e destinata a utenti di eta pari o superiore a 18 anni. E vietato inserire contenuti che rappresentino, provochino o facilitino l'abuso o lo sfruttamento di minori.\n\n" +
+            "2. Contenuti vietati. Non e consentito creare, caricare o condividere contenuti:\n" +
+            "- che violino le leggi applicabili o i diritti di terzi (copyright, privacy, immagine);\n" +
+            "- osceni, diffamatori, molesti, violenti o che incitino all'odio;\n" +
+            "- che ritraggano persone reali senza consenso;\n" +
+            "- a carattere sessuale esplicito che coinvolga minori o che violi le policy dei negozi app;\n" +
+            "- che promuovano autolesionismo, suicidio, droghe illecite o attivita pericolose.\n\n" +
+            "3. Responsabilita dell'utente. I personaggi e i messaggi sono generati dall'intelligenza artificiale a scopo di intrattenimento e non rappresentano persone reali. L'utente e l'unico responsabile dei contenuti che crea e condivide.\n\n" +
+            "4. Moderazione. I contenuti possono essere moderati, segnalati e rimossi. Gli utenti possono essere bloccati o segnalati. Contatti: lembopasquale78@gmail.com\n\n" +
+            "5. Proprieta intellettuale. L'app e i suoi componenti sono di proprieta degli sviluppatori. Le immagini possono provenire da Pexels e servizi AI gratuiti.\n\n" +
+            "Versione completa: https://www.mevacoin.com/terms.html";
+
     private TextInputEditText fieldName, fieldAge, fieldRole, fieldAvatar;
     private TextInputEditText fieldDescription, fieldTags, fieldEssence, fieldPersonality;
     private TextInputEditText fieldSpeakingStyle, fieldBackstory, fieldHobbies, fieldSystemPrompt;
@@ -46,6 +61,7 @@ public class CreateFragment extends Fragment {
     private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private AuthManager mAuth;
+    private PrefsManager prefs;
 
     private List<String> categoryIds = new ArrayList<>();
     private List<String> categoryNames = new ArrayList<>();
@@ -58,6 +74,7 @@ public class CreateFragment extends Fragment {
 
         ChatApplication app = (ChatApplication) requireActivity().getApplication();
         PrefsManager prefs = app.getPrefs();
+        this.prefs = prefs;
         mAuth = app.getAuthManager();
         baseUrl = prefs.getServerUrl().replace("/chat", "");
 
@@ -121,6 +138,11 @@ public class CreateFragment extends Fragment {
     }
 
     private void submitCharacter() {
+        if (prefs != null && !prefs.isTosAccepted()) {
+            showTosDialog(() -> submitCharacter());
+            return;
+        }
+
         String name = fieldName.getText().toString().trim();
         if (name.isEmpty()) {
             showStatus("Il nome è obbligatorio", true);
@@ -216,6 +238,22 @@ public class CreateFragment extends Fragment {
                 });
             }
         });
+    }
+
+    private void showTosDialog(Runnable onAccept) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.tos_title)
+                .setMessage(TOS_TEXT)
+                .setPositiveButton(R.string.tos_accept, (d, w) -> {
+                    if (prefs != null) prefs.setTosAccepted(true);
+                    if (onAccept != null) onAccept.run();
+                })
+                .setNegativeButton(R.string.tos_decline, (d, w) -> {
+                    showStatus(getString(R.string.tos_required), true);
+                    btnCreate.setEnabled(true);
+                })
+                .setCancelable(false)
+                .show();
     }
 
     private void clearFields() {

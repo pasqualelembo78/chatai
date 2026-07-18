@@ -8,6 +8,15 @@ def init_db():
     try:
         cur = conn.cursor()
         cur.execute("""
+            CREATE TABLE IF NOT EXISTS blocked_users (
+                blocker_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                blocked_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (blocker_id, blocked_id)
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_blocked_blocker ON blocked_users(blocker_id)")
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS relationships (
                 user_id TEXT NOT NULL,
                 character_id TEXT NOT NULL,

@@ -8,7 +8,6 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class LoginActivity extends Activity {
 
@@ -30,7 +31,10 @@ public class LoginActivity extends Activity {
     private EditText mPasswordView;
     private EditText mServerUrlView;
     private EditText mReferralCodeView;
-    private CheckBox mAgeConfirmCheckbox;
+    private View mBirthDateRow;
+    private EditText mBirthDay;
+    private EditText mBirthMonth;
+    private EditText mBirthYear;
     private Button mLoginButton;
     private TextView mToggleAuthMode;
     private ProgressBar mProgressBar;
@@ -66,7 +70,10 @@ public class LoginActivity extends Activity {
         mPasswordView = findViewById(R.id.password_input);
         mServerUrlView = findViewById(R.id.server_url_input);
         mReferralCodeView = findViewById(R.id.referral_code_input);
-        mAgeConfirmCheckbox = findViewById(R.id.age_confirm_checkbox);
+        mBirthDateRow = findViewById(R.id.birth_date_row);
+        mBirthDay = findViewById(R.id.birth_day);
+        mBirthMonth = findViewById(R.id.birth_month);
+        mBirthYear = findViewById(R.id.birth_year);
         mLoginButton = findViewById(R.id.login_button);
         mProgressBar = findViewById(R.id.auth_progress);
         mToggleAuthMode = findViewById(R.id.toggle_auth_mode);
@@ -100,12 +107,12 @@ public class LoginActivity extends Activity {
             mLoginButton.setText("REGISTRATI");
             mToggleAuthMode.setText("Hai già account? Accedi");
             mEmailView.setVisibility(View.VISIBLE);
-            mAgeConfirmCheckbox.setVisibility(View.VISIBLE);
+            mBirthDateRow.setVisibility(View.VISIBLE);
         } else {
             mLoginButton.setText("ACCEDI");
             mToggleAuthMode.setText("Non hai account? Registrati");
             mEmailView.setVisibility(View.GONE);
-            mAgeConfirmCheckbox.setVisibility(View.GONE);
+            mBirthDateRow.setVisibility(View.GONE);
         }
     }
 
@@ -190,14 +197,38 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        // Age verification: basta confermare di essere maggiorenni.
-        if (!mAgeConfirmCheckbox.isChecked()) {
+        // Neutral age screen: l'utente inserisce liberamente giorno/mese/anno di nascita.
+        int day, month, year;
+        try {
+            day = Integer.parseInt(mBirthDay.getText().toString().trim());
+            month = Integer.parseInt(mBirthMonth.getText().toString().trim());
+            year = Integer.parseInt(mBirthYear.getText().toString().trim());
+        } catch (NumberFormatException e) {
+            day = month = year = -1;
+        }
+        if (day < 1 || month < 1 || year < 1900) {
             Toast.makeText(LoginActivity.this,
-                    "Devi confermare di avere almeno 18 anni.", Toast.LENGTH_LONG).show();
+                    "Inserisci la data di nascita (GG/MM/AAAA).", Toast.LENGTH_LONG).show();
             setLoading(false);
             return;
         }
-        final String birthDate = getAdultBirthDate();
+        Calendar dob = Calendar.getInstance();
+        dob.set(year, month - 1, day);
+        if (dob.get(Calendar.YEAR) != year || dob.get(Calendar.MONTH) != month - 1) {
+            Toast.makeText(LoginActivity.this, "Data di nascita non valida.", Toast.LENGTH_LONG).show();
+            setLoading(false);
+            return;
+        }
+        int age = Calendar.getInstance().get(Calendar.YEAR) - year;
+        if (Calendar.getInstance().get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) age--;
+        if (age < 18) {
+            Toast.makeText(LoginActivity.this,
+                    "Devi avere almeno 18 anni per registrarti.", Toast.LENGTH_LONG).show();
+            setLoading(false);
+            return;
+        }
+        final String birthDate = String.format(Locale.ITALY, "%04d-%02d-%02d", year, month, day);
+        final int birthYear = year;
 
         setLoading(true);
         final String serverUrl = getEffectiveServerUrl();
@@ -210,6 +241,8 @@ public class LoginActivity extends Activity {
                         runOnUiThread(() -> {
                             setLoading(false);
                             saveServerUrl(serverUrl);
+                            mPrefs.setAdultBirthYear(birthYear);
+                            verifyAgeOnServer(serverUrl, birthYear);
                             Toast.makeText(LoginActivity.this,
                                     "Benvenuto, " + username + "!", Toast.LENGTH_SHORT).show();
                             checkAndRedirect(serverUrl);
@@ -234,10 +267,15 @@ public class LoginActivity extends Activity {
         return url;
     }
 
-    private String getAdultBirthDate() {
-        java.util.Calendar c = java.util.Calendar.getInstance();
-        c.add(java.util.Calendar.YEAR, -18);
-        return new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ITALY).format(c.getTime());
+    private void verifyAgeOnServer(final String serverUrl, final int birthYear) {
+        new Thread(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("birth_year", birthYear);
+                mAuth.requestWithRefresh(serverUrl + "/me/verify-age", "POST", body.toString(), 8000);
+            } catch (Exception ignored) {
+            }
+        }).start();
     }
 
     private void saveServerUrl(String url) {

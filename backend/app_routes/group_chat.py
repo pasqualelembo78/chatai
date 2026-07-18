@@ -27,6 +27,7 @@ from storage import (
     remove_group_participant as _rp,
     search_users as _su,
     add_group_message as _agm,
+    get_blocked_users,
 )
 from characters import get_character
 from chat_engine import FEATURES
@@ -80,6 +81,12 @@ async def get_group_chat(chat_id: int, user: AuthUser = Depends(jwt_required)):
     if chat["user_id"] != user.user_id and not _igp(chat_id, user.user_id):
         raise HTTPException(403, "Non sei autorizzato a visualizzare questa chat")
     messages = _ggm(chat_id, limit=100)
+    blocked = set(get_blocked_users(user.user_id))
+    if blocked:
+        messages = [
+            m for m in messages
+            if not (m.get("sender_type") == "user" and m.get("sender_id") in blocked)
+        ]
     participants = _gp(chat_id)
     chat["messages"] = messages
     chat["participants"] = [p["user_id"] for p in participants]
