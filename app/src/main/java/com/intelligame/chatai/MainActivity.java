@@ -138,19 +138,19 @@ public class MainActivity extends AppCompatActivity {
 
         View root = findViewById(R.id.coordinator);
         ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            int sysTop = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
             int sysBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
-            // Only account for the keyboard when it is actually visible. Some OEMs report a
-            // non-zero IME inset even with the keyboard closed, which would otherwise shrink
-            // the fragment container to ~half the screen and leave empty space at the bottom.
             int imeBottom = insets.isVisible(WindowInsetsCompat.Type.ime())
                     ? insets.getInsets(WindowInsetsCompat.Type.ime()).bottom : 0;
 
-            navView.setPadding(0, 0, 0, sysBottom);
+            topAppBar.setPadding(
+                topAppBar.getPaddingLeft(),
+                sysTop,
+                topAppBar.getPaddingRight(),
+                topAppBar.getPaddingBottom()
+            );
 
-            // La bottom navigation è già un view separata sotto il contenitore, quindi
-            // non serve aggiungere il suo spazio come padding. Applichiamo il padding
-            // inferiore SOLO quando la tastiera è aperta, altrimenti rimane una striscia
-            // vuota in basso (i fragment Home/Categorie non riempiono tutto lo schermo).
+            navView.setPadding(0, 0, 0, sysBottom);
             fragmentContainer.setPadding(0, 0, 0, imeBottom);
 
             return WindowInsetsCompat.CONSUMED;

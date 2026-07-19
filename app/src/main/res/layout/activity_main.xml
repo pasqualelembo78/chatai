@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/background"
-                app:title="ChatAI"
+                app:title="Aria"
                 app:titleTextColor="@color/on_surface"
                 app:navigationIcon="@drawable/ic_menu"
                 app:navigationIconTint="@color/on_surface" />
