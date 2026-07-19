@@ -46,6 +46,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private String mCharacterId;
     private String mCharacterAvatarUrl;
     private String mCharacterName;
+    private OnRegenerateListener mRegenerateListener;
+
+    public interface OnRegenerateListener {
+        void onRegenerate(Message message);
+    }
+
+    public void setOnRegenerateListener(OnRegenerateListener listener) {
+        mRegenerateListener = listener;
+    }
 
     public MessageAdapter(Context context, List<Message> messages) {
         mMessages = messages;
@@ -348,6 +357,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             }
             if (!isMine) {
                 popup.getMenu().add(0, 3, 2, "Segnala messaggio");
+                popup.getMenu().add(0, 4, 3, "Rigenera risposta");
             }
 
             popup.setOnMenuItemClickListener(item -> {
@@ -363,11 +373,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                         return true;
                     case 3:
                         new androidx.appcompat.app.AlertDialog.Builder(anchor.getContext())
-                            .setTitle("Segnala messaggio")
-                            .setMessage("Vuoi segnalare questo messaggio come inappropriato?")
-                            .setPositiveButton("Segnala", (dialog, which) -> reportMessage(anchor.getContext(), message, characterId))
-                            .setNegativeButton("Annulla", null)
-                            .show();
+                                .setTitle("Segnala messaggio")
+                                .setMessage("Vuoi segnalare questo messaggio come inappropriato?")
+                                .setPositiveButton("Segnala", (dialog, which) -> reportMessage(anchor.getContext(), message, characterId))
+                                .setNegativeButton("Annulla", null)
+                                .show();
+                        return true;
+                    case 4:
+                        if (mRegenerateListener != null) {
+                            mRegenerateListener.onRegenerate(message);
+                        }
                         return true;
                 }
                 return false;

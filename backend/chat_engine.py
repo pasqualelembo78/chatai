@@ -432,9 +432,10 @@ def _check_character_access(user_id, character):
     return True
 
 def process_message(user_id, character_id, text, username="Utente",
-                    memory_context=None, user_memory=None,
-                    character_data=None, image_base64="", image_mime="image/jpeg",
-                    client_storage=False, client_state=None, is_favorite=False):
+                     memory_context=None, user_memory=None,
+                     character_data=None, image_base64="", image_mime="image/jpeg",
+                     client_storage=False, client_state=None, is_favorite=False,
+                     tone=None):
     client_state = client_state or {}
     character = get_character(character_id)
     if character_data:
@@ -820,6 +821,16 @@ def process_message(user_id, character_id, text, username="Utente",
         shared_memories=shared_mems,
         impersonate_override=impersonate_override,
     )
+
+    TONE_HINTS = {
+        "divertente": "ISTRUZIONE DI TONO: mantieni un tono scherzoso e divertente, usa battute leggere.",
+        "romantico": "ISTRUZIONE DI TONO: mantieni un tono romantico e dolce, con parole affettuose.",
+        "protettivo": "ISTRUZIONE DI TONO: mantieni un tono protettivo e rassicurante, come chi veglia sull'utente.",
+        "energico": "ISTRUZIONE DI TONO: mantieni un tono energico e vivace.",
+    }
+    if tone and tone in TONE_HINTS and messages:
+        # Inserisce subito dopo il system prompt iniziale.
+        messages.insert(1, {"role": "system", "content": TONE_HINTS[tone]})
 
     logger.info(f"get_ai_response: impersonate={impersonate_override is not None}")
     ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)

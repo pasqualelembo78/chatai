@@ -282,7 +282,8 @@ def register_socket_handlers(sio):
                                      user_memory=data.get("user_memory"),
                                      character_data=data.get("character_data"),
                                      image_base64=image_b64, image_mime=image_mime,
-                                     is_favorite=data.get("is_favorite", False))
+                                     is_favorite=data.get("is_favorite", False),
+                                     tone=data.get("tone"))
             if result:
                 result["ai_text"] = moderate_output(result.get("ai_text", ""))[0]
                 payload = {

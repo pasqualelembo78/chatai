@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+
+import com.intelligame.chatai.SafeExecutor;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -126,6 +128,13 @@ public class MainFragment extends Fragment {
     private Message mStreamingMessage;
     private int mStreamingPosition = -1;
     private boolean mStreaming = false;
+
+    // Consumabili MVC (cache dalla chiamata /user/mevacoins/store)
+    private int mRegenCount = 0;
+    private int mTonePackCount = 0;
+    private int mBoostCount = 0;
+    private String mSelectedTone = null;
+    private boolean mBoostActive = false;
 
     public MainFragment() {
         super();
@@ -290,7 +299,9 @@ public class MainFragment extends Fragment {
             ((MessageAdapter) mAdapter).setCharacterId(mCharacterId);
             ((MessageAdapter) mAdapter).setCharacterAvatar(mPrefs.getServerUrl(), mCharacterAvatarImage);
             ((MessageAdapter) mAdapter).setCharacterName(mCharacterName);
+            ((MessageAdapter) mAdapter).setOnRegenerateListener(this::onRegenerateRequested);
         }
+        loadConsumables();
         if (mInputMessageView != null && mCharacterName != null) {
             mInputMessageView.setHint("Manda messaggio a " + mCharacterName);
         }
@@ -562,6 +573,7 @@ public class MainFragment extends Fragment {
             "Guarda scenario",
             "Elimina chat",
             "Copia chat",
+            "Tono messaggio",
             "Gioco",
             "AvatarMix",
             "Bobine",
@@ -585,19 +597,22 @@ public class MainFragment extends Fragment {
                 case 4: // Copia chat
                     copyChat();
                     break;
-                case 5: // Gioco
+                case 5: // Tono messaggio
+                    showTonePicker();
+                    break;
+                case 6: // Gioco
                     if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Game Center in arrivo", Toast.LENGTH_SHORT).show();
                     break;
-                case 6: // AvatarMix
+                case 7: // AvatarMix
                     if (!isAdded()) return;
                     Toast.makeText(getActivity(), "AvatarMix in arrivo", Toast.LENGTH_SHORT).show();
                     break;
-                case 7: // Bobine
+                case 8: // Bobine
                     if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Bobine in arrivo", Toast.LENGTH_SHORT).show();
                     break;
-                case 8: // Canzone
+                case 9: // Canzone
                     if (!isAdded()) return;
                     Toast.makeText(getActivity(), "Canzone in arrivo", Toast.LENGTH_SHORT).show();
                     break;
@@ -1212,6 +1227,13 @@ public class MainFragment extends Fragment {
             payload.put("character", mCharacterId);
             payload.put("user_id", mUserId);
 
+            if (mSelectedTone != null) {
+                payload.put("tone", mSelectedTone);
+            }
+            if (mBoostActive) {
+                payload.put("priority", true);
+            }
+
             if (hasImage) {
                 payload.put("image", mPendingImageBase64);
                 payload.put("image_mime", mPendingImageMime != null ? mPendingImageMime : "image/jpeg");
@@ -1256,6 +1278,129 @@ public class MainFragment extends Fragment {
             e.printStackTrace();
         }
         mSocket.emit("stop typing", stopTyping);
+    }
+
+    // ── Consumabili MVC ──────────────────────────────────────────────
+
+    private void loadConsumables() {
+        if (mAuth == null || mPrefs == null) return;
+        new SafeExecutor().execute(() -> {
+            try {
+                String base = mPrefs.getServerUrl().replace("/chat", "");
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                        base + "/user/mevacoins/store", "GET", null, 8000);
+                if (resp == null || resp.statusCode != 200) return;
+                JSONObject obj = new JSONObject(resp.body);
+                JSONArray cons = obj.optJSONArray("consumables");
+                int regen = 0, tone = 0, boost = 0;
+                if (cons != null) {
+                    for (int i = 0; i < cons.length(); i++) {
+                        JSONObject c = cons.optJSONObject(i);
+                        if (c == null) continue;
+                        int owned = c.optInt("owned", 0);
+                        switch (c.optString("id")) {
+                            case "regenerate_message": regen = owned; break;
+                            case "personality_pack": tone = owned; break;
+                            case "speed_boost": boost = owned; break;
+                        }
+                    }
+                }
+                final int fRegen = regen, fTone = tone, fBoost = boost;
+                safeRunOnUiThread(() -> {
+                    mRegenCount = fRegen;
+                    mTonePackCount = fTone;
+                    mBoostCount = fBoost;
+                    mBoostActive = fBoost > 0;
+                    if (mBoostActive && getActivity() != null) {
+                        Toast.makeText(getActivity(), "⚡ Boost velocità attivo", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception ignored) {
+            }
+        });
+    }
+
+    private void onRegenerateRequested(Message assistantMsg) {
+        if (mRegenCount <= 0) {
+            if (getActivity() != null)
+                Toast.makeText(getActivity(),
+                        "Ti serve il consumabile 'Rigenera messaggio' (schermata Guadagna MVC)",
+                        Toast.LENGTH_LONG).show();
+            return;
+        }
+        int idx = mMessages.indexOf(assistantMsg);
+        String userText = null;
+        for (int i = idx - 1; i >= 0; i--) {
+            Message m = mMessages.get(i);
+            if (m.getType() != Message.TYPE_MESSAGE) continue;
+            boolean mine = false;
+            try {
+                ChatApplication app = (ChatApplication) requireActivity().getApplication();
+                mine = app.getPrefs().getUsername().equals(m.getUsername());
+            } catch (Exception e) { /* ignore */ }
+            if (mine) { userText = m.getMessage(); break; }
+        }
+        if (userText == null || userText.isEmpty()) {
+            if (getActivity() != null)
+                Toast.makeText(getActivity(), "Nessun tuo messaggio da rigenerare", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final String textToSend = userText;
+        new SafeExecutor().execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("item", "regenerate_message");
+                String base = mPrefs.getServerUrl().replace("/chat", "");
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                        base + "/user/mevacoins/store/use", "POST", body.toString(), 10000);
+                if (resp == null || resp.statusCode != 200) {
+                    safeRunOnUiThread(() -> {
+                        if (getActivity() != null)
+                            Toast.makeText(getActivity(), "Consumabile non disponibile", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
+                safeRunOnUiThread(() -> {
+                    int pos = mMessages.indexOf(assistantMsg);
+                    if (pos >= 0) {
+                        mMessages.remove(pos);
+                        mAdapter.notifyItemRemoved(pos);
+                    }
+                    mInputMessageView.setText(textToSend);
+                    attemptSend();
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void showTonePicker() {
+        if (getActivity() == null) return;
+        if (mTonePackCount <= 0) {
+            Toast.makeText(getActivity(),
+                    "Sblocca il 'Pack personalità' nello store per scegliere il tono",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        final String[] tones = {"Normale", "Divertente", "Romantico", "Protettivo", "Energetico"};
+        final String[] values = {null, "divertente", "romantico", "protettivo", "energico"};
+        int checked = 0;
+        for (int i = 0; i < values.length; i++) {
+            if ((values[i] == null && mSelectedTone == null) ||
+                (values[i] != null && values[i].equals(mSelectedTone))) { checked = i; break; }
+        }
+        new android.app.AlertDialog.Builder(getActivity())
+                .setTitle("Tono della conversazione")
+                .setSingleChoiceItems(tones, checked, (dialog, which) -> {
+                    mSelectedTone = values[which];
+                    dialog.dismiss();
+                    if (getActivity() != null)
+                        Toast.makeText(getActivity(),
+                                "Tono: " + tones[which], Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Annulla", null)
+                .show();
     }
 
     private static final int REQUEST_RECORD_AUDIO = 100;
