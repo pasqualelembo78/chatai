@@ -494,16 +494,9 @@ def register_socket_handlers(sio):
         is_fallback = False
 
         try:
-            model_sent = False
             for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id):
-                if not model_sent and model:
-                    model_prefix = f"[{pid}/{model}] "
-                    ai_text += model_prefix + token
-                    await sio.emit("stream token", {"token": model_prefix + token, "text": ai_text}, room=sid)
-                    model_sent = True
-                else:
-                    ai_text += token
-                    await sio.emit("stream token", {"token": token, "text": ai_text}, room=sid)
+                ai_text += token
+                await sio.emit("stream token", {"token": token, "text": ai_text}, room=sid)
                 ai_provider = pid
                 ai_model = model
         except Exception as e:

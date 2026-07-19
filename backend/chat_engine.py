@@ -512,10 +512,8 @@ def process_message(user_id, character_id, text, username="Utente",
         is_fallback = False
 
     if not is_fallback and not client_storage:
-        model_prefix = f"[{ai_provider}/{ai_model}]" if ai_model else ""
-        display_text = f"{model_prefix} {ai_text}" if model_prefix else ai_text
+        # Keep ai_text as-is (no provider/model prefix for users)
         add_message(user_id, character_id, "assistant", ai_text)
-        ai_text = display_text
 
     if not client_storage:
         try:
