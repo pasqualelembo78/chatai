@@ -141,7 +141,7 @@ if [ "$SKIP_FIREWALL" = false ]; then
 fi
 
 # Pacchetti sempre necessari
-PACKAGES="$PACKAGES python3 python3-pip python3-venv curl wget git lsof"
+PACKAGES="$PACKAGES python3 python3-pip python3-venv curl wget git lsof bc"
 
 if [ -n "$PACKAGES" ]; then
     $SUDO apt-get install -y -qq $PACKAGES
@@ -150,7 +150,7 @@ fi
 
 # Crea utente dedicato per il servizio
 if ! id -u chatai &>/dev/null; then
-    $SUDO useradd -r -s /bin/false -d /opt/chatai chatai 2>/dev/null || true
+    $SUDO useradd -r -s /bin/false -d "$ROOT_DIR" chatai 2>/dev/null || true
     echo -e "    ${GREEN}Utente chatai creato.${NC}"
 fi
 
@@ -189,25 +189,33 @@ if [ "$SKIP_PY" = false ]; then
     pip install -r requirements.txt --quiet 2>&1 | grep -v "already satisfied" || true
     echo -e "    ${GREEN}Python dependencies installed.${NC}"
 
-    # Verifica file Python
+    # Verifica file Python — scan ricorsivo di tutti i .py nel backend
     python3 -c "
-import py_compile, sys, os
-files = ['app.py', 'app_models.py', 'app_socket.py', 'chat_engine.py', 'auth_fastapi.py', 'db.py', 'prompt_builder.py', 'evolution_engine.py', 'audio_utils.py', 'image_utils.py', 'security_utils.py', 'characters.py']
-dirs = ['storage', 'ai_engine', 'avatar', 'app_routes']
-import os
-for d in dirs:
-    if os.path.isdir(d):
-        for f in os.listdir(d):
-            if f.endswith('.py'):
-                files.append(os.path.join(d, f))
-for f in files:
-    if os.path.exists(f):
-        py_compile.compile(f, doraise=True)
+import py_compile, os
+errors = []
+for root, dirs, files in os.walk('.'):
+    # skip venv and __pycache__
+    dirs[:] = [d for d in dirs if d not in ('venv', '__pycache__', '.git')]
+    for f in files:
+        if f.endswith('.py'):
+            path = os.path.join(root, f)
+            try:
+                py_compile.compile(path, doraise=True)
+            except py_compile.PyCompileError as e:
+                errors.append(str(e))
+if errors:
+    for e in errors:
+        print('FAIL:', e)
+    raise SystemExit(1)
 print('    All Python files OK')
 " || { echo -e "${RED}ERROR: Python syntax check failed${NC}"; exit 1; }
 
     deactivate
     cd "$ROOT_DIR"
+
+    # Assicura directory per personaggi (import_engine le usa per JSON)
+    $SUDO mkdir -p "$ROOT_DIR/backend/characters/data"
+    $SUDO chown -R chatai:chatai "$ROOT_DIR/backend/characters" 2>/dev/null || true
 
     # Permessi restrittivi su backend
     $SUDO chgrp -R chatai "$ROOT_DIR" 2>/dev/null || true
@@ -232,31 +240,31 @@ echo -e "    ${GREEN}Python files: read-only (a-w).${NC}"
 
 # Git integrity watchdog — ogni 5 min controlla che i file non siano stati modificati
 INTEGRITY_SCRIPT="/usr/local/bin/chatai_integrity.sh"
-$SUDO tee "$INTEGRITY_SCRIPT" > /dev/null << 'INTEGRITYEOF'
+$SUDO tee "$INTEGRITY_SCRIPT" > /dev/null << INTEGRITYEOF
 #!/bin/bash
 # ChatAI integrity watchdog — eseguito via cron ogni 5 minuti
 # LOG le modifiche ma NON reverta automaticamente (evita di cancellare fix legittimi)
-ROOT="/opt/chatai"
-cd "$ROOT" || exit 0
+ROOT="$ROOT_DIR"
+cd "\$ROOT" || exit 0
 if [ -d .git ]; then
-    MODIFIED=$(git diff --name-only -- backend/ 2>/dev/null | tr '\n' ' ')
-    if [ -n "$MODIFIED" ]; then
-        logger -t chatai-integrity "BACKEND FILES MODIFIED: $MODIFIED"
-        # Rendi scrivibile (build_app.sh fa chmod a-w) e reverta SOLO storage.py se ha perso i PRAGMA
+    MODIFIED=\$(git diff --name-only -- backend/ 2>/dev/null | tr '\n' ' ')
+    if [ -n "\$MODIFIED" ]; then
+        logger -t chatai-integrity "BACKEND FILES MODIFIED: \$MODIFIED"
         chmod -R u+w backend/ 2>/dev/null || true
-        if echo "$MODIFIED" | grep -q "storage.py" && ! grep -q "PRAGMA" backend/storage.py 2>/dev/null; then
-            logger -t chatai-integrity "storage.py perso PRAGMA/timeout — ripristino da git"
-            git checkout -- backend/storage.py 2>/dev/null || true
+        # Reverta SOLO db.py se ha perso le impostazioni critiche
+        if echo "\$MODIFIED" | grep -q "db.py" && ! grep -q "connect_timeout" backend/db.py 2>/dev/null; then
+            logger -t chatai-integrity "db.py perso configurazione — ripristino da git"
+            git checkout -- backend/db.py 2>/dev/null || true
             systemctl restart chatai 2>/dev/null || true
         fi
     fi
-    MODIFIED_APP=$(git diff --name-only -- app/ 2>/dev/null | tr '\n' ' ')
-    if [ -n "$MODIFIED_APP" ]; then
-        logger -t chatai-integrity "APP FILES MODIFIED: $MODIFIED_APP"
+    MODIFIED_APP=\$(git diff --name-only -- app/ 2>/dev/null | tr '\n' ' ')
+    if [ -n "\$MODIFIED_APP" ]; then
+        logger -t chatai-integrity "APP FILES MODIFIED: \$MODIFIED_APP"
     fi
-    UNTRACKED=$(git ls-files --others --exclude-standard backend/ app/ 2>/dev/null | head -10 | tr '\n' ' ')
-    if [ -n "$UNTRACKED" ]; then
-        logger -t chatai-integrity "UNTRACKED FILES: $UNTRACKED"
+    UNTRACKED=\$(git ls-files --others --exclude-standard backend/ app/ 2>/dev/null | head -10 | tr '\n' ' ')
+    if [ -n "\$UNTRACKED" ]; then
+        logger -t chatai-integrity "UNTRACKED FILES: \$UNTRACKED"
     fi
 fi
 INTEGRITYEOF
@@ -768,7 +776,7 @@ echo -e "${YELLOW}>>> Configuring backup cron...${NC}"
 BACKUP_SCRIPT="$ROOT_DIR/backend/backup.sh"
 if [ -f "$BACKUP_SCRIPT" ]; then
     chmod +x "$BACKUP_SCRIPT"
-    CRON_LINE="0 3 * * * $SUDO -u chatai $BACKUP_SCRIPT"
+    CRON_LINE="0 3 * * * $(if [ -n "$SUDO" ]; then echo "$SUDO -u chatai"; else echo "sudo -u chatai"; fi) $BACKUP_SCRIPT"
     (crontab -l 2>/dev/null | grep -v "$BACKUP_SCRIPT"; echo "$CRON_LINE") | crontab - 2>/dev/null || true
     echo -e "    ${GREEN}Backup cron: ogni giorno alle 3:00${NC}"
     echo -e "    ${GREEN}Retention: 30 giorni${NC}"
@@ -864,7 +872,7 @@ fi
 
 if [ -f "$PRUNE_SCRIPT" ]; then
     chmod +x "$PRUNE_SCRIPT"
-    CRON_LINE="0 4 * * * $SUDO -u chatai $ROOT_DIR/backend/venv/bin/python3 $PRUNE_SCRIPT >> /var/log/chatai_prune.log 2>&1"
+    CRON_LINE="0 4 * * * sudo -u chatai $ROOT_DIR/backend/venv/bin/python3 $PRUNE_SCRIPT >> /var/log/chatai_prune.log 2>&1"
     # Idempotente: rimuove eventuali righe precedenti per lo stesso script prima di reinserire
     (crontab -l 2>/dev/null | grep -v "$PRUNE_SCRIPT"; echo "$CRON_LINE") | crontab - 2>/dev/null || true
     echo -e "    ${GREEN}Pruning cron: ogni giorno alle 4:00 (dati > 90 gg)${NC}"
@@ -902,7 +910,7 @@ StandardError=append:/var/log/chatai.log
 
 # Hardening
 NoNewPrivileges=true
-ReadWritePaths=$ROOT_DIR/backend $ROOT_DIR/backend/static/uploads /tmp/chatai_uploads /var/log/chatai.log
+ReadWritePaths=$ROOT_DIR/backend $ROOT_DIR/backend/static/uploads $ROOT_DIR/backend/characters /tmp/chatai_uploads /var/log/chatai.log
 
 [Install]
 WantedBy=multi-user.target
