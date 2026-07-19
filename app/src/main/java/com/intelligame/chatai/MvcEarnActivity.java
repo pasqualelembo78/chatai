@@ -1,6 +1,7 @@
 package com.intelligame.chatai;
 
 import android.graphics.Typeface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -66,6 +67,8 @@ public class MvcEarnActivity extends AppCompatActivity {
         baseUrl = app.getPrefs().getServerUrl().replace("/chat", "");
 
         balanceText = findViewById(R.id.earn_balance_text);
+        findViewById(R.id.btn_purchases).setOnClickListener(v ->
+                startActivity(new Intent(this, PurchasesActivity.class)));
         checkinStatusText = findViewById(R.id.checkin_status_text);
         btnCheckin = findViewById(R.id.btn_do_checkin);
         btnWatchAd = findViewById(R.id.btn_watch_ad);

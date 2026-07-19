@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -86,6 +87,20 @@
                 android:alpha="0.85" />
 
         </LinearLayout>
+
+        <!-- I tuoi acquisti / Rollback -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_purchases"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:text="I tuoi acquisti / Rollback"
+            android:textSize="14sp"
+            android:backgroundTint="@color/surface"
+            android:textColor="@color/on_surface"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            app:cornerRadius="22dp" />
 
         <!-- Daily Check-in Section -->
         <TextView

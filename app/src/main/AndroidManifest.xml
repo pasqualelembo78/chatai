@@ -74,6 +74,11 @@
         </activity>
 
         <activity
+            android:name=".PurchasesActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+
+        <activity
             android:name=".ImportActivity"
             android:exported="false"
             android:theme="@style/AppTheme"

@@ -45,6 +45,10 @@ class ShareRequest(BaseModel):
     platform: str = ""
 
 
+class RollbackRequest(BaseModel):
+    purchase_id: str = ""
+
+
 class SuggestionRequest(BaseModel):
     character_id: str = ""
 
@@ -89,6 +93,25 @@ async def api_mevacoins_store(user: AuthUser = Depends(jwt_required)):
 async def api_mevacoins_badges(user: AuthUser = Depends(jwt_required)):
     from storage.store import get_gamification
     return get_gamification(user.user_id)
+
+
+@router.get("/user/mevacoins/purchases")
+async def api_mevacoins_purchases(user: AuthUser = Depends(jwt_required)):
+    from storage.rollback import get_purchases, ROLLBACK_FEE
+    return {"purchases": get_purchases(user.user_id), "rollback_fee": ROLLBACK_FEE}
+
+
+@router.post("/user/mevacoins/rollback")
+async def api_mevacoins_rollback(body: RollbackRequest, user: AuthUser = Depends(jwt_required)):
+    if not body.purchase_id:
+        raise HTTPException(400, "purchase_id richiesto")
+    from storage.rollback import rollback_purchase
+    ok, payload, msg = rollback_purchase(user.user_id, body.purchase_id)
+    if not ok:
+        if msg in ("saldo_insufficiente_rollback", "acquisto_non_trovato"):
+            raise HTTPException(400, msg)
+        raise HTTPException(500, msg)
+    return {"status": "ok", **payload}
 
 
 @router.post("/user/mevacoins/store/buy")

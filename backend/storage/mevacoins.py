@@ -81,3 +81,43 @@ def get_mevacoins_transactions(user_id, limit=20):
         return [dict(r) for r in rows]
     finally:
         put_conn(conn)
+
+
+def adjust_balance(user_id, delta, reason):
+    """Adjust the balance by `delta` (positive or negative) and log a
+    transaction. Does NOT change `total_earned` (used for refunds/rollbacks
+    where coins are returned, not newly earned). Returns the new balance, or
+    False if a negative delta would drive the balance below zero.
+    """
+    if delta == 0:
+        return get_mevacoins_balance(user_id)
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        if delta > 0:
+            cur.execute(
+                "UPDATE mevacoins SET balance = balance + %s, updated_at=CURRENT_TIMESTAMP "
+                "WHERE user_id=%s",
+                (delta, user_id),
+            )
+        else:
+            cur.execute(
+                "UPDATE mevacoins SET balance = balance + %s, updated_at=CURRENT_TIMESTAMP "
+                "WHERE user_id=%s AND balance >= %s",
+                (delta, user_id, -delta),
+            )
+            if cur.rowcount == 0:
+                return False
+        cur.execute(
+            "INSERT INTO mevacoins_transactions (user_id, amount, reason) VALUES (%s, %s, %s)",
+            (user_id, delta, reason),
+        )
+        conn.commit()
+        cur.execute("SELECT balance FROM mevacoins WHERE user_id=%s", (user_id,))
+        row = cur.fetchone()
+        return row["balance"] if row else 0
+    except Exception as e:
+        conn.rollback()
+        raise
+    finally:
+        put_conn(conn)
