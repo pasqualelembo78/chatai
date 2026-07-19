@@ -41,6 +41,7 @@ public class MvcEarnActivity extends AppCompatActivity {
     private MaterialButton btnUnlockVideoGen;
     private MaterialButton btnUnlockPremiumVoice;
     private MaterialButton btnUnlockExtendedMemory;
+    private MaterialButton btnUnlockNoAds;
 
     private int currentBalance = 0;
     private java.util.Set<String> unlockedFeatures = new java.util.HashSet<>();
@@ -72,6 +73,7 @@ public class MvcEarnActivity extends AppCompatActivity {
         btnUnlockVideoGen = findViewById(R.id.btn_unlock_video_gen);
         btnUnlockPremiumVoice = findViewById(R.id.btn_unlock_premium_voice);
         btnUnlockExtendedMemory = findViewById(R.id.btn_unlock_extended_memory);
+        btnUnlockNoAds = findViewById(R.id.btn_unlock_no_ads);
 
         btnCheckin.setOnClickListener(v -> doCheckin());
         btnWatchAd.setOnClickListener(v -> showRewardedAd());
@@ -85,6 +87,7 @@ public class MvcEarnActivity extends AppCompatActivity {
         btnUnlockVideoGen.setOnClickListener(v -> attemptUnlockFeature("video_gen", 100, "Generazione Video"));
         btnUnlockPremiumVoice.setOnClickListener(v -> attemptUnlockFeature("premium_voice", 30, "Messaggi Vocali Premium"));
         btnUnlockExtendedMemory.setOnClickListener(v -> attemptUnlockFeature("extended_memory", 80, "Memoria Estesa"));
+        btnUnlockNoAds.setOnClickListener(v -> attemptUnlockFeature("no_ads", 120, "Nessuna pubblicità"));
 
         populateStreakGrid();
         loadAllData();
@@ -477,6 +480,7 @@ public class MvcEarnActivity extends AppCompatActivity {
                 mainHandler.post(() -> {
                     updateFeatureButtons();
                     btnUnlockCategories.setText(unlockedCats.isEmpty() ? "Vedi" : "Vedi (" + unlockedCats.size() + " sbloccate)");
+                    AdManager.getInstance().setNoAds(unlockedFeatures.contains("no_ads"));
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
@@ -490,6 +494,7 @@ public class MvcEarnActivity extends AppCompatActivity {
         updateOneButton(btnUnlockVideoGen, "video_gen", 100);
         updateOneButton(btnUnlockPremiumVoice, "premium_voice", 30);
         updateOneButton(btnUnlockExtendedMemory, "extended_memory", 80);
+        updateOneButton(btnUnlockNoAds, "no_ads", 120);
     }
 
     private void updateOneButton(MaterialButton btn, String featureId, int cost) {
@@ -546,6 +551,9 @@ public class MvcEarnActivity extends AppCompatActivity {
                     unlockedFeatures.add(featureId);
                     mainHandler.post(() -> {
                         updateFeatureButtons();
+                        if ("no_ads".equals(featureId)) {
+                            AdManager.getInstance().setNoAds(true);
+                        }
                         loadBalance();
                         loadTransactions();
                         Snackbar.make(findViewById(android.R.id.content),

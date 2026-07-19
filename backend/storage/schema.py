@@ -234,6 +234,15 @@ def init_db():
             )
         """)
         cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_consumables (
+                user_id TEXT NOT NULL,
+                item TEXT NOT NULL,
+                quantity INTEGER NOT NULL DEFAULT 0,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (user_id, item)
+            )
+        """)
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS referral_codes (
                 user_id TEXT PRIMARY KEY,
                 code TEXT UNIQUE NOT NULL,

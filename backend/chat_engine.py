@@ -413,6 +413,7 @@ FEATURES = {
     "premium_voice": {"name": "Messaggi Vocali Premium", "mvc_cost": 30},
     "extended_memory": {"name": "Memoria Estesa", "mvc_cost": 80},
     "group_chat": {"name": "Chat di Gruppo", "mvc_cost": 40},
+    "no_ads": {"name": "Nessuna pubblicità", "mvc_cost": 120},
 }
 
 _CHAT_GEN_MODEL = "black-forest-labs/FLUX.1-schnell"

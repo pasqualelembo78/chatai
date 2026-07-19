@@ -48,6 +48,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     private AppOpenAd mAppOpenAd;
     private AdView mBannerAd;
     private boolean mAdsEnabled = true;
+    private boolean mNoAds = false;
     private boolean mInitialized = false;
     private int mMessageCount = 0;
     private Activity mCurrentActivity;
@@ -211,7 +212,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     // ── Banner ──────────────────────────────────────────────────────
 
     public void showBanner(Activity activity, FrameLayout container) {
-        if (!mAdsEnabled || mBannerAd != null) return;
+        if (!mAdsEnabled || mNoAds || mBannerAd != null) return;
 
         mBannerAd = new AdView(activity);
         mBannerAd.setAdUnitId(BANNER_ID);
@@ -255,7 +256,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     // ── Interstitial (app open / close / ogni N messaggi) ───────────
 
     public void preloadInterstitial(Context context) {
-        if (!mAdsEnabled) return;
+        if (!mAdsEnabled || mNoAds) return;
         InterstitialAd.load(context, INTERSTITIAL_ID, new AdRequest.Builder().build(),
                 new InterstitialAdLoadCallback() {
                     @Override
@@ -283,14 +284,14 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     }
 
     public void showInterstitialIfReady(Activity activity) {
-        if (mInterstitialAd != null && mAdsEnabled) {
+        if (mInterstitialAd != null && mAdsEnabled && !mNoAds) {
             mInterstitialAd.show(activity);
             mInterstitialAd = null;
         }
     }
 
     public void onMessageSent(Activity activity) {
-        if (!mAdsEnabled) return;
+        if (!mAdsEnabled || mNoAds) return;
         mMessageCount++;
         if (mMessageCount >= 8) {
             mMessageCount = 0;
@@ -301,7 +302,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     // ── Rewarded Video ──────────────────────────────────────────────
 
     public void preloadRewarded(Context context) {
-        if (!mAdsEnabled) return;
+        if (!mAdsEnabled || mNoAds) return;
         RewardedAd.load(context, REWARDED_ID, new AdRequest.Builder().build(),
                 new RewardedAdLoadCallback() {
                     @Override
@@ -336,7 +337,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     }
 
     public void showRewarded(Activity activity, RewardedCallback callback) {
-        if (mRewardedAd == null || !mAdsEnabled) {
+        if (mRewardedAd == null || !mAdsEnabled || mNoAds) {
             if (callback != null) callback.onRewardedFailed();
             return;
         }
@@ -353,7 +354,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     }
 
     public boolean isRewardedReady() {
-        return mRewardedAd != null && mAdsEnabled;
+        return mRewardedAd != null && mAdsEnabled && !mNoAds;
     }
 
     public void setRewardedReadyListener(RewardedReadyListener listener) {
@@ -366,7 +367,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     // ── App Open Ad ─────────────────────────────────────────────────
 
     public void preloadAppOpen(Context context) {
-        if (!mAdsEnabled) return;
+        if (!mAdsEnabled || mNoAds) return;
         AppOpenAd.load(context, APP_OPEN_ID, new AdRequest.Builder().build(),
                 new AppOpenAd.AppOpenAdLoadCallback() {
                     @Override
@@ -394,7 +395,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     }
 
     public void showAppOpenIfReady(Activity activity) {
-        if (mAppOpenAd != null && mAdsEnabled) {
+        if (mAppOpenAd != null && mAdsEnabled && !mNoAds) {
             mAppOpenAd.show(activity);
             mAppOpenAd = null;
         }
@@ -408,6 +409,24 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
     public boolean isAdsEnabled() {
         return mAdsEnabled;
+    }
+
+    /**
+     * Se true, tutti gli annunci (banner, interstitial, rewarded, app-open) sono
+     * disattivati perché l'utente ha sbloccato "Nessuna pubblicità" con i MVC.
+     */
+    public void setNoAds(boolean noAds) {
+        mNoAds = noAds;
+        if (noAds) {
+            destroyBanner();
+            mInterstitialAd = null;
+            mRewardedAd = null;
+            mAppOpenAd = null;
+        }
+    }
+
+    public boolean isNoAds() {
+        return mNoAds;
     }
 
     // ── Lifecycle (track current activity) ──────────────────────────

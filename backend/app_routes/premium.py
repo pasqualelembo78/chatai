@@ -75,6 +75,38 @@ async def api_mevacoins_missions(user: AuthUser = Depends(jwt_required)):
     return {"missions": get_active_missions(user.user_id)}
 
 
+class StoreItemRequest(BaseModel):
+    item: str = ""
+
+
+@router.get("/user/mevacoins/store")
+async def api_mevacoins_store(user: AuthUser = Depends(jwt_required)):
+    from storage.store import get_shop_payload
+    return get_shop_payload(user.user_id)
+
+
+@router.post("/user/mevacoins/store/buy")
+async def api_mevacoins_store_buy(body: StoreItemRequest, user: AuthUser = Depends(jwt_required)):
+    from storage.store import buy_consumable
+    if not body.item:
+        raise HTTPException(400, "item richiesto")
+    ok, msg = buy_consumable(user.user_id, body.item)
+    if not ok:
+        raise HTTPException(400 if msg == "saldo_insufficiente" else 500, msg)
+    return {"status": "ok", "item": body.item}
+
+
+@router.post("/user/mevacoins/store/use")
+async def api_mevacoins_store_use(body: StoreItemRequest, user: AuthUser = Depends(jwt_required)):
+    from storage.store import use_consumable
+    if not body.item:
+        raise HTTPException(400, "item richiesto")
+    ok, msg = use_consumable(user.user_id, body.item)
+    if not ok:
+        raise HTTPException(400, msg)
+    return {"status": "ok", "item": body.item}
+
+
 @router.get("/user/mevacoins/unlocks")
 async def api_mevacoins_unlocks(user: AuthUser = Depends(jwt_required)):
     unlocks = get_user_unlocks(user.user_id)
