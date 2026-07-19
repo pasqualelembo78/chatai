@@ -26,7 +26,7 @@ public class PrefsManager {
     private static final String KEY_API_KEY_PREFIX = "api_key_";
     private static final String KEY_MVC_ONBOARDED = "mvc_onboarded";
 
-    private static final String DEFAULT_SERVER_URL = "https://mail.mevacoin.com";
+    private static final String DEFAULT_SERVER_URL = "https://82.165.218.56";
     private static final String DEFAULT_CHARACTER_ID = "ginecologa";
 
     private final SharedPreferences prefs;
