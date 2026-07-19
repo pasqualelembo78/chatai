@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -42,6 +44,9 @@ public class MvcEarnActivity extends AppCompatActivity {
     private MaterialButton btnUnlockPremiumVoice;
     private MaterialButton btnUnlockExtendedMemory;
     private MaterialButton btnUnlockNoAds;
+
+    private TextView levelText;
+    private LinearLayout consumablesContainer;
 
     private int currentBalance = 0;
     private java.util.Set<String> unlockedFeatures = new java.util.HashSet<>();
@@ -74,6 +79,8 @@ public class MvcEarnActivity extends AppCompatActivity {
         btnUnlockPremiumVoice = findViewById(R.id.btn_unlock_premium_voice);
         btnUnlockExtendedMemory = findViewById(R.id.btn_unlock_extended_memory);
         btnUnlockNoAds = findViewById(R.id.btn_unlock_no_ads);
+        levelText = findViewById(R.id.level_text);
+        consumablesContainer = findViewById(R.id.consumables_container);
 
         btnCheckin.setOnClickListener(v -> doCheckin());
         btnWatchAd.setOnClickListener(v -> showRewardedAd());
@@ -110,6 +117,7 @@ public class MvcEarnActivity extends AppCompatActivity {
         loadBonusStatus();
         loadTransactions();
         loadUnlockStatus();
+        loadStore();
     }
 
     private void loadBalance() {
@@ -123,6 +131,182 @@ public class MvcEarnActivity extends AppCompatActivity {
             } catch (Exception e) {
                 mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
                         "Errore caricamento saldo", Snackbar.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private int dp(int v) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v,
+                getResources().getDisplayMetrics());
+    }
+
+    private void loadStore() {
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                        baseUrl + "/user/mevacoins/store", "GET", null, 8000);
+                if (resp == null || resp.statusCode != 200) return;
+                JSONObject obj = new JSONObject(resp.body);
+                int balance = obj.optInt("balance", 0);
+                currentBalance = balance;
+                JSONObject lvl = obj.optJSONObject("level");
+                int level = lvl != null ? lvl.optInt("level", 1) : 1;
+                int into = lvl != null ? lvl.optInt("into_level", 0) : 0;
+                int needed = lvl != null ? lvl.optInt("needed", 200) : 200;
+                JSONArray consumables = obj.optJSONArray("consumables");
+                mainHandler.post(() -> {
+                    balanceText.setText(String.valueOf(balance));
+                    levelText.setText(String.format(Locale.getDefault(),
+                            "Livello %d  •  %d/%d MVC al prossimo", level, into, needed));
+                    renderConsumables(consumables);
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void renderConsumables(JSONArray consumables) {
+        if (consumables == null) return;
+        consumablesContainer.removeAllViews();
+        for (int i = 0; i < consumables.length(); i++) {
+            JSONObject c = consumables.optJSONObject(i);
+            if (c != null) {
+                consumablesContainer.addView(buildConsumableRow(c));
+            }
+        }
+    }
+
+    private View buildConsumableRow(JSONObject c) {
+        String id = c.optString("id");
+        String name = c.optString("name");
+        String desc = c.optString("desc");
+        int cost = c.optInt("cost", 0);
+        int owned = c.optInt("owned", 0);
+
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.HORIZONTAL);
+        card.setPadding(dp(12), dp(12), dp(12), dp(12));
+        card.setBackgroundResource(R.color.surface_card);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 0, dp(8));
+        card.setLayoutParams(lp);
+
+        LinearLayout left = new LinearLayout(this);
+        left.setOrientation(LinearLayout.VERTICAL);
+        left.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        left.setPadding(dp(12), 0, dp(8), 0);
+
+        TextView tName = new TextView(this);
+        tName.setText(name);
+        tName.setTextColor(ContextCompat.getColor(this, R.color.on_surface));
+        tName.setTextSize(15);
+        tName.setTypeface(null, Typeface.BOLD);
+
+        TextView tDesc = new TextView(this);
+        tDesc.setText(desc);
+        tDesc.setTextColor(ContextCompat.getColor(this, R.color.on_surface_variant));
+        tDesc.setTextSize(12);
+
+        TextView tOwned = new TextView(this);
+        tOwned.setText("Posseduti: " + owned);
+        tOwned.setTextColor(ContextCompat.getColor(this, R.color.on_surface_variant));
+        tOwned.setTextSize(12);
+
+        left.addView(tName);
+        left.addView(tDesc);
+        left.addView(tOwned);
+
+        LinearLayout right = new LinearLayout(this);
+        right.setOrientation(LinearLayout.VERTICAL);
+
+        MaterialButton btnBuy = new MaterialButton(this);
+        btnBuy.setText(cost + " MVC");
+        btnBuy.setBackgroundColor(ContextCompat.getColor(this, R.color.primary));
+        btnBuy.setTextColor(ContextCompat.getColor(this, R.color.on_primary));
+        btnBuy.setTextSize(12);
+        btnBuy.setOnClickListener(v -> buyConsumable(id, cost, name));
+
+        MaterialButton btnUse = new MaterialButton(this);
+        btnUse.setText("Usa");
+        btnUse.setBackgroundColor(ContextCompat.getColor(this, R.color.primary_light));
+        btnUse.setTextColor(ContextCompat.getColor(this, R.color.on_primary));
+        btnUse.setTextSize(12);
+        btnUse.setEnabled(owned > 0);
+        btnUse.setOnClickListener(v -> useConsumable(id, name));
+
+        right.addView(btnBuy);
+        right.addView(btnUse);
+
+        card.addView(left);
+        card.addView(right);
+        return card;
+    }
+
+    private void buyConsumable(String id, int cost, String name) {
+        if (currentBalance < cost) {
+            Snackbar.make(findViewById(android.R.id.content),
+                    "Saldo insufficiente. Servono " + cost + " MVC (hai " + currentBalance + ")",
+                    Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        executor.execute(() -> {
+            try {
+                JSONObject body = new JSONObject();
+                body.put("item", id);
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(
+                        baseUrl + "/user/mevacoins/store/buy", "POST", body.toString(), 10000);
+                if (resp != null && resp.statusCode == 200) {
+                    mainHandler.post(() -> {
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "✓ " + name + " acquistato! -" + cost + " MVC", Snackbar.LENGTH_LONG).show();
+                        loadStore();
+                        loadBalance();
+                    });
+                } else if (resp != null && resp.statusCode == 400) {
+                    mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                            "Saldo insufficiente", Snackbar.LENGTH_SHORT).show());
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                        "Errore acquisto", Snackbar.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private void useConsumable(String id, String name) {
+        executor.execute(() -> {
+            try {
+                String url;
+                JSONObject body = new JSONObject();
+                if ("streak_shield".equals(id)) {
+                    // Lo shield protegge la streak dei 30 giorni tramite endpoint dedicato.
+                    url = baseUrl + "/user/mevacoins/streak/shield";
+                } else {
+                    url = baseUrl + "/user/mevacoins/store/use";
+                    body.put("item", id);
+                }
+                AuthManager.HttpResponse resp = mAuth.requestWithRefresh(url, "POST", body.toString(), 10000);
+                if (resp != null && resp.statusCode == 200) {
+                    mainHandler.post(() -> {
+                        Snackbar.make(findViewById(android.R.id.content),
+                                "✓ " + name + " usato", Snackbar.LENGTH_SHORT).show();
+                        loadStore();
+                        loadBalance();
+                    });
+                } else if (resp != null && resp.statusCode == 400) {
+                    String msg = resp.body != null && resp.body.contains("shield")
+                            ? "Nessuno Streak Shield disponibile" : "Impossibile usare l'oggetto";
+                    mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                            msg, Snackbar.LENGTH_SHORT).show());
+                } else {
+                    mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                            "Impossibile usare l'oggetto", Snackbar.LENGTH_SHORT).show());
+                }
+            } catch (Exception e) {
+                mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
+                        "Errore: " + e.getMessage(), Snackbar.LENGTH_SHORT).show());
             }
         });
     }
