@@ -144,6 +144,14 @@ public class PrefsManager {
         prefs.edit().putBoolean(KEY_PRIVACY_ACCEPTED, accepted).apply();
     }
 
+    public boolean isMvcOnboarded() {
+        return prefs.getBoolean("mvc_onboarded", false);
+    }
+
+    public void setMvcOnboarded(boolean value) {
+        prefs.edit().putBoolean("mvc_onboarded", value).apply();
+    }
+
     public void clearAll() {
         prefs.edit().clear().apply();
     }

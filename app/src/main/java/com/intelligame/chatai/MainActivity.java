@@ -1,9 +1,12 @@
 package com.intelligame.chatai;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,6 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -153,6 +158,49 @@ public class MainActivity extends AppCompatActivity {
 
         handleIntent(getIntent());
         checkPendingInvitations();
+        scheduleMvcReminder();
+    }
+
+    private void scheduleMvcReminder() {
+        try {
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if (am == null) return;
+            Intent intent = new Intent(this, MvcReminderReceiver.class);
+            PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+            // Promemoria giornaliero alle 9:00 (orario locale, ripetizione approssimativa).
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.set(java.util.Calendar.HOUR_OF_DAY, 9);
+            cal.set(java.util.Calendar.MINUTE, 0);
+            cal.set(java.util.Calendar.SECOND, 0);
+            cal.set(java.util.Calendar.MILLISECOND, 0);
+            if (cal.getTimeInMillis() <= System.currentTimeMillis()) {
+                cal.add(java.util.Calendar.DAY_OF_MONTH, 1);
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                if (am.canScheduleExactAlarms()) {
+                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+                            pi);
+                } else {
+                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+                }
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(this,
+                        android.Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(
+                            new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+                }
+            }
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -278,6 +326,8 @@ public class MainActivity extends AppCompatActivity {
             String avatarImage = intent.getStringExtra("character_avatar_image");
             String emoji = intent.getStringExtra("character_emoji");
             openChat(characterId, characterName, initialMessage, avatarImage, emoji);
+        } else if (intent != null && intent.getBooleanExtra("open_earn", false)) {
+            startActivity(new Intent(this, MvcEarnActivity.class));
         }
     }
 

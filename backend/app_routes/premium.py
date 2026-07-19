@@ -85,6 +85,12 @@ async def api_mevacoins_store(user: AuthUser = Depends(jwt_required)):
     return get_shop_payload(user.user_id)
 
 
+@router.get("/user/mevacoins/badges")
+async def api_mevacoins_badges(user: AuthUser = Depends(jwt_required)):
+    from storage.store import get_gamification
+    return get_gamification(user.user_id)
+
+
 @router.post("/user/mevacoins/store/buy")
 async def api_mevacoins_store_buy(body: StoreItemRequest, user: AuthUser = Depends(jwt_required)):
     from storage.store import buy_consumable

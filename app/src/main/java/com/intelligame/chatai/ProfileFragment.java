@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
 import androidx.appcompat.widget.SwitchCompat;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -49,6 +51,11 @@ public class ProfileFragment extends Fragment {
     private MaterialButton btnSaveNickname, btnSaveServer, btnResetAll, btnImportManage;
     private TextView nicknameStatus, serverStatus, resetStatus;
     private TextView mevacoinsBalance;
+    private TextView mvcLevelText;
+    private TextView mvcLevelProgressText;
+    private ProgressBar mvcLevelProgress;
+    private com.google.android.material.chip.ChipGroup mvcBadgesGroup;
+    private TextView mvcBadgesEmpty;
     private View adminDivider;
     private android.widget.LinearLayout adminSection;
 
@@ -98,6 +105,11 @@ public class ProfileFragment extends Fragment {
         resetStatus = view.findViewById(R.id.reset_status);
 
         mevacoinsBalance = view.findViewById(R.id.mevacoins_balance_text);
+        mvcLevelText = view.findViewById(R.id.mvc_level_text);
+        mvcLevelProgressText = view.findViewById(R.id.mvc_level_progress_text);
+        mvcLevelProgress = view.findViewById(R.id.mvc_level_progress);
+        mvcBadgesGroup = view.findViewById(R.id.mvc_badges_group);
+        mvcBadgesEmpty = view.findViewById(R.id.mvc_badges_empty);
         Button btnRicarica = view.findViewById(R.id.btn_ricarica);
         Button btnGuadagna = view.findViewById(R.id.btn_guadagna);
         Button         btnEditPrefs = view.findViewById(R.id.btn_edit_preferences);
@@ -153,8 +165,10 @@ public class ProfileFragment extends Fragment {
         }
 
         loadMevacoins();
+        loadGamification();
         loadMissions();
         loadReferralCode();
+        showMvcOnboardingIfNeeded();
 
         preferitiRecycler = view.findViewById(R.id.prof_preferiti_recycler);
         preferitiTitle = view.findViewById(R.id.prof_preferiti_title);
@@ -195,11 +209,85 @@ public class ProfileFragment extends Fragment {
                     mainHandler.post(() -> {
                         if (mevacoinsBalance != null) {
                             mevacoinsBalance.setText(balance + " MVC");
+                            pulseView(mevacoinsBalance);
                         }
                     });
                 }
             } catch (Exception ignored) {}
         });
+    }
+
+    private void pulseView(View v) {
+        if (v == null || !isAdded()) return;
+        v.animate().scaleX(1.15f).scaleY(1.15f).setDuration(150)
+                .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(150).start())
+                .start();
+    }
+
+    private void loadGamification() {
+        executor.execute(() -> {
+            try {
+                AuthManager.HttpResponse httpResp =
+                        mAuth.requestWithRefresh(baseUrl + "/user/mevacoins/badges", "GET", null, 5000);
+                if (httpResp == null || httpResp.statusCode != 200) return;
+                JSONObject obj = new JSONObject(httpResp.body);
+                JSONObject level = obj.optJSONObject("level");
+                final int levelNum = level != null ? level.optInt("level", 1) : 1;
+                final int into = level != null ? level.optInt("into_level", 0) : 0;
+                final int needed = level != null ? level.optInt("needed", 200) : 200;
+                final int progressPct = level != null ? (int) (level.optDouble("progress", 0) * 100) : 0;
+                JSONArray badges = obj.optJSONArray("badges");
+                mainHandler.post(() -> {
+                    if (mvcLevelText != null) mvcLevelText.setText("Livello " + levelNum);
+                    if (mvcLevelProgressText != null)
+                        mvcLevelProgressText.setText(into + "/" + needed + " MVC");
+                    if (mvcLevelProgress != null) mvcLevelProgress.setProgress(progressPct);
+                    renderBadges(badges);
+                });
+            } catch (Exception ignored) {}
+        });
+    }
+
+    private void renderBadges(JSONArray badges) {
+        if (mvcBadgesGroup == null) return;
+        mvcBadgesGroup.removeAllViews();
+        boolean anyEarned = false;
+        if (badges != null) {
+            for (int i = 0; i < badges.length(); i++) {
+                try {
+                    JSONObject b = badges.getJSONObject(i);
+                    boolean earned = b.optBoolean("earned", false);
+                    if (earned) anyEarned = true;
+                    Chip chip = new Chip(requireContext());
+                    chip.setText(b.optString("name", ""));
+                    chip.setCheckable(false);
+                    chip.setClickable(false);
+                    int tint = earned ? R.color.primary : android.R.color.darker_gray;
+                    chip.setChipBackgroundColorResource(tint);
+                    chip.setTextColor(earned ? getResources().getColor(android.R.color.white)
+                            : getResources().getColor(R.color.on_surface_variant));
+                    mvcBadgesGroup.addView(chip);
+                } catch (Exception ignored) {}
+            }
+        }
+        mvcBadgesGroup.setVisibility(anyEarned ? View.VISIBLE : View.GONE);
+        if (mvcBadgesEmpty != null)
+            mvcBadgesEmpty.setVisibility(anyEarned ? View.GONE : View.VISIBLE);
+    }
+
+    private void showMvcOnboardingIfNeeded() {
+        boolean onboarded = prefs.isMvcOnboarded();
+        if (onboarded) return;
+        if (!isAdded() || getActivity() == null) return;
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Come funzionano i MevaCoin (MVC)")
+                .setMessage("Guadagni MVC ogni giorno: fai check-in, mantieni la streak di 30 giorni, "
+                        + "completa le missioni, invita amici o condividi l'app.\n\n"
+                        + "Poi spendili nel Negozio: sblocca personaggi e funzioni, "
+                        + "compra consumabili come Rigenera messaggio, Boost velocita, "
+                        + "Pack personalita e Streak Shield. Sali di livello e sblocca badge!")
+                .setPositiveButton("Ho capito", (d, w) -> prefs.setMvcOnboarded(true))
+                .show();
     }
 
     private void loadReferralCode() {

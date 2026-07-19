@@ -127,7 +127,10 @@ public class MvcEarnActivity extends AppCompatActivity {
                 JSONObject obj = new JSONObject(resp.body);
                 int balance = obj.optInt("balance", 0);
                 currentBalance = balance;
-                mainHandler.post(() -> balanceText.setText(String.valueOf(balance)));
+                mainHandler.post(() -> {
+                    balanceText.setText(String.valueOf(balance));
+                    pulseBalance();
+                });
             } catch (Exception e) {
                 mainHandler.post(() -> Snackbar.make(findViewById(android.R.id.content),
                         "Errore caricamento saldo", Snackbar.LENGTH_SHORT).show());
@@ -156,6 +159,7 @@ public class MvcEarnActivity extends AppCompatActivity {
                 JSONArray consumables = obj.optJSONArray("consumables");
                 mainHandler.post(() -> {
                     balanceText.setText(String.valueOf(balance));
+                    pulseBalance();
                     levelText.setText(String.format(Locale.getDefault(),
                             "Livello %d  •  %d/%d MVC al prossimo", level, into, needed));
                     renderConsumables(consumables);
@@ -915,5 +919,13 @@ public class MvcEarnActivity extends AppCompatActivity {
 
     public void onBackClick(View v) {
         finish();
+    }
+
+    private void pulseBalance() {
+        if (balanceText == null) return;
+        balanceText.animate().scaleX(1.25f).scaleY(1.25f).setDuration(160)
+                .withEndAction(() -> balanceText.animate()
+                        .scaleX(1f).scaleY(1f).setDuration(160).start())
+                .start();
     }
 }

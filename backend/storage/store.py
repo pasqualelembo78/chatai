@@ -103,6 +103,78 @@ def get_level(total_earned):
     }
 
 
+def get_badges(user_id):
+    """Badge di gamification derivate dai dati esistenti dell'utente."""
+    conn = get_conn()
+    badges = []
+
+    def add(key, name, desc, earned):
+        badges.append({"key": key, "name": name, "description": desc, "earned": bool(earned)})
+
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT total_earned FROM mevacoins WHERE user_id=%s", (user_id,))
+        row = cur.fetchone()
+        total_earned = row["total_earned"] if row else 0
+
+        lvl = get_level(total_earned)["level"]
+
+        cur.execute("SELECT COUNT(*) AS c FROM user_mission_rewards WHERE user_id=%s", (user_id,))
+        r = cur.fetchone()
+        missions = r["c"] if r else 0
+
+        cur.execute("SELECT COUNT(*) AS c FROM streak_30days WHERE user_id=%s AND claimed=1", (user_id,))
+        srow = cur.fetchone()
+        streak = srow["c"] if srow else 0
+
+        refs = 0
+        try:
+            cur.execute(
+                "SELECT COUNT(*) AS c FROM referrals WHERE referrer_id=%s AND rewarded=true",
+                (user_id,),
+            )
+            r = cur.fetchone()
+            refs = r["c"] if r else 0
+        except Exception:
+            refs = 0
+    finally:
+        put_conn(conn)
+
+    from storage import get_user_unlocks
+    unlocks = get_user_unlocks(user_id)
+    feature_unlocks = [u for u in unlocks if u.get("content_type") == "feature"]
+
+    add("primo_guadagno", "Primo Guadagno", "Hai guadagnato i tuoi primi MVC", total_earned > 0)
+    add("esploratore", "Esploratore", "Raggiungi il livello 2 (200 MVC)", lvl >= 2)
+    add("veterano", "Veterano", "Raggiungi il livello 5 (1000 MVC)", lvl >= 5)
+    add("leggenda", "Leggenda", "Accumula 2000 MVC in totale", total_earned >= 2000)
+    add("missionario", "Missionario", "Completa la tua prima missione", missions > 0)
+    add("fedelta", "Fedeltà", "Mantieni una streak di 7 giorni", streak >= 7)
+    add("colezionista", "Collezionista", "Sblocca un contenuto con i MVC", len(feature_unlocks) > 0)
+    add("generoso", "Generoso", "Fai premiare un invito ad un amico", refs > 0)
+    return badges
+
+
+def get_gamification(user_id):
+    balance = get_mevacoins_balance(user_id)
+    conn = get_conn()
+    total_earned = 0
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT total_earned FROM mevacoins WHERE user_id=%s", (user_id,))
+        row = cur.fetchone()
+        total_earned = row["total_earned"] if row else 0
+    finally:
+        put_conn(conn)
+    level = get_level(total_earned)
+    return {
+        "balance": balance,
+        "total_earned": total_earned,
+        "level": level,
+        "badges": get_badges(user_id),
+    }
+
+
 def get_shop_payload(user_id):
     from storage import get_user_unlocks
     balance = get_mevacoins_balance(user_id)
