@@ -6,8 +6,9 @@
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    <!-- Sviluppo: permetti HTTP su localhost solo per testing -->
+    <!-- Sviluppo/Server IP: permetti HTTP su IP del server (no SSL valido) -->
     <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">82.165.218.56</domain>
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">127.0.0.1</domain>
         <domain includeSubdomains="true">10.0.2.2</domain>
