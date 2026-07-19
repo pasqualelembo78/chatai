@@ -78,6 +78,23 @@ public class LoginActivity extends Activity {
 
         mToggleAuthMode.setOnClickListener(v -> toggleAuthMode());
 
+        // "Hai un codice invito?": espande/collassa il campo referral
+        final View referralToggle = findViewById(R.id.referral_toggle);
+        final View referralBonus = findViewById(R.id.referral_bonus_text);
+        referralToggle.setOnClickListener(v -> {
+            boolean show = mReferralCodeView.getVisibility() != View.VISIBLE;
+            mReferralCodeView.setVisibility(show ? View.VISIBLE : View.GONE);
+            referralBonus.setVisibility(show ? View.VISIBLE : View.GONE);
+        });
+
+        // "Configura server..." nascosto: rivelato con long-press sul logo (debug/dev)
+        findViewById(R.id.logo_badge).setOnLongClickListener(v -> {
+            findViewById(R.id.server_url_toggle).setVisibility(View.VISIBLE);
+            Toast.makeText(LoginActivity.this,
+                    "Modalità debug attivata", Toast.LENGTH_SHORT).show();
+            return true;
+        });
+
         findViewById(R.id.server_url_toggle).setOnClickListener(v -> {
             mServerUrlView.setVisibility(
                     mServerUrlView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
