@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+// Load keystore properties from local.properties
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
 android {
     namespace 'com.intelligame.chatai'
     compileSdk 35
@@ -7,9 +14,9 @@ android {
     signingConfigs {
         release {
             storeFile file('release.keystore')
-            storePassword System.getenv("KEYSTORE_PASSWORD") ?: project.findProperty("keystorePassword") ?: ""
+            storePassword localProperties.getProperty("keystorePassword", System.getenv("KEYSTORE_PASSWORD") ?: "")
             keyAlias 'chatai'
-            keyPassword System.getenv("KEY_PASSWORD") ?: project.findProperty("keyPassword") ?: ""
+            keyPassword localProperties.getProperty("keyPassword", System.getenv("KEY_PASSWORD") ?: "")
         }
     }
 
