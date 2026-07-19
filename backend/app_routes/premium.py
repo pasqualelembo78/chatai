@@ -69,6 +69,12 @@ async def api_mevacoins_balance(user: AuthUser = Depends(jwt_required)):
     return {"balance": get_mevacoins_balance(user.user_id)}
 
 
+@router.get("/user/mevacoins/missions")
+async def api_mevacoins_missions(user: AuthUser = Depends(jwt_required)):
+    from storage.missions import get_active_missions
+    return {"missions": get_active_missions(user.user_id)}
+
+
 @router.get("/user/mevacoins/unlocks")
 async def api_mevacoins_unlocks(user: AuthUser = Depends(jwt_required)):
     unlocks = get_user_unlocks(user.user_id)

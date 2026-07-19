@@ -4,19 +4,23 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +36,9 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -147,6 +153,7 @@ public class ProfileFragment extends Fragment {
         }
 
         loadMevacoins();
+        loadMissions();
         loadReferralCode();
 
         preferitiRecycler = view.findViewById(R.id.prof_preferiti_recycler);
@@ -512,5 +519,139 @@ public class ProfileFragment extends Fragment {
     private void hidePerTe() {
         pertRecycler.setVisibility(View.GONE);
         pertTitle.setVisibility(View.GONE);
+    }
+
+    private void loadMissions() {
+        executor.execute(() -> {
+            try {
+                String url = prefs.getServerUrl() + "/user/mevacoins/missions";
+                String resp = httpGetWithAuth(url);
+                if (resp == null) return;
+                JSONObject obj = new JSONObject(resp);
+                JSONArray missions = obj.optJSONArray("missions");
+                if (missions == null) return;
+                List<MissionItem> items = new ArrayList<>();
+                int completed = 0;
+                int totalReward = 0;
+                for (int i = 0; i < missions.length(); i++) {
+                    JSONObject m = missions.getJSONObject(i);
+                    String code = m.optString("code");
+                    String title = m.optString("title");
+                    String desc = m.optString("description");
+                    int progress = m.optInt("progress");
+                    int target = m.optInt("target");
+                    int reward = m.optInt("reward");
+                    boolean awarded = m.optBoolean("awarded");
+                    if (awarded) completed++;
+                    totalReward += reward;
+                    items.add(new MissionItem(code, title, desc, progress, target, reward, awarded));
+                }
+                int finalCompleted = completed;
+                int finalTotal = totalReward;
+                mainHandler.post(() -> {
+                    LinearLayout container = requireView().findViewById(R.id.mission_container);
+                    TextView summary = requireView().findViewById(R.id.mission_summary);
+                    if (container.getChildCount() > 2) {
+                        container.removeViews(2, container.getChildCount() - 2);
+                    }
+                    summary.setText(String.format(Locale.getDefault(),
+                            "Completate %d/%d  •  fino a %d MVC",
+                            finalCompleted, items.size(), finalTotal));
+                    for (MissionItem it : items) {
+                        container.addView(buildMissionRow(it));
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private View buildMissionRow(MissionItem it) {
+        Context ctx = requireContext();
+        LinearLayout wrapper = new LinearLayout(ctx);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        wrapper.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        wrapper.setPadding(0, 8, 0, 8);
+
+        View divider = new View(ctx);
+        divider.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 1));
+        divider.setBackgroundColor(ContextCompat.getColor(ctx, R.color.outline));
+        wrapper.addView(divider);
+
+        LinearLayout row = new LinearLayout(ctx);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+        row.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        row.setPadding(0, 8, 0, 0);
+
+        LinearLayout left = new LinearLayout(ctx);
+        left.setOrientation(LinearLayout.VERTICAL);
+        left.setLayoutParams(new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+        TextView tTitle = new TextView(ctx);
+        tTitle.setText(it.title);
+        tTitle.setTextSize(14);
+        tTitle.setTypeface(null, Typeface.BOLD);
+        tTitle.setTextColor(ContextCompat.getColor(ctx,
+                it.awarded ? R.color.status_connected : R.color.on_surface));
+        left.addView(tTitle);
+
+        TextView tDesc = new TextView(ctx);
+        tDesc.setText(it.description);
+        tDesc.setTextSize(11);
+        tDesc.setTextColor(ContextCompat.getColor(ctx, R.color.on_surface_variant));
+        left.addView(tDesc);
+
+        LinearLayout right = new LinearLayout(ctx);
+        right.setOrientation(LinearLayout.VERTICAL);
+        right.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+        right.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        TextView tProg = new TextView(ctx);
+        int shown = Math.min(it.progress, it.target);
+        tProg.setText(shown + "/" + it.target);
+        tProg.setTextSize(13);
+        tProg.setTypeface(null, Typeface.BOLD);
+        tProg.setTextColor(ContextCompat.getColor(ctx, R.color.on_surface));
+        right.addView(tProg);
+
+        TextView tRew = new TextView(ctx);
+        tRew.setText((it.awarded ? "\u2713 +" : "+") + it.reward + " MVC");
+        tRew.setTextSize(11);
+        tRew.setTextColor(ContextCompat.getColor(ctx,
+                it.awarded ? R.color.status_connected : R.color.primary));
+        right.addView(tRew);
+
+        row.addView(left);
+        row.addView(right);
+        wrapper.addView(row);
+        return wrapper;
+    }
+
+    private static class MissionItem {
+        final String code;
+        final String title;
+        final String description;
+        final int progress;
+        final int target;
+        final int reward;
+        final boolean awarded;
+
+        MissionItem(String code, String title, String description,
+                   int progress, int target, int reward, boolean awarded) {
+            this.code = code;
+            this.title = title;
+            this.description = description;
+            this.progress = progress;
+            this.target = target;
+            this.reward = reward;
+            this.awarded = awarded;
+        }
     }
 }

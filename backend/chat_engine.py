@@ -655,6 +655,15 @@ def process_message(user_id, character_id, text, username="Utente",
         start_conversation_session(user_id, character_id)
         # Phase 8: Track conversation topics
         update_conversation_topics(user_id, character_id, text)
+        # Missioni MVC: assegna ricompense se una missione odierna/settimanale
+        # è stata completata. Fail-safe: un errore qui non deve mai bloccare
+        # la chat dell'utente.
+        try:
+            from storage.missions import award_missions
+            award_missions(user_id)
+        except Exception:
+            import logging
+            logging.getLogger(__name__).warning("award_missions skipped", exc_info=True)
 
     evo_updates = evaluate_evolution(user_id, character_id, character, text, emotion, evo)
 

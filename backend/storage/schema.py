@@ -241,6 +241,21 @@ def init_db():
             )
         """)
         cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_mission_rewards (
+                id SERIAL PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                mission_id TEXT NOT NULL,
+                period TEXT NOT NULL,
+                reward INTEGER NOT NULL,
+                awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE (user_id, mission_id, period)
+            )
+        """)
+        cur.execute("""
+            CREATE INDEX IF NOT EXISTS idx_messages_user_ts
+            ON messages (user_id, timestamp)
+        """)
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS referral_earnings (
                 referrer_id TEXT NOT NULL,
                 referred_id TEXT NOT NULL,
