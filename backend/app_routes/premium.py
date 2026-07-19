@@ -258,6 +258,20 @@ async def api_streak_30_claim(request: Request, user: AuthUser = Depends(jwt_req
     return {"earned": earned, "success": True}
 
 
+@router.post("/user/mevacoins/streak/shield")
+async def api_streak_shield(request: Request, user: AuthUser = Depends(jwt_required)):
+    from storage.streak import use_streak_shield
+    success, msg, earned = use_streak_shield(user.user_id)
+    if not success and msg not in ("nothing_to_protect",):
+        if msg == "no_shield":
+            raise HTTPException(400, "Nessuno Streak Shield disponibile")
+        raise HTTPException(500, msg)
+    audit_log(user.user_id, "mevacoins.streak_shield", f"msg={msg} earned={earned}",
+              request.client.host if request.client else "",
+              request.headers.get("User-Agent", ""))
+    return {"success": success, "message": msg, "earned": earned}
+
+
 @router.post("/chat/suggestion")
 async def api_chat_suggestion(body: SuggestionRequest, user: Optional[AuthUser] = Depends(jwt_optional)):
     char = get_character(body.character_id)

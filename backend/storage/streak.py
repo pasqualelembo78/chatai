@@ -276,3 +276,59 @@ def claim_streak_30_day(user_id, day=None):
         return False, 0, str(e)
     finally:
         put_conn(conn)
+
+
+def use_streak_shield(user_id):
+    """Consuma uno Streak Shield per colmare un giorno perso della streak 30.
+
+    La streak è basata sui giorni dall'iscrizione: se ne salta uno, quel giorno
+    resta "da riscuotere" e la progressione si ferma finché non lo reclami.
+    Lo shield reclama automaticamente il giorno mancante più vecchio (gap),
+    così l'utente non perde il posto. Se non c'è alcun gap (è già in pari),
+    lo shield NON viene consumato.
+    Ritorna (success, message, earned).
+    """
+    from storage.store import get_inventory, use_consumable
+
+    today = datetime.now(timezone.utc).date()
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT created_at FROM users WHERE id=%s", (user_id,))
+        row = cur.fetchone()
+        reg = row["created_at"].date() if row and row["created_at"] else today
+    finally:
+        put_conn(conn)
+
+    expected_day = min((today - reg).days + 1, 30)
+
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT day_number, claimed FROM streak_30days WHERE user_id=%s ORDER BY day_number",
+            (user_id,),
+        )
+        claimed = {r["day_number"]: r["claimed"] for r in cur.fetchall()}
+    finally:
+        put_conn(conn)
+
+    target_day = expected_day
+    for d in range(1, expected_day):
+        if claimed.get(d, 0) != 1:
+            target_day = d
+            break
+
+    if target_day >= expected_day:
+        # Nessun giorno perso: niente da proteggere, non consumare lo shield.
+        return False, "nothing_to_protect", 0
+
+    if get_inventory(user_id).get("streak_shield", 0) <= 0:
+        return False, "no_shield", 0
+
+    success, earned, msg = claim_streak_30_day(user_id, day=target_day)
+    if not success:
+        return False, msg, 0
+
+    use_consumable(user_id, "streak_shield")
+    return True, "ok", earned
