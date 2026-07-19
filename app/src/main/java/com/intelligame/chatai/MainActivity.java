@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             );
 
             navView.setPadding(0, 0, 0, sysBottom);
-            fragmentContainer.setPadding(0, 0, 0, imeBottom);
+            fragmentContainer.setPadding(0, 0, 0, sysBottom + imeBottom);
 
             return WindowInsetsCompat.CONSUMED;
         });
