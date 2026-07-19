@@ -3,7 +3,7 @@
 
 Replica la logica di storage.pruning.prune_old_data ma senza importare
 l'intero backend (più leggero per il cron). Legge DATABASE_URL da env
-o da /root/chatai/backend/.env.
+o da .env nella directory dello script.
 """
 import os
 import sys
