@@ -1,6 +1,7 @@
 package com.intelligame.chatai;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ public class LoginActivity extends Activity {
     private EditText mUsernameView;
     private EditText mEmailView;
     private EditText mPasswordView;
+    private EditText mBirthdateView;
     private EditText mServerUrlView;
     private EditText mReferralCodeView;
     private Button mLoginButton;
@@ -62,11 +64,14 @@ public class LoginActivity extends Activity {
         mUsernameView = findViewById(R.id.username_input);
         mEmailView = findViewById(R.id.email_input);
         mPasswordView = findViewById(R.id.password_input);
+        mBirthdateView = findViewById(R.id.birthdate_input);
         mServerUrlView = findViewById(R.id.server_url_input);
         mReferralCodeView = findViewById(R.id.referral_code_input);
         mLoginButton = findViewById(R.id.login_button);
         mProgressBar = findViewById(R.id.auth_progress);
         mToggleAuthMode = findViewById(R.id.toggle_auth_mode);
+
+        initBirthdatePicker();
 
         mLoginButton.setOnClickListener(v -> {
             if (mIsSignupMode) {
@@ -114,11 +119,32 @@ public class LoginActivity extends Activity {
             mLoginButton.setText("REGISTRATI");
             mToggleAuthMode.setText("Hai già account? Accedi");
             mEmailView.setVisibility(View.VISIBLE);
+            mBirthdateView.setVisibility(View.VISIBLE);
         } else {
             mLoginButton.setText("ACCEDI");
             mToggleAuthMode.setText("Non hai account? Registrati");
             mEmailView.setVisibility(View.GONE);
+            mBirthdateView.setVisibility(View.GONE);
         }
+    }
+
+    private void initBirthdatePicker() {
+        mBirthdateView.setOnClickListener(v -> {
+            final java.util.Calendar c = java.util.Calendar.getInstance();
+            int year = c.get(java.util.Calendar.YEAR);
+            int month = c.get(java.util.Calendar.MONTH);
+            int day = c.get(java.util.Calendar.DAY_OF_MONTH);
+            DatePickerDialog dialog = new DatePickerDialog(
+                    LoginActivity.this,
+                    (view, y, m, d) -> {
+                        String iso = String.format("%04d-%02d-%02d", y, m + 1, d);
+                        mBirthdateView.setText(String.format("%02d/%02d/%04d", d, m + 1, y));
+                        mBirthdateView.setTag(iso);
+                    },
+                    year, month, day);
+            dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            dialog.show();
+        });
     }
 
     private void attemptLogin() {
@@ -175,6 +201,8 @@ public class LoginActivity extends Activity {
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString();
         String referralCode = mReferralCodeView.getText().toString().trim();
+        String birthDate = mBirthdateView.getTag() != null
+                ? mBirthdateView.getTag().toString() : "";
 
         if (TextUtils.isEmpty(username)) {
             mUsernameView.setError("Inserisci un username");
@@ -196,6 +224,11 @@ public class LoginActivity extends Activity {
             mPasswordView.requestFocus();
             return;
         }
+        if (TextUtils.isEmpty(birthDate)) {
+            mBirthdateView.setError("Inserisci la data di nascita");
+            mBirthdateView.requestFocus();
+            return;
+        }
         if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             mEmailView.setError("Email non valida");
             mEmailView.requestFocus();
@@ -204,7 +237,7 @@ public class LoginActivity extends Activity {
 
         setLoading(true);
         final String serverUrl = getEffectiveServerUrl();
-        mAuth.register(username, email, password, serverUrl,
+        mAuth.register(username, email, password, birthDate, serverUrl,
                 referralCode.isEmpty() ? null : referralCode,
                 new AuthManager.AuthCallback() {
                     @Override

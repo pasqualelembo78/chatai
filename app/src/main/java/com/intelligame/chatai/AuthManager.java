@@ -264,7 +264,7 @@ public class AuthManager {
         }).start();
     }
 
-    public void register(String username, String email, String password, String serverUrl, String referralCode, AuthCallback callback) {
+    public void register(String username, String email, String password, String birthDate, String serverUrl, String referralCode, AuthCallback callback) {
         final String urlStr = serverUrl + "/auth/register";
         new Thread(() -> {
             HttpURLConnection conn = null;
@@ -280,6 +280,9 @@ public class AuthManager {
                 JSONObject body = new JSONObject();
                 body.put("username", username);
                 body.put("password", password);
+                if (birthDate != null && !birthDate.isEmpty()) {
+                    body.put("birth_date", birthDate);
+                }
                 if (email != null && !email.isEmpty()) {
                     body.put("email", email);
                 }
