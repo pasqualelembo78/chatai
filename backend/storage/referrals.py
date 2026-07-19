@@ -62,8 +62,9 @@ def claim_referral_bonus(user_id, code):
         conn.commit()
         return True, "ok"
     except Exception as e:
+        logger.error(f"Claim referral bonus failed: {e}")
         conn.rollback()
-        return False, str(e)
+        return False, "Bonus referral non riuscito"
     finally:
         put_conn(conn)
 
@@ -142,7 +143,8 @@ def add_social_share(user_id, platform=""):
         conn.commit()
         return True, "ok"
     except Exception as e:
+        logger.error(f"Social share bonus failed: {e}")
         conn.rollback()
-        return False, str(e)
+        return False, "Bonus condivisione non riuscito"
     finally:
         put_conn(conn)

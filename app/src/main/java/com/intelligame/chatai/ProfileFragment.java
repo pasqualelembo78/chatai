@@ -18,6 +18,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -419,7 +421,7 @@ public class ProfileFragment extends Fragment {
             .show();
     }
 
-    private void deleteAccount() {
+private void deleteAccount() {
         btnDeleteAccount.setEnabled(false);
         deleteAccountStatus.setText("Eliminazione in corso...");
         deleteAccountStatus.setVisibility(View.VISIBLE);
@@ -427,14 +429,11 @@ public class ProfileFragment extends Fragment {
         executor.execute(() -> {
             try {
                 AuthManager.HttpResponse httpResp = mAuth.requestWithRefresh(
-                    baseUrl + "/user/delete", "POST", "{}", 10000);
+                        baseUrl + "/user/delete", "POST", "{}", 10000);
                 boolean serverOk = httpResp.statusCode >= 200 && httpResp.statusCode < 300;
 
-                try {
-                    app.getLocalDb().resetAll();
-                } catch (Exception ignored) {}
-
-                prefs.clearAll();
+                // Clear ALL local data
+                clearAllLocalData();
 
                 mainHandler.post(() -> {
                     if (!isAdded()) return;
@@ -456,6 +455,71 @@ public class ProfileFragment extends Fragment {
                 });
             }
         });
+    }
+
+    /**
+     * Completely clears all local user data including encrypted prefs, database, cache files.
+     */
+    private void clearAllLocalData() {
+        try {
+            // 1. Clear local database
+            app.getLocalDb().resetAll();
+        } catch (Exception ignored) {}
+
+        try {
+            // 2. Clear PrefsManager (user settings, API keys, etc.)
+            prefs.clearAll();
+        } catch (Exception ignored) {}
+
+        try {
+            // 3. Clear AuthManager encrypted SharedPreferences (tokens, user info)
+            mAuth.clear();
+        } catch (Exception ignored) {}
+
+        try {
+            // 4. Clear theme preferences
+            requireContext().getSharedPreferences("chatai_theme", Context.MODE_PRIVATE).edit().clear().apply();
+        } catch (Exception ignored) {}
+
+        try {
+            // 5. Delete cached audio files
+            File audioCache = new File(requireContext().getCacheDir(), "audio");
+            if (audioCache.exists()) {
+                deleteRecursive(audioCache);
+            }
+        } catch (Exception ignored) {}
+
+        try {
+            // 6. Delete cached image files
+            File imageCache = new File(requireContext().getCacheDir(), "images");
+            if (imageCache.exists()) {
+                deleteRecursive(imageCache);
+            }
+        } catch (Exception ignored) {}
+
+        try {
+            // 7. Delete any temp files in cache dir
+            File[] cacheFiles = requireContext().getCacheDir().listFiles();
+            if (cacheFiles != null) {
+                for (File f : cacheFiles) {
+                    if (f.isFile() && (f.getName().endsWith(".tmp") || f.getName().endsWith(".wav"))) {
+                        f.delete();
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private void deleteRecursive(File file) {
+        if (file.isDirectory()) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursive(child);
+                }
+            }
+        }
+        file.delete();
     }
 
     private void confirmReset() {

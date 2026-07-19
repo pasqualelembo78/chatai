@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -44,6 +45,17 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     private static final String REWARDED_ID = "ca-app-pub-2572171530354182/2958989767";
     private static final String APP_OPEN_ID = "ca-app-pub-2572171530354182/2879098710";
 
+    // ── Test Ad Unit IDs (Google's official test IDs) ───────────────
+    private static final String TEST_BANNER_ID = "ca-app-pub-3940256099942544/6300978111";
+    private static final String TEST_INTERSTITIAL_ID = "ca-app-pub-3940256099942544/1033173712";
+    private static final String TEST_REWARDED_ID = "ca-app-pub-3940256099942544/5224354917";
+    private static final String TEST_APP_OPEN_ID = "ca-app-pub-3940256099942544/9257395921";
+
+    // ── Frequency capping ──────────────────────────────────────────
+    private static final long INTERSTITIAL_MIN_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+    private static final int INTERSTITIAL_MAX_PER_SESSION = 4;
+    private static final long APP_OPEN_MIN_INTERVAL_MS = 30 * 60 * 1000; // 30 minutes
+
     // ── State ───────────────────────────────────────────────────────
     private static AdManager sInstance;
 
@@ -58,6 +70,15 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     private Application mApp;
     private ConsentInformation mConsentInformation;
     private boolean mConsentHandled = false;
+
+    // Frequency capping state
+    private long mLastInterstitialShown = 0;
+    private int mInterstitialShownThisSession = 0;
+    private long mSessionStartTime = 0;
+
+    // App Open ad guard
+    private boolean mAppOpenShownThisLaunch = false;
+    private long mLastAppOpenShown = 0;
 
     // Callback per rewarded ad
     public interface RewardedCallback {
@@ -90,7 +111,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
     /**
      * Richiede il consenso (UMP) prima di inizializzare MobileAds e precaricare gli annunci.
-     * Mostra il modulo di consenzi se richiesto (EEA/Regno Unito). onComplete viene chiamato
+     * Mostra il modulo di consensi se richiesto (EEA/Regno Unito). onComplete viene chiamato
      * al termine della gestione del consenso (modulo chiuso o non necessario).
      */
     public void initConsent(final Activity activity, final Runnable onComplete) {
@@ -212,6 +233,28 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
         preloadAppOpen(mApp);
     }
 
+    // ── Helper: get correct ad unit ID based on debug build ─────────
+
+    private String getBannerId() {
+        return isDebugBuild() ? TEST_BANNER_ID : BANNER_ID;
+    }
+
+    private String getInterstitialId() {
+        return isDebugBuild() ? TEST_INTERSTITIAL_ID : INTERSTITIAL_ID;
+    }
+
+    private String getRewardedId() {
+        return isDebugBuild() ? TEST_REWARDED_ID : REWARDED_ID;
+    }
+
+    private String getAppOpenId() {
+        return isDebugBuild() ? TEST_APP_OPEN_ID : APP_OPEN_ID;
+    }
+
+    private boolean isDebugBuild() {
+        return mApp != null && (mApp.getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+    }
+
     // ── Banner ──────────────────────────────────────────────────────
 
     public void showBanner(Activity activity, FrameLayout container) {
@@ -219,7 +262,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
         if (mBannerAds.containsKey(container)) return;
 
         AdView adView = new AdView(activity);
-        adView.setAdUnitId(BANNER_ID);
+        adView.setAdUnitId(getBannerId());
         adView.setAdSize(AdSize.BANNER);
         adView.setAdListener(new com.google.android.gms.ads.AdListener() {
             @Override
@@ -229,6 +272,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
             @Override
             public void onAdFailedToLoad(LoadAdError error) {
+                Log.w("AdManager", "Banner failed to load: " + error.getMessage());
                 container.setVisibility(View.GONE);
                 removeBanner(container);
             }
@@ -262,11 +306,11 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
         }
     }
 
-    // ── Interstitial (app open / close / ogni N messaggi) ───────────
+    // ── Interstitial with frequency capping ─────────────────────────
 
     public void preloadInterstitial(Context context) {
         if (!mAdsEnabled || mNoAds) return;
-        InterstitialAd.load(context, INTERSTITIAL_ID, new AdRequest.Builder().build(),
+        InterstitialAd.load(context, getInterstitialId(), new AdRequest.Builder().build(),
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd ad) {
@@ -280,6 +324,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
                             @Override
                             public void onAdFailedToShowFullScreenContent(AdError error) {
+                                Log.w("AdManager", "Interstitial failed to show: " + error.getMessage());
                                 mInterstitialAd = null;
                             }
                         });
@@ -287,23 +332,50 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError error) {
+                        Log.w("AdManager", "Interstitial failed to load: " + error.getMessage());
                         mInterstitialAd = null;
                     }
                 });
     }
 
+    /**
+     * Shows interstitial if ready AND frequency capping allows it.
+     * Frequency cap: max 4 per session, minimum 5 minutes between shows.
+     */
     public void showInterstitialIfReady(Activity activity) {
+        long now = System.currentTimeMillis();
+
+        // Reset session counter if session expired (30 minutes)
+        if (mSessionStartTime > 0 && now - mSessionStartTime > 30 * 60 * 1000) {
+            mSessionStartTime = now;
+            mInterstitialShownThisSession = 0;
+        }
+
+        // Check frequency caps
+        if (mInterstitialShownThisSession >= INTERSTITIAL_MAX_PER_SESSION) {
+            Log.d("AdManager", "Interstitial cap reached for this session");
+            return;
+        }
+        if (mLastInterstitialShown > 0 && now - mLastInterstitialShown < INTERSTITIAL_MIN_INTERVAL_MS) {
+            Log.d("AdManager", "Interstitial min interval not elapsed");
+            return;
+        }
+
         if (mInterstitialAd != null && mAdsEnabled && !mNoAds) {
             mInterstitialAd.show(activity);
             mInterstitialAd = null;
+            mLastInterstitialShown = now;
+            mInterstitialShownThisSession++;
+            if (mSessionStartTime == 0) mSessionStartTime = now;
+            Log.d("AdManager", "Interstitial shown (session count: " + mInterstitialShownThisSession + ")");
         }
     }
 
-    // ── Rewarded Video ──────────────────────────────────────────────
+    // ── Rewarded Video with opt-in confirmation ─────────────────────
 
     public void preloadRewarded(Context context) {
         if (!mAdsEnabled || mNoAds) return;
-        RewardedAd.load(context, REWARDED_ID, new AdRequest.Builder().build(),
+        RewardedAd.load(context, getRewardedId(), new AdRequest.Builder().build(),
                 new RewardedAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull RewardedAd ad) {
@@ -320,6 +392,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
                             @Override
                             public void onAdFailedToShowFullScreenContent(AdError error) {
+                                Log.w("AdManager", "Rewarded failed to show: " + error.getMessage());
                                 mRewardedAd = null;
                             }
                         });
@@ -327,6 +400,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError error) {
+                        Log.w("AdManager", "Rewarded failed to load: " + error.getMessage());
                         mRewardedAd = null;
                         if (context != null) {
                             new android.os.Handler(android.os.Looper.getMainLooper())
@@ -336,6 +410,11 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
                 });
     }
 
+    /**
+     * Shows rewarded ad. Caller MUST ensure user explicitly opted in (e.g., via a button labeled
+     * "Guarda annuncio per ottenere ricompensa").
+     * This method does NOT perform the opt-in dialog itself.
+     */
     public void showRewarded(Activity activity, RewardedCallback callback) {
         if (mRewardedAd == null || !mAdsEnabled || mNoAds) {
             if (callback != null) callback.onRewardedFailed();
@@ -364,11 +443,11 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
         }
     }
 
-    // ── App Open Ad ─────────────────────────────────────────────────
+    // ── App Open Ad with launch guard ───────────────────────────────
 
     public void preloadAppOpen(Context context) {
         if (!mAdsEnabled || mNoAds) return;
-        AppOpenAd.load(context, APP_OPEN_ID, new AdRequest.Builder().build(),
+        AppOpenAd.load(context, getAppOpenId(), new AdRequest.Builder().build(),
                 new AppOpenAd.AppOpenAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull AppOpenAd ad) {
@@ -382,6 +461,7 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
                             @Override
                             public void onAdFailedToShowFullScreenContent(AdError error) {
+                                Log.w("AdManager", "AppOpen failed to show: " + error.getMessage());
                                 mAppOpenAd = null;
                             }
                         });
@@ -389,19 +469,42 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError error) {
+                        Log.w("AdManager", "AppOpen failed to load: " + error.getMessage());
                         mAppOpenAd = null;
                     }
                 });
     }
 
+    /**
+     * Shows App Open ad ONLY on true cold start (not on activity recreation).
+     * Also respects minimum interval of 30 minutes between shows.
+     */
     public void showAppOpenIfReady(Activity activity) {
+        long now = System.currentTimeMillis();
+
+        // Guard: don't show on activity recreation (savedInstanceState != null)
+        // or if already shown this launch
+        if (mAppOpenShownThisLaunch) {
+            Log.d("AdManager", "AppOpen already shown this launch");
+            return;
+        }
+
+        // Guard: minimum interval between app open ads
+        if (mLastAppOpenShown > 0 && now - mLastAppOpenShown < APP_OPEN_MIN_INTERVAL_MS) {
+            Log.d("AdManager", "AppOpen min interval not elapsed");
+            return;
+        }
+
         if (mAppOpenAd != null && mAdsEnabled && !mNoAds) {
             mAppOpenAd.show(activity);
             mAppOpenAd = null;
+            mLastAppOpenShown = now;
+            mAppOpenShownThisLaunch = true;
+            Log.d("AdManager", "AppOpen ad shown");
         }
     }
 
-    // ── Controls ────────────────────────────────────────────────────
+    // ── Controls ─────────────────────────────────────────────────────
 
     public void setAdsEnabled(boolean enabled) {
         mAdsEnabled = enabled;
@@ -429,10 +532,15 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
         return mNoAds;
     }
 
-    // ── Lifecycle (track current activity) ──────────────────────────
+    // ── Lifecycle (track current activity + session) ─────────────────
 
     @Override
-    public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {}
+    public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+        // Reset launch flag when app is truly launched (not recreated)
+        if (savedInstanceState == null) {
+            mAppOpenShownThisLaunch = false;
+        }
+    }
 
     @Override
     public void onActivityStarted(@NonNull Activity activity) {

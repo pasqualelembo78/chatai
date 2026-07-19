@@ -7,9 +7,9 @@ android {
     signingConfigs {
         release {
             storeFile file('release.keystore')
-            storePassword 'Ch4tA1_R3l34s3!'
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: project.findProperty("keystorePassword") ?: ""
             keyAlias 'chatai'
-            keyPassword 'Ch4tA1_R3l34s3!'
+            keyPassword System.getenv("KEY_PASSWORD") ?: project.findProperty("keyPassword") ?: ""
         }
     }
 

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Produzione: solo HTTPS con pinning -->
+    <!-- Produzione: solo HTTPS -->
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    <!-- Sviluppo: permetti HTTP su IP locali -->
+    <!-- Sviluppo: permetti HTTP su localhost solo per testing -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">82.165.218.56</domain>
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">127.0.0.1</domain>
         <domain includeSubdomains="true">10.0.2.2</domain>

@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
@@ -50,6 +51,18 @@ public class LegalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_legal);
+
+        // Handle back press with OnBackPressedCallback (replaces deprecated onBackPressed)
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (webView.getVisibility() == View.VISIBLE) {
+                    showList();
+                } else {
+                    finish();
+                }
+            }
+        });
 
         titleText = findViewById(R.id.legal_title);
         backBtn = findViewById(R.id.legal_back);
@@ -149,7 +162,7 @@ public class LegalActivity extends AppCompatActivity {
         return String.format("#%06X", (0xFFFFFF & color));
     }
 
-    private String readRawText(int resId) {
+private String readRawText(int resId) {
         try (java.io.InputStream is = getResources().openRawResource(resId);
              java.io.BufferedReader reader = new java.io.BufferedReader(
                      new java.io.InputStreamReader(is, java.nio.charset.StandardCharsets.UTF_8))) {
@@ -161,15 +174,6 @@ public class LegalActivity extends AppCompatActivity {
             return sb.toString();
         } catch (Exception e) {
             return "<p>Errore di caricamento.</p>";
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView.getVisibility() == View.VISIBLE) {
-            showList();
-        } else {
-            super.onBackPressed();
         }
     }
 }

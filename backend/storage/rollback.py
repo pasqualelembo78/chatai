@@ -139,7 +139,8 @@ def rollback_purchase(user_id, purchase_id):
             "refund": refund,
         }, "ok"
     except Exception as e:
+        logger.error(f"Rollback failed: {e}")
         conn.rollback()
-        return False, None, str(e)
+        return False, None, "Rollback non riuscito"
     finally:
         put_conn(conn)

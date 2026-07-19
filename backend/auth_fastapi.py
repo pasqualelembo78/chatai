@@ -134,7 +134,10 @@ def init_auth_db():
 
 def ensure_admin_account():
     admin_username = os.environ.get("ADMIN_USERNAME", "admin")
-    admin_password = os.environ.get("ADMIN_PASSWORD", "admin")
+    admin_password = os.environ.get("ADMIN_PASSWORD")
+    if not admin_password:
+        logger.warning("ADMIN_PASSWORD not set in environment; skipping admin account creation/refresh")
+        return
     conn = get_conn()
     try:
         cur = conn.cursor()

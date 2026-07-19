@@ -45,6 +45,7 @@ class LoginRequest(BaseModel):
 
 class LocalLoginRequest(BaseModel):
     username: str = ""
+    password: str = ""
     referral_code: str = ""
     birth_date: str = ""
 
@@ -65,7 +66,8 @@ async def google_client_id():
 
 
 @router.post("/google")
-async def google_login(body: GoogleLoginRequest):
+@limiter.limit("10/minute")
+async def google_login(request: Request, body: GoogleLoginRequest):
     if not GOOGLE_CLIENT_ID:
         raise HTTPException(500, "Google Sign-In non configurato sul server")
     if not body.id_token:
@@ -262,19 +264,27 @@ async def login(request: Request, body: LoginRequest):
 
 
 @router.post("/local-login")
-async def local_login(body: LocalLoginRequest):
+@limiter.limit("5/minute")
+async def local_login(request: Request, body: LocalLoginRequest):
     username = body.username.strip()
+    password = body.password.strip()
     referral_code = body.referral_code.strip()
     if not username:
         raise HTTPException(400, "Username richiesto")
     if len(username) < 1 or len(username) > 30:
         raise HTTPException(400, "Username 1-30 caratteri")
+    if not re.match(r"^[a-zA-Z0-9_]+$", username):
+        raise HTTPException(400, "Username: solo lettere, numeri, underscore")
+    if not password:
+        raise HTTPException(400, "Password richiesta")
+    if len(password) < 8:
+        raise HTTPException(400, "Password minimo 8 caratteri")
 
     conn = get_conn()
     row = None
     try:
         cur = conn.cursor()
-        cur.execute("SELECT id, role, banned_until FROM users WHERE username = %s", (username,))
+        cur.execute("SELECT id, password_hash, role, banned_until FROM users WHERE username = %s", (username,))
         row = cur.fetchone()
         if row:
             if row["banned_until"]:
@@ -286,6 +296,8 @@ async def local_login(body: LocalLoginRequest):
                     raise
                 except Exception:
                     pass
+            if not row["password_hash"] or not check_password_hash(row["password_hash"], password):
+                raise HTTPException(401, "Credenziali non valide")
             user_id = row["id"]
             role = row["role"]
             cur.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = %s", (user_id,))
@@ -294,8 +306,9 @@ async def local_login(body: LocalLoginRequest):
             # Age verification only applies to new accounts.
             birth_date = require_adult(body.birth_date)
             user_id = str(uuid.uuid4())
-            cur.execute("INSERT INTO users (id, username, password_hash, role, birth_date) VALUES (%s, %s, '', 'user', %s)",
-                        (user_id, username, birth_date))
+            password_hash = generate_password_hash(password, method="scrypt")
+            cur.execute("INSERT INTO users (id, username, password_hash, role, birth_date) VALUES (%s, %s, %s, 'user', %s)",
+                        (user_id, username, password_hash, birth_date))
             conn.commit()
             if referral_code:
                 from storage import claim_referral_bonus as _crb
@@ -322,7 +335,8 @@ async def local_login(body: LocalLoginRequest):
 
 
 @router.post("/refresh")
-async def refresh(body: RefreshRequest):
+@limiter.limit("20/minute")
+async def refresh(request: Request, body: RefreshRequest):
     if not body.refresh_token:
         raise HTTPException(400, "Refresh token richiesto")
     token_hash = hashlib.sha256(body.refresh_token.encode()).hexdigest()
@@ -356,6 +370,7 @@ async def refresh(body: RefreshRequest):
 
 
 @router.post("/reauth")
+@limiter.limit("5/minute")
 async def reauth(request: Request):
     """Re-authenticate using persistent token (API key). Fallback when JWT + refresh both fail."""
     try:

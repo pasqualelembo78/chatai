@@ -34,9 +34,11 @@ from slowapi.util import get_remote_address
 limiter = Limiter(key_func=get_remote_address)
 
 # ─── Socket.IO ───────────────────────────────────────────────────
+_cors_origins = [o.strip() for o in os.environ.get("CORS_ALLOWED_ORIGINS", "https://mail.mevacoin.com,https://www.mevacoin.com").split(",") if o.strip()]
+
 sio = socketio_lib.AsyncServer(
     async_mode="asgi",
-    cors_allowed_origins="*",
+    cors_allowed_origins=_cors_origins,
     ping_interval=30,
     ping_timeout=120,
     logger=False,
@@ -135,11 +137,16 @@ async def lifespan(application):
 app = FastAPI(title="ChatAI", docs_url="/docs", redoc_url=None, lifespan=lifespan)
 app.state.limiter = limiter
 
+# CORS configuration: read allowed origins from env, default to a safe list
+# DO NOT use allow_origins=["*"] with allow_credentials=True
+_cors_env = os.environ.get("CORS_ALLOWED_ORIGINS", "https://mail.mevacoin.com,https://www.mevacoin.com")
+_cors_origins = [o.strip() for o in _cors_env.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
     expose_headers=["*"],
 )

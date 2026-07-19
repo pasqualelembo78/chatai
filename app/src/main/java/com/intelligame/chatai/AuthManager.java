@@ -45,8 +45,8 @@ public class AuthManager {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (Exception e) {
-            Log.w(TAG, "EncryptedSharedPreferences unavailable, falling back to plain prefs", e);
-            this.prefs = context.getSharedPreferences(PREFS_NAME + "_fallback", Context.MODE_PRIVATE);
+            Log.e(TAG, "EncryptedSharedPreferences unavailable - security feature required", e);
+            throw new SecurityException("EncryptedSharedPreferences is required for secure token storage", e);
         }
     }
 

@@ -2,13 +2,17 @@ package com.intelligame.chatai;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class PrefsManager {
 
-    private static final String NAME = "ai_roleplay_prefs";
+    private static final String NAME = "ai_roleplay_prefs_encrypted";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_CHARACTER = "character_id";
     private static final String KEY_PROVIDER = "provider";
@@ -20,13 +24,29 @@ public class PrefsManager {
     private static final String KEY_TOS_ACCEPTED = "tos_accepted";
     private static final String KEY_BLOCKED_USERS = "blocked_users";
     private static final String KEY_API_KEY_PREFIX = "api_key_";
+    private static final String KEY_MVC_ONBOARDED = "mvc_onboarded";
 
-    private static final String DEFAULT_SERVER_URL = "http://82.165.218.56:5000";
+    private static final String DEFAULT_SERVER_URL = "https://mail.mevacoin.com";
+    private static final String DEFAULT_CHARACTER_ID = "ginecologa";
 
     private final SharedPreferences prefs;
 
     public PrefsManager(Context context) {
-        prefs = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
+        try {
+            MasterKey masterKey = new MasterKey.Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+            this.prefs = EncryptedSharedPreferences.create(
+                    context,
+                    NAME,
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (Exception e) {
+            Log.e("PrefsManager", "EncryptedSharedPreferences unavailable", e);
+            throw new SecurityException("EncryptedSharedPreferences is required for secure storage", e);
+        }
     }
 
     public String getUsername() {
@@ -38,7 +58,7 @@ public class PrefsManager {
     }
 
     public String getCharacterId() {
-        return prefs.getString(KEY_CHARACTER, "ginecologa");
+        return prefs.getString(KEY_CHARACTER, DEFAULT_CHARACTER_ID);
     }
 
     public void setCharacterId(String id) {
@@ -145,11 +165,11 @@ public class PrefsManager {
     }
 
     public boolean isMvcOnboarded() {
-        return prefs.getBoolean("mvc_onboarded", false);
+        return prefs.getBoolean(KEY_MVC_ONBOARDED, false);
     }
 
-    public void setMvcOnboarded(boolean value) {
-        prefs.edit().putBoolean("mvc_onboarded", value).apply();
+    public void setMvcOnboarded(boolean onboarded) {
+        prefs.edit().putBoolean(KEY_MVC_ONBOARDED, onboarded).apply();
     }
 
     public void clearAll() {

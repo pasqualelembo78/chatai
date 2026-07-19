@@ -55,8 +55,9 @@ def buy_consumable(user_id, item):
         conn.commit()
         return True, "ok"
     except Exception as e:
+        logger.error(f"Buy consumable failed: {e}")
         conn.rollback()
-        return False, str(e)
+        return False, "Acquisto non riuscito"
     finally:
         put_conn(conn)
 
@@ -86,8 +87,9 @@ def use_consumable(user_id, item):
         conn.commit()
         return True, "ok"
     except Exception as e:
+        logger.error(f"Use consumable failed: {e}")
         conn.rollback()
-        return False, str(e)
+        return False, "Utilizzo non riuscito"
     finally:
         put_conn(conn)
 

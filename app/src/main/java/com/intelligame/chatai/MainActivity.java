@@ -2,6 +2,7 @@ package com.intelligame.chatai;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.badge.BadgeDrawable;
@@ -40,6 +42,7 @@ import com.google.android.material.navigation.NavigationView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialToolbar topAppBar;
     private AuthManager mAuth;
     private AdManager mAdManager;
+    private ChatApplication app;
     private ExecutorService executor = new SafeExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
     private int pendingInvitations = 0;
@@ -63,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ChatApplication app = (ChatApplication) getApplication();
+        app = (ChatApplication) getApplication();
         mAuth = app.getAuthManager();
         mAdManager = app.getAdManager();
 
@@ -84,6 +88,33 @@ public class MainActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
         setContentView(R.layout.activity_main);
+
+        // Register OnBackPressedCallback for predictive back gesture support (API 33+)
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStackImmediate();
+                    if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                        navView.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                    if (current instanceof HomeFragment) {
+                        ChatApplication app2 = (ChatApplication) getApplication();
+                        PremiumManager pm2 = app2.getPremiumManager();
+                        if (pm2 == null || !pm2.isPremium()) {
+                            mAdManager.showInterstitialIfReady(MainActivity.this);
+                        }
+                        // Allow default back behavior (exit app)
+                        setEnabled(false);
+                        onBackPressed();
+                    } else {
+                        navView.setSelectedItemId(R.id.nav_home);
+                    }
+                }
+            }
+        });
 
         navView = findViewById(R.id.nav_view);
         fragmentContainer = findViewById(R.id.fragment_container);
@@ -246,8 +277,8 @@ public class MainActivity extends AppCompatActivity {
                         baseUrl + "/user/delete", "POST", "", 8000);
                 mainHandler.post(() -> {
                     if (resp.statusCode == 200) {
+                        clearAllLocalData();
                         Toast.makeText(MainActivity.this, "Account eliminato", Toast.LENGTH_SHORT).show();
-                        mAuth.clear();
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
@@ -261,6 +292,60 @@ public class MainActivity extends AppCompatActivity {
                         "Errore eliminazione: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         });
+    }
+
+    /**
+     * Completely clears all local user data including encrypted prefs, database, cache files.
+     */
+    private void clearAllLocalData() {
+        try {
+            app.getLocalDb().resetAll();
+        } catch (Exception ignored) {}
+
+        try {
+            app.getPrefs().clearAll();
+        } catch (Exception ignored) {}
+
+        try {
+            mAuth.clear();
+        } catch (Exception ignored) {}
+
+        try {
+            getSharedPreferences("chatai_theme", Context.MODE_PRIVATE).edit().clear().apply();
+        } catch (Exception ignored) {}
+
+        try {
+            File audioCache = new File(getCacheDir(), "audio");
+            if (audioCache.exists()) deleteRecursive(audioCache);
+        } catch (Exception ignored) {}
+
+        try {
+            File imageCache = new File(getCacheDir(), "images");
+            if (imageCache.exists()) deleteRecursive(imageCache);
+        } catch (Exception ignored) {}
+
+        try {
+            File[] cacheFiles = getCacheDir().listFiles();
+            if (cacheFiles != null) {
+                for (File f : cacheFiles) {
+                    if (f.isFile() && (f.getName().endsWith(".tmp") || f.getName().endsWith(".wav"))) {
+                        f.delete();
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private void deleteRecursive(File file) {
+        if (file.isDirectory()) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    deleteRecursive(child);
+                }
+            }
+        }
+        file.delete();
     }
 
     private void checkPendingInvitations() {
@@ -497,28 +582,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void showBottomNav() {
         navView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStackImmediate();
-            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                navView.setVisibility(View.VISIBLE);
-            }
-        } else {
-            Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            if (current instanceof HomeFragment) {
-                ChatApplication app = (ChatApplication) getApplication();
-                PremiumManager pm2 = app.getPremiumManager();
-                if (pm2 == null || !pm2.isPremium()) {
-                    mAdManager.showInterstitialIfReady(this);
-                }
-                super.onBackPressed();
-            } else {
-                navView.setSelectedItemId(R.id.nav_home);
-            }
-        }
     }
 
     @Override

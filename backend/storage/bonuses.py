@@ -86,8 +86,9 @@ def unlock_content(user_id, content_type, content_id, amount):
         conn.commit()
         return True, "ok"
     except Exception as e:
+        logger.error(f"Unlock content failed: {e}")
         conn.rollback()
-        return False, str(e)
+        return False, "Sblocco non riuscito"
     finally:
         put_conn(conn)
 

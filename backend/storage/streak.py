@@ -273,7 +273,7 @@ def claim_streak_30_day(user_id, day=None):
     except Exception as e:
         log.error(f"claim_streak_30: user={user_id} ERROR: {e}")
         conn.rollback()
-        return False, 0, str(e)
+        return False, 0, "Riscatto streak non riuscito"
     finally:
         put_conn(conn)
 

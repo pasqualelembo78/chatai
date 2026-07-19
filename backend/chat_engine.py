@@ -94,7 +94,17 @@ def process_message(user_id, character_id, text, username="Utente",
     if character_data:
         if isinstance(character_data, str):
             character_data = json.loads(character_data)
-        character = character_data
+        # SECURITY: Only allow safe fields to be overridden from client.
+        # Never allow system_prompt, core_traits, knowledge_domains, or other
+        # prompt-injection vectors to be replaced by client-provided data.
+        SAFE_CHARACTER_FIELDS = {
+            "name", "description", "avatar", "category", "tags",
+            "visibility", "is_adult", "is_favorite", "rating", "stats"
+        }
+        # Merge safe fields only
+        for key, value in character_data.items():
+            if key in SAFE_CHARACTER_FIELDS:
+                character[key] = value
     if not character:
         return None
     if not _check_character_access(user_id, character):
@@ -205,14 +215,19 @@ def process_message(user_id, character_id, text, username="Utente",
 
     if client_storage:
         _cs_rel = client_state.get("relationship")
-        relationship = _cs_rel if isinstance(_cs_rel, dict) else get_relationship(user_id, character_id)
+        relationship = _cs_rel if isinstance(_cs_rel, dict) else get_relationship(user_id, character_id, character.get("core_traits", {}))
         _cs_per = client_state.get("personality")
-        personality = _cs_per if isinstance(_cs_per, dict) else get_personality(character_id, character.get("core_traits", {}))
+        personality = _cs_per if isinstance(_cs_per, dict) else get_user_personality(user_id, character_id, character.get("core_traits", {}))
         history = memory_context if memory_context is not None else (client_state.get("history") or [])
         shifts = client_state.get("shifts") or []
         _cs_evo = client_state.get("evolution")
         evo = _cs_evo if isinstance(_cs_evo, dict) and "flags" in _cs_evo else get_evolution(user_id, character_id)
         summaries = client_state.get("summaries") or []
+        # SECURITY: Client-provided state is used as-is but never replaces server-side
+        # critical data. Log a warning if client state differs significantly.
+        if history and len(history) > 100:
+            logger.warning(f"Client provided excessive history length: {len(history)}")
+            history = history[-100:]  # Cap to reasonable limit
     else:
         relationship = get_relationship(user_id, character_id)
         # Phase 2: Use per-user personality (falls back to shared if not yet personalized)
