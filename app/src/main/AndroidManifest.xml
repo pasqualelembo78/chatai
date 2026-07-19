@@ -38,7 +38,10 @@
             android:name="com.intelligame.chatai.MainActivity"
             android:label="@string/app_name"
             android:exported="false"
-            android:windowSoftInputMode="adjustNothing">
+            android:windowSoftInputMode="adjustNothing"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|density|uiMode|fontScale|keyboardHidden">
         </activity>
 
         <meta-data

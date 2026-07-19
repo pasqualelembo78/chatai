@@ -2,6 +2,7 @@ package com.intelligame.chatai;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.PictureInPictureParams;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Rational;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -641,4 +643,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ─── Picture-in-Picture support ──────────────────────────────────
+    @Override
+    protected void onUserLeaveHint() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // Enter PiP mode when user presses home/gesture navigation
+            if (isVideoPlaying()) {
+                enterPictureInPictureMode(new PictureInPictureParams.Builder()
+                        .setAspectRatio(new Rational(16, 9))
+                        .build());
+            }
+        }
+        super.onUserLeaveHint();
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPiP, android.content.res.Configuration newConfig) {
+        super.onPictureInPictureModeChanged(isInPiP, newConfig);
+        // Hide/show UI elements in PiP mode
+        if (navView != null) {
+            navView.setVisibility(isInPiP ? View.GONE : View.VISIBLE);
+        }
+        if (topAppBar != null) {
+            topAppBar.setVisibility(isInPiP ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    private boolean isVideoPlaying() {
+        // Check if a video is currently playing (e.g., in GroupChatFragment)
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        return current != null && (current instanceof GroupChatFragment);
+    }
 }
