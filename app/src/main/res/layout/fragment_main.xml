@@ -175,13 +175,6 @@
 
         </FrameLayout>
 
-        <!-- Banner Ad -->
-        <FrameLayout
-            android:id="@+id/banner_ad_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
         <!-- Image Preview -->
         <LinearLayout
             android:id="@+id/image_preview_container"

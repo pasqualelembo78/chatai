@@ -91,6 +91,15 @@ public class MainActivity extends AppCompatActivity {
         navDrawer = findViewById(R.id.nav_drawer);
         topAppBar = findViewById(R.id.top_app_bar);
 
+        // Banner persistente (una sola view, visibile su tutte le schermate)
+        FrameLayout bannerAdContainer = findViewById(R.id.banner_ad_container);
+        PremiumManager pmBanner = app.getPremiumManager();
+        if (pmBanner == null || !pmBanner.isPremium()) {
+            mAdManager.showBanner(this, bannerAdContainer);
+        } else {
+            bannerAdContainer.setVisibility(View.GONE);
+        }
+
         topAppBar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
         navDrawer.setNavigationItemSelectedListener(this::onDrawerItemSelected);
 
@@ -516,6 +525,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (executor != null) executor.shutdownNow();
+        mAdManager.destroyBanner();
     }
 
     public void showLoading(String message) {

@@ -8,6 +8,10 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -46,11 +50,10 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     private InterstitialAd mInterstitialAd;
     private RewardedAd mRewardedAd;
     private AppOpenAd mAppOpenAd;
-    private AdView mBannerAd;
+    private final Map<FrameLayout, AdView> mBannerAds = new HashMap<>();
     private boolean mAdsEnabled = true;
     private boolean mNoAds = false;
     private boolean mInitialized = false;
-    private int mMessageCount = 0;
     private Activity mCurrentActivity;
     private Application mApp;
     private ConsentInformation mConsentInformation;
@@ -212,12 +215,13 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
     // ── Banner ──────────────────────────────────────────────────────
 
     public void showBanner(Activity activity, FrameLayout container) {
-        if (!mAdsEnabled || mNoAds || mBannerAd != null) return;
+        if (!mAdsEnabled || mNoAds || container == null) return;
+        if (mBannerAds.containsKey(container)) return;
 
-        mBannerAd = new AdView(activity);
-        mBannerAd.setAdUnitId(BANNER_ID);
-        mBannerAd.setAdSize(AdSize.BANNER);
-        mBannerAd.setAdListener(new com.google.android.gms.ads.AdListener() {
+        AdView adView = new AdView(activity);
+        adView.setAdUnitId(BANNER_ID);
+        adView.setAdSize(AdSize.BANNER);
+        adView.setAdListener(new com.google.android.gms.ads.AdListener() {
             @Override
             public void onAdLoaded() {
                 container.setVisibility(View.VISIBLE);
@@ -226,19 +230,21 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
             @Override
             public void onAdFailedToLoad(LoadAdError error) {
                 container.setVisibility(View.GONE);
-                mBannerAd = null;
+                removeBanner(container);
             }
         });
 
         container.removeAllViews();
-        container.addView(mBannerAd);
-        mBannerAd.loadAd(new AdRequest.Builder().build());
+        container.addView(adView);
+        container.setVisibility(View.GONE);
+        adView.loadAd(new AdRequest.Builder().build());
+        mBannerAds.put(container, adView);
     }
 
-    public void hideBanner(FrameLayout container) {
-        if (mBannerAd != null) {
-            mBannerAd.destroy();
-            mBannerAd = null;
+    private void removeBanner(FrameLayout container) {
+        AdView ad = mBannerAds.remove(container);
+        if (ad != null) {
+            ad.destroy();
         }
         if (container != null) {
             container.removeAllViews();
@@ -246,10 +252,13 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
         }
     }
 
+    public void hideBanner(FrameLayout container) {
+        removeBanner(container);
+    }
+
     public void destroyBanner() {
-        if (mBannerAd != null) {
-            mBannerAd.destroy();
-            mBannerAd = null;
+        for (FrameLayout container : new ArrayList<>(mBannerAds.keySet())) {
+            removeBanner(container);
         }
     }
 
@@ -287,15 +296,6 @@ public class AdManager implements Application.ActivityLifecycleCallbacks {
         if (mInterstitialAd != null && mAdsEnabled && !mNoAds) {
             mInterstitialAd.show(activity);
             mInterstitialAd = null;
-        }
-    }
-
-    public void onMessageSent(Activity activity) {
-        if (!mAdsEnabled || mNoAds) return;
-        mMessageCount++;
-        if (mMessageCount >= 8) {
-            mMessageCount = 0;
-            showInterstitialIfReady(activity);
         }
     }
 

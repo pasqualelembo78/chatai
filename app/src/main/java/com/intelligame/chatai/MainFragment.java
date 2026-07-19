@@ -102,7 +102,6 @@ public class MainFragment extends Fragment {
     private PrefsManager mPrefs;
     private AuthManager mAuth;
     private LocalDatabaseHelper mLocalDb;
-    private FrameLayout mBannerAdContainer;
     private AdManager mAdManager;
     private ImageButton mMicButton;
     private ImageButton mImageAttachButton;
@@ -231,10 +230,6 @@ public class MainFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Clean up banner ad
-        if (mAdManager != null) {
-            mAdManager.destroyBanner();
-        }
         mSocket.off(Socket.EVENT_CONNECT, onConnect);
         mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
         mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -269,17 +264,7 @@ public class MainFragment extends Fragment {
         mHeaderAvatar = (ImageView) view.findViewById(R.id.header_avatar);
         mHeaderAvatarEmoji = (TextView) view.findViewById(R.id.header_avatar_emoji);
 
-        mBannerAdContainer = (FrameLayout) view.findViewById(R.id.banner_ad_container);
-
-        // Banner se non premium
-        ChatApplication app = (ChatApplication) requireActivity().getApplication();
-        mAdManager = app.getAdManager();
-        PremiumManager pm = app.getPremiumManager();
-        if (pm == null || !pm.isPremium()) {
-            mAdManager.showBanner(requireActivity(), mBannerAdContainer);
-        } else {
-            mBannerAdContainer.setVisibility(View.GONE);
-        }
+        mAdManager = ((ChatApplication) requireActivity().getApplication()).getAdManager();
 
         Bundle args = getArguments();
         if (args != null) {
@@ -1262,12 +1247,6 @@ public class MainFragment extends Fragment {
         showStreamStopButton(true);
         addThinking(mCharacterName != null ? mCharacterName : "AI");
         mSocket.emit("stream message", payload);
-
-        // Interstitial ogni 8 messaggi (se non premium)
-        PremiumManager pm2 = ((ChatApplication) requireActivity().getApplication()).getPremiumManager();
-        if (getActivity() != null && (pm2 == null || !pm2.isPremium())) {
-            mAdManager.onMessageSent(getActivity());
-        }
 
         clearPendingImage();
 
