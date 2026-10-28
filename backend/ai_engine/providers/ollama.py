@@ -66,6 +66,10 @@ def _ensure_ollama():
 
 
 OLLAMA_MODELS = [
+    {"id": "stheno-abliterated:8b", "name": "Stheno v3.2 Abliterated 8B ★ (uncensored, roleplay)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "fluffy/l3-8b-stheno-v3.2:latest", "name": "Stheno v3.2 8B (uncensored, permissiva)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "hf.co/mradermacher/L3.1-8B-Lunaris-v1-abliterated-GGUF:Q4_K_M", "name": "Lunaris v1 Abliterated 8B (uncensored, roleplay)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "dolphin-llama3.1:8b", "name": "Dolphin Llama 3.1 8B (uncensored)", "quality": "alta", "size": "4.8GB"},
     {"id": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M", "name": "Qwen 2.5 3B Abliterated RP ★ (uncensored, roleplay)", "quality": "alta", "size": "2.1GB"},
     {"id": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Qwen 2.5 3B Abliterated (uncensored)", "quality": "alta", "size": "2.0GB"},
     {"id": "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Llama 3.2 3B Abliterated (uncensored, fallback)", "quality": "media", "size": "2.0GB"},
@@ -149,7 +153,7 @@ register_provider({
     "available": _ollama_available,
     "generate": _ollama_generate,
     "generate_stream": lambda msgs, model, user_id=None: _generate_stream_impl(msgs, model, user_id),
-    "default_model": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M",
+    "default_model": "stheno-abliterated:8b",
 })
 
 
