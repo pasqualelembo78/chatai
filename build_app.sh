@@ -65,7 +65,7 @@ echo -e "${BLUE} Sicurezza: JWT + Apache + Redis + ClamAV + HTTPS${NC}"
 echo -e "${BLUE}==================================================${NC}"
 
 # ─── Modelli predefiniti ────────────────────────────────────────
-DEFAULT_MODELS="llama3.2:3b qwen2.5:7b"
+DEFAULT_MODELS="hf.co/mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M fluffy/l3-8b-stheno-v3.2:latest dolphin-llama3.1:8b hf.co/mradermacher/L3.1-8B-Lunaris-v1-abliterated-GGUF:Q4_K_M"
 
 # ─── Parsing argomenti ──────────────────────────────────────────
 SKIP_PY=false
@@ -701,6 +701,19 @@ if [ "$SKIP_OLLAMA" = false ] && [ "$SKIP_PY" = false ]; then
             echo -e "    ${GREEN}Model '$model' ready.${NC}"
         fi
     done
+
+    # Alias locale stheno-abliterated (copia del GGUF mradermacher, nessun re-download)
+    if ! ollama list 2>/dev/null | grep -q "stheno-abliterated:8b"; then
+        if ollama list 2>/dev/null | grep -q "mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M"; then
+            echo -e "    ${YELLOW}Creating local alias 'stheno-abliterated:8b'...${NC}"
+            ollama cp "hf.co/mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M" "stheno-abliterated:8b" && \
+                echo -e "    ${GREEN}Alias 'stheno-abliterated:8b' creato.${NC}"
+        else
+            echo -e "    ${YELLOW}Base GGUF mradermacher non presente, alias non creato.${NC}"
+        fi
+    else
+        echo -e "    ${GREEN}Alias 'stheno-abliterated:8b' già presente.${NC}"
+    fi
 fi
 
 # ══════════════════════════════════════════════════════════════════
