@@ -18,6 +18,10 @@
             android:icon="@drawable/ic_info"
             android:title="Info" />
         <item
+            android:id="@+id/nav_logs"
+            android:icon="@drawable/ic_info"
+            android:title="Log App" />
+        <item
             android:id="@+id/nav_legal"
             android:icon="@drawable/ic_info"
             android:title="Privacy e Legali" />

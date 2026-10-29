@@ -233,7 +233,7 @@ def get_ai_response_stream(messages, user_id=None, force_provider=None):
         for model in GROQ_CHAT_MODELS:
             chain.append(("groq", model))
 
-    if CHAT_PROVIDER == "local" and DEFAULT_PROVIDER in PROVIDERS and _provider_ready(DEFAULT_PROVIDER):
+    if CHAT_PROVIDER in ("local", "ollama") and DEFAULT_PROVIDER in PROVIDERS and _provider_ready(DEFAULT_PROVIDER):
         chain.append((DEFAULT_PROVIDER, DEFAULT_MODEL))
 
     force_first = os.environ.get("FORCE_LOCAL_FIRST", "0") == "1"
@@ -287,6 +287,9 @@ def get_ai_response_stream(messages, user_id=None, force_provider=None):
                 return
         except Exception as e:
             logger.warning(f"  stream {pid}/{model} errore ({e}), provo il prossimo...")
+            if pid == DEFAULT_PROVIDER and model == DEFAULT_MODEL:
+                logger.error(f"Stream locale ({pid}/{model}) non riuscito: nessun fallback al chain libero.")
+                return
             continue
 
     logger.error("Tutti i modelli streaming esauriti")

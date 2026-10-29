@@ -1,6 +1,9 @@
 package com.intelligame.chatai;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import io.socket.client.IO;
@@ -106,5 +109,14 @@ public class ChatApplication extends Application {
 
     public PrefsManager getPrefs() {
         return mPrefs;
+    }
+
+    public static String getAppVersion(Context ctx) {
+        try {
+            PackageInfo pInfo = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0);
+            return pInfo.versionName;
+        } catch (Exception e) {
+            return "unknown";
+        }
     }
 }

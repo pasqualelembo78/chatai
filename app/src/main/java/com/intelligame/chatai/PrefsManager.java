@@ -31,7 +31,11 @@ public class PrefsManager {
 
     private final SharedPreferences prefs;
 
+    private final AppLogger logger;
+
     public PrefsManager(Context context) {
+        this.logger = AppLogger.getInstance(context);
+        logger.info("PrefsManager", "Initializing PrefsManager");
         try {
             MasterKey masterKey = new MasterKey.Builder(context)
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -43,7 +47,9 @@ public class PrefsManager {
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
+            logger.success("PrefsManager", "EncryptedSharedPreferences created successfully");
         } catch (Exception e) {
+            logger.error("PrefsManager", "EncryptedSharedPreferences unavailable: " + e.getMessage());
             Log.e("PrefsManager", "EncryptedSharedPreferences unavailable", e);
             throw new SecurityException("EncryptedSharedPreferences is required for secure storage", e);
         }
@@ -90,10 +96,13 @@ public class PrefsManager {
     }
 
     public String getServerUrl() {
-        return prefs.getString(KEY_SERVER_URL, DEFAULT_SERVER_URL);
+        String url = prefs.getString(KEY_SERVER_URL, DEFAULT_SERVER_URL);
+        logger.debug("PrefsManager", "getServerUrl() returning: " + url);
+        return url;
     }
 
     public void setServerUrl(String url) {
+        logger.info("PrefsManager", "setServerUrl() setting: " + url);
         prefs.edit().putString(KEY_SERVER_URL, url).apply();
     }
 

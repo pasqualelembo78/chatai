@@ -38,14 +38,17 @@ def get_ai_response(messages, user_id=None, force_provider=None):
             except Exception as e:
                 logger.warning(f"  groq/{model} errore ({e}), provo il prossimo...")
 
-    if CHAT_PROVIDER == "local" and DEFAULT_PROVIDER in PROVIDERS and _provider_ready(DEFAULT_PROVIDER):
+    if CHAT_PROVIDER in ("local", "ollama") and DEFAULT_PROVIDER in PROVIDERS and _provider_ready(DEFAULT_PROVIDER):
         try:
             result = PROVIDERS[DEFAULT_PROVIDER]["generate"](messages, DEFAULT_MODEL, user_id=user_id)
             if result:
                 logger.info(f"Risposta AI da {DEFAULT_PROVIDER}/{DEFAULT_MODEL} (CHAT_PROVIDER=local)")
                 return result, DEFAULT_PROVIDER, DEFAULT_MODEL
+            logger.warning(f"  local: {DEFAULT_PROVIDER}/{DEFAULT_MODEL}: nessuna risposta disponibile")
         except Exception as e:
             logger.warning(f"  local: {DEFAULT_PROVIDER}/{DEFAULT_MODEL} errore ({e})")
+        logger.error(f"Provider locale ({DEFAULT_PROVIDER}/{DEFAULT_MODEL}) non riuscito: nessun fallback al chain libero.")
+        return None, None, None
 
     force_first = os.environ.get("FORCE_LOCAL_FIRST", "0") == "1"
     if force_first and DEFAULT_PROVIDER in PROVIDERS and _provider_ready(DEFAULT_PROVIDER):

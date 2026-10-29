@@ -31,8 +31,12 @@ public class AuthManager {
     private SharedPreferences prefs;
     private final String baseUrl;
 
+    private final AppLogger logger;
+
     public AuthManager(Context context, String baseUrl) {
         this.baseUrl = baseUrl;
+        this.logger = AppLogger.getInstance(context);
+        logger.info(TAG, "AuthManager initialized with baseUrl: " + baseUrl);
         try {
             MasterKey masterKey = new MasterKey.Builder(context)
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -44,7 +48,9 @@ public class AuthManager {
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
+            logger.success(TAG, "EncryptedSharedPreferences created successfully");
         } catch (Exception e) {
+            logger.error(TAG, "EncryptedSharedPreferences unavailable: " + e.getMessage());
             Log.e(TAG, "EncryptedSharedPreferences unavailable - security feature required", e);
             throw new SecurityException("EncryptedSharedPreferences is required for secure token storage", e);
         }
@@ -103,11 +109,14 @@ public class AuthManager {
 
     public void loginLocal(String username, String serverUrl, String referralCode, AuthCallback callback) {
         final String urlStr = serverUrl + "/auth/local-login";
+        logger.debug(TAG, "Starting local login to: " + urlStr + " username: " + username);
         new Thread(() -> {
             HttpURLConnection conn = null;
             try {
+                logger.debug(TAG, "Opening URL connection: " + urlStr);
                 URL url = new URL(urlStr);
                 conn = (HttpURLConnection) url.openConnection();
+                logger.debug(TAG, "Connection established, setting parameters");
                 conn.setRequestMethod("POST");
                 conn.setConnectTimeout(20000);
                 conn.setReadTimeout(20000);
@@ -124,13 +133,17 @@ public class AuthManager {
                 os.write(body.toString().getBytes());
                 os.close();
 
+                logger.debug(TAG, "Sending request body");
                 int code = conn.getResponseCode();
+                logger.info(TAG, "Server response code: " + code);
                 if (code == 200 || code == 201) {
+                    logger.success(TAG, "Login successful, parsing response");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     StringBuilder response = new StringBuilder();
                     String line;
                     while ((line = reader.readLine()) != null) response.append(line);
                     reader.close();
+                    logger.debug(TAG, "Response received: " + response.toString().substring(0, Math.min(200, response.length())));
 
                     JSONObject json = new JSONObject(response.toString());
                     String accessToken = json.getString("access_token");
@@ -142,8 +155,10 @@ public class AuthManager {
 
                     saveTokens(accessToken, refreshToken, userId, username, role, "");
                     if (!persistentToken.isEmpty()) savePersistentToken(persistentToken);
+                    logger.success(TAG, "Tokens saved, user ID: " + userId);
                     callback.onSuccess(accessToken, refreshToken, userId, username, role, "");
                 } else {
+                    logger.error(TAG, "Login failed with code: " + code);
                     String errMsg = "Errore login locale (" + code + ")";
                     try {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
@@ -152,14 +167,19 @@ public class AuthManager {
                         while ((line = reader.readLine()) != null) response.append(line);
                         reader.close();
                         errMsg = new JSONObject(response.toString()).optString("error", errMsg);
+                        logger.error(TAG, "Error from server: " + errMsg);
                     } catch (Exception ignored) {}
                     callback.onError(errMsg);
                 }
             } catch (Exception e) {
+                logger.error(TAG, "Local login exception: " + e.getMessage());
                 Log.e(TAG, "Local login error", e);
                 callback.onError("Connessione al server fallita: " + e.getMessage());
             } finally {
-                if (conn != null) conn.disconnect();
+                if (conn != null) {
+                    logger.debug(TAG, "Disconnecting connection");
+                    conn.disconnect();
+                }
             }
         }).start();
     }
@@ -205,11 +225,14 @@ public class AuthManager {
 
     public void login(String username, String password, String serverUrl, String referralCode, AuthCallback callback) {
         final String urlStr = serverUrl + "/auth/login";
+        logger.debug(TAG, "Starting login to: " + urlStr + " username: " + username);
         new Thread(() -> {
             HttpURLConnection conn = null;
             try {
+                logger.debug(TAG, "Opening URL connection: " + urlStr);
                 URL url = new URL(urlStr);
                 conn = (HttpURLConnection) url.openConnection();
+                logger.debug(TAG, "Connection established, setting parameters");
                 conn.setRequestMethod("POST");
                 conn.setConnectTimeout(15000);
                 conn.setReadTimeout(15000);
@@ -227,13 +250,17 @@ public class AuthManager {
                 os.write(body.toString().getBytes());
                 os.close();
 
+                logger.debug(TAG, "Sending request body");
                 int code = conn.getResponseCode();
+                logger.info(TAG, "Server response code: " + code);
                 if (code == 200) {
+                    logger.success(TAG, "Login successful, parsing response");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     StringBuilder response = new StringBuilder();
                     String line;
                     while ((line = reader.readLine()) != null) response.append(line);
                     reader.close();
+                    logger.debug(TAG, "Response received: " + response.toString().substring(0, Math.min(200, response.length())));
 
                     JSONObject json = new JSONObject(response.toString());
                     String accessToken = json.getString("access_token");
@@ -245,21 +272,28 @@ public class AuthManager {
 
                     saveTokens(accessToken, refreshToken, userId, username, role, "");
                     if (!persistentToken.isEmpty()) savePersistentToken(persistentToken);
+                    logger.success(TAG, "Tokens saved, user ID: " + userId);
                     callback.onSuccess(accessToken, refreshToken, userId, username, role, "");
                 } else {
+                    logger.error(TAG, "Login failed with code: " + code);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
                     StringBuilder response = new StringBuilder();
                     String line;
                     while ((line = reader.readLine()) != null) response.append(line);
                     reader.close();
                     String msg = new JSONObject(response.toString()).optString("error", "Errore login");
+                    logger.error(TAG, "Error from server: " + msg);
                     callback.onError(msg);
                 }
             } catch (Exception e) {
+                logger.error(TAG, "Login exception: " + e.getMessage());
                 Log.e(TAG, "Login error", e);
                 callback.onError("Errore di connessione: " + e.getMessage());
             } finally {
-                if (conn != null) conn.disconnect();
+                if (conn != null) {
+                    logger.debug(TAG, "Disconnecting connection");
+                    conn.disconnect();
+                }
             }
         }).start();
     }

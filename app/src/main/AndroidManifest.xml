@@ -96,6 +96,13 @@
             android:theme="@style/AppTheme"
             android:parentActivityName=".MainActivity">
         </activity>
+
+        <activity
+            android:name=".LogActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

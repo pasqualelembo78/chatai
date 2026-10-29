@@ -44,11 +44,18 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        AppLogger logger = AppLogger.getInstance(this);
+        logger.info("LoginActivity", "onCreate() called");
+
         ChatApplication app = (ChatApplication) getApplication();
         mAuth = app.getAuthManager();
         mPrefs = app.getPrefs();
 
+        logger.debug("LoginActivity", "Server URL: " + mPrefs.getServerUrl());
+        logger.debug("LoginActivity", "isLoggedIn: " + mAuth.isLoggedIn());
+
         if (!mPrefs.isPrivacyAccepted()) {
+            logger.info("LoginActivity", "Privacy not accepted, showing consent");
             showPrivacyConsent();
             return;
         }
@@ -56,6 +63,7 @@ public class LoginActivity extends Activity {
         initViews();
 
         if (mAuth.isLoggedIn()) {
+            logger.info("LoginActivity", "User already logged in, starting MainActivity");
             startMainActivity();
         }
     }
@@ -148,16 +156,20 @@ public class LoginActivity extends Activity {
     }
 
     private void attemptLogin() {
+        AppLogger logger = AppLogger.getInstance(this);
         String username = mUsernameView.getText().toString().trim();
         String password = mPasswordView.getText().toString();
+        logger.info("LoginActivity", "attemptLogin() called for user: " + username);
 
         if (TextUtils.isEmpty(username)) {
+            logger.warn("LoginActivity", "Username is empty");
             mUsernameView.setError("Inserisci un username");
             mUsernameView.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
+            logger.warn("LoginActivity", "Password is empty");
             mPasswordView.setError("Inserisci la password");
             mPasswordView.requestFocus();
             setLoading(false);
@@ -165,6 +177,7 @@ public class LoginActivity extends Activity {
         }
 
         if (password.length() < 8) {
+            logger.warn("LoginActivity", "Password too short");
             mPasswordView.setError("Minimo 8 caratteri");
             mPasswordView.requestFocus();
             setLoading(false);
@@ -174,11 +187,13 @@ public class LoginActivity extends Activity {
         setLoading(true);
         final String serverUrl = getEffectiveServerUrl();
         final String referralCode = mReferralCodeView.getText().toString().trim();
+        logger.debug("LoginActivity", "Login request - server: " + serverUrl + ", username: " + username);
 
         mAuth.login(username, password, serverUrl, new AuthManager.AuthCallback() {
             @Override
             public void onSuccess(String accessToken, String refreshToken,
                                   String userId, String username, String role, String email) {
+                logger.success("LoginActivity", "Login successful for user: " + username + ", userId: " + userId);
                 runOnUiThread(() -> {
                     setLoading(false);
                     saveServerUrl(serverUrl);
@@ -188,6 +203,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onError(String error) {
+                logger.error("LoginActivity", "Login failed: " + error);
                 runOnUiThread(() -> {
                     setLoading(false);
                     Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();
@@ -197,39 +213,47 @@ public class LoginActivity extends Activity {
     }
 
     private void attemptRegister() {
+        AppLogger logger = AppLogger.getInstance(this);
         String username = mUsernameView.getText().toString().trim();
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString();
         String referralCode = mReferralCodeView.getText().toString().trim();
         String birthDate = mBirthdateView.getTag() != null
                 ? mBirthdateView.getTag().toString() : "";
+        logger.info("LoginActivity", "attemptRegister() called for user: " + username);
 
         if (TextUtils.isEmpty(username)) {
+            logger.warn("LoginActivity", "Username is empty");
             mUsernameView.setError("Inserisci un username");
             mUsernameView.requestFocus();
             return;
         }
         if (username.length() < 3) {
+            logger.warn("LoginActivity", "Username too short");
             mUsernameView.setError("Minimo 3 caratteri");
             mUsernameView.requestFocus();
             return;
         }
         if (TextUtils.isEmpty(password)) {
+            logger.warn("LoginActivity", "Password is empty");
             mPasswordView.setError("Inserisci una password");
             mPasswordView.requestFocus();
             return;
         }
         if (password.length() < 8) {
+            logger.warn("LoginActivity", "Password too short");
             mPasswordView.setError("Minimo 8 caratteri");
             mPasswordView.requestFocus();
             return;
         }
         if (TextUtils.isEmpty(birthDate)) {
+            logger.warn("LoginActivity", "Birth date is empty");
             mBirthdateView.setError("Inserisci la data di nascita");
             mBirthdateView.requestFocus();
             return;
         }
         if (!email.isEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            logger.warn("LoginActivity", "Email invalid");
             mEmailView.setError("Email non valida");
             mEmailView.requestFocus();
             return;
@@ -237,6 +261,7 @@ public class LoginActivity extends Activity {
 
         setLoading(true);
         final String serverUrl = getEffectiveServerUrl();
+        logger.debug("LoginActivity", "Register request - server: " + serverUrl + ", username: " + username);
         mAuth.register(username, email, password, birthDate, serverUrl,
                 referralCode.isEmpty() ? null : referralCode,
                 new AuthManager.AuthCallback() {

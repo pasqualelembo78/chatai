@@ -1647,12 +1647,25 @@ public class MainFragment extends Fragment {
         providerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                AppLogger selLogger = AppLogger.getInstance(getActivity());
                 String providerId = mProviderIds.get(position);
+                List<String> modelsForProvider = providerId != null ? mProviderModels.get(providerId) : null;
+                selLogger.info("MainFragment", "Provider selezionato: '" + providerId + "' (posizione " + position + ")");
+                selLogger.debug("MainFragment", "Modelli disponibili per '" + providerId + "': " +
+                        (modelsForProvider != null ? modelsForProvider.size() + " modelli" : "NESSUNO (mProviderModels non contiene la chiave)"));
+                if (modelsForProvider != null) {
+                    selLogger.debug("MainFragment", "Lista modelli '" + providerId + "': " + modelsForProvider);
+                }
+                if (mProviderModels.isEmpty()) {
+                    selLogger.warn("MainFragment", "ATTENZIONE: mProviderModels è VUOTO (fallback attivo o server non raggiunto), nessun modello sarà mostrato");
+                }
                 updateModelSpinner(modelSpinner, providerId, savedModel);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+                AppLogger.getInstance(getActivity()).debug("MainFragment", "onNothingSelected sul provider spinner");
+            }
         });
 
         refreshBtn.setOnClickListener(new View.OnClickListener() {
@@ -1723,18 +1736,24 @@ public class MainFragment extends Fragment {
     private void loadProvidersIntoSpinner(final Spinner providerSpinner, final Spinner modelSpinner,
                                            final String savedProvider, final String savedModel) {
         final String baseUrl = mPrefs.getServerUrl();
+        AppLogger logger = AppLogger.getInstance(getActivity());
+        logger.debug("MainFragment", "Loading providers from: " + baseUrl + "/available-models");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 HttpURLConnection conn = null;
                 try {
+                    logger.debug("MainFragment", "Opening connection to /available-models");
                     URL url = new URL(baseUrl + "/available-models");
                     conn = (HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(5000);
-                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(30000);
+                    conn.setReadTimeout(30000);
                     setAuthHeader(conn);
                     conn.setRequestProperty("Accept", "application/json");
-                    if (conn.getResponseCode() != 200) {
+                    int responseCode = conn.getResponseCode();
+                    logger.info("MainFragment", "Response code from /available-models: " + responseCode);
+                    if (responseCode != 200) {
+                        logger.error("MainFragment", "Failed to load providers, response code: " + responseCode);
                         setFallbackProviders(providerSpinner, modelSpinner, savedProvider, savedModel);
                         return;
                     }
@@ -1743,6 +1762,7 @@ public class MainFragment extends Fragment {
                     String line;
                     while ((line = reader.readLine()) != null) response.append(line);
                     reader.close();
+                    logger.debug("MainFragment", "Received response, length: " + response.length());
 
                     JSONObject available = new JSONObject(response.toString());
                     final List<String> providerIds = new ArrayList<>();
@@ -1756,7 +1776,10 @@ public class MainFragment extends Fragment {
                     while (keys.hasNext()) {
                         String pid = keys.next();
                         JSONArray models = available.getJSONArray(pid);
-                        if (models.length() == 0) continue;
+                        if (models.length() == 0) {
+                            logger.debug("MainFragment", "Provider " + pid + " has no models, skipping");
+                            continue;
+                        }
                         String displayName = pid;
                         if (pid.equals("groq")) displayName = "Groq";
                         else if (pid.equals("gemini")) displayName = "Gemini";
@@ -1773,6 +1796,10 @@ public class MainFragment extends Fragment {
                             modelList.add(m.getString("id"));
                         }
                         providerModels.put(pid, modelList);
+                        logger.info("MainFragment", "Loaded provider " + displayName + " with " + models.length() + " models");
+                        if (pid.equals("ollama")) {
+                            logger.info("MainFragment", "Ollama models: " + modelList);
+                        }
                     }
 
                     safeRunOnUiThread(new Runnable() {
@@ -1793,6 +1820,8 @@ public class MainFragment extends Fragment {
                         }
                     });
                 } catch (Exception e) {
+                    logger.error("MainFragment", "Error loading providers: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+                    e.printStackTrace();
                     setFallbackProviders(providerSpinner, modelSpinner, savedProvider, savedModel);
                 } finally {
                     if (conn != null) conn.disconnect();
@@ -1803,6 +1832,9 @@ public class MainFragment extends Fragment {
 
     private void setFallbackProviders(final Spinner providerSpinner, final Spinner modelSpinner,
                                        final String savedProvider, final String savedModel) {
+        AppLogger logger = AppLogger.getInstance(getActivity());
+        logger.warn("MainFragment", "Using fallback providers: la mappa modelli NON verrà popolata, " +
+                "i modelli verranno mostrati solo dopo un caricamento riuscito dal server");
         safeRunOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1838,7 +1870,9 @@ public class MainFragment extends Fragment {
     }
 
     private void updateModelSpinner(final Spinner modelSpinner, final String providerId, final String savedModel) {
+        AppLogger logger = AppLogger.getInstance(getActivity());
         if (providerId == null || providerId.equals("auto")) {
+            logger.debug("MainFragment", "updateModelSpinner: provider 'auto'/null, mostro solo 'Auto'");
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
                     getActivity(), android.R.layout.simple_spinner_item,
                     new String[]{"Auto"});
@@ -1850,6 +1884,8 @@ public class MainFragment extends Fragment {
         if (modelIds == null) {
             modelIds = new ArrayList<>();
         }
+        logger.debug("MainFragment", "updateModelSpinner: provider '" + providerId + "' -> " +
+                modelIds.size() + " modelli" + (modelIds.isEmpty() ? " (LISTA VUOTA - dati non caricati dal server)" : ""));
         final List<String> finalModelIds = modelIds;
         safeRunOnUiThread(new Runnable() {
             @Override
@@ -1860,6 +1896,9 @@ public class MainFragment extends Fragment {
                 modelSpinner.setAdapter(adapter);
                 int idx = savedModel != null ? finalModelIds.indexOf(savedModel) : 0;
                 modelSpinner.setSelection(idx < 0 ? 0 : idx);
+                if (idx < 0 && savedModel != null) {
+                    logger.warn("MainFragment", "Modello salvato '" + savedModel + "' non trovato per '" + providerId + "', selezionato il primo");
+                }
             }
         });
     }
@@ -1884,8 +1923,8 @@ public class MainFragment extends Fragment {
                     URL url = new URL(baseUrl + "/refresh-models");
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
-                    conn.setConnectTimeout(5000);
-                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(30000);
+                    conn.setReadTimeout(30000);
                     setAuthHeader(conn);
                     conn.setRequestProperty("Accept", "application/json");
                     conn.setDoOutput(true);
@@ -1941,8 +1980,8 @@ public class MainFragment extends Fragment {
                     URL url = new URL(baseUrl + "/config");
                     conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
-                    conn.setConnectTimeout(5000);
-                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(30000);
+                    conn.setReadTimeout(30000);
                     setAuthHeader(conn);
                     conn.setRequestProperty("Content-Type", "application/json");
                     conn.setDoOutput(true);

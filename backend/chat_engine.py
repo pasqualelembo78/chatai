@@ -130,7 +130,7 @@ def process_message(user_id, character_id, text, username="Utente",
         if not is_content_unlocked(user_id, "feature", feature_id):
             feat = FEATURES[feature_id]
             return {
-                "ai_text": f"🔒 Per usare {feat['name']} serve sbloccare la funzionalità ({feat['mvc_cost']} MVC). Vai nella sezione Guadagna MVC.",
+                "ai_text": "Funzione bloccata.",
                 "ai_provider": "system", "ai_model": "",
                 "is_fallback": False, "emotion": "neutro", "intensity": 0.0,
                 "character": character, "memory_updates": None,
@@ -521,6 +521,40 @@ def process_message(user_id, character_id, text, username="Utente",
         except Exception as e:
             logger.warning(f"Summarize failed: {e}")
 
+    # Post-processing: forza risposte brevi in chat (regola ferrea)
+    try:
+        user_text_lower = (user_message or "").lower()
+        force_long = any(k in user_text_lower for k in ["raccontami", "spiegami", "dimmi di più", "approfondisci", "descrivimi dettagliatamente"])
+        if not force_long and isinstance(ai_text, str):
+            text_clean = ai_text.strip()
+            import re
+            text_clean = re.sub(r'\*[^*]+\*', '', text_clean).strip()
+            # Rimuovi tutto dopo punto e virgola o altro
+            for sep in ['\n\n', '\n']:
+                if sep in text_clean:
+                    text_clean = text_clean.split(sep)[0].strip()
+            sentences = re.split(r'([.!?]+)', text_clean)
+            sent_list = []
+            i = 0
+            while i < len(sentences):
+                s = sentences[i].strip()
+                if s and not re.match(r'^[.!?]+$', s):
+                    punc = sentences[i+1].strip() if i+1 < len(sentences) and re.match(r'^[.!?]+$', sentences[i+1].strip()) else '.'
+                    sent_list.append(s + punc)
+                    i += 2
+                else:
+                    i += 1
+            if sent_list:
+                ai_text = sent_list[0].strip()
+            text_clean = ai_text.strip()
+            words = re.sub(r'[^a-zA-ZàèéìòùÀÈÉÌÒÙ0-9\s\!\?\.\,]', ' ', text_clean).split()
+            if len(words) > 8:
+                ai_text = " ".join(words[:8]) + "."
+    except Exception as e:
+        logger.debug(f"Troncamento risposta fallito: {e}")
+    except Exception as e:
+        logger.debug(f"Troncamento risposta fallito: {e}")
+    
     result = {
         "ai_text": ai_text, "ai_provider": ai_provider, "ai_model": ai_model,
         "is_fallback": is_fallback, "emotion": emotion, "intensity": intensity,

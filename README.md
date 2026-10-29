@@ -32,7 +32,7 @@ Chatta con personaggi virtuali realistici dotati di personalità, memoria e capa
 ./build_app.sh --skip-ollama --skip-apk
 
 # Con modelli specifici
-./build_app.sh --models "llama3.1:8b mistral:7b qwen2.5:7b"
+./build_app.sh --models "dolphin-llama3.1:8b fluffy/l3-8b-stheno-v3.2:latest"
 ```
 
 ## Avvio Manuale

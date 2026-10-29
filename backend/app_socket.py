@@ -3,6 +3,7 @@ import logging
 import re
 import uuid
 import time
+import asyncio
 from collections import defaultdict
 
 from characters import get_character, list_characters, get_categories
@@ -168,12 +169,16 @@ def register_socket_handlers(sio):
                 await sio.emit("error", {"message": msg}, room=sid)
                 return
         username = user_names.get(sid, "Utente")
-        result = process_message(user_id, character_id, text, username,
-                                 memory_context=data.get("memory_context"),
-                                 user_memory=data.get("user_memory"),
-                                 character_data=data.get("character_data"),
-                                 image_base64=image_b64, image_mime=image_mime,
-                                 is_favorite=data.get("is_favorite", False))
+        _loop = asyncio.get_event_loop()
+        result = await _loop.run_in_executor(
+            None,
+            lambda: process_message(user_id, character_id, text, username,
+                                    memory_context=data.get("memory_context"),
+                                    user_memory=data.get("user_memory"),
+                                    character_data=data.get("character_data"),
+                                    image_base64=image_b64, image_mime=image_mime,
+                                    is_favorite=data.get("is_favorite", False))
+        )
         if not result:
             refund_message(user_id)
             await sio.emit("error", {"message": "Character not found"}, room=sid)
@@ -277,13 +282,17 @@ def register_socket_handlers(sio):
 
         stripped = text.strip()
         if stripped.startswith("/genera") or stripped.startswith("/muovi"):
-            result = process_message(user_id, character_id, text, username,
-                                     memory_context=data.get("memory_context"),
-                                     user_memory=data.get("user_memory"),
-                                     character_data=data.get("character_data"),
-                                     image_base64=image_b64, image_mime=image_mime,
-                                     is_favorite=data.get("is_favorite", False),
-                                     tone=data.get("tone"))
+            _loop = asyncio.get_event_loop()
+            result = await _loop.run_in_executor(
+                None,
+                lambda: process_message(user_id, character_id, text, username,
+                                        memory_context=data.get("memory_context"),
+                                        user_memory=data.get("user_memory"),
+                                        character_data=data.get("character_data"),
+                                        image_base64=image_b64, image_mime=image_mime,
+                                        is_favorite=data.get("is_favorite", False),
+                                        tone=data.get("tone"))
+            )
             if result:
                 result["ai_text"] = moderate_output(result.get("ai_text", ""))[0]
                 payload = {
@@ -494,7 +503,27 @@ def register_socket_handlers(sio):
         is_fallback = False
 
         try:
-            for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id):
+            loop = asyncio.get_event_loop()
+            token_queue = asyncio.Queue()
+
+            def _produce_tokens():
+                try:
+                    for token, pid, model in ai_engine.get_ai_response_stream(messages, user_id=user_id):
+                        loop.call_soon_threadsafe(token_queue.put_nowait, ("token", token, pid, model))
+                except Exception as e:
+                    logger.error(f"Stream generation error for {user_id}: {e}")
+                    loop.call_soon_threadsafe(token_queue.put_nowait, ("error", str(e), None, None))
+                finally:
+                    loop.call_soon_threadsafe(token_queue.put_nowait, ("done", None, None, None))
+
+            loop.run_in_executor(None, _produce_tokens)
+            while True:
+                kind, token, pid, model = await token_queue.get()
+                if kind == "done":
+                    break
+                if kind == "error":
+                    await sio.emit("stream error", {"message": token}, room=sid)
+                    return
                 ai_text += token
                 await sio.emit("stream token", {"token": token, "text": ai_text}, room=sid)
                 ai_provider = pid

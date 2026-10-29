@@ -406,6 +406,8 @@ public class MainActivity extends AppCompatActivity {
             showGuideDialog();
         } else if (id == R.id.nav_info) {
             showInfoDialog();
+        } else if (id == R.id.nav_logs) {
+            startActivity(new Intent(MainActivity.this, LogActivity.class));
         } else if (id == R.id.nav_legal) {
             startActivity(new Intent(MainActivity.this, LegalActivity.class));
         } else if (id == R.id.nav_consent) {
