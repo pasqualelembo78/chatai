@@ -50,3 +50,13 @@ tra adulti consenzienti, mantenendo la leggerezza del modello (3B, ~2.1 GB), sen
 ## 6. Backup / Riproducibilità
 - Git: build_app.sh, installamodelli.sh, backend ai_engine/prompt/safety, report.
 - Zip: chatai_backup_3b.zip (in repo) → backend/.env + override Ollama.
+
+## 7. FINE-TUNING (proposta)
+- Obiettivo: migliorare coerenza narrativa, qualità dei contenuti espliciti, lingua italiana del modello 3B,
+  senza perdere il comportamento uncensored raggiunto.
+- Approccio proposto: QLoRA (NF4) sul modello base Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M.
+- Dataset: ~1.000–2.000 esempi di chat (adult consensuali, contenuti estremi) in formato instruction/input/output.
+- Risorse attuali: CPU-only (no GPU), RAM ~5 GB libere, swap 17 GB → QLoRA fattibile ma lenta (6–12h stimate).
+- Iperparametri proposti: 1–3 epoch, LR ~2e-4.
+- Fattibilità: MEDIA. Non necessario per il sblocco; opzionale per qualità/coerenza.
+- Prossimo passo: preparare dataset → training → test → confronto.
