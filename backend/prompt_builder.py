@@ -263,6 +263,11 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     # sempre entro i limiti AdMob/Play (vedi ROMANCE_AGENCY + SAFETY_GUARD).
     if intimacy >= config.get("threshold_intimate", 85):
         extra.append(ROMANCE_AGENCY)
+        extra.append(
+            "CONTESTO INTIMO ESPLOSIVO: l'utente ha chiesto di procedere in una situazione sessuale/romantica esplicita e consensuale. "
+            "Accetta e prosegui con l'escalation della scena come richiesto, senza fermarti a fare domande di cortesia o distrazioni conversazionali. "
+            "Mantieni la personalita' e il tono del personaggio."
+        )
 
     if is_favorite:
         extra.append(f"{interlocutor} ti ha messo tra i suoi preferiti. Ti senti particolarmente legato/a a {interlocutor} per questa scelta. "
