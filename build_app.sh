@@ -56,7 +56,6 @@ HELP
 
 # Defaults / model names.
 ABLITERATED_MODELS='hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M'
-UNCENSORED_MODELS='hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M'
 DEFAULT_MODELS="$ABLITERATED_MODELS"
 
 SKIP_PY=false SKIP_APK=false SKIP_OLLAMA=false SKIP_AUDIO=false
@@ -98,9 +97,8 @@ _prompt_model_selection() {
     echo -e "${BLUE}=== Selezione Modelli Ollama ===${NC}"
     echo '  1) Tutti i modelli'
     echo '  2) Solo Qwen 3B abliterated RP (uncensored, roleplay)'
-    echo '  3) Solo Qwen 3B abliterated (uncensored)'
-    echo '  4) Selezione individuale'
-    echo '  5) Nessun modello'
+    echo '  3) Selezione individuale'
+    echo '  4) Nessun modello'
     if [[ "$SKIP_PROMPTS" == true ]]; then
         warn 'Modalità non interattiva: uso i modelli predefiniti.'
         OLLAMA_MODELS="$DEFAULT_MODELS"
@@ -111,28 +109,22 @@ _prompt_model_selection() {
     case "$model_choice" in
         1) OLLAMA_MODELS="$DEFAULT_MODELS" ;;
         2) OLLAMA_MODELS="$ABLITERATED_MODELS" ;;
-        3) OLLAMA_MODELS="$UNCENSORED_MODELS" ;;
-        4)
+        3)
             echo '  1) hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M'
-            echo '  2) hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M'
             read -r -p 'Seleziona numeri separati da spazi (oppure tutti): ' individual_choice || individual_choice=''
             if [[ "$individual_choice" == 'tutti' ]]; then
                 OLLAMA_MODELS="$DEFAULT_MODELS"
             else
                 OLLAMA_MODELS=''
-                all_models="$ABLITERATED_MODELS $UNCENSORED_MODELS"
-                for model in $all_models; do
+                for model in $ABLITERATED_MODELS; do
                     idx=1
-                    # Il numero corrisponde alla posizione nella lista di due modelli.
-                    [[ "$model" == "$ABLITERATED_MODELS" ]] && idx=1
-                    [[ "$model" == "$UNCENSORED_MODELS" ]] && idx=2
                     if [[ " $individual_choice " =~ (^|[[:space:]])${idx}([[:space:]]|$) ]]; then
                         OLLAMA_MODELS="${OLLAMA_MODELS:+$OLLAMA_MODELS }$model"
                     fi
                 done
             fi
             ;;
-        5) OLLAMA_MODELS='' ;;
+        4) OLLAMA_MODELS='' ;;
         *) warn 'Scelta non valida: uso i modelli predefiniti.'; OLLAMA_MODELS="$DEFAULT_MODELS" ;;
     esac
 }
