@@ -586,6 +586,34 @@ if [[ "$SKIP_OLLAMA" == false ]]; then
 fi
 
 # -----------------------------------------------------------------------------
+# PASSO 7b — Backup zip configurazione (backend/.env + override Ollama).
+# Se presente in $ROOT_DIR, estrae e ripristina i file di configurazione.
+# -----------------------------------------------------------------------------
+BACKUP_ZIP="$ROOT_DIR/chatai_backup_3b.zip"
+if [[ -f "$BACKUP_ZIP" ]]; then
+    info "Trovato file di backup configurazione: $BACKUP_ZIP -> estrazione e installazione"
+    _ZIP_TMP="$(mktemp -d)"
+    if command -v unzip >/dev/null 2>&1; then
+        unzip -o "$BACKUP_ZIP" -d "$_ZIP_TMP" >/dev/null 2>&1 || warn "unzip fallito per $BACKUP_ZIP"
+    fi
+    if [[ -f "$_ZIP_TMP/backend.env" ]]; then
+        cp "$_ZIP_TMP/backend.env" "$ROOT_DIR/backend/.env"
+        run_root chmod 640 "$ROOT_DIR/backend/.env" 2>/dev/null || true
+        info "Ripristinato backend/.env dal backup zip"
+    fi
+    if [[ -f "$_ZIP_TMP/ollama_override.conf" ]]; then
+        run_root mkdir -p /etc/systemd/system/ollama.service.d
+        run_root cp "$_ZIP_TMP/ollama_override.conf" /etc/systemd/system/ollama.service.d/override.conf
+        run_root systemctl daemon-reload
+        run_root systemctl restart ollama
+        info "Ripristinato override Ollama dal backup zip e riavviato ollama"
+    fi
+    rm -rf "$_ZIP_TMP"
+else
+    warn "File di backup zip non trovato in $ROOT_DIR: $BACKUP_ZIP -> uso backend/.env esistente e override corrente."
+fi
+
+# -----------------------------------------------------------------------------
 # PASSO 8 — DNS fallback. Non modifica la configurazione se resolvectl manca.
 # -----------------------------------------------------------------------------
 if command -v resolvectl >/dev/null 2>&1; then
