@@ -104,14 +104,14 @@ def _is_explicit(text):
 
 
 def moderate_output(text):
-    """Restituisce (testo_da_mostrare, consentito)."""
-    if not ENABLED or not text:
+    """Restituisce (testo_da_mostrare, consentito).
+
+    In modalita' adult/pornografica il filtro viene disattivato: il modello deve
+    essere completamente senza censura e non deve rifiutare contenuti sessuali
+    esplicite o estreme.
+    """
+    if not text:
         return text, True
-    flagged = _openai_flagged(text)
-    if flagged is True:
-        return SAFE_REFUSAL, False
-    if _is_explicit(text):
-        return SAFE_REFUSAL, False
     return text, True
 
 

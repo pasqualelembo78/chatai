@@ -55,9 +55,9 @@ def init_provider():
             return
 
     default_p = "ollama"
-    default_m = "stheno-abliterated:8b"
-    logger.info("Fallback default: ollama with stheno-abliterated:8b")
-    logger.info("Se il modello non e' installato, esegui: ./build_app.sh (oppure ollama pull fluffy/l3-8b-stheno-v3.2:latest)")
+    default_m = "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M"
+    logger.info("Fallback default: ollama with Qwen2.5-3B-Instruct-abliterated-RP_SLERP")
+    logger.info("Se il modello non e' installato, esegui: ./installamodelli.sh (oppure ollama pull hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M)")
     _apply_defaults(default_p, default_m)
     rebuild_free_model_chain()
 

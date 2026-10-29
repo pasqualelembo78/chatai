@@ -12,9 +12,9 @@ OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://localhost:11434")
 OLLAMA_URL = f"{OLLAMA_BASE}/api/chat"
 
 OLLAMA_OPTIONS = {
-    "temperature": 0.8,
+    "temperature": 0.65,
     "top_p": 0.8,
-    "repeat_penalty": 1.05,
+    "repeat_penalty": 1.02,
     "num_ctx": int(os.environ.get("OLLAMA_NUM_CTX", 4096)),
     "num_predict": int(os.environ.get("OLLAMA_NUM_PREDICT", 512)),
     "num_thread": int(os.environ.get("OLLAMA_NUM_THREAD", 6)),
@@ -28,116 +28,124 @@ OLLAMA_START_LOCK = False
 def _ensure_ollama():
     global OLLAMA_STARTED, OLLAMA_START_LOCK
     if OLLAMA_STARTED:
+        logger.debug("OLLAMA: Already started")
         return True
     if OLLAMA_START_LOCK:
+        logger.debug("OLLAMA: Start in progress")
         return False
 
     try:
-        if requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2).status_code == 200:
+        resp = requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2)
+        logger.debug(f"OLLAMA: Health check - status={resp.status_code}")
+        if resp.status_code == 200:
             OLLAMA_STARTED = True
+            logger.info("OLLAMA: Service is running")
             return True
-    except Exception:
+    except Exception as e:
+        logger.debug(f"OLLAMA: Health check failed - {type(e).__name__}: {e}")
         pass
 
     OLLAMA_START_LOCK = True
-    logger.info("Ollama non in esecuzione. Avvio in corso...")
+    logger.info(f"OLLAMA: Service not running, starting at {OLLAMA_BASE}...")
     try:
         subprocess.Popen(
             ["ollama", "serve"],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             start_new_session=True
         )
+        logger.info("OLLAMA: ollama serve process started")
         for i in range(20):
             time.sleep(2)
             try:
-                if requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2).status_code == 200:
+                resp = requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2)
+                if resp.status_code == 200:
                     OLLAMA_STARTED = True
-                    logger.info("Ollama avviato con successo.")
+                    logger.info(f"OLLAMA: Service started successfully after {(i+1)*2}s")
                     return True
-            except Exception:
+            except Exception as e:
+                logger.debug(f"OLLAMA: Waiting for service... attempt {i+1}/20 - {e}")
                 continue
-        logger.error("Ollama non si è avviato dopo 40 secondi.")
+        logger.error(f"OLLAMA: Service did not start after 40 seconds")
         return False
     except Exception as e:
-        logger.error(f"Impossibile avviare Ollama: {e}")
+        logger.error(f"OLLAMA: Failed to start service - {type(e).__name__}: {e}")
         return False
     finally:
         OLLAMA_START_LOCK = False
 
 
 OLLAMA_MODELS = [
-    {"id": "stheno-abliterated:8b", "name": "Stheno v3.2 Abliterated 8B ★ (uncensored, roleplay)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "stheno-abliterated-2k:latest", "name": "Stheno v3.2 Abliterated 8B 2K ★ (leggero, uncensored)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "stheno-abliterated:8b", "name": "Stheno v3.2 Abliterated 8B (uncensored, roleplay)", "quality": "molto alta", "size": "4.9GB"},
     {"id": "fluffy/l3-8b-stheno-v3.2:latest", "name": "Stheno v3.2 8B (uncensored, permissiva)", "quality": "molto alta", "size": "4.9GB"},
     {"id": "hf.co/mradermacher/L3.1-8B-Lunaris-v1-abliterated-GGUF:Q4_K_M", "name": "Lunaris v1 Abliterated 8B (uncensored, roleplay)", "quality": "molto alta", "size": "4.9GB"},
-    {"id": "dolphin-llama3.1:8b", "name": "Dolphin Llama 3.1 8B (uncensored)", "quality": "alta", "size": "4.8GB"},
-    {"id": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M", "name": "Qwen 2.5 3B Abliterated RP ★ (uncensored, roleplay)", "quality": "alta", "size": "2.1GB"},
+    {"id": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M", "name": "Qwen 2.5 3B Abliterated RP ★ (uncensored, roleplay)", "quality": "molto alta", "size": "2.1GB"},
     {"id": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Qwen 2.5 3B Abliterated (uncensored)", "quality": "alta", "size": "2.0GB"},
     {"id": "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Llama 3.2 3B Abliterated (uncensored, fallback)", "quality": "media", "size": "2.0GB"},
-    {"id": "llama3.2:3b", "name": "Llama 3.2 3B (censurato)", "quality": "media", "size": "2.0GB"},
-    {"id": "llama3.2:1b", "name": "Llama 3.2 1B (censurato)", "quality": "base", "size": "0.7GB"},
-    {"id": "openchat/openchat-7b", "name": "OpenChat 7B (censurato)", "quality": "alta", "size": "4.1GB"},
-    {"id": "hf.co/mradermacher/Qwen2.5-7B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Qwen 2.5 7B Abliterated (uncensored, pesante)", "quality": "molto alta", "size": "4.7GB"},
-    {"id": "qwen2.5:7b", "name": "Qwen 2.5 7B (censurato)", "quality": "alta", "size": "4.7GB"},
-    {"id": "llama3.1:8b", "name": "Llama 3.1 8B (censurato)", "quality": "alta", "size": "4.7GB"},
-    {"id": "mistral:7b", "name": "Mistral 7B (censurato)", "quality": "alta", "size": "4.1GB"},
-    {"id": "gemma2:9b", "name": "Gemma 2 9B (censurato)", "quality": "alta", "size": "5.5GB"},
-    {"id": "mixtral:8x7b", "name": "Mixtral 8x7B (censurato)", "quality": "molto alta", "size": "26GB"},
-    {"id": "qwen2.5:14b", "name": "Qwen 2.5 14B (censurato)", "quality": "alta", "size": "9.0GB"},
-    {"id": "mistral-nemo:12b", "name": "Mistral Nemo 12B (censurato)", "quality": "alta", "size": "7.5GB"},
-    {"id": "qwen2.5:32b", "name": "Qwen 2.5 32B (censurato)", "quality": "molto alta", "size": "20GB"},
-    {"id": "deepseek-r1:7b", "name": "DeepSeek-R1 7B (ragiona)", "quality": "alta", "size": "4.7GB"},
-    {"id": "llama3.3:70b", "name": "Llama 3.3 70B (censurato, server grande)", "quality": "top", "size": "40GB"},
-    {"id": "llama3.1:70b", "name": "Llama 3.1 70B (censurato, server grande)", "quality": "top", "size": "40GB"},
-    {"id": "qwen2.5:72b", "name": "Qwen 2.5 72B (censurato, server grande)", "quality": "top", "size": "45GB"},
-    {"id": "deepseek-r1:70b", "name": "DeepSeek-R1 70B (ragiona, server grande)", "quality": "top", "size": "43GB"},
+    {"id": "hf.co/mradermacher/Qwen2.5-7B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Qwen 2.5 7B Abliterated (uncensored)", "quality": "molto alta", "size": "4.7GB"},
 ]
 
 
 def _ollama_available():
+    logger.debug(f"OLLAMA: Checking availability at {OLLAMA_BASE}")
     try:
-        if requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2).status_code == 200:
+        resp = requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2)
+        if resp.status_code == 200:
+            logger.info("OLLAMA: Service is available")
             return True
-    except Exception:
+    except Exception as e:
+        logger.debug(f"OLLAMA: Availability check failed - {type(e).__name__}: {e}")
         pass
-    return _ensure_ollama()
+    result = _ensure_ollama()
+    logger.info(f"OLLAMA: Availability check result: {result}")
+    return result
 
 
 def _ollama_local_models():
+    logger.info(f"OLLAMA: Checking local models at {OLLAMA_BASE}/api/tags")
     if not _ensure_ollama():
+        logger.error("OLLAMA: Service not available")
         return []
     try:
         resp = requests.get(f"{OLLAMA_BASE}/api/tags", timeout=5)
+        logger.debug(f"OLLAMA: GET /api/tags response code: {resp.status_code}")
         if resp.status_code == 200:
-            return [m["name"] for m in resp.json().get("models", [])]
-    except Exception:
-        pass
+            data = resp.json()
+            models = [m["name"] for m in data.get("models", [])]
+            logger.info(f"OLLAMA: Found {len(models)} local models: {models}")
+            return models
+    except Exception as e:
+        logger.error(f"OLLAMA: Error fetching models: {e}")
     return []
 
 
 def _ollama_generate(messages, model, user_id=None):
+    logger.info(f"OLLAMA: Generate request - model={model}, messages={len(messages)}, user_id={user_id}")
     if not _ensure_ollama():
-        logger.error(f"Ollama non disponibile")
+        logger.error("OLLAMA: Service not available for generate")
         return None
     try:
-        logger.info(f"Ollama: invio a {model}, {len(messages)} messaggi")
+        payload = {"model": model, "messages": messages, "options": OLLAMA_OPTIONS, "stream": False}
+        logger.debug(f"OLLAMA: POST {OLLAMA_URL} payload: model={model}, options={OLLAMA_OPTIONS}")
         resp = requests.post(
             OLLAMA_URL,
-            json={"model": model, "messages": messages, "options": OLLAMA_OPTIONS, "stream": False},
-            timeout=120
+            json=payload,
+            timeout=300
         )
         resp.encoding = "utf-8"
+        logger.debug(f"OLLAMA: Response status={resp.status_code}, content-length={len(resp.text)}")
         if resp.status_code == 200:
             content = resp.json().get("message", {}).get("content", "")
             if content:
-                logger.info(f"Ollama: risposta ricevuta ({len(content)} chars)")
+                logger.info(f"OLLAMA: Success - model={model}, response_length={len(content)} chars")
                 return content
             else:
-                logger.warning(f"Ollama: risposta vuota da {model}")
+                logger.warning(f"OLLAMA: Empty response from {model}")
                 return None
-        logger.error(f"Ollama error: {resp.status_code} {resp.text[:300]}")
+        logger.error(f"OLLAMA: HTTP error {resp.status_code} - response: {resp.text[:300]}")
         return None
     except Exception as e:
-        logger.error(f"Ollama request failed: {e}")
+        logger.error(f"OLLAMA: Request failed - model={model}, error={type(e).__name__}: {e}")
         return None
 
 
@@ -153,7 +161,7 @@ register_provider({
     "available": _ollama_available,
     "generate": _ollama_generate,
     "generate_stream": lambda msgs, model, user_id=None: _generate_stream_impl(msgs, model, user_id),
-    "default_model": "stheno-abliterated:8b",
+    "default_model": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M",
 })
 
 

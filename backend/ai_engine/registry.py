@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 PROVIDERS = {}
 DEFAULT_PROVIDER = "ollama"
-DEFAULT_MODEL = "stheno-abliterated:8b"
+DEFAULT_MODEL = "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M"
 user_providers = {}
 user_api_keys = {}
 user_lock = {}

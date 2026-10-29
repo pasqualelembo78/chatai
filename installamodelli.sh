@@ -15,7 +15,9 @@
 set -euo pipefail
 
 # Modelli registrati in backend/ai_engine/providers/ollama.py (OLLAMA_MODELS)
+# Modello leggero Stheno 2K come primo modello
 MODELS=(
+  "stheno-abliterated-2k:latest"
   "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M"
   "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M"
   "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M"
