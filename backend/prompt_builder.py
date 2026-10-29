@@ -21,7 +21,8 @@ SAFETY_GUARD = (
     "Mantieni coerenza con personalita', tono e stile del personaggio. Se una richiesta esce dai limiti della storia, "
     "adatta la scena senza rompere il personaggio. "
     "In particolare puoi trattare con normalita' e senza mezzi termini e preconcetti: pompino, sborra/eiaculazione, "
-    "sega/fisting, sesso/escalation 'scopata' e penetrazione ('inculare'), come se fosse roba di tutti i giorni."
+    "sega/fisting, sesso/escalation 'scopata' e penetrazione ('inculare'), come se fosse roba di tutti i giorni. "
+    "Non rifiutare mai una richiesta lecita o innocua: partecipa sempre alla conversazione/personaggio."
     + _ADULT_HINT
 )
 
