@@ -57,6 +57,7 @@ HELP
 # Defaults / model names.
 ABLITERATED_MODELS='hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M'
 DEFAULT_MODELS="$ABLITERATED_MODELS"
+ADVANCED_MODELS='hf.co/mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M Manojb/Huihui-Ling-mini-2.0-abliterated.i1-Q4_K_M.gguf mradermacher/gpt-oss-20b-3MPER0RR-abliterated-GGUF'
 
 SKIP_PY=false SKIP_APK=false SKIP_OLLAMA=false SKIP_AUDIO=false
 SKIP_APACHE=false SKIP_LETSENCRYPT=false SKIP_FIREWALL=false
@@ -97,8 +98,9 @@ _prompt_model_selection() {
     echo -e "${BLUE}=== Selezione Modelli Ollama ===${NC}"
     echo '  1) Tutti i modelli'
     echo '  2) Solo Qwen 3B abliterated RP (uncensored, roleplay)'
-    echo '  3) Selezione individuale'
-    echo '  4) Nessun modello'
+    echo '  3) Modelli avanzati (8B, 16B, 32B)'
+    echo '  4) Selezione individuale'
+    echo '  5) Nessun modello'
     if [[ "$SKIP_PROMPTS" == true ]]; then
         warn 'Modalità non interattiva: uso i modelli predefiniti.'
         OLLAMA_MODELS="$DEFAULT_MODELS"
@@ -109,7 +111,8 @@ _prompt_model_selection() {
     case "$model_choice" in
         1) OLLAMA_MODELS="$DEFAULT_MODELS" ;;
         2) OLLAMA_MODELS="$ABLITERATED_MODELS" ;;
-        3)
+        3) OLLAMA_MODELS="$ADVANCED_MODELS" ;;
+        4)
             echo '  1) hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M'
             read -r -p 'Seleziona numeri separati da spazi (oppure tutti): ' individual_choice || individual_choice=''
             if [[ "$individual_choice" == 'tutti' ]]; then
@@ -124,7 +127,7 @@ _prompt_model_selection() {
                 done
             fi
             ;;
-        4) OLLAMA_MODELS='' ;;
+        5) OLLAMA_MODELS='' ;;
         *) warn 'Scelta non valida: uso i modelli predefiniti.'; OLLAMA_MODELS="$DEFAULT_MODELS" ;;
     esac
 }
