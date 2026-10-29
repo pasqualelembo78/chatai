@@ -57,7 +57,7 @@ HELP
 # Defaults / model names.
 ABLITERATED_MODELS='hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M'
 UNCENSORED_MODELS='hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M'
-DEFAULT_MODELS="$ABLITERATED_MODELS $UNCENSORED_MODELS"
+DEFAULT_MODELS="$ABLITERATED_MODELS"
 
 SKIP_PY=false SKIP_APK=false SKIP_OLLAMA=false SKIP_AUDIO=false
 SKIP_APACHE=false SKIP_LETSENCRYPT=false SKIP_FIREWALL=false
