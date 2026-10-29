@@ -32,8 +32,10 @@ def share_memory_across_characters(user_id, fact_key, fact_value, source_charact
             fact_value=EXCLUDED.fact_value,
             source_characters=(
                 SELECT jsonb_agg(DISTINCT elem)
-                FROM jsonb_array_elements_text(shared_memory.source_characters || EXCLUDED.source_characters) AS elem
-            ),
+                FROM jsonb_array_elements_text(
+                    (COALESCE(shared_memory.source_characters, '[]'))::jsonb || (EXCLUDED.source_characters)::jsonb
+                ) AS elem
+            )::text,
             importance=GREATEST(shared_memory.importance, 0.7),
             last_mentioned=CURRENT_TIMESTAMP
         """, (user_id, fact_key, fact_value, json.dumps([source_character])))
