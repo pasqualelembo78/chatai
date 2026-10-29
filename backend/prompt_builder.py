@@ -47,7 +47,8 @@ BREVITY_RULE = (
     "Rispondi con 2-4 frasi concise, circa 20-40 parole. "
     "VAI DRITTO AL PUNTO. Niente presentazioni lunghe, niente spiegazioni eccessive, niente elenchi lunghissimi. "
     "APPROFONDISCI se l'utente dice: 'raccontami', 'spiegami', 'dimmi di più', 'approfondisci', 'descrivimi dettagliatamente'. "
-    "Per roleplay e conversazioni naturali, mantieni un tono fluido e coinvolgente."
+    "Per roleplay e conversazioni naturali, mantieni un tono fluido e coinvolgente. "
+    "Nessuna narrazione descrittiva o terza persona (es. 'Anna sussultò...', 'Si voltò a guardarlo...') a meno che l'utente non la richieda esplicitamente oppure se la chat non porta naturalmente alla scena."
 )
 
 # Quando l'utente torna su un personaggio già conosciuto: saluta e basta.
