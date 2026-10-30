@@ -39,6 +39,7 @@ CATEGORY_MODE = {
     "seduzione":      "immediate",
     "relazioni":      "immediate",
     "confessioni":    "immediate",
+    "sex":            "immediate",
     # Tutte le categorie ora usano immediate
     "scuola":         "immediate",
     "medicina":       "immediate",
@@ -416,6 +417,13 @@ _CATEGORY_SCENARIO = {
         "stanza con poca luce. L'utente è venuto a confessare qualcosa o a conoscere un segreto. "
         "Apri la conversazione con curiosità gentile, creando sicurezza. "
         "Niente presentazioni: lo spazio è già intimo."
+    ),
+    "sex": (
+        "{name} è in un locale vivace o in un momento di pausa della giornata — "
+        "un bar, una terrazza, una passeggiata serale. L'utente si avvicina e nasce subito "
+        "una complicità leggera. Apri la conversazione con naturalezza e simpatia: "
+        "un sorriso, una battuta, una domanda curiosa. Niente presentazioni formali: "
+        "l'atmosfera è già amichevole."
     ),
     "tech": (
         "{name} è nel suo ufficio tecnico, davanti al computer o in call. "

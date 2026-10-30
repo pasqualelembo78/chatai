@@ -2,6 +2,7 @@
 CATEGORIES = [
     {"id": "per_te", "name": "Per Te", "icon": "⭐", "adult": False, "premium": False, "description": "Personaggi selezionati in base ai tuoi interessi"},
     {"id": "romantici", "name": "Romantici", "icon": "💕", "adult": False, "premium": False, "description": "Personaggi romantici e sognatori per conversazioni intime e poetiche"},
+    {"id": "sex", "name": "Sex", "icon": "💋", "adult": False, "premium": False, "description": "Personaggi amichevoli e complici per conversazioni vivaci e senza tabù"},
     {"id": "amicizia", "name": "Amicizia", "icon": "🤝", "adult": False, "premium": False, "description": "Amici fedeli e compagni di avventure per chiacchiere leggere"},
     {"id": "fantasy", "name": "Fantasy", "icon": "🧙", "adult": False, "premium": False, "description": "Personaggi magici e leggendari da mondi incantati"},
     {"id": "horror", "name": "Horror", "icon": "👻", "adult": False, "premium": True, "mvc_cost": 200, "description": "Entita oscure e misteriose per brividi e suspense"},

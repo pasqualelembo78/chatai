@@ -121,7 +121,7 @@ CATEGORY_EMOJI = {
     "medicina": "🏥", "business": "💼", "viaggi": "✈️", "motivazione": "💪",
     "cucina": "🍝", "tecnologia": "💻", "tecnici": "🔧", "storia": "🏺",
     "supereroi": "🤜", "sopravvivenza": "🏕️", "sci-fi": "🚀", "sport": "⚽",
-    "flirt": "❤️", "relazioni": "💋", "confessioni": "💬", "seduzione": "🔥",
+    "flirt": "❤️", "relazioni": "💋", "confessioni": "💬", "seduzione": "🔥", "sex": "💋",
     "esperti": "💼", "creativi": "🎭", "quotidiano": "📋", "premium": "💎",
     "intrattenimento": "🎲",
 }
@@ -293,7 +293,7 @@ _CHAR_FILES = [
     "amicizia", "anime", "business", "confessioni", "creativi", "cucina",
     "detective", "esperti", "fantasy", "flirt", "gamer", "horror",
     "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
-    "relazioni", "romantici", "sci_fi", "scuola", "seduzione",
+    "relazioni", "romantici", "sci_fi", "scuola", "seduzione", "sex",
     "sopravvivenza", "speciale", "sport", "storia", "supereroi",
     "tecnici", "tecnologia", "viaggi",
 ]

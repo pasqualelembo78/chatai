@@ -95,7 +95,7 @@ def _row_to_character(row):
         "cucina": "Cucina", "tecnologia": "Tecnologia", "storia": "Storia",
         "supereroi": "Supereroi", "sopravvivenza": "Sopravvivenza", "sci-fi": "Sci-Fi",
         "sport": "Sport", "flirt": "Flirt", "relazioni": "Relazioni",
-        "confessioni": "Confessioni", "seduzione": "Seduzione",
+        "confessioni": "Confessioni", "seduzione": "Seduzione", "sex": "Sex",
     }
     return {
         "id": row["id"],

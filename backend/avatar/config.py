@@ -8,7 +8,7 @@ CHAR_FILES = [
     "amicizia", "anime", "business", "confessioni", "creativi", "cucina",
     "detective", "esperti", "fantasy", "flirt", "gamer", "horror",
     "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
-    "relazioni", "romantici", "sci_fi", "scuola", "seduzione",
+    "relazioni", "romantici", "sci_fi", "scuola", "seduzione", "sex",
     "sopravvivenza", "speciale", "sport", "storia", "supereroi",
     "tecnici", "tecnologia", "viaggi",
 ]
@@ -59,6 +59,7 @@ CATEGORY_ICON_PROMPTS = {
     "relazioni": "Minimalist flat icon of two interlocked rings, relationships theme, pink and gold colors, clean design, white background, vector art style",
     "confessioni": "Minimalist flat icon of a speech bubble with heart, confession theme, soft purple and pink colors, clean design, white background, vector art style",
     "seduzione": "Minimalist flat icon of a rose with thorns, seduction theme, deep red and black colors, clean design, white background, vector art style",
+    "sex": "Minimalist flat icon of a pair of lips with a playful wink, flirtatious friendly theme, magenta and pink colors, clean design, white background, vector art style",
     "esperti": "Minimalist flat icon of a professional badge, experts theme, navy blue and gold colors, clean design, white background, vector art style",
     "creativi": "Minimalist flat icon of a paint palette and brush, creative arts theme, rainbow colors, clean design, white background, vector art style",
     "quotidiano": "Minimalist flat icon of a coffee cup, daily life theme, warm brown and white colors, clean design, white background, vector art style",

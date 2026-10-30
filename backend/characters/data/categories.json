@@ -16,6 +16,14 @@
     "description": "Personaggi romantici e sognatori per conversazioni intime e poetiche"
   },
   {
+    "id": "sex",
+    "name": "Sex",
+    "icon": "💋",
+    "adult": false,
+    "premium": false,
+    "description": "Personaggi amichevoli e complici per conversazioni vivaci e senza tabù"
+  },
+  {
     "id": "amicizia",
     "name": "Amicizia",
     "icon": "🤝",

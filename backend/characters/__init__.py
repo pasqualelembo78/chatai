@@ -17,7 +17,7 @@ _CHAR_FILES = [
     "amicizia", "anime", "business", "creativi", "cucina",
     "detective", "esperti", "fantasy", "gamer", "horror",
     "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
-    "romantici", "sci_fi", "scuola",
+    "romantici", "sci_fi", "scuola", "sex",
     "sopravvivenza", "speciale", "sport", "storia", "supereroi",
     "tecnici", "tecnologia", "viaggi",
 ]
