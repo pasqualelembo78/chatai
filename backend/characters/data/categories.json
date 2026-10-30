@@ -19,7 +19,7 @@
     "id": "sex",
     "name": "Sex",
     "icon": "💋",
-    "adult": false,
+    "adult": true,
     "premium": false,
     "description": "Personaggi amichevoli e complici per conversazioni vivaci e senza tabù"
   },

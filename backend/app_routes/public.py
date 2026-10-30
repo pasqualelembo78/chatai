@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Query, Depends, HTTPException
 
 from characters import get_character, get_categories
-from storage import get_user_preferences, get_user_unlocks
+from storage import get_user_preferences, get_user_unlocks, is_age_verified
 from ai_engine import get_providers
 import ai_engine
 import audio_utils
@@ -55,7 +55,7 @@ async def api_categories(
             is_adult = prefs.get("show_adult", False)
         except Exception:
             pass
-    cats = get_categories()
+    cats = get_categories(include_adult=bool(user and is_age_verified(user.user_id)))
     unlocks = set()
     if user:
         try:

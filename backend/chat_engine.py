@@ -27,6 +27,7 @@ from storage import (
     get_user_preferences,
     add_mevacoins,
     is_content_unlocked,
+    is_age_verified,
     credit_referral_first_message,
     count_all_user_messages,
     get_user_personality, update_user_personality as update_user_personality_db,
@@ -73,6 +74,8 @@ FEATURES = {
 
 def _check_character_access(user_id, character):
     if not user_id:
+        return False
+    if character.get("is_adult") and not is_age_verified(user_id):
         return False
     category_id = character.get("category", "")
     for cat in get_categories():

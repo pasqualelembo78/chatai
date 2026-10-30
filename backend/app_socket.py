@@ -20,6 +20,7 @@ from storage import (
     get_evolution, update_evolution,
     is_user_premium,
     is_content_unlocked,
+    is_age_verified,
     count_all_user_messages,
     credit_referral_first_message,
 )
@@ -62,6 +63,16 @@ def _default_character_id():
     """
     chars = list_characters()
     return chars[0]["id"] if chars else None
+
+
+def _adult_blocked(user_id, character):
+    """True se il personaggio e' per adulti e l'utente non ha eta' verificata."""
+    if not character or not character.get("is_adult"):
+        return False
+    try:
+        return not is_age_verified(user_id)
+    except Exception:
+        return True
 
 
 def register_socket_handlers(sio):
@@ -111,6 +122,9 @@ def register_socket_handlers(sio):
         user_rooms[sid] = user_id
         user_names[sid] = username
         character = get_character(character_id)
+        if _adult_blocked(user_id, character):
+            await sio.emit("error", {"message": "Contenuto riservato a utenti maggiorenni verificati"}, room=sid)
+            return
         character_name = character["name"] if character else "AI"
         await sio.enter_room(sid, user_id)
         if not character:
@@ -161,6 +175,9 @@ def register_socket_handlers(sio):
         character_id = data.get("character", _default_character_id())
         image_b64 = data.get("image", "")
         image_mime = data.get("image_mime", "image/jpeg")
+        if _adult_blocked(user_id, get_character(character_id)):
+            await sio.emit("error", {"message": "Contenuto riservato a utenti maggiorenni verificati"}, room=sid)
+            return
         if not text and not image_b64:
             return
         if text:
@@ -253,6 +270,9 @@ def register_socket_handlers(sio):
         character_id = data.get("character", _default_character_id())
         image_b64 = data.get("image", "")
         image_mime = data.get("image_mime", "image/jpeg")
+        if _adult_blocked(user_id, get_character(character_id)):
+            await sio.emit("error", {"message": "Contenuto riservato a utenti maggiorenni verificati"}, room=sid)
+            return
         if not text and not image_b64:
             return
         if text:

@@ -222,8 +222,8 @@ def list_characters(include_adult=False):
     return [c for c in cached if not c.get("is_adult")]
 
 
-def get_categories():
-    return [c for c in CATEGORIES if not c.get("adult")]
+def get_categories(include_adult=False):
+    return [c for c in CATEGORIES if include_adult or not c.get("adult")]
 
 
 _CAT_CACHE = {}
@@ -246,17 +246,20 @@ def get_characters_by_category(category_id, include_adult=False):
     return [c for c in result if not c.get("is_adult")]
 
 
-def search_characters(query):
+def search_characters(query, include_adult=False):
     query = query.lower()
     from storage import get_all_user_characters
     predefined = [_enrich(c) for c in CHARACTERS if query in c["name"].lower() or query in c.get("description", "").lower() or any(query in t.lower() for t in c.get("tags", []))]
     user_chars = [c for c in get_all_user_characters() if query in c["name"].lower() or query in c.get("description", "").lower() or any(query in t.lower() for t in c.get("tags", []))]
-    return [c for c in (predefined + user_chars) if not c.get("is_adult")]
+    results = predefined + user_chars
+    if include_adult:
+        return results
+    return [c for c in results if not c.get("is_adult")]
 
 
 def get_adult_characters():
-    # Contenuti adulti rimossi dall'app: non esposti piu'.
-    return []
+    """Personaggi per adulti. Da esporre solo a utenti con eta' verificata."""
+    return [_enrich(c) for c in CHARACTERS if c.get("is_adult")]
 
 
 def filter_characters_by_gender(characters, gender_interest):

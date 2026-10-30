@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 from characters import get_character, list_characters, get_categories
-from storage import is_content_unlocked, flag_user
+from storage import is_content_unlocked, flag_user, is_age_verified
 import audio_utils
 import image_utils
 import security_utils
@@ -42,6 +42,8 @@ def _send_alert(message):
 
 def _check_character_access(user_id, character):
     if not user_id:
+        return False
+    if character.get("is_adult") and not is_age_verified(user_id):
         return False
     category_id = character.get("category", "")
     for cat in get_categories():
