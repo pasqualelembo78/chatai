@@ -54,7 +54,6 @@ Uso: ./build_app.sh [opzioni]
 HELP
 }
 
-# Defaults / model names.
 ABLITERATED_MODELS='hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M'
 DEFAULT_MODELS="$ABLITERATED_MODELS"
 ADVANCED_MODELS='hf.co/mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M Manojb/Huihui-Ling-mini-2.0-abliterated.i1-Q4_K_M.gguf mradermacher/gpt-oss-20b-3MPER0RR-abliterated-GGUF'

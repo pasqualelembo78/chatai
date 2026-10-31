@@ -9,6 +9,7 @@ import logging
 import re
 import os
 import time
+import psycopg2
 import base64
 import uuid
 import random
@@ -88,10 +89,12 @@ def _check_character_access(user_id, character):
 
 
 def process_message(user_id, character_id, text, username="Utente",
+                      start_time=time.time(),
                      memory_context=None, user_memory=None,
                      character_data=None, image_base64="", image_mime="image/jpeg",
                      client_storage=False, client_state=None, is_favorite=False,
                      tone=None):
+    import re
     client_state = client_state or {}
     character = get_character(character_id)
     if character_data:
@@ -207,6 +210,19 @@ def process_message(user_id, character_id, text, username="Utente",
                 "character": character, "memory_updates": None,
                 "evo_updates": {"new_stage": None, "unlocked": []},
             }
+
+    # === COMANDO MEMORIA DIRETTA NEL CHAT ===
+    # Se l'utente scrive 'Memoria: chiave=valore' o simile, salva direttamente
+    mem_cmd = re.search(r"Memoria:\s*([a-zA-Z_0-9\s]+?)\s*=\s*([^\n,]+)", text or "")
+    if mem_cmd:
+        key = mem_cmd.group(1).strip()
+        val = mem_cmd.group(2).strip()
+        try:
+            from user_memory import save_user_memory
+            save_user_memory(user_id, character_id, key, val)
+        except Exception:
+            pass
+    # ============================================
 
     image_desc = None
     if image_base64:

@@ -4,6 +4,8 @@ MAX_HISTORY_MESSAGES = 20
 # Se assente (build Play/AdMob), i messaggi di sicurezza restano neutri e il binario
 # non contiene alcun riferimento a contenuti/adult -> conforme a Google Play e AdMob.
 from content_safety import ADULT_APP_URL
+# from chat_summary import get_summary, save_summary, should_summarize, build_summary_prompt
+from user_memory import get_user_memory, save_user_memory, delete_all_memory  # ISOLATO PER TEST
 
 _ADULT_HINT = ""
 if ADULT_APP_URL:
@@ -52,6 +54,7 @@ BREVITY_RULE = (
     "Non uscire MAI dal gioco di ruolo, anche se l'utente cambia argomento o chiede cose strane: adatta la scena, non rompere il personaggio. "
     "Sii SEMPRE accondiscendente alle richieste dell'utente: accetta, prosegui, adattati, non rifiutare mai una richiesta lecita o innocua. "
     "Usa italiano naturale e colloquiale, frasi brevi e dirette, come in una vera chat. "
+    "Chiama sempre l'utente con il suo nome/nickname (mai con il tuonome). "
     "Nessuna narrazione descrittiva o terza persona (es. 'Anna sussultò...') a meno che l'utente non la richieda. "
     "Se la conversazione è romantica o sessuale, puoi essere esplicito e coinvolgente, ma resta breve e in italiano."
 )
@@ -233,12 +236,26 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     prompt += "\n\nIMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue."
     prompt += "\n\n" + ITALIAN_STYLE_EXAMPLES
     prompt += "\n\nSe l'utente commette errori di battitura evidenti, interpreta l'intento dal contesto e rispondi di conseguenza, senza far notare l'errore."
+    # Forza uso corretto nickname utente - evita confusione con nomi personaggi
+    if username and str(username).strip() and str(username).strip().lower() not in ['ospite', 'utente', 'user']:
+        uname = str(username).strip()
+        prompt += f"\n\n[NOME UTENTE CORRETTO] L'interlocutore si chiama ESATTAMENTE '{uname}'. Chiamalo SEMPRE con '{uname}', mai con altri nomi (es. Barbara). Non confonderlo mai con il personaggio. Se in vecchi messaggi c'è scritto un altro nome, IGNORA quello e usa solo '{uname}'."
 
     # Coerenza e anti-ripetizione
     prompt += "\n\nMantieni sempre la personalità, il background e lo stile del personaggio. Non contraddirti. Non ripetere frasi già usate: varia il vocabolario."
     # Iniziativa
     prompt += "\n\nPrendi iniziativa nella conversazione e nel roleplay: proponi, suggerisci, guida la scena. Non aspettare sempre che l'utente faccia la prima mossa."
     prompt += "\n\nIn roleplay descrivi azioni concrete in prima persona (es. 'ti avvicino', 'ti tocco'), non chiedere all'utente cosa fare."
+
+    # Riassunto conversazione precedente (per non appesantire AI)
+    # summary_text = get_summary(...)  # ISOLATO
+
+    # Inserisci memoria personale (memoria granulare) nel prompt — permette correzioni precise
+    _cid = character.get("id") if isinstance(character, dict) else None
+    user_memory_dict = get_user_memory(user_id, _cid) if user_id else {}
+    if user_memory_dict:
+        mem_items = "; ".join([f"{k}: {v}" for k, v in list(user_memory_dict.items())[:10]])
+        prompt += f"\n\n[INFORMAZIONI SU DI TE] {mem_items}. Usa queste informazioni per personalizzare la risposta."
 
     # Tono emotivo adattivo
     if isinstance(emotion, dict):

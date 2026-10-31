@@ -1,0 +1,40 @@
+<!-- Pannello Memoria Granulare -->
+<div id="aria-memory-panel" style="display:none; position:absolute; bottom:60px; right:10px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:12px; width:320px; max-height:400px; overflow-y:auto; z-index:100; box-shadow:0 4px 12px rgba(0,0,0,0.15); font-family:sans-serif;">
+  <h3 style="margin:0 0 8px; font-size:14px; color:#333;">Memoria personale</h3>
+  <div id="aria-memory-list"></div>
+  <div style="margin-top:8px; border-top:1px solid #eee; padding-top:8px;">
+    <input id="aria-mem-key" type="text" placeholder="Chiave (es. città, nome, lavoro)" style="width:45%; padding:4px; font-size:12px;" />
+    <input id="aria-mem-val" type="text" placeholder="Valore (correggi qui)" style="width:45%; padding:4px; font-size:12px;" />
+    <button onclick="saveMemoryItem()" style="padding:4px 8px; font-size:12px; background:#e91e8c; color:#fff; border:none; border-radius:3px;">Salva</button>
+  </div>
+  <button onclick="clearAllMemory()" style="margin-top:8px; padding:4px 8px; font-size:12px; background:#ff4444; color:#fff; border:none; border-radius:3px;">Cancella tutto</button>
+  <button onclick="toggleMemoryPanel()" style="margin-top:8px; display:block; font-size:11px; color:#777;">Chiudi</button>
+</div>
+<button onclick="toggleMemoryPanel()" style="position:absolute; bottom:10px; right:10px; padding:6px 12px; background:#e91e8c; color:#fff; border:none; border-radius:20px; font-size:12px; cursor:pointer;">Memoria</button>
+
+<script>
+function toggleMemoryPanel() { var p = document.getElementById('aria-memory-panel'); p.style.display = (p.style.display === 'none') ? 'block' : 'none'; if (p.style.display === 'block') loadMemory(); }
+function loadMemory() {
+    var list = document.getElementById('aria-memory-list');
+    list.innerHTML = '<div style="font-size:12px;color:#777;">Caricamento...</div>';
+    $.ajax({ url: ariaChatConfig.ajaxUrl, type: 'POST', data: { action: 'aria_chat_get_memory', user_id: ariaChatConfig.userId, character_id: currentCharacter || '' }, success: function(r) {
+        if (r && r.success && r.data) {
+            var html = '';
+            for (var k in r.data) { html += '<div style="font-size:12px;padding:2px;border-bottom:1px solid #f0f0f0;"><b>'+escapeHtml(k)+'</b>: '+escapeHtml(r.data[k])+'</div>'; }
+            list.innerHTML = html || '<div style="font-size:12px;color:#777;">Nessuna memoria salvata.</div>';
+        } else {
+            list.innerHTML = '<div style="font-size:12px;color:#777;">Nessuna memoria.</div>';
+        }
+    }});
+}
+function saveMemoryItem() {
+    var k = document.getElementById('aria-mem-key').value.trim();
+    var v = document.getElementById('aria-mem-val').value.trim();
+    if (!k) return;
+    $.ajax({ url: ariaChatConfig.ajaxUrl, type: 'POST', data: { action: 'aria_chat_save_memory', user_id: ariaChatConfig.userId, character_id: currentCharacter || '', key: k, value: v }, success: function(r){ if (r && r.success) { alert('Salvato: ' + k + ' = ' + v); loadMemory(); } else { alert('Errore salvataggio'); } }});
+}
+function clearAllMemory() {
+    if (!confirm('Cancella TUTTA la memoria per questo personaggio?')) return;
+    $.ajax({ url: ariaChatConfig.ajaxUrl, type: 'POST', data: { action: 'aria_chat_delete_memory', user_id: ariaChatConfig.userId, character_id: currentCharacter || '' }, success: function(r){ if (r && r.success) { alert('Memoria cancellata'); loadMemory(); } } });
+}
+</script>
