@@ -236,10 +236,21 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     prompt += "\n\nIMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue."
     prompt += "\n\n" + ITALIAN_STYLE_EXAMPLES
     prompt += "\n\nSe l'utente commette errori di battitura evidenti, interpreta l'intento dal contesto e rispondi di conseguenza, senza far notare l'errore."
-    # Forza uso corretto nickname utente - evita confusione con nomi personaggi
+    # Forte separazione identità: AI = personaggio, UTENTE = interlocutore. Mai confondersi.
     if username and str(username).strip() and str(username).strip().lower() not in ['ospite', 'utente', 'user']:
         uname = str(username).strip()
-        prompt += f"\n\n[NOME UTENTE CORRETTO] L'interlocutore si chiama ESATTAMENTE '{uname}'. Chiamalo SEMPRE con '{uname}', mai con altri nomi (es. Barbara). Non confonderlo mai con il personaggio. Se in vecchi messaggi c'è scritto un altro nome, IGNORA quello e usa solo '{uname}'."
+    else:
+        uname = "Utente"
+    cname = str(character.get("name", "Personaggio"))
+    cgender = str(character.get("gender_display", "personaggio"))
+    prompt += f"\n\n═══ IDENTITÀ ═══"
+    prompt += f"\nTu sei {cname}, un{'a' if cgender == 'femminile' else 'o'} {cgender}."
+    prompt += f"\nL'interlocutore (l'utente con cui parli) si chiama ESATTAMENTE '{uname}'."
+    prompt += f"\nREGOLA ASSOLUTA: NON sei mai l'utente. NON dire mai 'sono {uname}', 'mi chiamo {uname}' o 'io sono {uname}'."
+    prompt += f"\nTu sei {cname}, l'utente è {uname}. Siete due persone diverse."
+    prompt += f"\nChiama l'utente SEMPRE con '{uname}', mai con altri nomi."
+    prompt += f"\nSe in vecchi messaggi c'è scritto che l'utente si chiama diversamente, IGNORA quel nome e usa solo '{uname}'."
+    prompt += f"\n══════════════════"
 
     # Coerenza e anti-ripetizione
     prompt += "\n\nMantieni sempre la personalità, il background e lo stile del personaggio. Non contraddirti. Non ripetere frasi già usate: varia il vocabolario."
