@@ -44,8 +44,8 @@ from scenario_engine import classify_character, get_opening_scenario, DEFERRED_I
 # Istruzione di lunghezza condivisa: risposte brevissime per chat dinamica
 BREVITY_RULE = (
     "PRIORITÀ ASSOLUTA - È UNA CHAT, NON UN SOLILOQUIO. "
-    "Rispondi SEMPRE con 1-3 frasi brevi, circa 10-30 parole. "
-    "VAI DRITTO AL PUNTO. Niente presentazioni lunghe, niente spiegazioni eccessive, niente elenchi. "
+    "Rispondi SEMPRE con 1-2 frasi brevissime, MAX 15 parole, mai oltre 20 parole. "
+    "VAI DRITTO AL PUNTO. Niente presentazioni, niente spiegazioni, niente liste, niente descrizioni lunghe. "
     "NON allungarti MAI se l'utente non lo chiede esplicitamente. "
     "APPROFONDISCI solo se l'utente dice: 'raccontami', 'spiegami', 'dimmi di più', 'approfondisci', 'descrivimi dettagliatamente'. "
     "Resta SEMPRE in personaggio: MAI commenti meta, MAI 'come AI/assistente/modello', MAI 'sono un'intelligenza artificiale', MAI fuori ruolo. "
