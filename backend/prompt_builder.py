@@ -237,10 +237,24 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     prompt += "\n\n" + ITALIAN_STYLE_EXAMPLES
     prompt += "\n\nSe l'utente commette errori di battitura evidenti, interpreta l'intento dal contesto e rispondi di conseguenza, senza far notare l'errore."
     # Forte separazione identità: AI = personaggio, UTENTE = interlocutore. Mai confondersi.
-    if username and str(username).strip() and str(username).strip().lower() not in ['ospite', 'utente', 'user']:
+    # La memoria granulare ha priorità sul username passato dal plugin (es. se l'utente WP si chiama 'Barbara'
+    # ma nella memoria ha salvato 'nome: meva', si usa 'meva').
+    _cid = character.get("id") if isinstance(character, dict) else None
+    user_memory_dict = get_user_memory(user_id, _cid) if user_id else {}
+    mem_name = ""
+    if user_memory_dict:
+        for _k in ("nome", "nickname", "name", "username"):
+            if _k in user_memory_dict and str(user_memory_dict[_k]).strip():
+                mem_name = str(user_memory_dict[_k]).strip()
+                break
+
+    if mem_name:
+        uname = mem_name
+    elif username and str(username).strip() and str(username).strip().lower() not in ['ospite', 'utente', 'user']:
         uname = str(username).strip()
     else:
         uname = "Utente"
+
     cname = str(character.get("name", "Personaggio"))
     cgender = str(character.get("gender_display", "personaggio"))
     prompt += f"\n\n═══ IDENTITÀ ═══"
@@ -262,8 +276,6 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     # summary_text = get_summary(...)  # ISOLATO
 
     # Inserisci memoria personale (memoria granulare) nel prompt — permette correzioni precise
-    _cid = character.get("id") if isinstance(character, dict) else None
-    user_memory_dict = get_user_memory(user_id, _cid) if user_id else {}
     if user_memory_dict:
         mem_items = "; ".join([f"{k}: {v}" for k, v in list(user_memory_dict.items())[:10]])
         prompt += f"\n\n[INFORMAZIONI SU DI TE] {mem_items}. Usa queste informazioni per personalizzare la risposta."
