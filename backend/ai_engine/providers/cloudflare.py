@@ -36,7 +36,7 @@ def _cloudflare_generate(messages, model, uid=None):
         resp = requests.post(
             f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions",
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-            json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
+            json={"model": model, "messages": messages, "temperature": 0.7, "max_tokens": 100},
             timeout=60
         )
         resp.encoding = "utf-8"
@@ -58,7 +58,7 @@ def _cloudflare_generate_stream(messages, model, uid=None):
     yield from _stream_openai_compatible(
         f"https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/v1/chat/completions",
         {"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        {"messages": messages, "temperature": 0.9, "max_tokens": 200},
+        {"messages": messages, "temperature": 0.7, "max_tokens": 100},
         model
     )
 

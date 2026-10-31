@@ -8,10 +8,8 @@ CHAT_PROVIDER = os.environ.get("CHAT_PROVIDER", "groq").lower()
 
 GROQ_CHAT_MODELS = [
     "openai/gpt-oss-120b",
-    "llama-3.1-8b-instant",
-    "qwen/qwen3-32b",
-    "qwen/qwen3.6-27b",
-    "meta-llama/llama-4-scout-17b-16e-instruct",
+    "qwen/qwen3.8-27b",
+    "openai/gpt-oss-20b",
 ]
 
 

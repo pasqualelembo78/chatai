@@ -182,8 +182,9 @@ def init_db():
         # Migrazione: aggiunge verified_birth_year se manca (tabelle esistenti).
         try:
             cur.execute("ALTER TABLE user_preferences ADD COLUMN verified_birth_year INTEGER DEFAULT 0")
+            conn.commit()
         except Exception:
-            pass
+            conn.rollback()
         cur.execute("""
             CREATE TABLE IF NOT EXISTS mevacoins (
                 user_id TEXT PRIMARY KEY,

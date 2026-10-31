@@ -161,7 +161,7 @@ register_provider({
     "available": _ollama_available,
     "generate": _ollama_generate,
     "generate_stream": lambda msgs, model, user_id=None: _generate_stream_impl(msgs, model, user_id),
-    "default_model": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M",
+    "default_model": "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M",
 })
 
 

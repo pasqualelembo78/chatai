@@ -526,7 +526,7 @@ def process_message(user_id, character_id, text, username="Utente",
 
     # Post-processing: forza risposte brevi in chat (regola ferrea)
     try:
-        user_text_lower = (user_message or "").lower()
+        user_text_lower = (text or "").lower()
         force_long = any(k in user_text_lower for k in ["raccontami", "spiegami", "dimmi di più", "approfondisci", "descrivimi dettagliatamente"])
         if not force_long and isinstance(ai_text, str):
             text_clean = ai_text.strip()
@@ -551,13 +551,37 @@ def process_message(user_id, character_id, text, username="Utente",
                 ai_text = sent_list[0].strip()
             text_clean = ai_text.strip()
             words = re.sub(r'[^a-zA-ZàèéìòùÀÈÉÌÒÙ0-9\s\!\?\.\,]', ' ', text_clean).split()
-            if len(words) > 8:
-                ai_text = " ".join(words[:8]) + "."
+            if len(words) > 18:
+                ai_text = " ".join(words[:18]) + "."
     except Exception as e:
         logger.debug(f"Troncamento risposta fallito: {e}")
     except Exception as e:
         logger.debug(f"Troncamento risposta fallito: {e}")
     
+    # Anti-generico: forza azione concreta in roleplay (solo Barbara)
+    try:
+        if character_id == "barbara_sex":
+            _tl = (text or "").lower()
+            _is_rp = ("dottore" in _tl or "esamin" in _tl or "paziente" in _tl or "barista" in _tl or "cliente" in _tl or "giocare" in _tl or "gioco" in _tl or "ruolo" in _tl or "proponi" in _tl or "bello" in _tl)
+            _generic = False
+            if isinstance(ai_text, str):
+                _low = ai_text.lower()
+                _generic = any(g in _low for g in ["come posso aiutarti", "cosa vuoi fare", "dimmi cosa", "stai soffrendo", "cosa hai", "come ti senti", "prego", "esamino il paziente", "certamente", "dimmi qualcosa", "raccontami qualcosa", "ciao, barbara", "ciao barbara"])
+            if _is_rp or _generic:
+                if "barbara" in _low and "ciao" in _low:
+                    ai_text = "Ciao! Come va?"
+                elif "dottore" in _tl or "esamin" in _tl or "paziente" in _tl:
+                    ai_text = "Sdraiati sul lettino, abbassa i pantaloni. Ti visito io, rilassati."
+                elif "barista" in _tl or "cliente" in _tl:
+                    ai_text = "Ti servo un drink e mi avvicino. Cosa prendi?"
+                else:
+                    ai_text = "Ti avvicino e ti bacio. Cosa vuoi fare ora?"
+                # Continuazione se l'utente chiede di proseguire
+                if isinstance(ai_text, str) and ("quindi" in _tl or "continua" in _tl or "avanti" in _tl or "poi" in _tl or ai_text.strip().lower() in ("ciao", "ciao!", "ciao.")):
+                    ai_text = "Ti prendo per mano e ti porto sul letto. Iniziamo il gioco."
+    except Exception:
+        pass
+
     result = {
         "ai_text": ai_text, "ai_provider": ai_provider, "ai_model": ai_model,
         "is_fallback": is_fallback, "emotion": emotion, "intensity": intensity,

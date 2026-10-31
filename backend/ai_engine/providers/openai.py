@@ -31,7 +31,7 @@ def _openai_generate(messages, model, user_id=None):
         resp = requests.post(
             "https://api.openai.com/v1/chat/completions",
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-            json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
+            json={"model": model, "messages": messages, "temperature": 0.7, "max_tokens": 100},
             timeout=60
         )
         resp.encoding = "utf-8"
@@ -53,7 +53,7 @@ def _openai_generate_stream(messages, model, user_id=None):
     yield from _stream_openai_compatible(
         "https://api.openai.com/v1/chat/completions",
         {"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        {"messages": messages, "temperature": 0.9, "max_tokens": 200},
+        {"messages": messages, "temperature": 0.7, "max_tokens": 100},
         model
     )
 

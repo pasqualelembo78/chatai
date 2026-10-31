@@ -119,7 +119,7 @@ def _anthropic_generate_stream(messages, model, user_id=None):
         else:
             chat.append({"role": m["role"], "content": m["content"]})
     try:
-        body = {"model": model, "max_tokens": 200, "messages": chat, "stream": True}
+        body = {"model": model, "max_tokens": 100, "messages": chat, "stream": True}
         if system.strip():
             body["system"] = system.strip()
         resp = requests.post(

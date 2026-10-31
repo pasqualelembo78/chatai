@@ -37,7 +37,7 @@ def _anthropic_generate(messages, model, user_id=None):
     try:
         body = {
             "model": model,
-            "max_tokens": 200,
+            "max_tokens": 100,
             "messages": chat,
         }
         if system.strip():

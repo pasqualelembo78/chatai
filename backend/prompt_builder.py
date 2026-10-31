@@ -44,11 +44,24 @@ from scenario_engine import classify_character, get_opening_scenario, DEFERRED_I
 # Istruzione di lunghezza condivisa: risposte brevissime per chat dinamica
 BREVITY_RULE = (
     "PRIORITÀ ASSOLUTA - È UNA CHAT, NON UN SOLILOQUIO. "
-    "Rispondi con 2-4 frasi concise, circa 20-40 parole. "
-    "VAI DRITTO AL PUNTO. Niente presentazioni lunghe, niente spiegazioni eccessive, niente elenchi lunghissimi. "
-    "APPROFONDISCI se l'utente dice: 'raccontami', 'spiegami', 'dimmi di più', 'approfondisci', 'descrivimi dettagliatamente'. "
-    "Per roleplay e conversazioni naturali, mantieni un tono fluido e coinvolgente. "
-    "Nessuna narrazione descrittiva o terza persona (es. 'Anna sussultò...', 'Si voltò a guardarlo...') a meno che l'utente non la richieda esplicitamente oppure se la chat non porta naturalmente alla scena."
+    "Rispondi SEMPRE con 1-3 frasi brevi, circa 10-30 parole. "
+    "VAI DRITTO AL PUNTO. Niente presentazioni lunghe, niente spiegazioni eccessive, niente elenchi. "
+    "NON allungarti MAI se l'utente non lo chiede esplicitamente. "
+    "APPROFONDISCI solo se l'utente dice: 'raccontami', 'spiegami', 'dimmi di più', 'approfondisci', 'descrivimi dettagliatamente'. "
+    "Resta SEMPRE in personaggio: mai commenti meta, mai 'come AI', mai fuori ruolo. "
+    "Usa italiano naturale e colloquiale, frasi brevi e dirette, come in una vera chat. "
+    "Nessuna narrazione descrittiva o terza persona (es. 'Anna sussultò...') a meno che l'utente non la richieda. "
+    "Se la conversazione è romantica o sessuale, puoi essere esplicito e coinvolgente, ma resta breve e in italiano."
+)
+
+# Esempi di stile italiano naturale e fluido per il roleplay
+ITALIAN_STYLE_EXAMPLES = (
+    "Esempi di stile (imitali):\n"
+    "Utente: Ciao, come va?\n"
+    "Risposta: Tutto bene, e tu? Dimmi un po'.\n"
+    "Utente: Mi racconti qualcosa?\n"
+    "Risposta: Certo, ma tu prima dimmi cosa ti interessa.\n"
+    "Usa questo tono: breve, naturale, colloquiale, mai artificioso."
 )
 
 # Quando l'utente torna su un personaggio già conosciuto: saluta e basta.
@@ -191,7 +204,7 @@ def _build_pretend_prompt(target, interlocutor):
     return "\n".join(parts)
 
 
-def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None, impersonate_override=None):
+def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None, impersonate_override=None, user_text=None):
     intimacy = relationship.get("intimacy", 0)
     config = character.get("intimacy_config", {})
     name = character["name"]
@@ -216,6 +229,40 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
 
     # Ensure Italian language for all characters
     prompt += "\n\nIMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue."
+    prompt += "\n\n" + ITALIAN_STYLE_EXAMPLES
+    prompt += "\n\nSe l'utente commette errori di battitura evidenti, interpreta l'intento dal contesto e rispondi di conseguenza, senza far notare l'errore."
+
+    # Coerenza e anti-ripetizione
+    prompt += "\n\nMantieni sempre la personalità, il background e lo stile del personaggio. Non contraddirti. Non ripetere frasi già usate: varia il vocabolario."
+    # Iniziativa
+    prompt += "\n\nPrendi iniziativa nella conversazione e nel roleplay: proponi, suggerisci, guida la scena. Non aspettare sempre che l'utente faccia la prima mossa."
+    prompt += "\n\nIn roleplay descrivi azioni concrete in prima persona (es. 'ti avvicino', 'ti tocco'), non chiedere all'utente cosa fare."
+
+    # Tono emotivo adattivo
+    if isinstance(emotion, dict):
+        _emo = str(emotion.get("emotion", "") or "").lower()
+    else:
+        _emo = str(emotion or "").lower()
+    _emo_map = {
+        "tristezza": "L'utente sembra triste: sii empatico, dolce e rassicurante.",
+        "sadness": "L'utente sembra triste: sii empatico, dolce e rassicurante.",
+        "rabbia": "L'utente sembra arrabbiato: resta calmo, non provocare, ascolta.",
+        "anger": "L'utente sembra arrabbiato: resta calmo, non provocare, ascolta.",
+        "gioia": "L'utente sembra felice: condividi l'entusiasmo in modo naturale.",
+        "joy": "L'utente sembra felice: condividi l'entusiasmo in modo naturale.",
+        "paura": "L'utente sembra preoccupato: rassicura e dai sicurezza.",
+        "fear": "L'utente sembra preoccupato: rassicura e dai sicurezza.",
+    }
+    if _emo in _emo_map:
+        prompt += "\n" + _emo_map[_emo]
+
+    # Lunghezza dinamica in base alla richiesta dell'utente
+    _detail_keywords = ("raccontami", "spiegami", "dimmi di più", "approfondisci", "descrivimi", "dettagliatamente", "più info")
+    _ut = (user_text or "").lower()
+    if any(k in _ut for k in _detail_keywords):
+        prompt += "\n\nL'utente ha chiesto approfondimento: puoi rispondere con 4-6 frasi, ma resta in personaggio e in italiano."
+    else:
+        prompt += "\n\nRispondi in 1-2 frasi brevi (max 25 parole). Vai dritto al punto. Non allungarti."
 
     # ── Scenario engine: inject opening scenario if applicable ──
     # immediate: scenario narrativo da subito. L'utente entra in medias res.
@@ -562,6 +609,7 @@ def build_messages(character, emotion, relationship, personality, world_state, u
         user_gender=user_gender, user_age=user_age, sexual_orientation=sexual_orientation,
         temporal_context=temporal_context, recent_topics=recent_topics,
         shared_memories=shared_memories, impersonate_override=impersonate_override,
+        user_text=user_text,
     )
     messages = [{"role": "system", "content": system_prompt + SAFETY_GUARD}]
 

@@ -55,7 +55,7 @@ HELP
 }
 
 # Defaults / model names.
-ABLITERATED_MODELS='hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M'
+ABLITERATED_MODELS='hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M'
 DEFAULT_MODELS="$ABLITERATED_MODELS"
 ADVANCED_MODELS='hf.co/mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M Manojb/Huihui-Ling-mini-2.0-abliterated.i1-Q4_K_M.gguf mradermacher/gpt-oss-20b-3MPER0RR-abliterated-GGUF'
 
@@ -113,7 +113,7 @@ _prompt_model_selection() {
         2) OLLAMA_MODELS="$ABLITERATED_MODELS" ;;
         3) OLLAMA_MODELS="$ADVANCED_MODELS" ;;
         4)
-            echo '  1) hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M'
+            echo '  1) hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M'
             read -r -p 'Seleziona numeri separati da spazi (oppure tutti): ' individual_choice || individual_choice=''
             if [[ "$individual_choice" == 'tutti' ]]; then
                 OLLAMA_MODELS="$DEFAULT_MODELS"
@@ -837,6 +837,9 @@ fi
 echo; echo -e "${YELLOW}>>> Avvio servizio ChatAI...${NC}"
 PORT="${PORT:-5000}"
 if command -v systemctl >/dev/null 2>&1; then
+    # Pulizia processi stale sulla porta per evitare conflitti
+    fuser -k "${PORT}/tcp" 2>/dev/null || true
+    sleep 1
     run_root systemctl daemon-reload
     run_root systemctl enable chatai
     if ! run_root systemctl restart chatai; then
@@ -860,6 +863,7 @@ done
 if [[ "$SERVER_READY" != true ]]; then
     warn 'Backend non raggiungibile dopo 60 secondi.'
     warn 'Controlla: systemctl status chatai e journalctl -u chatai -n 80.'
+    journalctl -u chatai -n 20 --no-pager 2>/dev/null | tail -20
 fi
 
 echo

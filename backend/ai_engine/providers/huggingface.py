@@ -32,7 +32,7 @@ def _huggingface_generate(messages, model, user_id=None):
         resp = requests.post(
             "https://router.huggingface.co/v1/chat/completions",
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-            json={"model": model, "messages": messages, "max_tokens": 500, "temperature": 0.9},
+            json={"model": model, "messages": messages, "max_tokens": 500, "temperature": 0.7},
             timeout=120
         )
         resp.encoding = "utf-8"

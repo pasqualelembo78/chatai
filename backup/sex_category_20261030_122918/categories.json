@@ -1,0 +1,219 @@
+[
+  {
+    "id": "per_te",
+    "name": "Per Te",
+    "icon": "⭐",
+    "adult": false,
+    "premium": false,
+    "description": "Personaggi selezionati in base ai tuoi interessi"
+  },
+  {
+    "id": "romantici",
+    "name": "Romantici",
+    "icon": "💕",
+    "adult": false,
+    "premium": false,
+    "description": "Personaggi romantici e sognatori per conversazioni intime e poetiche"
+  },
+  {
+    "id": "amicizia",
+    "name": "Amicizia",
+    "icon": "🤝",
+    "adult": false,
+    "premium": false,
+    "description": "Amici fedeli e compagni di avventure per chiacchiere leggere"
+  },
+  {
+    "id": "fantasy",
+    "name": "Fantasy",
+    "icon": "🧙",
+    "adult": false,
+    "premium": false,
+    "description": "Personaggi magici e leggendari da mondi incantati"
+  },
+  {
+    "id": "horror",
+    "name": "Horror",
+    "icon": "👻",
+    "adult": false,
+    "premium": true,
+    "mvc_cost": 200,
+    "description": "Entita oscure e misteriose per brividi e suspense"
+  },
+  {
+    "id": "anime",
+    "name": "Anime",
+    "icon": "🎮",
+    "adult": false,
+    "premium": false,
+    "description": "Personaggi ispirati al mondo degli anime e manga"
+  },
+  {
+    "id": "scuola",
+    "name": "Scuola",
+    "icon": "🎓",
+    "adult": false,
+    "premium": false,
+    "description": "Insegnanti e studenti per conversazioni educative"
+  },
+  {
+    "id": "gamer",
+    "name": "Gamer",
+    "icon": "🕹️",
+    "adult": false,
+    "premium": false,
+    "description": "Giocatori e personaggi virtuali per sfide e gaming"
+  },
+  {
+    "id": "detective",
+    "name": "Detective",
+    "icon": "🕵️",
+    "adult": false,
+    "premium": false,
+    "description": "Investigatori e agenti per misteri da risolvere"
+  },
+  {
+    "id": "medicina",
+    "name": "Medicina",
+    "icon": "🏥",
+    "adult": false,
+    "premium": false,
+    "description": "Medici e professionisti della salute"
+  },
+  {
+    "id": "business",
+    "name": "Business",
+    "icon": "💼",
+    "adult": false,
+    "premium": false,
+    "description": "Imprenditori e coach per consigli professionali"
+  },
+  {
+    "id": "viaggi",
+    "name": "Viaggi",
+    "icon": "✈️",
+    "adult": false,
+    "premium": false,
+    "description": "Esploratori e viaggiatori per racconti di avventure"
+  },
+  {
+    "id": "motivazione",
+    "name": "Motivazione",
+    "icon": "💪",
+    "adult": false,
+    "premium": false,
+    "description": "Motivatori e mentori per ispirazione e crescita personale"
+  },
+  {
+    "id": "cucina",
+    "name": "Cucina",
+    "icon": "🍝️",
+    "adult": false,
+    "premium": false,
+    "description": "Chef e appassionati di cucina per ricette e sapori"
+  },
+  {
+    "id": "tecnologia",
+    "name": "Tecnologia",
+    "icon": "💻",
+    "adult": false,
+    "premium": false,
+    "description": "Hacker e ingegneri per conversazioni tech"
+  },
+  {
+    "id": "tecnici",
+    "name": "Tecnici",
+    "icon": "🔧",
+    "adult": false,
+    "premium": false,
+    "description": "Esperti tecnici per consulenze professionali su programmazione e matematica"
+  },
+  {
+    "id": "storia",
+    "name": "Storia",
+    "icon": "🏺",
+    "adult": false,
+    "premium": false,
+    "description": "Storici e archeologi per viaggi nel passato"
+  },
+  {
+    "id": "supereroi",
+    "name": "Supereroi",
+    "icon": "🤜",
+    "adult": false,
+    "premium": false,
+    "description": "Eroi con superpoteri per avventure epiche"
+  },
+  {
+    "id": "sopravvivenza",
+    "name": "Sopravvivenza",
+    "icon": "🏕️",
+    "adult": false,
+    "premium": false,
+    "description": "Survivalist e esploratori per sfide nella natura"
+  },
+  {
+    "id": "sci-fi",
+    "name": "Sci-Fi",
+    "icon": "🚀",
+    "adult": false,
+    "premium": false,
+    "description": "Personaggi del futuro per conversazioni cosmiche"
+  },
+  {
+    "id": "sport",
+    "name": "Sport",
+    "icon": "⚽",
+    "adult": false,
+    "premium": false,
+    "description": "Atleti e istruttori per conversazioni sportive"
+  },
+  {
+    "id": "esperti",
+    "name": "Esperti Professionali",
+    "icon": "💼",
+    "adult": false,
+    "premium": false,
+    "description": "Consulenti e professionisti avanzati per business, marketing e finanza"
+  },
+  {
+    "id": "creativi",
+    "name": "Creativi e Narrativi",
+    "icon": "🎭",
+    "adult": false,
+    "premium": false,
+    "description": "Narratori, sceneggiatori e game master per esperienze creative immersive"
+  },
+  {
+    "id": "quotidiano",
+    "name": "Vita Quotidiana",
+    "icon": "📋",
+    "adult": false,
+    "premium": false,
+    "description": "Assistenti pratici per organizzazione casa, lavoro e vita di tutti i giorni"
+  },
+  {
+    "id": "premium",
+    "name": "Premium",
+    "icon": "💎",
+    "adult": false,
+    "premium": true,
+    "description": "Consulenti strategici e assistenti evoluti di alto livello"
+  },
+  {
+    "id": "intrattenimento",
+    "name": "Intrattenimento",
+    "icon": "🎲",
+    "adult": false,
+    "premium": false,
+    "description": "Personaggi divertenti e coinvolgenti per conversazioni innovative"
+  },
+  {
+    "id": "speciale",
+    "name": "Speciale",
+    "icon": "❓",
+    "adult": false,
+    "premium": false,
+    "description": "Personaggi speciali, sperimentali e personalizzabili dall'utente"
+  }
+]

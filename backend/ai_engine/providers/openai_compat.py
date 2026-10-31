@@ -27,7 +27,7 @@ def _make_openai_provider(pid, name, desc, base_url, env_key, models, free=True,
             resp = requests.post(
                 f"{base_url}/chat/completions",
                 headers=headers,
-                json={"model": model, "messages": messages, "temperature": 0.9, "max_tokens": 200},
+                json={"model": model, "messages": messages, "temperature": 0.7, "max_tokens": 100},
                 timeout=60
             )
             resp.encoding = "utf-8"
@@ -50,7 +50,7 @@ def _make_openai_provider(pid, name, desc, base_url, env_key, models, free=True,
         yield from _stream_openai_compatible(
             f"{base_url}/chat/completions",
             headers,
-            {"messages": messages, "temperature": 0.9, "max_tokens": 200},
+            {"messages": messages, "temperature": 0.7, "max_tokens": 100},
             model
         )
 

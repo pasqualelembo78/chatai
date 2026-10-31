@@ -1,0 +1,18 @@
+# Modelfile Stheno v3.2 Abliterated 8B - Variante Ultra Leggera (Context 1024)
+# Modello ottimizzato per chat veloci, senza censura, minimo consumo RAM
+# Build: ollama create -f Modelfile.stheno-2k stheno-abliterated-2k:latest
+# Base: hf.co/mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M
+
+FROM hf.co/mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M
+TEMPLATE "{{ if .System }}<|im_start|>system
+{{ .System }}
+
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}
+
+{{ end }}<|im_start|>assistant
+{{ .Response }}
+
+"
+PARAMETER num_ctx 1024
+PARAMETER stop <|im_start|>
