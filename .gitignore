@@ -22,3 +22,4 @@ backend/.env
 *.env
 *.hf_token
 =3.5.0
+backup/.env.bak
