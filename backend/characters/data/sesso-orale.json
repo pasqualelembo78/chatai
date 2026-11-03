@@ -287,7 +287,8 @@
     "slim": 1,
     "job": "Fotografo",
     "old_name": "Anselm Kiefer",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "marlo-tassiero"
   },
   {
     "id": "aqua_hf1795",
@@ -633,7 +634,8 @@
     "slim": 1,
     "job": "Regista",
     "old_name": "B.F. Skinner",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "toni-bernandi"
   },
   {
     "id": "balto_hf3464",
@@ -2832,7 +2834,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Erza Scarlet",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "mila-palaro"
   },
   {
     "id": "ethan_thomas_hf4732",
@@ -3473,7 +3476,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Goku",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "atena-portardi"
   },
   {
     "id": "gollum_sm_agol_hf1370",
@@ -5511,7 +5515,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Kaoru Sakurayashiki",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "madi-giorgurri"
   },
   {
     "id": "kathie_moffat_hf517",
@@ -7889,7 +7894,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Nanami Momozono",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "alen-pasqaro"
   },
   {
     "id": "nausica_hf3382",
@@ -11079,7 +11085,8 @@
     "slim": 1,
     "job": "Ragioniere",
     "old_name": "Tracy Jordan",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lauro-grassenti"
   },
   {
     "id": "trevor_trouble_andrew_hf805",
@@ -11953,7 +11960,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Yoshihiro Togashi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "flavio-albarandi"
   },
   {
     "id": "yugi_muto_hf3279",

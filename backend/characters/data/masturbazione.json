@@ -404,7 +404,8 @@
     "slim": 1,
     "job": "Musicista",
     "old_name": "Alexander Fleming",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "noa-fontocchi"
   },
   {
     "id": "anne_sexton_hf1217",
@@ -1392,7 +1393,8 @@
     "slim": 1,
     "job": "Illustratore",
     "old_name": "Captain Jack Sparrow",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-zavardi"
   },
   {
     "id": "captain_marvel_carol_danvers_hf2599",
@@ -4694,7 +4696,8 @@
     "slim": 1,
     "job": "Avvocato",
     "old_name": "Jerry Gergich (Garry, Larry, Terry)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rober-nerurri"
   },
   {
     "id": "jesse_faden_hf2481",
@@ -6495,7 +6498,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Makoto Ariga",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ivo-biancucci"
   },
   {
     "id": "malcolm_x_hf1981",
@@ -9397,7 +9401,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Senku Ishigami",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "adri-cristandi"
   },
   {
     "id": "shadowhawk_hf306",
@@ -9688,7 +9693,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Shinji Ikari",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vale-toscardi"
   },
   {
     "id": "shizuku_mizutani_hf639",
@@ -9806,7 +9812,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Shobu Kirifuda",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "bene-vinucci"
   },
   {
     "id": "sibaso_hf1147",
@@ -11722,7 +11729,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Vatican Kiseki Chousakan",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lian-lorenzoni"
   },
   {
     "id": "vaughn_hf400",

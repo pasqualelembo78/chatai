@@ -112,7 +112,8 @@
     "slim": 1,
     "job": "Operaio",
     "old_name": "Alice Nakiri",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gilda-tardoni"
   },
   {
     "id": "alt_cunningham_hf3802",
@@ -2141,7 +2142,8 @@
     "slim": 1,
     "job": "Regista",
     "old_name": "Dr. Ian Malcolm",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nadir-amadani"
   },
   {
     "id": "dr_kurt_lewin_hf1933",
@@ -3590,7 +3592,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Genos",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "falco-pisurri"
   },
   {
     "id": "genta_shinken_gold_hf4603",
@@ -6552,7 +6555,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Makoto Naegi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rodolfo-stortocchi"
   },
   {
     "id": "margaret_fuller_hf4624",
@@ -8235,7 +8239,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Pipimi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ely-giorgurri"
   },
   {
     "id": "president_john_henry_eden_hf4329",
@@ -8642,7 +8647,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Renamon",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "bene-vianali"
   },
   {
     "id": "rizzo_hf2581",
@@ -11776,7 +11782,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Yamada",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "mila-tadali"
   },
   {
     "id": "yeonwoo_hf2385",
@@ -11950,7 +11957,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Yuko Kanoe",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "giovanni-grisazzi"
   },
   {
     "id": "yunus_jonah_hf1396",

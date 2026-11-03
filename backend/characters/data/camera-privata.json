@@ -1272,7 +1272,8 @@
     "slim": 1,
     "job": "Curatore museale",
     "old_name": "Boris Pasternak",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tara-lorenzazzi"
   },
   {
     "id": "bryan_mills_hf893",
@@ -2083,7 +2084,8 @@
     "slim": 1,
     "job": "Criminologo",
     "old_name": "Detective Harry Ambrose",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dino-ruffaro"
   },
   {
     "id": "donnie_darko_hf3651",
@@ -2255,7 +2257,8 @@
     "slim": 1,
     "job": "Guardia di sicurezza",
     "old_name": "Dr. David Beck",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nino-paglardi"
   },
   {
     "id": "dr_john_seward_hf3504",
@@ -4396,7 +4399,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Issei Hyoudou",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "riva-guiducci"
   },
   {
     "id": "jack_hf470",
@@ -6546,7 +6550,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Major Ocelot",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luan-lanteschi"
   },
   {
     "id": "maleiwa_hf1081",
@@ -7649,7 +7654,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Naru Narusegawa",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luan-rosotti"
   },
   {
     "id": "nencatacoa_hf1503",
@@ -11772,7 +11778,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Werner Heisenberg",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sole-fumali"
   },
   {
     "id": "william_james_moriarty_hf4550",
@@ -11950,7 +11957,8 @@
     "slim": 1,
     "job": "Designer",
     "old_name": "Yossarian",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-cordazzi"
   },
   {
     "id": "yukari_hayasaka_hf1053",
@@ -12186,7 +12194,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Zane Truesdale",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "aurelio-tadoni"
   },
   {
     "id": "zhang_wuji_hf2979",

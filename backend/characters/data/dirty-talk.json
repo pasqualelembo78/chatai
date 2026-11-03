@@ -112,7 +112,8 @@
     "slim": 1,
     "job": "Ricercatore",
     "old_name": "Ada Lovelace",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "irene-zoragni"
   },
   {
     "id": "aganju_hf2357",
@@ -226,7 +227,8 @@
     "slim": 1,
     "job": "Mercante ambulante",
     "old_name": "Aje Shaluga",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "corrado-lomboni"
   },
   {
     "id": "akane_tsunemori_hf1574",
@@ -401,7 +403,8 @@
     "slim": 1,
     "job": "Custode di reliquie",
     "old_name": "Alexia Tarabotti",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nora-bramiero"
   },
   {
     "id": "ambassador_liora_thal_hf844",
@@ -1215,7 +1218,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Brian Griffin",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "etere-vigani"
   },
   {
     "id": "buster_keaton_hf1279",
@@ -4277,7 +4281,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Hayao Miyazaki",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ermanno-fabboldi"
   },
   {
     "id": "hecuba_hf1799",
@@ -7356,7 +7361,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Mikazuki Augus",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-petrini"
   },
   {
     "id": "milk_cheese_hf4924",
@@ -9212,7 +9218,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Rei Ogami",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eli-ortani"
   },
   {
     "id": "richie_rich_hf4669",
@@ -9969,7 +9976,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Seol-Ah Lee",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luan-amadardi"
   },
   {
     "id": "shane_madej_hf2906",
@@ -12060,7 +12068,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Yukito Kunisaki",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gaetano-piccali"
   },
   {
     "id": "yum_cekula_hf1828",

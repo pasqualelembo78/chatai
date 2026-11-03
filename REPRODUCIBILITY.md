@@ -395,3 +395,15 @@ backend/chat_engine.py (auto-save compact summary)
   niente doppio login.
 - Verificato: apertura prova, chat da ospite (58 pezzi), blocco al 5° messaggio, registrazione
   con login automatico, login con credenziali WP, messaggi uniti dopo il login.
+
+## 32) Pagine personaggio, fase 1 su 200 (2026-11-03)
+- URL annidata: `/stanza/<categoria>/<slug>/` (rewrite `personaggio` + query var). Pagina con
+  H1 "Chat con <nome>", età/mestiere/stanza, presentazione unica, chat già aperta, FAQ della
+  stanza e link a 6 compagni della stessa stanza.
+- Slug generati da `characters/assegna_slug.py`: 200 a rotazione (8-9 per categoria), preferendo
+  i dati completi. Gli altri restano con `?char=` e verranno promossi a fasi.
+- `?char=` di un personaggio con pagina fa **301** alla pagina; senza slug resta 200.
+- SEO: title con nome+(mestiere)+stanza, description da essenza, canonical self, OG.
+  Sitemap dedicata `?aria_char_sitemap=1` (200 URL) aggiunta all'indice Yoast.
+- Le card della stanza linkano la pagina quando esiste (link interni), altrimenti `?char=`.
+- Nota scala: si allarga solo se Search Console indicizza (soglia 70% in 4 settimane).

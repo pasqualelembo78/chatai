@@ -231,7 +231,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Akira Kiyosato",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lara-goraro"
   },
   {
     "id": "alan_watts_hf1684",
@@ -346,7 +347,8 @@
     "slim": 1,
     "job": "Game designer",
     "old_name": "Alex",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "aster-dentardi"
   },
   {
     "id": "alison_porter_hf3187",
@@ -928,7 +930,8 @@
     "slim": 1,
     "job": "Economista",
     "old_name": "Ben Wyatt",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fiamma-priviero"
   },
   {
     "id": "benjy_compson_hf1708",
@@ -5393,7 +5396,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Kaname Kuran",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "roberto-garoldi"
   },
   {
     "id": "kate_halfpenny_hf679",
@@ -7424,7 +7428,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Monkey D. Luffy",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teti-rovazzi"
   },
   {
     "id": "morgana_hf913",
@@ -7948,7 +7953,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Nitori Shuichi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gio-malveschi"
   },
   {
     "id": "nobita_nobi_hf4827",
@@ -8008,7 +8014,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Nobita Nobi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luana-altazzi"
   },
   {
     "id": "oliver_stone_hf4781",
@@ -9575,7 +9582,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Sakura Kinomoto",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "siria-pellotti"
   },
   {
     "id": "sandman_morpheus_hf1878",

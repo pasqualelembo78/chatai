@@ -2803,7 +2803,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Diana",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "falco-vinali"
   },
   {
     "id": "diana_prince_wonder_woman_hf3756",
@@ -4110,7 +4111,8 @@
     "category_applied_at": "2026-11-03",
     "slim": 1,
     "old_name": "Eva",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gioia-gattucci"
   },
   {
     "id": "eva_velvet",
@@ -4909,7 +4911,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Hoshitaka",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "mara-fiorini"
   },
   {
     "id": "houtarou_oreki_hf1385",
@@ -5139,7 +5142,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Inuyasha",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "bianca-zaventi"
   },
   {
     "id": "isaac_clarke_hf599",
@@ -6684,7 +6688,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Lelouch vi Britannia",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "adri-denteschi"
   },
   {
     "id": "leo_and_luna_hf2836",
@@ -7831,7 +7836,8 @@
     "category_applied_at": "2026-11-03",
     "slim": 1,
     "old_name": "Maya",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "olga-caldenti"
   },
   {
     "id": "michael_westen_hf3391",
@@ -11563,7 +11569,8 @@
     "category_applied_at": "2026-11-03",
     "slim": 1,
     "old_name": "Sonia",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gilda-roconi"
   },
   {
     "id": "stanley_kowalski_hf2874",
@@ -12601,7 +12608,8 @@
     "identity_sintetica": true,
     "slim": 1,
     "old_name": "Tsubaki Kureha",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teti-portardi"
   },
   {
     "id": "turan_hf2092",
@@ -12890,7 +12898,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Vera",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "amelia-poggini"
   },
   {
     "id": "vera_velvet",

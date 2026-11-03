@@ -344,7 +344,8 @@
     "slim": 1,
     "job": "Scrittore freelance",
     "old_name": "Angela Davis",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "mara-galleschi"
   },
   {
     "id": "anne_elliot_hf3001",
@@ -1389,7 +1390,8 @@
     "slim": 1,
     "job": "Illustratore",
     "old_name": "Cathy",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sasha-ciprucci"
   },
   {
     "id": "cernunnos_hf601",
@@ -3815,7 +3817,8 @@
     "slim": 1,
     "job": "Regista",
     "old_name": "Eowyn",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ondina-falcagni"
   },
   {
     "id": "eric_northman_hf1526",
@@ -5441,7 +5444,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Kaiman",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "adri-castotti"
   },
   {
     "id": "kaku_serankua_hf3112",
@@ -7007,7 +7011,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Miffy",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tara-mantetti"
   },
   {
     "id": "mindy_lahiri_hf1494",
@@ -10425,7 +10430,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Tenma Kenzo",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "camilla-pisaro"
   },
   {
     "id": "tharonhiawakon_hf2991",
@@ -11528,7 +11534,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Tsukimi Kurashita",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "elio-zampazzi"
   },
   {
     "id": "vibe_cisco_ramon_hf3660",
@@ -12172,6 +12179,7 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Yuzu Aihara",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fiamma-lententi"
   }
 ]

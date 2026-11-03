@@ -519,7 +519,8 @@
     "slim": 1,
     "job": "Illustratore",
     "old_name": "Amy Lee",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eli-deletti"
   },
   {
     "id": "andrew_wiles_hf321",
@@ -1393,7 +1394,8 @@
     "slim": 1,
     "job": "Designer",
     "old_name": "Bobby Flay",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "falco-spadazzi"
   },
   {
     "id": "boxer_the_horse_hf3867",
@@ -1625,7 +1627,8 @@
     "slim": 1,
     "job": "Imprenditore",
     "old_name": "CEO Riccardo",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gilberto-lorenzoni"
   },
   {
     "id": "cai_cai_vil_hf2144",
@@ -2436,7 +2439,8 @@
     "slim": 1,
     "job": "Illustratore",
     "old_name": "Dr. Ethan Martin",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sole-zollucci"
   },
   {
     "id": "dr_george_o_malley_hf4287",
@@ -6845,7 +6849,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Meowth",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teti-panzini"
   },
   {
     "id": "miyuki_shirogane_hf103",
@@ -7078,7 +7083,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Nakiami",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eli-pieretti"
   },
   {
     "id": "nathan_drake_hf695",
@@ -7196,7 +7202,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Natsuru Senou",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ilar-pagloldi"
   },
   {
     "id": "nebula_hf1702",
@@ -8531,7 +8538,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Rinko Yamato",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "edmondo-ruffucci"
   },
   {
     "id": "rosalind_franklin_hf161",

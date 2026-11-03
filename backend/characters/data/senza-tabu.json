@@ -228,7 +228,8 @@
     "slim": 1,
     "job": "Musicista",
     "old_name": "Albert Bandura",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lauro-bordocchi"
   },
   {
     "id": "albrecht_hf1999",
@@ -6138,7 +6139,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Levi Ackerman",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ilar-vettali"
   },
   {
     "id": "libat_hf4464",
@@ -6372,7 +6374,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Lucy Heartfilia",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gio-giancardi"
   },
   {
     "id": "lucy_hutton_hf335",
@@ -7999,7 +8002,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Reborn",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "kim-portazzi"
   },
   {
     "id": "resource_manager_hf1818",
@@ -9569,7 +9573,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Takato Saijou",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "amedeo-dalmiero"
   },
   {
     "id": "tatsumi_hf32",
@@ -9801,7 +9806,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Tenchi Masaki",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-virelli"
   },
   {
     "id": "terry_jeffords_hf4455",
@@ -9919,7 +9925,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Tetsuo Shima",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "valerio-bramoni"
   },
   {
     "id": "the_black_dog_hf3460",
@@ -11835,7 +11842,8 @@
     "slim": 1,
     "job": "Economista",
     "old_name": "Walter White (Heisenberg)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "aster-morucci"
   },
   {
     "id": "walter_willett_hf4301",

@@ -229,7 +229,8 @@
     "slim": 1,
     "job": "Content creator",
     "old_name": "Ahmed Zewail",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nino-zamponi"
   },
   {
     "id": "akito_tenkawa_hf473",
@@ -579,7 +580,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Alucard",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rudi-biancaro"
   },
   {
     "id": "amy_adams_hf4959",
@@ -1161,7 +1163,8 @@
     "slim": 1,
     "job": "Regista",
     "old_name": "Billie Joe McAllister",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-fanturri"
   },
   {
     "id": "blathers_hf2744",
@@ -3938,7 +3941,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Hanamichi Sakuragi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "riva-farinoldi"
   },
   {
     "id": "haoma_hf4175",
@@ -5739,7 +5743,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Kaguyahime",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "matteo-taglini"
   },
   {
     "id": "karl_marx_hf994",
@@ -6553,7 +6558,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Lacus Welt",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vani-veraro"
   },
   {
     "id": "lady_mechanika_hf1723",
@@ -8063,7 +8069,8 @@
     "slim": 1,
     "job": "Economista",
     "old_name": "Misato Katsuragi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "pietro-altocchi"
   },
   {
     "id": "miyamoto_musashi_hf1664",
@@ -9398,7 +9405,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Rias Gremory",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "enea-lenazzi"
   },
   {
     "id": "rigoletto_hf1276",

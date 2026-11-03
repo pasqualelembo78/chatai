@@ -113,7 +113,8 @@
     "slim": 1,
     "job": "Pensionato",
     "old_name": "Adam Yates",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nadir-lorenziero"
   },
   {
     "id": "agent_jack_harper_hf3089",
@@ -231,7 +232,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Akame",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tiziano-capelli"
   },
   {
     "id": "akari_hf3777",
@@ -755,7 +757,8 @@
     "slim": 1,
     "job": "Game designer",
     "old_name": "Alice",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "erika-dantani"
   },
   {
     "id": "amanda_wingfield_hf144",
@@ -929,7 +932,8 @@
     "slim": 1,
     "job": "Guardiano della foresta",
     "old_name": "Animikii",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "marlo-doneschi"
   },
   {
     "id": "arthur_fleck_hf4779",
@@ -5051,7 +5055,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Kiyotaka Ayanokoji",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "delia-stellandi"
   },
   {
     "id": "klaus_wulfenbach_hf4539",
@@ -5866,7 +5871,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Manji",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-dentelli"
   },
   {
     "id": "march_hf2741",
@@ -8184,7 +8190,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Reiji Sakamaki",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lian-dorigaro"
   },
   {
     "id": "rhysand_hf2565",
@@ -9056,7 +9063,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Satsuki Kiryuin",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "etere-samparo"
   },
   {
     "id": "sebastian_rudd_hf4496",
@@ -9930,7 +9938,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Taiga Aisaka",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "arianna-giorgeschi"
   },
   {
     "id": "takeshi_jin_hf1680",

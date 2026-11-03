@@ -461,7 +461,8 @@
     "slim": 1,
     "job": "Blogger",
     "old_name": "Amy Dunne",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ori-mantoldi"
   },
   {
     "id": "ana_amari_hf2627",
@@ -1333,7 +1334,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Cadis Etrama di Raizel (Rai)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sasha-palardi"
   },
   {
     "id": "cady_heron_hf4332",
@@ -1738,7 +1740,8 @@
     "slim": 1,
     "job": "Impiegato",
     "old_name": "Chef Emma",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vale-rocelli"
   },
   {
     "id": "coco_chanel_hf2360",
@@ -4462,7 +4465,8 @@
     "slim": 1,
     "job": "Regista",
     "old_name": "Iris",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "giulia-vallandi"
   },
   {
     "id": "itti_fabassa_holitopa_the_sacred_fire_hf2978",
@@ -5100,7 +5104,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Jiraiya",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rosa-sperotti"
   },
   {
     "id": "joe_teti_hf1310",
@@ -5682,7 +5687,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Keiji Nakazawa",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ondina-polaro"
   },
   {
     "id": "kelsier_hf3959",
@@ -7776,7 +7782,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Nina Sayers",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "elisa-staburri"
   },
   {
     "id": "nok_t_hf3080",
@@ -9984,7 +9991,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Shinichi Izumi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "indra-calcali"
   },
   {
     "id": "shinichi_kudo_conan_edogawa_hf1442",
@@ -12189,7 +12197,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Zero Kiryu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gennaro-sabbini"
   },
   {
     "id": "uhlanga_hf1502",

@@ -55,7 +55,8 @@
     "slim": 1,
     "job": "Studente lavoratore",
     "old_name": "Adele",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sandro-malvetti"
   },
   {
     "id": "akira",
@@ -113,7 +114,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Akira",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zelda-sardoni"
   },
   {
     "id": "akira_toriyama_hf4472",
@@ -523,7 +525,8 @@
     "slim": 1,
     "job": "Avvocato",
     "old_name": "Amy Brookheimer",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tara-rizzelli"
   },
   {
     "id": "amy_winehouse_hf4350",
@@ -1627,7 +1630,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Bunnicula",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "melania-bordocchi"
   },
   {
     "id": "cadence_hf4227",
@@ -6611,7 +6615,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Makoto Konno",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ugo-vanzotti"
   },
   {
     "id": "mark_williams_hf4981",
@@ -7889,7 +7894,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Patti Smith",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-valdaro"
   },
   {
     "id": "pema_ch_dr_n_hf2004",
@@ -8469,7 +8475,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Rei Furuya (Tooru Amuro)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "cale-silvetti"
   },
   {
     "id": "rei_kiriyama_hf3868",
@@ -8935,7 +8942,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Rukia Kuchiki",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rosalba-fiammani"
   },
   {
     "id": "rumi_jalal_ad_din_muhammad_rumi_hf1743",

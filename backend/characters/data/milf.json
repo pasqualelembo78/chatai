@@ -345,7 +345,8 @@
     "slim": 1,
     "job": "Autonomo",
     "old_name": "Alexander Hamilton",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "giule-tagliero"
   },
   {
     "id": "allen_walker_hf4446",
@@ -1389,7 +1390,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "BoJack Horseman",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ilar-vanotti"
   },
   {
     "id": "bragi_hf2056",
@@ -3767,7 +3769,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Gao Red (Kakeru Shishi)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "alfio-nardoni"
   },
   {
     "id": "garruk_wildspeaker_hf3925",
@@ -4461,7 +4464,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Haruka Nanami",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michela-paglotti"
   },
   {
     "id": "haruyuki_arita_hf326",
@@ -4752,7 +4756,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Homura Akemi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sara-fioriero"
   },
   {
     "id": "ishtar_hf2422",
@@ -5448,7 +5453,8 @@
     "slim": 1,
     "job": "Blogger",
     "old_name": "John Reese",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teti-porturri"
   },
   {
     "id": "john_wesley_powell_hf3924",
@@ -8582,7 +8588,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Petrushka",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eva-farinelli"
   },
   {
     "id": "pseudolus_hf4440",
@@ -12008,7 +12015,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Yuri Sakazaki",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "adri-rosagni"
   },
   {
     "id": "yuya_sakaki_hf3882",

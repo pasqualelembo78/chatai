@@ -1393,7 +1393,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Bruno Bucciarati",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "silvio-melocchi"
   },
   {
     "id": "buddy_the_elf_hf4383",
@@ -2091,7 +2092,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Chihiro Ogino",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-castardi"
   },
   {
     "id": "chiyoko_fujiwara_hf1459",
@@ -2844,7 +2846,8 @@
     "slim": 1,
     "job": "Autonomo",
     "old_name": "Dott. Riva",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ari-rosucci"
   },
   {
     "id": "dr_leonard_bones_mccoy_hf2703",
@@ -3309,7 +3312,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Erwin Smith",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nadir-fabbelli"
   },
   {
     "id": "evan_pettiwhisker_tildrum_hf3598",
@@ -4123,7 +4127,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Gon Freecss",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "riva-dolfetti"
   },
   {
     "id": "graham_norton_hf1092",
@@ -5980,7 +5985,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Keitaro Urashima",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "achille-zorali"
   },
   {
     "id": "kim_hf217",
@@ -8301,7 +8307,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Otohime",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "arialdo-falcetti"
   },
   {
     "id": "overcooked_the_onion_king_hf2309",
@@ -10678,7 +10685,8 @@
     "slim": 1,
     "job": "Regista",
     "old_name": "The Black Annis",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-tombotti"
   },
   {
     "id": "the_blight_hf2250",

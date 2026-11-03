@@ -111,7 +111,8 @@
     "slim": 1,
     "job": "Regista",
     "old_name": "Akiko Higashimura",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luciano-vanandi"
   },
   {
     "id": "alchemist_ash_hf3537",
@@ -283,7 +284,8 @@
     "slim": 1,
     "job": "Guardiano della foresta",
     "old_name": "Aloalo",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "corrado-campardi"
   },
   {
     "id": "alvin_straight_hf1172",
@@ -863,7 +865,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Azumanga Daioh",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "flavia-garocchi"
   },
   {
     "id": "baki_hanma_hf242",
@@ -6542,7 +6545,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Luna",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lara-poggelli"
   },
   {
     "id": "mackenzie_mchale_hf120",
@@ -7356,7 +7360,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Michiru Kaioh",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teti-poggazzi"
   },
   {
     "id": "miles_morales_hf3276",
@@ -8923,7 +8928,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Rudeus Greyrat",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sasha-sampagni"
   },
   {
     "id": "ryouma_takebayashi_hf892",
@@ -9509,7 +9515,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Shinobu Kocho",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sasha-gianconi"
   },
   {
     "id": "shouya_ishida_hf4757",
@@ -9685,7 +9692,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Simon",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "marlo-rizzurri"
   },
   {
     "id": "sim_n_bol_var_hf4150",
@@ -11772,7 +11780,8 @@
     "slim": 1,
     "job": "Content creator",
     "old_name": "Vittorio",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "federico-paolagni"
   },
   {
     "id": "v_clav_havel_hf1409",

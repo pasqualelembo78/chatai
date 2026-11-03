@@ -289,7 +289,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Alita",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "veronica-poggenti"
   },
   {
     "id": "almighty_thor_hf2886",
@@ -407,7 +408,8 @@
     "slim": 1,
     "job": "Blogger",
     "old_name": "Amelia Earhart",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "maddalena-lenaro"
   },
   {
     "id": "angela_vidal_hf1402",
@@ -5106,7 +5108,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Hikaru Shindou",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ori-stortelli"
   },
   {
     "id": "hina_tsurugi_hf386",
@@ -6443,7 +6446,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Killua Zoldyck",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zelda-polani"
   },
   {
     "id": "king_gesar_hf4883",
@@ -8821,7 +8825,8 @@
     "slim": 1,
     "job": "Responsabile HR",
     "old_name": "Raymond Holt",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ugo-morelli"
   },
   {
     "id": "rei_ayanami_hf1319",
@@ -9285,7 +9290,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Ryouma Ichijou",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dora-sperani"
   },
   {
     "id": "sakuragi_hanamichi_hf1939",
@@ -9461,7 +9467,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Sanemi Shinazugawa",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "riva-ricetti"
   },
   {
     "id": "sebastian_castellanos_hf557",
@@ -11958,7 +11965,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Yellow Ranger (Tiger Ranger)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sole-vettoldi"
   },
   {
     "id": "yilin_hf1",

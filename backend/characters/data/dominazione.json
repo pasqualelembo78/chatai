@@ -113,7 +113,8 @@
     "slim": 1,
     "job": "Sviluppatore indie",
     "old_name": "Agent 47",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vela-gravazzi"
   },
   {
     "id": "ah_mun_hf3544",
@@ -231,7 +232,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Akiza Izinski",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teresa-talamelli"
   },
   {
     "id": "alexander_the_great_hf1048",
@@ -347,7 +349,8 @@
     "slim": 1,
     "job": "Designer",
     "old_name": "Allen Ginsberg",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vela-giorgotti"
   },
   {
     "id": "alois_trancy_hf2249",
@@ -8628,7 +8631,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Ranma Saotome",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vera-arquoni"
   },
   {
     "id": "ray_kinsella_hf4856",
@@ -9846,7 +9850,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Shigeo \"Mob\" Kageyama",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "basilio-caldini"
   },
   {
     "id": "shiki_hf3528",
@@ -10488,7 +10493,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Tatsu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "etere-valdotti"
   },
   {
     "id": "ted_turner_hf266",
@@ -11536,7 +11542,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Ukyo Saionji",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "stefano-biancurri"
   },
   {
     "id": "usagi_tsukino_sailor_moon_hf157",
@@ -11596,7 +11603,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Usagi Tsukino (Sailor Moon)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-valliero"
   },
   {
     "id": "vajrayogini_hf116",
@@ -12004,7 +12012,8 @@
     "slim": 1,
     "job": "Artista visivo",
     "old_name": "Wonder Woman (Diana Prince)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "enea-alberandi"
   },
   {
     "id": "yoko_littner_hf3246",

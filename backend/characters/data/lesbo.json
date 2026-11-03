@@ -519,7 +519,8 @@
     "slim": 1,
     "job": "Scholar di antichità",
     "old_name": "Ao Ao",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tommaso-pisoldi"
   },
   {
     "id": "apu_hf3729",
@@ -5383,7 +5384,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Kazuto \"Kirito\" Kirigaya",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "quirino-zavazzi"
   },
   {
     "id": "keima_katsuragi_hf2022",
@@ -5792,7 +5794,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Kusanagi Izumo",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vale-lanturri"
   },
   {
     "id": "lady_alexia_tarabotti_hf443",
@@ -6375,7 +6378,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Makoto Kusanagi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "riccardo-forlali"
   },
   {
     "id": "masato_hijirikawa_hf4573",
@@ -6896,7 +6900,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Mr. Fox",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nerio-guideschi"
   },
   {
     "id": "mufasa_hf4953",
@@ -9280,7 +9285,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Saber (Artoria Pendragon)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "etere-serrandi"
   },
   {
     "id": "sam_beckett_hf1018",
@@ -9687,7 +9693,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Shikamaru Nara",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "enea-giancetti"
   },
   {
     "id": "shinichi_kudo_conan_edogawa_hf2438",
@@ -10039,7 +10046,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Tadakuni",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "reno-follucci"
   },
   {
     "id": "tarzan_hf3209",

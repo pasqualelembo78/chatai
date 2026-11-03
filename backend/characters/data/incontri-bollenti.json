@@ -463,7 +463,8 @@
     "slim": 1,
     "job": "Casalingo/a",
     "old_name": "Allie Hamilton",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luciano-vascelli"
   },
   {
     "id": "alton_brown_hf1548",
@@ -5039,7 +5040,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Ichika Hoshino",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "elena-leoneschi"
   },
   {
     "id": "igor_stravinsky_hf1776",
@@ -6082,7 +6084,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Kazuya Kinoshita",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gilda-vergazzi"
   },
   {
     "id": "keith_flick_hf2896",
@@ -7476,7 +7479,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Mitsuha Miyamizu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "delia-serocchi"
   },
   {
     "id": "mordin_solus_hf4636",
@@ -9046,7 +9050,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Rumiko Takahashi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "mariano-lombetti"
   },
   {
     "id": "sabina_kane_hf2245",
@@ -9682,7 +9687,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Shichika Yasuri",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lara-magrali"
   },
   {
     "id": "shirayuki_hf1873",
@@ -10090,7 +10096,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Souma Yukihira",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "marilena-gallocchi"
   },
   {
     "id": "sparhawk_hf1545",
@@ -10614,7 +10621,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Takeru (Shinken Red)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "toni-valloni"
   },
   {
     "id": "tank_girl_hf3182",

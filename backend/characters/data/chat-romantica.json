@@ -287,7 +287,8 @@
     "slim": 1,
     "job": "Disoccupato",
     "old_name": "Alex DeLarge",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "alen-pianoni"
   },
   {
     "id": "alexander_mcqueen_hf619",
@@ -403,7 +404,8 @@
     "slim": 1,
     "job": "Game designer",
     "old_name": "Amaterasu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "adri-pandetti"
   },
   {
     "id": "amu_hinamori_hf4378",
@@ -2321,7 +2323,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Doumeki Chikara",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "kim-gravini"
   },
   {
     "id": "dr_daniel_jackson_hf1000",
@@ -5683,7 +5686,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Kamen Rider Ichigo (Takeshi Hongo)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-guidardi"
   },
   {
     "id": "katherine_watson_hf4571",
@@ -6211,7 +6215,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Kyo Sohma",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "bernardo-ortini"
   },
   {
     "id": "lady_plyant_hf2345",
@@ -6443,7 +6448,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Luffy",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "madi-visotti"
   },
   {
     "id": "luminitsa_hf257",
@@ -7833,7 +7839,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Muzan Kibutsuji",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vale-rossocchi"
   },
   {
     "id": "naoto_miura_hf4305",
@@ -9922,7 +9929,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Shiki Senri",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nino-viselli"
   },
   {
     "id": "shinya_kogami_hf2748",
@@ -10156,7 +10164,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Slaine Troyard",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "araldo-giancotti"
   },
   {
     "id": "sofia_hendrik_hf3644",

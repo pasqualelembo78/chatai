@@ -343,7 +343,8 @@
     "slim": 1,
     "job": "DevOps engineer",
     "old_name": "Alice Roberts",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gioia-sardoldi"
   },
   {
     "id": "amalali_hf2923",
@@ -3010,7 +3011,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Emma",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ortensia-tassaro"
   },
   {
     "id": "emma_watson_hf957",
@@ -6959,7 +6961,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Legoshi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-leoniero"
   },
   {
     "id": "leon_trotsky_hf2639",
@@ -8295,7 +8298,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Nana Komatsu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "leda-moreschi"
   },
   {
     "id": "nezha_hf3614",
@@ -9225,7 +9229,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Princess Mononoke (San)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ely-amadiero"
   },
   {
     "id": "princess_vespa_hf2143",
@@ -9517,7 +9522,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Rem",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "madi-marciero"
   },
   {
     "id": "richard_hammond_hf48",
@@ -9577,7 +9583,8 @@
     "slim": 1,
     "job": "Scrittore freelance",
     "old_name": "Richard Hammond",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luan-calcaro"
   },
   {
     "id": "rincewind_hf3261",
@@ -9987,7 +9994,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Ryo Asuka",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "edmondo-vergazzi"
   },
   {
     "id": "ryusoul_red_koh_hf3385",

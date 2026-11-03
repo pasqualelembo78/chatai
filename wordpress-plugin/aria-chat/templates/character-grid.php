@@ -66,8 +66,11 @@ $room_url = get_permalink();
                 // La descrizione inizia con il nome: nella card il nome è già sopra
                 $card_desc = trim(preg_replace('/^' . preg_quote($c['name'], '/') . '\s*[—–-]\s*/u', '', $c['desc']));
                 $nascosta = $i >= $per_blocco ? ' aria-card-hidden' : '';
+                $link_card = !empty($c['slug'])
+                    ? trailingslashit($room_url) . $c['slug'] . '/'
+                    : add_query_arg('char', rawurlencode($c['id']), $room_url);
             ?>
-            <a class="aria-character-card<?php echo $nascosta; ?>" href="<?php echo esc_url(add_query_arg('char', rawurlencode($c['id']), $room_url)); ?>" title="Chatta con <?php echo esc_attr($c['name']); ?>">
+            <a class="aria-character-card<?php echo $nascosta; ?>" href="<?php echo esc_url($link_card); ?>" title="Chatta con <?php echo esc_attr($c['name']); ?>">
                 <div class="aria-character-avatar"><?php echo esc_html($c['avatar']); ?></div>
                 <h3><?php echo esc_html($c['name']); ?></h3>
                 <p><?php echo esc_html($card_desc); ?></p>

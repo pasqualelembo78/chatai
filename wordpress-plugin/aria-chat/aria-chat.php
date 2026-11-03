@@ -203,6 +203,7 @@ function aria_grid_build_index() {
             $desc = trim((string) $desc);
             $index['characters'][$cat][] = array(
                 'id' => $c['id'],
+                'slug' => $c['slug'] ?? '',
                 'name' => isset($c['name']) ? $c['name'] : 'Personaggio',
                 'avatar' => isset($c['avatar']) ? $c['avatar'] : '💬',
                 'desc' => mb_substr($desc, 0, 90)
@@ -264,6 +265,222 @@ function aria_chat_shortcode_grid($atts) {
     include ARIA_CHAT_PLUGIN_DIR . 'templates/character-grid.php';
     return ob_get_clean();
 }
+
+
+/* ───────── Pagine personaggio: /stanza/<categoria>/<slug>/ ───────── */
+
+function aria_char_data_file($categoria) {
+    $f = aria_grid_data_dir() . '/' . sanitize_title($categoria) . '.json';
+    return is_readable($f) ? $f : '';
+}
+
+/** Personaggio dal suo slug dentro la categoria. */
+function aria_char_by_slug($categoria, $slug) {
+    static $cache = array();
+    $chiave = $categoria . '|' . $slug;
+    if (isset($cache[$chiave])) {
+        return $cache[$chiave];
+    }
+    $file = aria_char_data_file($categoria);
+    $trovato = null;
+    if ($file) {
+        $righe = json_decode((string) file_get_contents($file), true);
+        if (is_array($righe)) {
+            foreach ($righe as $c) {
+                if (!empty($c['slug']) && $c['slug'] === $slug) {
+                    $trovato = $c;
+                    break;
+                }
+            }
+        }
+    }
+    $cache[$chiave] = $trovato;
+    return $trovato;
+}
+
+/** Personaggio dal suo id dentro la categoria (per i vecchi link ?char=). */
+function aria_char_by_id($categoria, $id) {
+    static $cache = array();
+    $chiave = $categoria . '|' . $id;
+    if (isset($cache[$chiave])) {
+        return $cache[$chiave];
+    }
+    $trovato = null;
+    $file = aria_char_data_file($categoria);
+    if ($file) {
+        foreach ((array) json_decode((string) file_get_contents($file), true) as $c) {
+            if (!empty($c['id']) && $c['id'] === $id) {
+                $trovato = $c;
+                break;
+            }
+        }
+    }
+    $cache[$chiave] = $trovato;
+    return $trovato;
+}
+
+/** Altri personaggi della stanza che hanno una pagina propria. */
+function aria_characters_with_slug($categoria, $escludi = '', $quanti = 6) {
+    $file = aria_char_data_file($categoria);
+    if (!$file) {
+        return array();
+    }
+    $righe = json_decode((string) file_get_contents($file), true) ?: array();
+    $out = array();
+    foreach ($righe as $c) {
+        if (empty($c['slug']) || $c['id'] === $escludi) {
+            continue;
+        }
+        $out[] = array('slug' => $c['slug'], 'name' => $c['name'] ?? '');
+        if (count($out) >= $quanti) {
+            break;
+        }
+    }
+    return $out;
+}
+
+function aria_rewrite_personaggi() {
+    add_rewrite_rule('^stanza/([^/]+)/([^/]+)/?$', 'index.php?stanza=$matches[1]&personaggio=$matches[2]', 'top');
+}
+add_action('init', 'aria_rewrite_personaggi', 5);
+
+function aria_query_vars_personaggi($vars) {
+    $vars[] = 'personaggio';
+    return $vars;
+}
+add_filter('query_vars', 'aria_query_vars_personaggi');
+
+/** Le regole vanno rigenerate una volta dopo l'introduzione degli slug. */
+function aria_maybe_flush_rules() {
+    if (get_option('aria_char_routes') !== ARIA_CHAT_VERSION) {
+        flush_rewrite_rules(false);
+        update_option('aria_char_routes', ARIA_CHAT_VERSION, false);
+    }
+}
+add_action('wp_loaded', 'aria_maybe_flush_rules');
+
+/** ?char= senza slug resta com'è; con slug si va alla pagina dedicata (301). */
+function aria_redirect_char_to_page() {
+    if (!is_singular('stanza') || get_query_var('personaggio') || empty($_GET['char'])) {
+        return;
+    }
+    $categoria = get_post_field('post_name', get_queried_object_id());
+    $c = aria_char_by_id($categoria, sanitize_text_field(wp_unslash($_GET['char'])));
+    if ($c && !empty($c['slug'])) {
+        wp_safe_redirect(trailingslashit(get_permalink()) . $c['slug'] . '/', 301);
+        exit;
+    }
+}
+add_action('template_redirect', 'aria_redirect_char_to_page');
+
+/** Titolo, description, canonical e OG della pagina personaggio. */
+function aria_char_seo_attivo() {
+    return (bool) get_query_var('personaggio');
+}
+
+function aria_char_current() {
+    static $c = null;
+    if ($c !== null) {
+        return $c;
+    }
+    $c = false;
+    $slug = get_query_var('personaggio');
+    if ($slug && is_singular('stanza')) {
+        $cat = get_post_field('post_name', get_queried_object_id());
+        $c = aria_char_by_slug($cat, sanitize_title($slug)) ?: false;
+    }
+    return $c;
+}
+
+function aria_char_title($titolo) {
+    $c = aria_char_current();
+    if (!$c || !is_singular('stanza')) {
+        return $titolo;
+    }
+    $stanza = get_queried_object();
+    $cat = aria_grid_category_meta(get_post_field('post_name', $stanza->ID));
+    $mestiere = !empty($c['job']) ? ' (' . $c['job'] . ')' : '';
+    return 'Chat con ' . $c['name'] . $mestiere . ' — ' . $cat['name'] . ' | Pornovirtuale';
+}
+add_filter('pre_get_document_title', 'aria_char_title', 20);
+add_filter('wpseo_title', 'aria_char_title', 20);
+
+function aria_char_desc($desc) {
+    $c = aria_char_current();
+    if (!$c) {
+        return $desc;
+    }
+    $cat = aria_grid_category_meta(get_post_field('post_name', get_queried_object_id()));
+    $pezzo = trim(wp_strip_all_tags((string) ($c['essence'] ?? '')));
+    if (!$pezzo) {
+        $pezzo = $c['name'] . ' ti aspetta nella stanza ' . $cat['name'] . '.';
+    }
+    return mb_substr($pezzo, 0, 150) . ' Chatta gratis: 4 messaggi senza registrarti.';
+}
+add_filter('wpseo_metadesc', 'aria_char_desc', 20);
+
+function aria_char_canonical($url) {
+    $c = aria_char_current();
+    if (!$c) {
+        return $url;
+    }
+    return trailingslashit(get_permalink()) . $c['slug'] . '/';
+}
+add_filter('wpseo_canonical', 'aria_char_canonical', 20);
+
+function aria_char_og($titolo) {
+    $c = aria_char_current();
+    if (!$c) {
+        return $titolo;
+    }
+    return 'Chat con ' . $c['name'];
+}
+add_filter('wpseo_opengraph_title', 'aria_char_og', 20);
+
+/** Sitemap dedicata delle sole pagine personaggio. */
+function aria_char_sitemap() {
+    if (!isset($_GET['aria_char_sitemap'])) {
+        return;
+    }
+    header('Content-Type: application/xml; charset=utf-8');
+    echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+    foreach (aria_grid_character_slugs() as $voce) {
+        echo '  <url><loc>' . esc_url($voce['url']) . '</loc><lastmod>' . esc_html($voce['data']) . '</lastmod></url>' . "\n";
+    }
+    echo '</urlset>';
+    exit;
+}
+add_action('template_redirect', 'aria_char_sitemap', 1);
+
+/** Elenco URL delle pagine personaggio (per la sitemap). */
+function aria_grid_character_slugs() {
+    $file = aria_grid_cache_file();
+    $urls = array();
+    $indice = aria_grid_index();
+    foreach ((array) glob(aria_grid_data_dir() . '/*.json') as $f) {
+        if (basename($f) === 'categories.json') {
+            continue;
+        }
+        $cat = basename($f, '.json');
+        $righe = json_decode((string) file_get_contents($f), true) ?: array();
+        foreach ($righe as $c) {
+            if (empty($c['slug'])) {
+                continue;
+            }
+            $urls[] = array(
+                'url'  => home_url('/stanza/' . $cat . '/' . $c['slug'] . '/'),
+                'data' => gmdate('Y-m-d', filemtime($f)),
+            );
+        }
+    }
+    return $urls;
+}
+
+function aria_char_sitemap_index($index) {
+    $index .= '<sitemap><loc>' . esc_url(home_url('/?aria_char_sitemap=1')) . '</loc><lastmod>' . gmdate('c') . '</lastmod></sitemap>' . "\n";
+    return $index;
+}
+add_filter('wpseo_sitemap_index', 'aria_char_sitemap_index', 20);
 
 function aria_chat_admin_menu() {
     add_options_page(

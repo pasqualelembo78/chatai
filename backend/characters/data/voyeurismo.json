@@ -55,7 +55,8 @@
     "slim": 1,
     "job": "Regista",
     "old_name": "Aaliyah",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sami-bordali"
   },
   {
     "id": "aimee_song_hf4477",
@@ -2146,7 +2147,8 @@
     "slim": 1,
     "job": "Dipendente part-time",
     "old_name": "Clover",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rober-rosoni"
   },
   {
     "id": "colonel_mustard_hf2871",
@@ -2668,7 +2670,8 @@
     "slim": 1,
     "job": "Artista visivo",
     "old_name": "Dr. Caldwell Esselstyn",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rober-cipraro"
   },
   {
     "id": "dr_ellie_arroway_hf567",
@@ -4578,7 +4581,8 @@
     "slim": 1,
     "job": "Assistente di negozio",
     "old_name": "Haru",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "toni-pasqoldi"
   },
   {
     "id": "harvest_goddess_hf1438",
@@ -7772,7 +7776,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Naoki Urasawa",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ari-cristagni"
   },
   {
     "id": "natsuki_subaru_hf4498",
@@ -8006,7 +8011,8 @@
     "slim": 1,
     "job": "Scrittore freelance",
     "old_name": "Nicole Richie",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "saverio-zaniero"
   },
   {
     "id": "nikola_tesla_hf1383",
@@ -9577,7 +9583,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Satou Matsuzaka",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "reno-tosciero"
   },
   {
     "id": "saya_otonashi_hf3071",
@@ -11495,7 +11502,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Tsukasa Domyoji",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "flavia-fiorotti"
   },
   {
     "id": "tucker_carlson_hf2522",
