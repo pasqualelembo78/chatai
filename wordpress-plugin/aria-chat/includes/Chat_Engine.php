@@ -23,6 +23,7 @@ class Aria_Chat_Engine {
         add_action('wp_ajax_aria_chat_logout', array($this, 'ajax_logout'));
         add_action('wp_ajax_nopriv_aria_chat_logout', array($this, 'ajax_logout'));
         add_action('wp_ajax_aria_chat_send', array($this, 'ajax_send_message'));
+        add_action('wp_ajax_aria_chat_stream', array($this, 'ajax_send_stream'));
         add_action('wp_ajax_nopriv_aria_chat_send', array($this, 'ajax_send_message'));
         add_action('wp_ajax_aria_chat_characters', array($this, 'ajax_get_characters'));
         add_action('wp_ajax_nopriv_aria_chat_characters', array($this, 'ajax_get_characters'));
@@ -175,6 +176,93 @@ class Aria_Chat_Engine {
             return "Errore del servizio chat (" . ($code ?: "sconosciuto") . ").";
         }
         return $detail;
+    }
+
+
+    /**
+     * Invio in streaming (Server-Sent Events).
+     * Fa da ponte tra il browser e il backend: legge l'SSE di `/chat/stream` e lo
+     * riverbera, svuotando i buffer a ogni pezzo. Se qualcosa non va, il client
+     * ricade da solo sull'invio normale (`aria_chat_send`).
+     */
+    public function ajax_send_stream() {
+        while (ob_get_level() > 0) {
+            @ob_end_flush();
+        }
+        header('Content-Type: text/event-stream; charset=utf-8');
+        header('Cache-Control: no-cache, no-transform');
+        header('X-Accel-Buffering: no');
+        header('Connection: keep-alive');
+
+        $esci = function ($evento, $dati) {
+            echo "event: " . $evento . "\ndata: " . wp_json_encode($dati) . "\n\n";
+            @flush();
+        };
+
+        $character_id = sanitize_text_field($_POST['character'] ?? '');
+        $text = sanitize_textarea_field($_POST['text'] ?? '');
+        $current_user = wp_get_current_user();
+        $username = sanitize_text_field($_POST['username'] ?? (($current_user && $current_user->exists()) ? $current_user->user_login : 'Ospite'));
+
+        if (!$character_id || !$text) {
+            $esci('error', array('error' => 'Personaggio e messaggio richiesti'));
+            exit;
+        }
+        if (!$this->auth_manager->ensure_authenticated()) {
+            $esci('error', array('error' => 'Sessione scaduta: esegui di nuovo il login nella chat'));
+            exit;
+        }
+        $token = $this->auth_manager->get_access_token();
+        if (!$token) {
+            $esci('error', array('error' => 'Token mancante: riprova il login'));
+            exit;
+        }
+        $this->api_client->set_access_token($token);
+        $this->ensure_age_verified();
+
+        $payload = wp_json_encode(array(
+            'character' => $character_id,
+            'text' => $text,
+            'username' => $username,
+        ));
+
+        $buffer_parziale = '';
+        $ch = curl_init(rtrim($this->api_client->get_base_url(), '/') . '/chat/stream');
+        curl_setopt_array($ch, array(
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $token,
+                'Accept: text/event-stream',
+            ),
+            CURLOPT_TIMEOUT => 300,
+            CURLOPT_WRITEFUNCTION => function ($curl, $pezzo) use ($esci, &$buffer_parziale) {
+                $buffer_parziale .= $pezzo;
+                // Riverbera i frame completi senza reinterpretarli
+                while (($pos = strpos($buffer_parziale, "\n\n")) !== false) {
+                    $frame = substr($buffer_parziale, 0, $pos + 2);
+                    $buffer_parziale = substr($buffer_parziale, $pos + 2);
+                    echo $frame;
+                    @flush();
+                }
+                return strlen($pezzo);
+            },
+        ));
+        curl_exec($ch);
+        $errore = curl_error($ch);
+        $stato = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        curl_close($ch);
+
+        if ($buffer_parziale !== '') {
+            echo $buffer_parziale;
+        }
+        if ($errore) {
+            $esci('error', array('error' => 'Connessione al servizio chat interrotta: ' . $errore));
+        } elseif ($stato >= 400) {
+            $esci('error', array('error' => $this->human_error(array('code' => $stato, 'error' => ''))));
+        }
+        exit;
     }
 
     public function ajax_send_message() {

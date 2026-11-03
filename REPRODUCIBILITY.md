@@ -215,3 +215,16 @@ backend/chat_engine.py (auto-save compact summary)
   "Roleplay erotico"', lesbo -> 'Siamo nella stanza "Lesbo", qui ci incontriamo...'.
 - NOTA: non esiste una categoria "trans" fra le 24 (lesbo/gay/bisex ci sono). Servirebbe una
   stanza nuova con riassegnazione di personaggi da altre categorie.
+
+## 17) Risposta in streaming (2026-11-03)
+- Backend: `POST /chat/stream` (SSE) con gli stessi controlli di `/chat` (auth, accesso,
+  limite giornaliero, moderazione output per il testo finale). Eventi: `meta`, `delta`,
+  `final` (payload identico a /chat), `error` con rimborso del messaggio.
+- `chat_engine.process_message(..., on_delta=...)`: se arriva la callback usa
+  `get_ai_response_stream` e inoltra i pezzi; se lo stream non produce nulla ricade sulla
+  chiamata normale.
+- Plugin: `ajax_send_stream` fa da ponte (cURL + WRITEFUNCTION, `X-Accel-Buffering: no`,
+  buffer svuotati) e il client legge l'SSE: bolla che si riempie parola per parola, cursore
+  lampeggiante, barra nascosta al primo pezzo. Se lo stream non parte il client ricade da
+  solo su `aria_chat_send`. Misurato TTFB 0,13 s contro 20-100 s della risposta completa.
+- `API_Client::get_base_url()` aggiunto (la proprietà è privata).

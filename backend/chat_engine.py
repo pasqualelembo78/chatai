@@ -88,12 +88,43 @@ def _check_character_access(user_id, character):
     return True
 
 
+def _streamed_response(messages, user_id, on_delta):
+    """Come get_ai_response, ma inoltra i pezzi appena arrivano (callback).
+
+    Se lo stream non produce nulla si ricade sulla chiamata normale, così il
+    comportamento resta identico quando il provider non sa fare streaming.
+    """
+    from ai_engine.streaming import get_ai_response_stream
+
+    pezzi = []
+    provider = model = ""
+    try:
+        for token, pid, mid in get_ai_response_stream(messages, user_id=user_id):
+            if not token:
+                continue
+            if not pezzi:
+                provider, model = pid, mid
+            pezzi.append(token)
+            try:
+                on_delta(token)
+            except Exception:
+                pass
+    except Exception as e:
+        logger.warning(f"Streaming fallito ({e}): ricado sulla risposta completa")
+        pezzi = []
+
+    if pezzi:
+        return "".join(pezzi), provider, model
+    from ai_engine.response import get_ai_response
+    return get_ai_response(messages, user_id=user_id)
+
+
 def process_message(user_id, character_id, text, username="Utente",
                       start_time=time.time(),
                      memory_context=None, user_memory=None,
                      character_data=None, image_base64="", image_mime="image/jpeg",
                      client_storage=False, client_state=None, is_favorite=False,
-                     tone=None):
+                     tone=None, on_delta=None):
     import re
     client_state = client_state or {}
     character = get_character(character_id)
@@ -520,7 +551,10 @@ def process_message(user_id, character_id, text, username="Utente",
         messages.insert(1, {"role": "system", "content": TONE_HINTS[tone]})
 
     logger.info(f"get_ai_response: impersonate={impersonate_override is not None}")
-    ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
+    if on_delta is not None:
+        ai_text, ai_provider, ai_model = _streamed_response(messages, user_id, on_delta)
+    else:
+        ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
     logger.info(f"AI response: provider={ai_provider} model={ai_model} len={len(ai_text) if ai_text else 0}")
     if not ai_text:
         ai_text = _fallback_response(character, emotion)

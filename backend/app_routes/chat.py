@@ -161,6 +161,125 @@ async def api_chat(request: Request, body: ChatRequest, user: AuthUser = Depends
     return resp
 
 
+@router.post("/chat/stream")
+@limiter.limit("60/minute")
+async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = Depends(jwt_required)):
+    """Come /chat ma in Server-Sent Events: i pezzi arrivano mentre il modello scrive.
+
+    Eventi: meta (nome personaggio), delta (testo), final (payload completo, stessa
+    forma di /chat), error. Su CPU la lettura del prompt resta il costo maggiore:
+    lo streaming serve a non far fissare una pagina vuota.
+    """
+    import json as _json
+    import queue
+    import threading
+
+    chars = list_characters()
+    character_id = body.character or (chars[0]["id"] if chars else None)
+    text = body.text
+
+    client_state = {
+        "relationship": body.relationship_state,
+        "personality": body.personality_state,
+        "evolution": body.evolution_state,
+        "shifts": body.shifts,
+        "summaries": body.summaries,
+    }
+
+    if not text and not body.image:
+        raise HTTPException(400, "text or image required")
+    if text:
+        ok, msg = security_utils.nsfw_check_text(text)
+        if not ok:
+            raise HTTPException(400, msg)
+
+    char = get_character(character_id)
+    if char and not _check_character_access(user.user_id, char):
+        raise HTTPException(403, "premium_required")
+
+    from storage import check_and_count_message, refund_message
+    from content_safety import moderate_output
+    allowed, status = check_and_count_message(user.user_id)
+    if not allowed:
+        raise HTTPException(
+            429,
+            {
+                "error": "daily_limit_reached",
+                "limit": status["limit"],
+                "used": status["used"],
+                "unlock_cost": status["unlock_cost"],
+                "message": f"Limite giornaliero di messaggi raggiunto ({status['limit']}). "
+                           f"Sblocca messaggi illimitati con {status['unlock_cost']} MVC.",
+            },
+        )
+
+    coda = queue.Queue()
+
+    def lavora():
+        try:
+            result = process_message(
+                user.user_id, character_id, text, body.username,
+                memory_context=body.memory_context,
+                user_memory=body.user_memory,
+                character_data=body.character_data,
+                image_base64=body.image,
+                image_mime=body.image_mime,
+                client_storage=body.client_storage,
+                client_state=client_state,
+                is_favorite=body.is_favorite,
+                on_delta=lambda pezzo: coda.put(("delta", pezzo)),
+            )
+            coda.put(("result", result))
+        except Exception as e:  # qualunque errore va raccontato al client
+            logger.exception("stream/chat errore")
+            coda.put(("error", str(e)))
+
+    threading.Thread(target=lavora, daemon=True).start()
+
+    def eventi():
+        nome = (char or {}).get("name", "")
+        yield "event: meta\ndata: " + _json.dumps({"character_name": nome}, ensure_ascii=False) + "\n\n"
+        while True:
+            tipo, dato = coda.get()
+            if tipo == "delta":
+                yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
+                continue
+            if tipo == "error":
+                refund_message(user.user_id)
+                yield "event: error\ndata: " + _json.dumps({"error": dato}, ensure_ascii=False) + "\n\n"
+                return
+            result = dato
+            if not result:
+                refund_message(user.user_id)
+                yield "event: error\ndata: " + _json.dumps({"error": "character not found"}, ensure_ascii=False) + "\n\n"
+                return
+            ai_text, _bloccato = moderate_output(result["ai_text"])
+            result["ai_text"] = ai_text
+            payload = {
+                "response": ai_text,
+                "emotion": result["emotion"],
+                "emotion_intensity": result["intensity"],
+                "ai_provider": result.get("ai_provider", ""),
+                "ai_model": result.get("ai_model", ""),
+                "character_id": character_id,
+                "character_name": result["character"]["name"],
+            }
+            mem_updates = result.get("memory_updates", {})
+            if mem_updates:
+                payload["memory_updates"] = mem_updates
+            evo_updates = result.get("evo_updates", {})
+            if evo_updates.get("new_stage") or evo_updates.get("unlocked"):
+                payload["evo_updates"] = evo_updates
+            yield "event: final\ndata: " + _json.dumps(payload, ensure_ascii=False) + "\n\n"
+            return
+
+    return StreamingResponse(
+        eventi(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
+    )
+
+
 @router.post("/transcribe")
 @limiter.limit("10/minute")
 async def api_transcribe(request: Request, audio: UploadFile = File(...), user: AuthUser = Depends(jwt_required)):

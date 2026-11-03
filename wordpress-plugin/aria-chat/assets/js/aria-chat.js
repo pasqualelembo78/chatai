@@ -442,38 +442,150 @@
         var ajaxUrl = (typeof ariaChatConfig !== 'undefined' && ariaChatConfig.ajaxUrl) ? ariaChatConfig.ajaxUrl : (typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php');
         var userId = (typeof ariaChatConfig !== 'undefined') ? ariaChatConfig.userId : 0;
         var data = new FormData();
-        data.append('action', 'aria_chat_send');
         data.append('character', charId);
         data.append('text', text);
         data.append('username', (typeof ariaChatConfig !== 'undefined') ? ariaChatConfig.username : 'Ospite');
         data.append('user_id', userId);
-        fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data })
-            .then(function(r) {
-                return r.text().then(function(t) {
-                    try { return JSON.parse(t); }
-                    catch (e) { return { success: false, error: 'Risposta non-JSON dal server: ' + t.substring(0, 160) }; }
-                });
-            })
-            .then(function(resp) {
-                // Fine della misurazione: da qui in poi c'e' solo l'effetto di digitazione
-                window.ariaFetchDoneAt = performance.now();
-                setStatus('connected');
-                if (resp && resp.success) {
-                    var payload = resp.data || {};
-                    var txt = payload.ai_text || payload.response || resp.response || '';
-                    var emo = payload.emotion || resp.emotion || 'neutro';
-                    if (!txt) txt = '(nessuna risposta dal modello)';
-                    addAIMessage(txt, emo);
-                } else {
+
+        inviaInStreaming(ajaxUrl, data);
+    }
+
+    /**
+     * Invio con risposta in streaming.
+     * Il primo pezzo arriva in pochi secondi e le parole si compongono mentre il
+     * modello scrive. Se lo stream non parte o si rompe prima di qualsiasi testo,
+     * si ricade da soli sull'invio normale: l'utente non resta mai a mani vuote.
+     */
+    function inviaInStreaming(ajaxUrl, data) {
+        var ricevuto = false;
+        var $bolla = null;
+        var $testo = null;
+        var aperta = false;
+        var parziale = '';
+
+        function apriBolla() {
+            if (aperta) return;
+            aperta = true;
+            hideProgressBar();
+            $bolla = $('<div class="aria-message aria-message-ai aria-message-streaming"><div class="aria-message-content"><span class="aria-caret"></span></div><div class="aria-message-meta">' + new Date().toLocaleTimeString() + '</div></div>');
+            $messages.append($bolla);
+            $testo = $bolla.find('.aria-message-content');
+            scrollToBottom();
+        }
+
+        function scrivi(pezzo) {
+            parziale += pezzo;
+            if (!aperta) apriBolla();
+            $testo.text(parziale);
+            scrollToBottom();
+        }
+
+        function chiudi(emo, finale) {
+            hideProgressBar();
+            setStatus('connected');
+            if (!aperta) apriBolla();
+            $bolla.removeClass('aria-message-streaming');
+            $testo.text((getEmotionEmoji(emo ? emo : 'neutro') + ' ') + finale);
+            $bolla.find('.aria-caret').remove();
+            if (window.chatStartTime) {
+                var fine = window.ariaFetchDoneAt || performance.now();
+                var ms = Math.round(fine - window.chatStartTime);
+                window.ariaFetchDoneAt = 0;
+                saveResponseTime(ms, window.ariaLastChar || currentCharacter);
+                $bolla.find('.aria-message-meta').append(' <span style="font-size:10px;color:#888;">(' + (ms / 1000).toFixed(1) + 's)</span>');
+            }
+            scrollToBottom();
+            setTimeout(function () { if (typeof refreshMemoryPanel === 'function') refreshMemoryPanel(); }, 300);
+        }
+
+        function fallback() {
+            var d2 = new FormData();
+            data.forEach(function (v, k) { d2.append(k, v); });
+            d2.append('action', 'aria_chat_send');
+            fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: d2 })
+                .then(function (r) { return r.text(); })
+                .then(function (t) {
+                    var resp;
+                    try { resp = JSON.parse(t); } catch (e) { resp = { success: false, error: 'Risposta non-JSON dal server' }; }
+                    window.ariaFetchDoneAt = performance.now();
+                    if (resp && resp.success) {
+                        var payload = resp.data || {};
+                        var txt = payload.ai_text || payload.response || '';
+                        if (!txt) txt = '(nessuna risposta dal modello)';
+                        if (aperta) {
+                            $bolla.removeClass('aria-message-streaming');
+                            $bolla.find('.aria-caret').remove();
+                            $testo.text(getEmotionEmoji(payload.emotion || 'neutro') + ' ' + txt);
+                            hideProgressBar();
+                            setStatus('connected');
+                        } else {
+                            addAIMessage(txt, payload.emotion || 'neutro');
+                        }
+                    } else {
+                        hideProgressBar();
+                        addSystemMessage('Errore: ' + ((resp && typeof resp.error === 'string') ? resp.error : 'risposta non valida dal server'));
+                    }
+                })
+                .catch(function () {
                     hideProgressBar();
-                    var msgErr = (resp && typeof resp.error === 'string' && resp.error) ? resp.error : 'risposta non valida dal server';
-                    addSystemMessage('Errore: ' + msgErr);
+                    setStatus('disconnected');
+                    addSystemMessage('Errore di connessione al server chat.');
+                });
+        }
+
+        data.append('action', 'aria_chat_stream');
+        fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data, headers: { 'Accept': 'text/event-stream' } })
+            .then(function (r) {
+                if (!r.ok || !r.body || !r.body.getReader) throw new Error('stream non disponibile');
+                var reader = r.body.getReader();
+                var decoder = new TextDecoder('utf-8');
+                var buffer = '';
+                var fine = false;
+
+                function leggi() {
+                    return reader.read().then(function (res) {
+                        if (res.done) { fine = true; return; }
+                        buffer += decoder.decode(res.value, { stream: true });
+                        var taglio;
+                        while ((taglio = buffer.indexOf('\n\n')) !== -1) {
+                            var frame = buffer.slice(0, taglio);
+                            buffer = buffer.slice(taglio + 2);
+                            var evento = 'message';
+                            var dati = '';
+                            frame.split('\n').forEach(function (riga) {
+                                if (riga.indexOf('event:') === 0) evento = riga.slice(6).trim();
+                                else if (riga.indexOf('data:') === 0) dati += riga.slice(5).trim();
+                            });
+                            if (!dati) continue;
+                            var obj;
+                            try { obj = JSON.parse(dati); } catch (e) { continue; }
+                            if (evento === 'delta' && obj.t) {
+                                if (!ricevuto) { ricevuto = true; window.ariaFetchDoneAt = performance.now(); }
+                                scrivi(obj.t);
+                            } else if (evento === 'final') {
+                                ricevuto = true;
+                                window.ariaFetchDoneAt = performance.now();
+                                chiudi(obj.emotion, obj.response || obj.ai_text || '(nessuna risposta)');
+                                fine = true;
+                            } else if (evento === 'error') {
+                                if (!ricevuto) { fallback(); return; }
+                                hideProgressBar();
+                                if (aperta) { $bolla.removeClass('aria-message-streaming'); $bolla.find('.aria-caret').remove(); }
+                                addSystemMessage('Errore: ' + (obj.error || 'risposta non valida'));
+                                fine = true;
+                            }
+                        }
+                        if (fine) return;
+                        return leggi();
+                    });
                 }
+                return leggi();
             })
-            .catch(function(err) {
-                hideProgressBar();
-                setStatus('disconnected');
-                addSystemMessage('Errore di connessione al server chat: ' + (err && err.message ? err.message : err));
+            .then(function () {
+                if (!ricevuto && !aperta) fallback();
+            })
+            .catch(function () {
+                if (!ricevuto) fallback();
             });
     }
 

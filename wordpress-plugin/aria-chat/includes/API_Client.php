@@ -10,6 +10,11 @@ class Aria_API_Client {
     private $base_url;
     private $access_token;
     
+    /** URL base del backend (serve a Chat_Engine per lo streaming SSE). */
+    public function get_base_url() {
+        return $this->base_url;
+    }
+
     public function __construct($base_url = null) {
         $this->base_url = $base_url ? $base_url : get_option('aria_chat_backend_url', 'http://82.165.218.56:5000');
         $this->access_token = null;
