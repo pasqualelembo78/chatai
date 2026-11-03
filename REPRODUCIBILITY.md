@@ -444,3 +444,13 @@ backend/chat_engine.py (auto-save compact summary)
 - Anteprime social: 24 immagini 1200x630 generate con ImageMagick (il generatore AI è senza
   crediti), impostate come immagine in evidenza e stampate come `og:image`/`twitter:image`
   per stanze e pagine personaggio.
+
+## 36) GA4: verifica e attivazione del tracciamento (2026-11-03)
+- Correzione: GA4 **era già collegata** (Site Kit, proprietà 231018431, stream G-HHSCV0372N, Google
+  Tag GT-KF6GM6G7). Il mio controllo iniziale leggeva la chiave sbagliata
+  (`googlesitekit_analytics_settings` invece di `googlesitekit_analytics-4_settings`).
+- Il tag però era escluso per gli utenti loggati (`trackingDisabled: ["loggedinUsers"]`): così si
+  perdeva l'evento di registrazione, che avviene dopo il login. Impostato a lista vuota.
+- `traccia()` ora usa `gtag` e, se non è ancora definito, accoda su `dataLayer`: nessun evento
+  perso nei primi millisecondi di caricamento.
+- Verificato: Google Tag presente anche da utente autenticato, script servito con gli eventi.

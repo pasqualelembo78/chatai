@@ -568,7 +568,15 @@
      * gli eventi iniziano a funzionare appena colleghi la proprietà.
      */
     function traccia(nome, parametri) {
-        if (typeof window.gtag !== 'function') return;
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', nome, parametri || {});
+            return;
+        }
+        // il tag di Google a volte non ha ancora definito gtag: uso la coda
+        window.dataLayer = window.dataLayer || [];
+        if (typeof window.gtag !== 'function') {
+            window.gtag = function () { window.dataLayer.push(arguments); };
+        }
         window.gtag('event', nome, parametri || {});
     }
 
