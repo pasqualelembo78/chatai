@@ -474,3 +474,12 @@ backend/chat_engine.py (auto-save compact summary)
   senza che gliele si dichiari tutte insieme.
 - Sitemap da inviare in Search Console: **`sitemap_index.xml`** (indice), che ora contiene 7 voci:
   post, pagine, stanze, video, categorie, pv_categoria e la selezione personaggi.
+
+## 39) Blog: categorie e 51 articoli programmati (2026-11-03)
+- Create 5 categorie editoriali: Guide alle chat, Temi e stanze, Confronti e consigli, Tecnologia e
+  privacy, Per iniziare. I due articoli già online sono stati assegnati (prima erano senza categoria).
+- Scritti **51 articoli** (350-450 parole, struttura H2, link contestuali alle stanze e agli altri
+  articoli) e programmati **2 a settimana** (uno ogni 3,5 giorni, il primo il 5 novembre, ultimo
+  il 29 aprile 2027). Totale in archivio: 53.
+- Verificati e corretti i link interni rotti (1 trovato: slug sbagliato corretto).
+- Nessun articolo senza categoria, nessun link orfano.
