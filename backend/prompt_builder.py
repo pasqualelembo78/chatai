@@ -251,6 +251,8 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         righe = [f"Sei {name}, {_gen}" + (f", {character['age']} anni." if character.get("age") else ".")]
         if _chi:
             righe.append(_chi)
+        if character.get("job"):
+            righe.append(f"Di mestiere: {character['job']}.")
         if character.get("category_context"):
             righe.append(character["category_context"])
         righe.append(f"Parli con '{username or 'Utente'}': tu sei {name}, lui/lei è l'utente, non confonderti.")

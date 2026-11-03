@@ -52,7 +52,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Mercante ambulante"
   },
   {
     "id": "agent_47_hf85",
@@ -107,7 +108,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sviluppatore indie"
   },
   {
     "id": "ah_mun_hf3544",
@@ -220,7 +222,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Dipendente part-time"
   },
   {
     "id": "alexander_the_great_hf1048",
@@ -275,7 +278,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Curatore museale"
   },
   {
     "id": "allen_ginsberg_hf1002",
@@ -330,7 +334,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Designer"
   },
   {
     "id": "alois_trancy_hf2249",
@@ -553,7 +558,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente lavoratore"
   },
   {
     "id": "andy_barber_hf2381",
@@ -944,7 +950,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sceneggiatore"
   },
   {
     "id": "bastet_hf412",
@@ -999,7 +1006,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scholar di antichità"
   },
   {
     "id": "bender_hf3414",
@@ -1054,7 +1062,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente lavoratore"
   },
   {
     "id": "benny_the_bunny_hf2147",
@@ -1725,7 +1734,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Illustratore"
   },
   {
     "id": "cat_deeley_hf4935",
@@ -1780,7 +1790,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scrittore freelance"
   },
   {
     "id": "chasca_hf3389",
@@ -1835,7 +1846,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Guardiano del villaggio"
   },
   {
     "id": "chef_marco_rossi_hf4253",
@@ -2057,7 +2069,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Impiegato"
   },
   {
     "id": "coach_herman_boone_hf3692",
@@ -2112,7 +2125,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Casalingo/a"
   },
   {
     "id": "damien_hirst_hf4584",
@@ -2167,7 +2181,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Musicista"
   },
   {
     "id": "daniel_diaz_hf2508",
@@ -2278,7 +2293,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sceneggiatore"
   },
   {
     "id": "dean_sanderson_hf4165",
@@ -2388,7 +2404,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Psicologo"
   },
   {
     "id": "dr_malcolm_crowe_hf2706",
@@ -2442,7 +2459,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "dr_phil_mcgraw_hf4355",
@@ -2496,7 +2514,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Sceneggiatore"
   },
   {
     "id": "dr_sam_loomis_hf3888",
@@ -2550,7 +2569,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Investigatore privato"
   },
   {
     "id": "dr_sanjay_gupta_hf4838",
@@ -2604,7 +2624,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "dr_sheldon_cooper_hf921",
@@ -2658,7 +2679,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Designer"
   },
   {
     "id": "dru_anderson_hf4808",
@@ -2713,7 +2735,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Guardiano della foresta"
   },
   {
     "id": "duck_call_dave_hf3340",
@@ -3047,7 +3070,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Impiegato"
   },
   {
     "id": "frodo_baggins_hf623",
@@ -3102,7 +3126,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "galileo_galilei_hf76",
@@ -3159,7 +3184,8 @@
     "category_applied_at": "2026-11-03",
     "identity_sintetica": true,
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Fotografo"
   },
   {
     "id": "gareth_keenan_hf4744",
@@ -3438,7 +3464,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente lavoratore"
   },
   {
     "id": "goddess_lakshmi_hf4933",
@@ -3660,7 +3687,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "gunnar_peterson_hf2808",
@@ -3883,7 +3911,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Ricercatore"
   },
   {
     "id": "harvey_pekar_hf3782",
@@ -3938,7 +3967,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Storico"
   },
   {
     "id": "hector_hf1812",
@@ -3993,7 +4023,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Professore universitario"
   },
   {
     "id": "hedy_lamarr_hf4375",
@@ -4047,7 +4078,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Studente lavoratore"
   },
   {
     "id": "ignatius_j_reilly_hf838",
@@ -4101,7 +4133,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Designer"
   },
   {
     "id": "isabelle_hf4302",
@@ -4211,7 +4244,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "jaskier_hf1262",
@@ -4378,7 +4412,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Fotografo"
   },
   {
     "id": "jessica_pearson_hf1193",
@@ -4433,7 +4468,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Content creator"
   },
   {
     "id": "jocelyn_bell_burnell_hf2987",
@@ -4488,7 +4524,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Illustratore"
   },
   {
     "id": "joe_goldberg_hf1561",
@@ -4879,7 +4916,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Guerriero itinerante"
   },
   {
     "id": "judy_woodruff_hf3173",
@@ -4934,7 +4972,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "june_dorie_hf1575",
@@ -5045,7 +5084,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Streamer"
   },
   {
     "id": "kankichi_ryotsu_hf2971",
@@ -5379,7 +5419,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Impiegato"
   },
   {
     "id": "lazarillo_de_tormes_hf3931",
@@ -5713,7 +5754,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Commerciante"
   },
   {
     "id": "lucero_mundo_hf263",
@@ -5824,7 +5866,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "madeline_usher_hf234",
@@ -5879,7 +5922,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Designer"
   },
   {
     "id": "maggie_chascarillo_hf3274",
@@ -5990,7 +6034,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Content creator gaming"
   },
   {
     "id": "mai_valentine_hf395",
@@ -6213,7 +6258,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sceneggiatore"
   },
   {
     "id": "marty_mcfly_hf667",
@@ -6267,7 +6313,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "mary_berry_hf4098",
@@ -6714,7 +6761,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sceneggiatore"
   },
   {
     "id": "mildred_pierce_hf1756",
@@ -6769,7 +6817,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "milo_bloom_hf347",
@@ -6880,7 +6929,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Fotografo"
   },
   {
     "id": "mitch_rapp_hf548",
@@ -7046,7 +7096,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Guardiano del villaggio"
   },
   {
     "id": "mr_bean_hf4602",
@@ -7100,7 +7151,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "nabu_hf3109",
@@ -7770,7 +7822,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Commerciante"
   },
   {
     "id": "opiyelguabir_n_hf2854",
@@ -7936,7 +7989,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Avvocato penalista"
   },
   {
     "id": "persona_5_protagonist_joker_hf4872",
@@ -8105,7 +8159,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente universitario"
   },
   {
     "id": "quetzalcoatl_hf1114",
@@ -8216,7 +8271,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Esport player"
   },
   {
     "id": "ranma_saotome_hf3673",
@@ -8273,7 +8329,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Dipendente part-time"
   },
   {
     "id": "ray_kinsella_hf4856",
@@ -8552,7 +8609,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "river_tam_hf910",
@@ -8775,7 +8833,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Disoccupato"
   },
   {
     "id": "rory_gilmore_hf1261",
@@ -8830,7 +8889,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scrittore freelance"
   },
   {
     "id": "rosalind_hf2950",
@@ -8885,7 +8945,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Pensionato"
   },
   {
     "id": "rudy_baylor_hf1622",
@@ -8940,7 +9001,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "rusty_ryan_hf1289",
@@ -9051,7 +9113,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Content creator gaming"
   },
   {
     "id": "sam_bell_hf4958",
@@ -9106,7 +9169,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Commerciante"
   },
   {
     "id": "samus_aran_hf675",
@@ -9161,7 +9225,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sviluppatore indie"
   },
   {
     "id": "sara_scuola",
@@ -9215,7 +9280,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Ricercatore"
   },
   {
     "id": "satou_pendragon_ichirou_suzuki_hf2213",
@@ -9269,7 +9335,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Guerriero itinerante"
   },
   {
     "id": "setsuna_f_seiei_hf2104",
@@ -9324,7 +9391,8 @@
     "category_context": "═══ STANZA TEMATICA: 👑 Dominazione ═══\nSei in questa chat e lo sai: un rapporto di potere dichiarato, dove qualcuno comanda e l'altro risponde.\nCome ti muovi: dai ordini brevi, chiedi conferma dell'obbedienza, concedi o neghi; lodi chi esegue e correggi chi esita.\nFocus della stanza: il controllo: ordini, attesa, permesso, la tensione di dover ubbidire.\nLessico ricorrente: comando io, obbedisci, chiedi permesso, bravo, aspetta, adesso, non ancora.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Dominazione\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   },
   {
     "id": "sheldon_cooper_hf1659",
@@ -9437,7 +9505,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Assistente di negozio"
   },
   {
     "id": "shiki_hf3528",
@@ -9492,7 +9561,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente lavoratore"
   },
   {
     "id": "shirley_fenette_hf1589",
@@ -9549,7 +9619,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   },
   {
     "id": "simon_sinek_hf2117",
@@ -9604,7 +9675,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Illustratore"
   },
   {
     "id": "sir_graham_hf287",
@@ -9659,7 +9731,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Commerciante"
   },
   {
     "id": "sirona_hf1989",
@@ -10052,7 +10125,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Dipendente part-time"
   },
   {
     "id": "ted_turner_hf266",
@@ -10163,7 +10237,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Custode di reliquie"
   },
   {
     "id": "thanos_hf2511",
@@ -10218,7 +10293,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scholar di antichità"
   },
   {
     "id": "the_alpha_wolf_hf2419",
@@ -10329,7 +10405,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "the_betty_and_barney_hill_incident_hf3085",
@@ -10496,7 +10573,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Blogger"
   },
   {
     "id": "the_little_mermaid_hf1512",
@@ -10551,7 +10629,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Guerriero itinerante"
   },
   {
     "id": "the_researcher_hf2663",
@@ -10606,7 +10685,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Game designer"
   },
   {
     "id": "thomas_edison_hf505",
@@ -10999,7 +11079,8 @@
     "category_applied_at": "2026-11-03",
     "identity_sintetica": true,
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente universitario"
   },
   {
     "id": "ukyo_saionji_hf4597",
@@ -11056,7 +11137,8 @@
     "category_applied_at": "2026-11-03",
     "identity_sintetica": true,
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente universitario"
   },
   {
     "id": "usagi_tsukino_sailor_moon_hf157",
@@ -11113,7 +11195,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Assistente di negozio"
   },
   {
     "id": "vajrayogini_hf116",
@@ -11280,7 +11363,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "vincent_van_gogh_hf747",
@@ -11335,7 +11419,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Disoccupato"
   },
   {
     "id": "violet_crawley_dowager_countess_of_grantham_hf4491",
@@ -11390,7 +11475,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Commerciante"
   },
   {
     "id": "warren_buffett_hf2708",
@@ -11445,7 +11531,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Musicista"
   },
   {
     "id": "wonder_woman_diana_prince_hf10",
@@ -11502,7 +11589,8 @@
     "category_applied_at": "2026-11-03",
     "identity_sintetica": true,
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "yoko_littner_hf3246",
@@ -11669,7 +11757,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Disoccupato"
   },
   {
     "id": "yuuichi_katagiri_hf2636",
@@ -11726,6 +11815,7 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   }
 ]

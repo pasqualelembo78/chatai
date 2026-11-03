@@ -348,3 +348,11 @@ backend/chat_engine.py (auto-save compact summary)
   core_traits), 0 categorie vuote, indice 5.072 card, stanze 200 con card e paginazione.
 - Prompt per personaggio ~1.000 caratteri (erano ~4.600): chat di prova su bdsm e milf
   dichiarano la stanza e restano in tema, 20-24 s a freddo.
+
+## 28) Mestiere recuperato dove serviva (2026-11-03)
+- L'asciugatura aveva tolto `occupation`: 1.781 personaggi (39%) restavano senza mestiere e
+  il modello lo inventava ("custode di reliquie"). Per il 61% il mestiere era già nell'essenza.
+- Recuperato SOLO `occupation.title` (campo `job`, max 60 caratteri) dai commit precedenti,
+  esclusivamente dove l'essenza non lo citava. Costo nel prompt: ~25 caratteri (~1%).
+- Nel prompt leggero la riga è "Di mestiere: X.". Verificato: personaggio milf risponde
+  "Sono un musicista" e dichiara comunque la stanza.

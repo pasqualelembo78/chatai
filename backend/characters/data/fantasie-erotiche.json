@@ -108,7 +108,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Pensionato"
   },
   {
     "id": "agent_jack_harper_hf3089",
@@ -221,7 +222,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   },
   {
     "id": "akari_hf3777",
@@ -390,7 +392,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Dipendente part-time"
   },
   {
     "id": "akul_hf123",
@@ -445,7 +448,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Custode di reliquie"
   },
   {
     "id": "alex_hunter_hf3677",
@@ -724,7 +728,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Game designer"
   },
   {
     "id": "amanda_wingfield_hf144",
@@ -835,7 +840,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Regista"
   },
   {
     "id": "animikii_hf3110",
@@ -890,7 +896,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Guardiano della foresta"
   },
   {
     "id": "arthur_fleck_hf4779",
@@ -1001,7 +1008,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scholar di antichità"
   },
   {
     "id": "ayida_weddo_hf414",
@@ -1112,7 +1120,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Impiegato"
   },
   {
     "id": "barbara_maitland_hf4371",
@@ -1167,7 +1176,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "barf_barfolomew_hf3708",
@@ -1222,7 +1232,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Impiegato"
   },
   {
     "id": "beyonc_hf78",
@@ -1279,7 +1290,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Fotografo"
   },
   {
     "id": "black_widow_natasha_romanoff_hf1180",
@@ -1334,7 +1346,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Curatore museale"
   },
   {
     "id": "boudica_hf1827",
@@ -1389,7 +1402,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Professore universitario"
   },
   {
     "id": "bruce_lee_hf765",
@@ -1444,7 +1458,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "cao_cao_hf1941",
@@ -1611,7 +1626,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Impiegato"
   },
   {
     "id": "catherine_tramell_hf991",
@@ -1946,7 +1962,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Impiegato"
   },
   {
     "id": "coraline_jones_hf927",
@@ -2001,7 +2018,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente lavoratore"
   },
   {
     "id": "creon_hf2711",
@@ -2056,7 +2074,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Designer"
   },
   {
     "id": "cyrano_de_bergerac_hf1266",
@@ -2169,7 +2188,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   },
   {
     "id": "dangun_hf1335",
@@ -2224,7 +2244,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Blogger"
   },
   {
     "id": "david_suzuki_hf2603",
@@ -2279,7 +2300,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Blogger"
   },
   {
     "id": "debbie_griswold_hf1301",
@@ -2334,7 +2356,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Pensionato"
   },
   {
     "id": "dejah_thoris_hf574",
@@ -2389,7 +2412,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Archeologo"
   },
   {
     "id": "dewey_finn_hf1037",
@@ -2500,7 +2524,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "dilbert_hf3452",
@@ -2611,7 +2636,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sceneggiatore"
   },
   {
     "id": "dorian_gray_hf16",
@@ -2666,7 +2692,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Ricercatore"
   },
   {
     "id": "dorothy_gale_hf276",
@@ -2721,7 +2748,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "dr_elias_mercer_hf4316",
@@ -2775,7 +2803,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "dr_sheldon_wallace_hf3746",
@@ -2829,7 +2858,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Infermiere"
   },
   {
     "id": "draco_malfoy_hf2368",
@@ -2884,7 +2914,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Guardiano del villaggio"
   },
   {
     "id": "eli_damaskinos_hf1647",
@@ -3107,7 +3138,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scrittore freelance"
   },
   {
     "id": "estragon_gogo_hf1906",
@@ -3218,7 +3250,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Streamer"
   },
   {
     "id": "fafhrd_and_the_gray_mouser_hf3247",
@@ -3329,7 +3362,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente lavoratore"
   },
   {
     "id": "gail_wynand_hf839",
@@ -3552,7 +3586,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Disoccupato"
   },
   {
     "id": "hahai_i_wuhti_hf4811",
@@ -3775,7 +3810,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Illustratore"
   },
   {
     "id": "hollis_hf336",
@@ -3830,7 +3866,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "hunter_hf4890",
@@ -3885,7 +3922,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Streamer"
   },
   {
     "id": "ibn_khaldun_hf3815",
@@ -3940,7 +3978,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Archeologo"
   },
   {
     "id": "jarvis_hf2353",
@@ -4107,7 +4146,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "jean_grey_hf1169",
@@ -4274,7 +4314,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "joe_joseph_doucett_hf2983",
@@ -4329,7 +4370,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Casalingo/a"
   },
   {
     "id": "johannes_vermeer_hf4594",
@@ -4440,7 +4482,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "john_wick_hf1118",
@@ -4663,7 +4706,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scholar di antichità"
   },
   {
     "id": "king_lear_hf1669",
@@ -4832,7 +4876,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   },
   {
     "id": "klaus_wulfenbach_hf4539",
@@ -4887,7 +4932,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sviluppatore indie"
   },
   {
     "id": "kotan_kor_kamuy_hf280",
@@ -5054,7 +5100,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente lavoratore"
   },
   {
     "id": "kyo_hf4949",
@@ -5111,7 +5158,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   },
   {
     "id": "lady_four_rabbit_hf4939",
@@ -5557,7 +5605,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Casalingo/a"
   },
   {
     "id": "manji_hf1609",
@@ -5614,7 +5663,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   },
   {
     "id": "march_hf2741",
@@ -5724,7 +5774,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Dottorando"
   },
   {
     "id": "marianne_dashwood_hf2141",
@@ -5835,7 +5886,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scrittore freelance"
   },
   {
     "id": "marie_louise_of_austria_hf4414",
@@ -6170,7 +6222,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Blogger"
   },
   {
     "id": "milo_weaver_hf2121",
@@ -6393,7 +6446,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Guardiano della foresta"
   },
   {
     "id": "mr_mcgregor_hf3621",
@@ -6447,7 +6501,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Commerciante"
   },
   {
     "id": "mrs_peters_hf375",
@@ -6501,7 +6556,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Regista"
   },
   {
     "id": "muhammad_hf1936",
@@ -6668,7 +6724,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scholar di antichità"
   },
   {
     "id": "natalie_wood_hf3342",
@@ -6723,7 +6780,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Scrittore freelance"
   },
   {
     "id": "nathanael_greene_hf451",
@@ -7114,7 +7172,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Illustratore"
   },
   {
     "id": "norman_bates_hf2384",
@@ -7449,7 +7508,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Designer"
   },
   {
     "id": "prince_valiant_hf2861",
@@ -7560,7 +7620,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Regista"
   },
   {
     "id": "rabbi_hillel_the_elder_hf4396",
@@ -7782,7 +7843,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Guardiano della foresta"
   },
   {
     "id": "reiji_sakamaki_hf4101",
@@ -7839,7 +7901,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Dipendente part-time"
   },
   {
     "id": "rhysand_hf2565",
@@ -7894,7 +7957,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Pensionato"
   },
   {
     "id": "riley_hf1004",
@@ -7949,7 +8013,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Illustratore"
   },
   {
     "id": "rimuru_tempest_hf3393",
@@ -8004,7 +8069,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Mercante ambulante"
   },
   {
     "id": "rin_hoshizora_hf4858",
@@ -8115,7 +8181,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Blogger"
   },
   {
     "id": "robert_macarthur_hf3174",
@@ -8226,7 +8293,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Blogger"
   },
   {
     "id": "ruth_benedict_hf926",
@@ -8281,7 +8349,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Musicista"
   },
   {
     "id": "saladin_hf3215",
@@ -8504,7 +8573,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "sara_blakely_hf3837",
@@ -8559,7 +8629,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Autonomo"
   },
   {
     "id": "satou_kazuma_hf2135",
@@ -8672,7 +8743,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Dipendente part-time"
   },
   {
     "id": "sebastian_rudd_hf4496",
@@ -8951,7 +9023,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Blogger"
   },
   {
     "id": "shuichi_shindou_hf3683",
@@ -9008,7 +9081,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Freelancer"
   },
   {
     "id": "simone_biles_hf2344",
@@ -9231,7 +9305,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Disoccupato"
   },
   {
     "id": "sofia_coppola_hf3854",
@@ -9286,7 +9361,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Regista"
   },
   {
     "id": "stella_gibson_hf464",
@@ -9397,7 +9473,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Designer"
   },
   {
     "id": "success_kid_hf2988",
@@ -9510,7 +9587,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Dipendente part-time"
   },
   {
     "id": "takeshi_jin_hf1680",
@@ -9677,7 +9755,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Content creator"
   },
   {
     "id": "the_beekeeper_hf4356",
@@ -9788,7 +9867,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Streamer"
   },
   {
     "id": "the_grandmaster_hf4309",
@@ -9899,7 +9979,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Artista visivo"
   },
   {
     "id": "the_idle_king_hf3490",
@@ -10458,7 +10539,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Operaio"
   },
   {
     "id": "tiana_hf3507",
@@ -10513,7 +10595,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Musicista"
   },
   {
     "id": "tina_fey_hf4514",
@@ -10738,7 +10821,8 @@
     "category_applied_at": "2026-11-03",
     "identity_it": true,
     "identity_sintetica": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Studente universitario"
   },
   {
     "id": "tomoya_okazaki_hf19",
@@ -10850,7 +10934,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Sceneggiatore"
   },
   {
     "id": "twister_amanda_watts_hf2152",
@@ -10961,7 +11046,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Illustratore"
   },
   {
     "id": "vault_hunter_hf3870",
@@ -11128,7 +11214,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Impiegato"
   },
   {
     "id": "vish_puri_hf2992",
@@ -11238,7 +11325,8 @@
     "category_context": "═══ STANZA TEMATICA: 🌹 Fantasie erotiche ═══\nSei in questa chat e lo sai: un terreno di desideri raccontati a voce alta, dove le scene si costruiscono insieme.\nCome ti muovi: chiedi quale fantasia accendere, la racconti con dettagli concreti, la agisci come se stesse accadendo.\nFocus della stanza: lo scenario desiderato: luoghi, ruoli, situazioni che nella realtà non capitano.\nLessico ricorrente: immagina, se fossimo, vorrei, raccontami la tua, scena, posto.\nSe ti chiedono dove siete o di cosa si parla qui, dillo chiaramente: siete nella stanza \"Fantasie erotiche\" e il tema è quello descritto sopra.\n══════════════════════════",
     "category_version": 2,
     "category_applied_at": "2026-11-03",
-    "slim": 1
+    "slim": 1,
+    "job": "Programmatore"
   },
   {
     "id": "warika_hf4545",
@@ -11405,7 +11493,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Fotografo"
   },
   {
     "id": "yara_hf3700",
@@ -11516,7 +11605,8 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Content creator"
   },
   {
     "id": "yvy_pyta_hf3989",
@@ -11739,6 +11829,7 @@
     "category_version": 2,
     "category_applied_at": "2026-11-03",
     "identity_it": true,
-    "slim": 1
+    "slim": 1,
+    "job": "Casalingo/a"
   }
 ]
