@@ -598,3 +598,11 @@ backend/chat_engine.py (auto-save compact summary)
   file deve essere installabile da `build_app.sh` senza errori se già presente e i file vanno
   sempre messi nello zip; se dopo un ripristino serve un comando a mano, il lavoro non è finito.
 - Zip: aggiunta `backend/language/` (11 file) che prima mancava.
+
+## 48) Ripristino da zero: script dedicato (2026-11-03)
+- Chiarito che `build_app.sh` NON estrae il backup: installa dipendenze e servizi e legge solo
+  `backend/.env` dallo zip. Per un ripristino serviva estrarre a mano.
+- Nuovo `restore_from_backup.sh`: estrae le parti applicative in `/opt/aria`, le parti di sistema
+  in `/var/www` e `/usr/local`, sistema i permessi, esegue `build_app.sh` e stampa i passaggi
+  residui (SQL, attivazione plugin, token ptk, token GitHub).
+- `AGENTS.md` aggiornato: il ripristino è `restore_from_backup.sh`, non `build_app.sh` da solo.

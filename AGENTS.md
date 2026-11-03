@@ -37,4 +37,6 @@
   * plugin WP: /var/www/pornovirtuale/wp-content/plugins/aria-chat/ (aria-chat.php, assets/js/aria-chat.js, includes/Chat_Engine.php)
   * DB: sql_chat_summaries.sql + sql per user_memory_items
   * Documentazione: REPRODUCIBILITY.md
-- Se si disinstalla il plugin o si cambia server: copiare file WP, eseguire SQL DB, lanciare build_app.sh, riavviare chatai.service.
+- Se si disinstalla il plugin o si cambia server: `./restore_from_backup.sh` (estrae lo zip e
+  lancia build_app.sh), poi eseguire gli SQL del DB, attivare il plugin e riavviare chatai.service.
+  `build_app.sh` da solo NON estrae il backup: installa dipendenze e servizi.
