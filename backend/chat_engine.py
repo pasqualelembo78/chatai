@@ -605,6 +605,10 @@ def process_message(user_id, character_id, text, username="Utente",
                 taglio = max(ai_text.rfind('.'), ai_text.rfind('?'), ai_text.rfind('!'))
                 if taglio > 30:
                     ai_text = ai_text[:taglio + 1]
+                # se resta un virgolettato aperto, chiudilo
+                if ai_text.count('"') % 2:
+                    ai_text += '"'
+
     except Exception as e:
         logger.debug(f"Troncamento risposta fallito: {e}")
 

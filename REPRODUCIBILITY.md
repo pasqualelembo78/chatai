@@ -295,3 +295,17 @@ backend/chat_engine.py (auto-save compact summary)
   vuota, più chiusura automatica all'ultima frase completa se la generazione si interrompe.
 - Verificato su 4 risposte: 27-41 parole, testo streamato == testo finale, sempre chiuso con
   punteggiatura.
+
+## 23) Latenza: keep-alive, cronologia, modalità prompt leggera (2026-11-03)
+- Il picco di 93,9 s era il **keep-alive scaduto** (1 minuto): dopo 5 minuti di pausa Ollama
+  scaricava il modello e il messaggio successivo pagava la ricarica. Portato a 30 minuti nel
+  drop-in `override.conf` (che scavalcava il nostro `limiti.conf`) e — soprattutto — il
+  `keep_alive` ora viaggia a livello di richiesta: dentro `options` Ollama lo IGNORA.
+- Cronologia da 20 a 10 messaggi.
+- Nuova modalità `PROMPT_LIGHT_ADULT=1` (default): per le categorie adulte il prompt scende a
+  ~820 caratteri (da ~3.700) con identità, essenza breve, stanza, nome utente, brevità e scala
+  di intimità. Misurato: 28 s a freddo, **9-12 s** a caldo, risposte 13-16 parole coerenti.
+  Spegnibile con `PROMPT_LIGHT_ADULT=0` (torna il prompt completo con tutte le regole).
+- Genere non binario: prima usciva "uno non binario"; ora "una persona non binaria" con
+  licenza esplicita di essere chiamato al maschile o al femminile.
+- Troncamento: se chiude a metà di un virgolettato, lo richiude.

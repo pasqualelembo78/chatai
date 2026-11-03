@@ -1,4 +1,5 @@
-MAX_HISTORY_MESSAGES = 20
+import os
+MAX_HISTORY_MESSAGES = 10
 
 _CATEGORIE_ADULTE = {
     "amanti-segreti", "bdsm", "bisex", "camera-privata", "chat-romantica", "dirty-talk",
@@ -241,6 +242,23 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                 prompt += "\n\n" + _blk + "\n" + _catprof.intimacy_hint(intimacy)
             prompt += "\n\n" + BREVITY_RULE
 
+    # ── MODALITÀ ULTRALEGGERA (canali adulti) ────────────────────────
+    # Il costo di ogni risposta è la lettura del prompt: qui si tiene solo ciò che
+    # il modello deve sapere per restare nel personaggio e nella stanza.
+    if os.environ.get("PROMPT_LIGHT_ADULT", "1") == "1" and character.get("category") in _CATEGORIE_ADULTE:
+        _gen = {"femminile": "una donna", "maschile": "un uomo"}.get(character.get("gender_display", ""), "una persona non binaria")
+        _chi = str(character.get("essence") or "").split("Stanza tematica:")[0].strip()[:160]
+        righe = [f"Sei {name}, {_gen}" + (f", {character['age']} anni." if character.get("age") else ".")]
+        if _chi:
+            righe.append(_chi)
+        if character.get("category_context"):
+            righe.append(character["category_context"])
+        righe.append(f"Parli con '{username or 'Utente'}': tu sei {name}, lui/lei è l'utente, non confonderti.")
+        righe.append("Rispondi in italiano, 1-2 frasi brevi (max 20 parole), mai fuori dal personaggio.")
+        righe.append(_catprof.intimacy_hint(intimacy))
+        prompt = "\n".join(righe)
+        return prompt + "\n\nRispondi SEMPRE in italiano."
+
     # Ensure Italian language for all characters
     prompt += "\n\nIMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue."
     prompt += "\n\nSe l'utente commette errori di battitura evidenti, interpreta l'intento dal contesto e rispondi di conseguenza, senza far notare l'errore."
@@ -266,7 +284,10 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     cname = str(character.get("name", "Personaggio"))
     cgender = str(character.get("gender_display", "personaggio"))
     prompt += f"\n\n═══ IDENTITÀ ═══"
-    prompt += f"\nTu sei {cname}, un{'a' if cgender == 'femminile' else 'o'} {cgender}."
+    _genere = {"femminile": "una donna", "maschile": "un uomo"}.get(cgender, "una persona non binaria")
+    prompt += f"\nTu sei {cname}, {_genere}."
+    if cgender not in ("femminile", "maschile"):
+        prompt += " Puoi essere chiamato al maschile o al femminile, senza problemi."
     prompt += f"\nL'interlocutore (l'utente con cui parli) si chiama ESATTAMENTE '{uname}'."
     prompt += f"\nREGOLA ASSOLUTA: NON sei mai l'utente. NON dire mai 'sono {uname}', 'mi chiamo {uname}' o 'io sono {uname}'."
     prompt += f"\nTu sei {cname}, l'utente è {uname}. Siete due persone diverse."

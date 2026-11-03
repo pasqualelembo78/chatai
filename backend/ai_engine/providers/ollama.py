@@ -18,7 +18,6 @@ OLLAMA_OPTIONS = {
     "num_ctx": int(os.environ.get("OLLAMA_NUM_CTX", 4096)),
     "num_predict": int(os.environ.get("OLLAMA_NUM_PREDICT", 512)),
     "num_thread": int(os.environ.get("OLLAMA_NUM_THREAD", 6)),
-    "keep_alive": os.environ.get("OLLAMA_KEEP_ALIVE", "30m"),
 }
 
 OLLAMA_STARTED = False
@@ -86,6 +85,9 @@ OLLAMA_MODELS = [
 ]
 
 
+KEEP_ALIVE = os.environ.get("OLLAMA_KEEP_ALIVE", "30m")
+
+
 def _ollama_available():
     logger.debug(f"OLLAMA: Checking availability at {OLLAMA_BASE}")
     try:
@@ -125,7 +127,7 @@ def _ollama_generate(messages, model, user_id=None):
         logger.error("OLLAMA: Service not available for generate")
         return None
     try:
-        payload = {"model": model, "messages": messages, "options": OLLAMA_OPTIONS, "stream": False}
+        payload = {"model": model, "messages": messages, "options": OLLAMA_OPTIONS, "stream": False, "keep_alive": KEEP_ALIVE}
         logger.debug(f"OLLAMA: POST {OLLAMA_URL} payload: model={model}, options={OLLAMA_OPTIONS}")
         resp = requests.post(
             OLLAMA_URL,
