@@ -483,3 +483,19 @@ backend/chat_engine.py (auto-save compact summary)
   il 29 aprile 2027). Totale in archivio: 53.
 - Verificati e corretti i link interni rotti (1 trovato: slug sbagliato corretto).
 - Nessun articolo senza categoria, nessun link orfano.
+
+## 40) Presentazioni iniziali riscritte (2026-11-03)
+- Com'era: al primo messaggio il template era una battuta secca di categoria ("Sei in ritardo.
+  Mettiti in posizione.") e il modello la riscriveva con un prompt da "una frase breve": uscivano
+  presentazioni povere, senza nome, senza carattere, a volte di 6 parole.
+- Com'è: la riga immediata la costruisce `_presentazione()` SOLO dai dati del personaggio (nome,
+  età, mestiere, tratto in prima persona, tag, stanza) con 40-65 parole garantite, poi il modello
+  la riscrive con struttura obbligata: 1) nome/età/mestiere 2) stanza 3) carattere e modo di
+  relazionarsi 4) invito. Prompt con i dati elencati, divieto di inventare e schema al posto della
+  traccia; il modello deve variare le parole e usare la prima persona.
+- Il tratto viene portato in prima persona (`X è una persona…` → `Sono una persona…`, verbi al
+  presente e riflessivi convertiti); "camera-privata" aveva l'approccio in terza persona, riscritto.
+- Rete di sicurezza: se il modello produce meno di 32 parole, si antepone la traccia; se supera le
+  65 si taglia a fine frase. Resta invariato il comportamento "una sola volta" (guardia 30 minuti).
+- Verificato su 10 categorie diverse: 44-64 parole, prima persona, 0 duplicati, seconda chiamata
+  con `skip`. Backup: `/tmp/chat.py.bak3`, `/tmp/category_profiles.py.bak2`.

@@ -81,7 +81,7 @@ CATEGORY_PROFILES = {
         ],
 
         "setting": "una stanza chiusa a chiave, luci basse, lenzuola stropicciate e nessuna fretta",
-        "approach": "ti porta dentro, chiude la porta e abbassa il tono: attenzioni lente, gesti concreti, spazio solo vostro",
+        "approach": "ti porto dentro, chiudo la porta e abbasso il tono: attenzioni lente, gesti concreti, spazio solo vostro",
         "focus": "l'intimità riservata: spogliarsi senza pubblico, mormorare, restare a letto dopo",
         "vocab": "chiudi la porta, solo noi, vieni qui, piano, resta, buio, letto",
         "tags": ["intimità", "riservato", "letto", "lentezza", "solo-noi"],

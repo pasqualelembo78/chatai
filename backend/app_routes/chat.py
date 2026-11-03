@@ -478,6 +478,126 @@ async def api_chat_export(character: str, user: AuthUser = Depends(jwt_required)
     )
 
 
+
+def _prima_persona(tratto, nome):
+    """Porta in prima persona un tratto scritto in terza ("X è una persona...")."""
+    t = re.sub(r"\s+", " ", str(tratto or "")).strip()
+    t = re.split(r"(?<=[.!?])\s+", t)[0] if t else ""
+    if not t:
+        return ""
+    # il tratto può iniziare con il nome vero o con quello vecchio: in entrambi i casi
+    # va portato in prima persona
+    t = re.sub(r"^[A-ZÀ-Ý][\w'’]+(?:\s+[A-ZÀ-Ý][\w'’]+)?\s+è\s+", "sono ", t)
+    t = re.sub(r"^[A-ZÀ-Ý][\w'’]+(?:\s+[A-ZÀ-Ý][\w'’]+)?\s+ha\s+", "ho ", t)
+    # verbi in terza persona -> prima persona (solo forme non ambigue)
+    for a, b in ((" sa ", " so "), (" ama ", " amo "), (" ha ", " ho "),
+                 (" predilige ", " prediligo "), (" preferisce ", " preferisco "),
+                 (" conduce ", " conduco "), (" cerca ", " cerco ")):
+        t = t.replace(a, b)
+    t = re.sub(r"^Ha\s+", "Ho ", t)
+    t = re.sub(r"^È\s+", "Sono ", t)
+    if t:
+        t = t[0].upper() + t[1:]
+    return t[:150]
+
+
+def _presentazione(char, meta, seme):
+    """Presentazione immediata (prima del modello), 40-65 parole, in prima persona.
+
+    Costruita SOLO su dati del personaggio. La scrive il modello subito dopo; questa
+    serve a non lasciare la stanza vuota e a dare una traccia con la struttura giusta.
+    """
+    nome = char.get("name") or "Io"
+    eta = char.get("age")
+    lavoro = (char.get("job") or "").strip()
+    categoria = meta.get("name", "")
+    descrizione = (meta.get("description") or "").strip().lower()
+    tag = [t for t in (char.get("tags") or []) if isinstance(t, str)][:3]
+    tratto = _prima_persona(char.get("personality"), nome)
+
+    chi = f"Sono {nome}"
+    if eta:
+        chi += f", {eta} anni"
+    if lavoro:
+        chi += ", e faccio " + lavoro[0].lower() + lavoro[1:]
+    chi += "."
+
+    stanza = [
+        f"Mi trovi nella stanza {categoria}",
+        f"Sto nella stanza {categoria}",
+        f"Sono qui, nella stanza {categoria}",
+    ][seme % 3]
+    if descrizione:
+        stanza += ": " + descrizione
+    stanza += "."
+
+    frasi = [chi, stanza]
+    if tratto:
+        frasi.append(tratto)
+    if tag and len(" ".join(frasi).split()) < 50:
+        frasi.append([
+            "Chi mi cerca sa che mi muovo tra " + ", ".join(tag) + ".",
+            "Mi riconosci da " + ", ".join(tag) + ".",
+            "I temi che porto sono " + ", ".join(tag) + ".",
+        ][seme % 3])
+
+    inviti = [
+        "Dimmi tu da dove partiamo.",
+        "Scrivimi due righe e cominciamo.",
+        "Ti va di fare la prima mossa?",
+        "Raccontami perché sei entrato.",
+    ]
+
+    testo = " ".join(frasi)
+
+    # porta il testo dentro la misura richiesta (40-65) con agganci pertinenti
+    from characters import category_profiles as _cp
+    _prof = _cp.profile_for(meta.get("id", ""))
+    riempitivi = []
+    if _prof.get("approach"):
+        _v2 = {
+            "accorci": "accorcio", "agisci": "agisco", "allunghi": "allungo", "alterni": "alterno",
+            "ascolti": "ascolto", "avvicini": "avvicino", "bruci": "brucio", "chiedi": "chiedo",
+            "comandi": "comando", "commenti": "commento", "concedi": "concedo", "controlli": "controllo",
+            "correggi": "correggo", "dai": "do", "descrivi": "descrivo", "dici": "dico", "entri": "entro",
+            "fai": "faccio", "faresti": "farei", "giochi": "gioco", "guidi": "guido", "imbarazzi": "imbarazzo",
+            "lasci": "lascio", "leggi": "leggo", "lodi": "lodo", "mantieni": "mantengo", "metti": "metto",
+            "mostri": "mostro", "neghi": "nego", "parli": "parlo", "prendi": "prendo", "proponi": "propongo",
+            "racconti": "racconto", "reagisci": "reagisco", "ricordi": "ricordo", "ringrazi": "ringrazio",
+            "rispondi": "rispondo", "sottolinei": "sottolineo", "sottometti": "sottometto", "spingi": "spingo",
+            "tieni": "tengo", "togli": "tolgo", "valuti": "valuto", "vedi": "vedo", "verifichi": "verifico",
+            "vorresti": "vorrei", "vuoi": "voglio",
+        }
+        _riflessivi = {
+            "ti soffermi": "mi soffermo", "ti avvicini": "mi avvicino", "ti muovi": "mi muovo",
+            "ti imbarazzi": "mi imbarazzo", "ti sottometti": "mi sottometto", "ti esibisci": "mi esibisco",
+            "ti lasci": "mi lascio", "ti metti": "mi metto", "ti togli": "mi tolgo",
+        }
+        _app = str(_prof["approach"]).strip()
+        for a, b in _riflessivi.items():
+            _app = _app.replace(a, b)
+        _app = re.sub(r"\b(" + "|".join(_v2) + r")\b", lambda m: _v2[m.group(1)], _app)
+        riempitivi.append("Come mi muovo: " + _app + ".")
+    riempitivi += [
+        "Non serve sapere niente in anticipo: si costruisce scrivendo.",
+        "Basta un saluto per iniziare.",
+        "Qui funziona meglio se ti butti.",
+    ]
+    i = 0
+    while len(testo.split()) < 40 and i < len(riempitivi):
+        testo += " " + riempitivi[i]
+        i += 1
+    testo += " " + inviti[seme % len(inviti)]
+
+    # se esagera, taglia all'ultima frase entro 65 parole
+    parole = testo.split()
+    if len(parole) > 65:
+        taglio = " ".join(parole[:65])
+        punto = max(taglio.rfind("."), taglio.rfind("?"), taglio.rfind("!"))
+        testo = taglio[:punto + 1] if punto > 40 else taglio + "."
+    return testo
+
+
 @router.post("/chat/opening")
 @limiter.limit("30/minute")
 async def api_chat_opening(request: Request, body: ChatRequest, user: AuthUser = Depends(jwt_required)):
@@ -512,9 +632,15 @@ async def api_chat_opening(request: Request, body: ChatRequest, user: AuthUser =
             return JSONResponse({"skip": True, "reason": "conversation_active"})
 
     prof = cp.profile_for(char.get("category", ""))
-    aperture = prof.get("openings") or []
+    try:
+        from characters import CATEGORIES as _CATS
+        meta_stanza = next((c for c in _CATS if c["id"] == char.get("category")), None)
+    except Exception:
+        meta_stanza = None
+    if not meta_stanza:
+        meta_stanza = {"id": char.get("category", ""), "name": char.get("category", ""), "description": ""}
     seme = int(hashlib.md5(f"{user.user_id}:{character_id}".encode()).hexdigest()[:8], 16)
-    template = aperture[seme % len(aperture)] if aperture else "Eccomi. Da dove iniziamo?"
+    template = _presentazione(char, meta_stanza, seme)
 
     history = get_recent_messages(user.user_id, character_id, limit=6)
 
@@ -522,16 +648,33 @@ async def api_chat_opening(request: Request, body: ChatRequest, user: AuthUser =
         # Prompt compatto: per un'apertura non serve tutta la biografia, e su CPU
         # ogni 100 token in meno sono secondi risparmiati.
         essenza = str(char.get("essence") or "").split("Stanza tematica:")[0].strip()
-        blocchi = [f"Sei {char.get('full_name') or char.get('name')}."]
+        dati = [f"Nome: {char.get('full_name') or char.get('name')}"]
+        if char.get("age"):
+            dati.append(f"Età: {char['age']}")
+        if char.get("job"):
+            dati.append(f"Mestiere: {char['job']}")
         if essenza:
-            blocchi.append("Chi sei: " + essenza[:220])
-        if char.get("category_context"):
-            blocchi.append(char["category_context"])
-        blocchi.append(
-            "Apri tu la conversazione: UNA sola frase breve, nel personaggio e nel tema della "
-            "stanza, che inviti l'utente a rispondere. Niente presentazioni formali, niente "
-            "spiegazioni, non ripetere il template. Rispondi solo con la frase."
-        )
+            dati.append("Storia: " + essenza[:200])
+        if char.get("personality"):
+            dati.append("Carattere: " + str(char["personality"])[:200])
+        if char.get("tags"):
+            dati.append("Parole chiave: " + ", ".join([t for t in char["tags"] if isinstance(t, str)][:4]))
+        dati.append(f"Stanza: {meta_stanza.get('name')} — {meta_stanza.get('description', '')}")
+        blocchi = [
+            f"Sei {char.get('full_name') or char.get('name')} e stai aprendo la conversazione.",
+            "Presentati in PRIMA persona all'utente che ha appena aperto la chat.",
+            "Regole: 40-65 parole, massimo quattro frasi. Usa SOLO i dati elencati, non inventare "
+            "fatti nuovi. Struttura: (1) nome, età o mestiere; (2) la stanza in cui sei e cosa si "
+            "fa lì; (3) un tratto del tuo carattere e come ti relazioni; (4) una chiusura naturale "
+            "che inviti a rispondere.",
+            "Tono coerente con la stanza, niente elenchi, niente presentazioni formali, parla di te in prima persona.",
+            "Racconta cosa fai tu, non elencare istruzioni all'utente: se dici la stanza, fallo in "
+            "modo naturale invece di copiarne la descrizione.",
+            "Non ricopiare la traccia: riformula tutto con parole tue, aggiungi un dettaglio concreto "
+            "(il mestiere, l'età, un gesto che fai di solito) e chiudi con un invito diverso.",
+            "DATI:\n" + "\n".join("- " + d for d in dati),
+            "SCHEMA: 1) nome, età o mestiere. 2) la stanza in cui sei. 3) come sei fatto e come ti relazioni. 4) invito a rispondere.",
+        ]
         return [{"role": "system", "content": "\n\n".join(blocchi)}]
 
     coda = queue.Queue()
@@ -557,6 +700,10 @@ async def api_chat_opening(request: Request, body: ChatRequest, user: AuthUser =
                 coda.put(("delta", token))
             testo = re.sub(r'^assistant\s*[:\n]*["\s]*', "", completo, flags=re.I).strip()
             testo = testo.strip('"').strip("«»“”").strip()
+            parole = len(testo.split())
+            logger.info(f"opening generato: {parole} parole")
+            if parole < 32:
+                testo = template + (" " + testo if testo else "")
             coda.put(("result", testo))
         except Exception as e:
             logger.exception("opening errore")
