@@ -11,6 +11,7 @@ set -uo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ZIP="${1:-$ROOT_DIR/chatai_backup_3b.zip}"
+shift || true
 
 if [[ ! -f "$ZIP" ]]; then
     echo "Backup non trovato: $ZIP" >&2
@@ -39,7 +40,8 @@ chown -R chatai:chatai "$ROOT_DIR/backend" 2>/dev/null || true
 [[ -d /var/www ]] && chown -R www-data:www-data /var/www 2>/dev/null || true
 
 echo "== Installazione dipendenze, modelli e servizi (build_app.sh) =="
-bash "$ROOT_DIR/build_app.sh" --skip-apache --skip-letsencrypt --skip-firewall || {
+# senza flag: installazione completa. Passa le stesse opzioni di build_app.sh se servono.
+bash "$ROOT_DIR/build_app.sh" "${@:2}" || {
     echo "build_app.sh è terminato con errori: controlla l'output sopra." >&2
 }
 
