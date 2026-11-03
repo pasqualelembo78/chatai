@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS chat_summaries (
     id SERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL,
+    user_id TEXT NOT NULL,
     character_id VARCHAR(255) NOT NULL,
     summary_text TEXT NOT NULL,
     message_count INT DEFAULT 0,

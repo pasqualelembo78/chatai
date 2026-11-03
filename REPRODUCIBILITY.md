@@ -616,3 +616,15 @@ backend/chat_engine.py (auto-save compact summary)
 - `sql_chat_response_stats.sql`: intestazione esplicita — è MySQL/WordPress, letto con `$wpdb`,
   e il plugin lo crea comunque da sé.
 - `restore_from_backup.sh`: i passaggi SQL ora indicano il motore giusto per ciascun file.
+
+## 50) Tabella riassunti: tipo corretto e aggiornamento in place (2026-11-03)
+- Secondo difetto trovato: `chat_summaries.user_id` era **BIGINT**, ma gli id utente ARIA sono
+  UUID. La tabella era vuota (nessun riassunto era mai stato salvato) e ogni scrittura falliva in
+  silenzio, perché l'errore è gestito con un warning.
+- Corretto il tipo a `TEXT` (coerente con tutte le altre tabelle), creato l'indice unico
+  `(user_id, character_id)`, rimosso l'indice doppio non unico.
+- `save_summary` ora fa `ON CONFLICT ... DO UPDATE`: con l'indice unico il vecchio
+  `DO NOTHING` avrebbe congelato il primo riassunto per sempre.
+- Verificato: due salvataggi sulla stessa coppia → 1 riga, testo aggiornato, `get_summary`
+  restituisce l'ultimo. Chat reale 200 con final.
+- Backup: `/opt/aria/backups/pre_lingua/chat_summary.py.bak`.

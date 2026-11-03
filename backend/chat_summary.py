@@ -34,7 +34,10 @@ def save_summary(user_id, character_id, summary_text, message_count=0):
         conn = _conn()
         cur = conn.cursor()
         cur.execute(
-            "INSERT INTO chat_summaries (user_id, character_id, summary_text, message_count, updated_at) VALUES (%s,%s,%s,%s,NOW()) ON CONFLICT DO NOTHING",
+            "INSERT INTO chat_summaries (user_id, character_id, summary_text, message_count, updated_at) "
+            "VALUES (%s,%s,%s,%s,NOW()) "
+            "ON CONFLICT (user_id, character_id) DO UPDATE SET "
+            "summary_text = EXCLUDED.summary_text, message_count = EXCLUDED.message_count, updated_at = NOW()",
             (str(user_id), str(character_id), str(summary_text), int(message_count))
         )
         conn.commit()
