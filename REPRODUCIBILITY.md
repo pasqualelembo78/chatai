@@ -589,3 +589,12 @@ backend/chat_engine.py (auto-save compact summary)
 - Non riscrive: le sostituzioni restano quelle mappate in `correggizioni_brevi` (es. borbbo→ciuccio),
   applicate prima del controllo.
 - Verificato: "ti borbbo il cazzo" → "ti ciuccio il cazzo"; frase corretta senza parole ignote.
+
+## 47) hunspell installabile da build_app + regola di riproducibilità (2026-11-03)
+- `build_app.sh`: passo 0 installa `hunspell` e `hunspell-it` in modo idempotente (controlla
+  binario e dizionario `it_IT.dic` prima di apt, avvisa se manca il dizionario). Così il
+  controllo ortografico funziona anche su un server nuovo.
+- `AGENTS.md`: aggiunta la regola — ogni modifica che richieda pacchetti, servizi, cron, SQL o
+  file deve essere installabile da `build_app.sh` senza errori se già presente e i file vanno
+  sempre messi nello zip; se dopo un ripristino serve un comando a mano, il lavoro non è finito.
+- Zip: aggiunta `backend/language/` (11 file) che prima mancava.

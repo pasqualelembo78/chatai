@@ -19,6 +19,15 @@
 - Non usare mai modelli cloud (Groq/OpenAI/Cerebras/etc.) come default: la chat
   deve girare solo sul modello locale obbligatorio (`CHAT_PROVIDER=ollama`).
 
+- OGNI modifica che richieda pacchetti, servizi, file o configurazioni deve essere
+  **installabile in modo idempotente da `build_app.sh`** (stesso risultato su server nuovo,
+  nessun errore se già presente) e i file necessari vanno **sempre** aggiunti a
+  `chatai_backup_3b.zip`. Vale per: dipendenze di sistema (es. `hunspell` + `hunspell-it`),
+  nuove cartelle di dati (`backend/language/`), servizi systemd, cron, drop-in, SQL.
+  Regola pratica: se dopo un ripristino da zero serve un comando manuale, la modifica non è
+  finita. Prima di chiudere un lavoro: `bash -n build_app.sh` e verifica che i file siano
+  nello zip.
+
 # RULE: After every update to plugin, build_app, registry, prompts, behavior, or any file/info needed for reinstall, always update chatai_backup_3b.zip (zip -u with changed files + REPRODUCIBILITY.md).
 
 # REGOLA COMPLETA DI BACKUP / RIPRISTINO (tutti i file e info utili)

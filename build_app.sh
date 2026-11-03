@@ -181,6 +181,21 @@ PACKAGES='python3 python3-pip python3-venv curl wget git lsof bc openssl'
 [[ "$SKIP_CLAMAV" == false ]] && PACKAGES+=' clamav clamav-daemon'
 [[ "$SKIP_FIREWALL" == false ]] && PACKAGES+=' ufw'
 run_root apt-get install -y -qq $PACKAGES
+
+# Controllo ortografico italiano (usato da language.parole_sconosciute): idempotente,
+# se il dizionario c'è già non si tocca niente.
+if ! command -v hunspell >/dev/null 2>&1 || [ ! -f /usr/share/hunspell/it_IT.dic ]; then
+    info 'Installo hunspell e il dizionario italiano (controllo parole)...'
+    run_root apt-get install -y -qq hunspell hunspell-it || warn 'hunspell non installato: il controllo ortografico resterà spento.'
+else
+    info 'hunspell e dizionario italiano già presenti.'
+fi
+if [ -f /usr/share/hunspell/it_IT.dic ]; then
+    info 'Dizionario italiano verificato.'
+else
+    warn 'Dizionario it_IT assente: le parole ignote non verranno segnalate.'
+fi
+
 if ! id -u chatai >/dev/null 2>&1; then
     run_root useradd -r -s /usr/sbin/nologin -d "$ROOT_DIR" chatai 2>/dev/null || true
 fi
