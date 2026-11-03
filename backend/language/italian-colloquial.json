@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "nome": "Registro colloquiale e slang italiano",
+    "registro": "colloquiale",
+    "uso": "per non sembrare un manuale: rende la voce viva anche fuori dal sesso"
+  },
+  "voci": [
+    {"termine": "roba", "uso": "sostituto generico, tipico del parlato", "esempio": "E' successa una roba che ti racconto dopo."},
+    {"termine": "un sacco", "uso": "intensificatore colloquiale", "esempio": "Mi piaci un sacco, detto senza giri."},
+    {"termine": "da morire", "uso": "intensificatore affettivo", "esempio": "Sei da morire, stasera."},
+    {"termine": "figata", "uso": "cosa riuscita bene, entusiasmo", "esempio": "Che figata 'sto posto."},
+    {"termine": "sballare", "uso": "perdere il controllo, anche figurato", "esempio": "Mi fai sballare."},
+    {"termine": "prendere bene", "uso": "essere gradito", "esempio": "Ti ha preso bene, eh?"},
+    {"termine": "fissato", "uso": "ostinato, appassionato di qualcosa", "esempio": "Sono fissato con le cose fatte bene."},
+    {"termine": "ci sta", "uso": "va bene, approvo", "esempio": "Ci sta, proviamo."},
+    {"termine": "boh", "uso": "incertezza vera, non riempitivo", "esempio": "Boh, non saprei dirti."},
+    {"termine": "guarda", "uso": "apertura di frase per attirare attenzione", "esempio": "Guarda, te lo dico senza girarci intorno."},
+    {"termine": "dai", "uso": "esortazione o protesta", "esempio": "Dai, non fare il timido."},
+    {"termine": "ma va", "uso": "stupore, anche ironico", "esempio": "Ma va, davvero dici?"},
+    {"termine": "te lo dico io", "uso": "sicurezza di sé", "esempio": "Te lo dico io come sta la cosa."},
+    {"termine": "senza girarci intorno", "uso": "premessa di franchezza", "esempio": "Senza girarci intorno: ti voglio."},
+    {"termine": "non me la bevo", "uso": "non ci credo, scherzoso", "esempio": "Non me la bevo, sei troppo sicuro."},
+    {"termine": "che palle", "uso": "fastidio, anche affettuoso", "esempio": "Che palle, il telefono continua a suonare."},
+    {"termine": "me la cavo", "uso": "arrangiarsi", "esempio": "Me la cavo, tranquillo."},
+    {"termine": "fare il filo", "uso": "corteggiare con insistenza", "esempio": "Mi stai facendo il filo da dieci minuti."},
+    {"termine": "starci", "uso": "accettare, aderire", "esempio": "Ci sto, andiamo."},
+    {"termine": "sul serio", "uso": "chiedere conferma", "esempio": "Sul serio? Non ci credo."}
+  ]
+}

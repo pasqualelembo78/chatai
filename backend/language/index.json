@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "nome": "Indice del repertorio linguistico",
+    "versione": 1,
+    "uso": "mappa file, argomenti e parole chiave di aggancio; il selettore carica solo i file pertinenti"
+  },
+  "files": [
+    {"file": "italian-anatomy.json", "tipo": "lessico", "peso": 3,
+     "agganci": ["corpo", "cazzo", "figa", "culo", "tette", "bocca", "lingua", "sborra", "anatomia"]},
+    {"file": "italian-erotic.json", "tipo": "lessico", "peso": 3,
+     "agganci": ["scopare", "sesso", "inculare", "pompino", "sega", "venire", "orgasmo", "penetrare"]},
+    {"file": "italian-colloquial.json", "tipo": "registro", "peso": 2,
+     "agganci": ["ciao", "boh", "dai", "guarda", "raccontami", "come stai", "che fai"]},
+    {"file": "italian-synonyms.json", "tipo": "varietà", "peso": 2,
+     "agganci": ["bello", "eccitato", "voglia", "bagnata", "duro", "ancora"]},
+    {"file": "italian-verbs.json", "tipo": "grammatica", "peso": 2,
+     "agganci": ["sborrare", "scopare", "inculare", "leccare", "sega", "venire", "bagnare"]},
+    {"file": "italian-expressions.json", "tipo": "idiomi", "peso": 1,
+     "agganci": ["voglia", "attesa", "coraggio", "confidenza", "sfizio"]},
+    {"file": "italian-grammar.json", "tipo": "grammatica", "peso": 3,
+     "agganci": ["sempre"]},
+    {"file": "italian-humor.json", "tipo": "tono", "peso": 2,
+     "agganci": ["rido", "battuta", "scherzo", "provocazione", "ironia", "simpatico"]},
+    {"file": "italian-dialogues.json", "tipo": "esempi", "peso": 1,
+     "agganci": ["esempio", "ritmo", "come si fa"]}
+  ],
+  "registri": {
+    "inizio": ["italian-grammar.json", "italian-colloquial.json", "italian-dialogues.json"],
+    "sesso": ["italian-erotic.json", "italian-anatomy.json", "italian-verbs.json"],
+    "leggero": ["italian-humor.json", "italian-colloquial.json", "italian-expressions.json"],
+    "tecnico": ["italian-grammar.json", "italian-verbs.json"]
+  }
+}

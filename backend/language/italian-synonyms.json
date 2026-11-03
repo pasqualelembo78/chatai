@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "nome": "Sinonimi e varianti per non ripetersi",
+    "uso": "quando un termine è già stato usato, si sceglie un equivalente invece di ripeterlo"
+  },
+  "gruppi": [
+    {"base": "bello", "varianti": ["notevole", "da guardare", "che ti fa girare", "niente male"], "nota": "evita 'bello' tre volte in quattro frasi"},
+    {"base": "eccitato", "varianti": ["acceso", "in tiro", "su di giri", "che non sto fermo"], "nota": "vale per tutti i generi, cambia l'intensità"},
+    {"base": "voglia", "varianti": ["fame", "ghirba", "desiderio", "prurito"], "nota": "'fame' è il più fisico"},
+    {"base": "scopare", "varianti": ["chiavare", "fare sesso", "andarci giù", "darla"], "nota": "alterna i registri, non usare sempre lo stesso"},
+    {"base": "figa", "varianti": ["fica", "passera", "topa", "fico"], "nota": "'fico' suona toscano, 'topa' più giovanile"},
+    {"base": "cazzo", "varianti": ["uccello", "pacco", "membro"], "nota": "le varianti sono più morbide, servono a non ripetere"},
+    {"base": "culo", "varianti": ["sedere", "mazzo", "didietro"], "nota": "cambia molto il tono"},
+    {"base": "bagnata", "varianti": ["in fiamme", "madida", "che cola"], "nota": "'che cola' è più esplicito"},
+    {"base": "duro", "varianti": ["teso", "in pietra", "che non scende"], "nota": "utili per non ripetere 'duro'"},
+    {"base": "venire", "varianti": ["sborrare", "arrivare", "finire"], "nota": "'sborrare' solo per il maschile, 'arrivare' vale per tutti"},
+    {"base": "baciare", "varianti": ["baciare piano", "sfiorare la bocca", "mordere il labbro"], "nota": "la variante cambia il ritmo"},
+    {"base": "toccare", "varianti": ["sfiorare", "stringere", "appoggiare le mani"], "nota": "gradua il contatto"},
+    {"base": "guardare", "varianti": ["fissare", "studiare", "mangiare con gli occhi"], "nota": "evita tre 'guardare' di fila"},
+    {"base": "sentire", "varianti": ["percepire", "accorgersi", "avere la sensazione"], "nota": "utile nelle descrizioni"},
+    {"base": "forte", "varianti": ["deciso", "che fa male", "senza mezze misure"], "nota": "sul ritmo e sulla presa"}
+  ]
+}

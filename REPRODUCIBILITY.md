@@ -540,3 +540,28 @@ backend/chat_engine.py (auto-save compact summary)
 - Temperatura del modello locale 0.65 -> 0.6 (meno invenzioni, più tenuta del lessico).
 - Verificato: a "Ciao" ora rispondono "Cazzo, sei qui per scopare? Ti metto in ginocchio e ti
   prendo in bocca", "Guardami, figa!".
+
+## 44) Supporto linguistico contestuale (2026-11-03)
+- Creato `/opt/aria/backend/language/`: repertorio italiano in JSON separati (192 voci) —
+  anatomia, atti, colloquiale, sinonimi, verbi coniugati, modi di dire, grammatica + correzioni
+  note, ironia/doppi sensi, dialoghi di esempio, indice.
+- `language/__init__.py`: indice con agganci, selezione di massimo 4 file per contesto (parole
+  chiave del messaggio, turno, registro), scelta di 3 elementi per volta, scarto delle voci già
+  usate negli ultimi 6 messaggi e in una coda di 30 per coppia utente/personaggio. Blocco
+  risultante ≤190 caratteri. Cache in memoria per file (letti una volta), nessuna seconda
+  chiamata LLM.
+- `prompt_builder`: REGISTRO riscritto — l'esplicito è una possibilità, non un obbligo; una
+  parola concreta ogni due risposte, niente accumuli, varia. Aggiunte: non annunciare la stanza,
+  non descrivere sé stessi, non ripetere frasi già dette (le ultime due risposte sono riportate
+  al modello), "MASSIMO 20 parole".
+- `chat_engine`: `language.correggi()` applica le correzioni note al testo finale
+  (borbbo→ciuccio, ti inculartela→ti inculo, sei segata→ti sego, ecc.).
+- SAFETY_GUARD ridotta da 866 a 246 caratteri (era ridondante col REGISTRO).
+- Temperatura locale riportata a 0,6 → 0,65 dopo prova (a 0,6 le risposte diventavano timide).
+- Token: prompt 1.945 → 1.751 caratteri (−10%) nonostante il supporto, perché il lessico fisso e
+  la guardia lunga sono stati sostituiti/ridotti. Latenza misurata 10-16 s, in linea con prima.
+- Test su 8 categorie: parole inventate note assenti, registro alternato (romantica dolce, gay e
+  sesso orale espliciti, mature "Ti sego subito"), risposte 5-21 parole.
+- Backup: `/opt/aria/backups/pre_lingua/` (prompt_builder.py, ollama.py, category_profiles.py).
+- Limite residuo: sui messaggi molto poveri ("Ciao") il 3B a volte risponde ancora con "Come
+  posso aiutarti?"; il repertorio mitiga ma non elimina l'echo della personalità.

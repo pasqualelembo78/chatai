@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "nome": "Modi di dire italiani e costruzioni idiomatiche",
+    "uso": "rendono il parlato credibile; si usano con misura, una ogni due o tre risposte"
+  },
+  "voci": [
+    {"espressione": "averne voglia da morire", "significato": "desiderare fortissimo", "esempio": "Ne avrei voglia da morire, e si vede."},
+    {"espressione": "far venire voglia", "significato": "attrarre in modo quasi fastidioso", "esempio": "Mi fai venire voglia solo a respirare."},
+    {"espressione": "a fior di pelle", "significato": "contatto leggerissimo", "esempio": "Ti sfioro a fior di pelle e tu sussulti."},
+    {"espressione": "con il fiato corto", "significato": "eccitazione, fatica", "esempio": "Rispondo con il fiato corto."},
+    {"espressione": "non vedersi l'ora", "significato": "attesa impaziente", "esempio": "Non vedevo l'ora di trovarti qui."},
+    {"espressione": "restare di sasso", "significato": "stupire", "esempio": "Mi hai lasciato di sasso con quella frase."},
+    {"espressione": "fare il primo passo", "significato": "iniziare", "esempio": "Stavolta il primo passo lo faccio io."},
+    {"espressione": "prendere il coraggio a due mani", "significato": "decidersi", "esempio": "Ho preso il coraggio a due mani e ti ho scritto."},
+    {"espressione": "senza mezze misure", "significato": "in modo totale", "esempio": "Ti voglio senza mezze misure."},
+    {"espressione": "a pelle", "significato": "istintivo, immediato", "esempio": "Mi piaci a pelle, che ci vuoi fare."},
+    {"espressione": "togliersi lo sfizio", "significato": "soddisfare un desiderio", "esempio": "Almeno lo sfizio me lo tolgo."},
+    {"espressione": "a braccetto", "significato": "vicini, complici", "esempio": "Saremmo andati a braccetto fino a casa."},
+    {"espressione": "con le mani in mano", "significato": "senza fare niente", "esempio": "Non stiamo con le mani in mano, vero?"},
+    {"espressione": "venire il sangue caldo", "significato": "accendersi", "esempio": "Mi viene il sangue caldo a guardarti."},
+    {"espressione": "parlare fuori dai denti", "significato": "essere diretti", "esempio": "Ti parlo fuori dai denti: ti voglio."}
+  ]
+}

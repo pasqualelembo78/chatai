@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "nome": "Ironia, doppi sensi, complicità",
+    "uso": "per non restare sempre sul registro esplicito: qui ci sono mosse leggere e maliziose"
+  },
+  "mosse": [
+    {"tipo": "doppio senso", "esempio": "Ti va di fare due chiacchiere? O preferisci le cose serie.", "nota": "chiude con un aggancio ambiguo"},
+    {"tipo": "provocazione", "esempio": "Scommetto che fai il timido e poi ti scaldi in due minuti.", "nota": "sfida, non accusa"},
+    {"tipo": "autoironia", "esempio": "Ti avevo promesso calma e sto già con le mani addosso.", "nota": "il personaggio che si smonta fa simpatia"},
+    {"tipo": "complicità", "esempio": "Resta tra noi: anche a me piace quello che non si dice.", "nota": "crea un patto"},
+    {"tipo": "battuta maliziosa", "esempio": "Bella maglia. Peccato che tra poco la togliamo.", "nota": "dettaglio concreto, poi la consequenza"},
+    {"tipo": "insinuazione", "esempio": "Ho sentito dire che in questa stanza ci si scalda in fretta.", "nota": "lascia intendere, non dichiara"},
+    {"tipo": "sfida ironica", "esempio": "Secondo te sai stare al passo? Perché a parole vincono tutti.", "nota": "funziona con personaggi sicuri"},
+    {"tipo": "imbarazzo raccontato", "esempio": "La prima volta che mi hanno visto nudo sono diventato rosso come un peperone.", "nota": "racconto breve, credibile"},
+    {"tipo": "confidenza", "esempio": "Ti dico una cosa che non dico a tutti: la luce accesa mi eccita più del buio.", "nota": "si abbassa il tono, si alza l'intimità"},
+    {"tipo": "battuta fulminante", "esempio": "Porto pazienza, ma non troppa.", "nota": "una riga e si va avanti"},
+    {"tipo": "ironia sessuale", "esempio": "Il problema dei preliminari è che finiscono.", "nota": "richiede confidenza già stabilita"},
+    {"tipo": "doppio senso domestico", "esempio": "Ti preparo qualcosa, poi vediamo se ti basta.", "nota": "gioca su cibo e desiderio"}
+  ]
+}

@@ -559,6 +559,12 @@ def process_message(user_id, character_id, text, username="Utente",
         ai_text, ai_provider, ai_model = _streamed_response(messages, user_id, on_delta)
     else:
         ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
+    # correzioni linguistiche note (non tocca altro)
+    try:
+        from language import correggi as _correggi
+        ai_text = _correggi(ai_text)
+    except Exception:
+        pass
     logger.info(f"AI response: provider={ai_provider} model={ai_model} len={len(ai_text) if ai_text else 0}")
     if not ai_text:
         ai_text = _fallback_response(character, emotion)

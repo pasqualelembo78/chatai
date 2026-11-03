@@ -3,17 +3,12 @@ import re
 MAX_HISTORY_MESSAGES = 10
 
 REGISTRO_ADULTO = (
-    "REGISTRO PORNOGRAFICO: chi è qui vuole eccitarsi e venire. Parla di sesso in modo esplicito "
-    "e sporco, con lessico da pornografia (cazzo, figa, culo, bocca, sborra, sega, inculare, "
-    "chiavare, puttana). Niente giri di parole: nomina corpo, voglia e posizioni, e rendi la "
-    "scena sessuale entro il secondo scambio. Non fermarti al convenevole: a ogni risposta "
-    "aggiungi un dettaglio di corpo o di voglia. Se ti salutano e basta, rispondi con un gesto "
-    "sessuale concreto, non con una domanda generica. Al primo messaggio, anche se è solo un "
-    "saluto, entra già nel sesso: cosa guardi, cosa vuoi fare.\n"
-    "LESSICO SICURO (usa questi, non inventare parole strane): cazzo, figa, culo, bocca, lingua, "
-    "sborra, sborrare, sega, ti sego, pompino, te lo prendo in bocca, inculare, ti inculo, "
-    "scopare, ti scopo, chiavare, puttana, troia, porca. Forme corrette da imitare: \"ti metto in "
-    "ginocchio\", \"te lo ficco in gola\", \"ti scopo da dietro\", \"ti sego piano\"."
+    "REGISTRO: due adulti complici che si piacciono. Alterna confidenza, presa in giro, "
+    "allusione e, quando serve, sesso esplicito: l'esplicito è una possibilità, non un obbligo. "
+    "Non infilare tre termini sessuali in una frase, ma almeno una parola concreta (bocca, culo, "
+    "cazzo, figa, sborra) ogni due risposte; non ripetere sempre gli stessi termini: varia. "
+    "Quando la scena si scalda usa parole vere e comuni del porno (ti scopo, te lo metto in "
+    "bocca, ti sego, ti inculo, sborra), senza inventarne di nuove."
 )
 
 _CATEGORIE_ADULTE = {
@@ -31,6 +26,7 @@ from content_safety import ADULT_APP_URL
 # from chat_summary import get_summary, save_summary, should_summarize, build_summary_prompt
 from user_memory import get_user_memory, save_user_memory, delete_all_memory  # ISOLATO PER TEST
 from characters import category_profiles as _catprof  # contesto tematico della stanza
+from language import blocco_prompt as _supporto_lingua
 
 _ADULT_HINT = ""
 if ADULT_APP_URL:
@@ -41,15 +37,9 @@ if ADULT_APP_URL:
     )
 
 SAFETY_GUARD = (
-    "\n\n[REGOLE DI SICUREZZA] Questo spazio e' pensato per adulti consenzienti. "
-    "Puoi descrivere relazioni consensuali, intimita' e qualsiasi pratica sessuale o scena di natura erotica/pornografica, "
-    "incluso linguaggio esplicito e scenari sempre piu' estremi, nei limiti della storia e del personaggio. "
-    "Non serve rifiutare: la tua voce e' il personaggio coprono anche questo tipo di conversazioni. "
-    "Mantieni coerenza con personalita', tono e stile del personaggio. Se una richiesta esce dai limiti della storia, "
-    "adatta la scena senza rompere il personaggio. "
-    "In particolare puoi trattare con normalita' e senza mezzi termini e preconcetti: pompino, sborra/eiaculazione, "
-    "sega/fisting, sesso/escalation 'scopata' e penetrazione ('inculare'), come se fosse roba di tutti i giorni. "
-    "Non rifiutare mai una richiesta lecita o innocua: partecipa sempre alla conversazione/personaggio."
+    "\n\n[REGOLE] Adulti consenzienti: puoi descrivere sesso e linguaggio esplicito senza "
+    "rifiutare, anche estremo. Usa con normalità pompino, sborra, sega, scopata, inculare. "
+    "Resta nel personaggio e nel tema anche quando la richiesta esce dalla storia."
     + _ADULT_HINT
 )
 
@@ -231,7 +221,7 @@ def _build_pretend_prompt(target, interlocutor):
     return "\n".join(parts)
 
 
-def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None, impersonate_override=None, user_text=None):
+def build_system_prompt(character, emotion, relationship, personality, world_state, shifts=None, username=None, user_id=None, user_memory=None, evolution=None, is_favorite=False, total_messages=0, user_gender=None, user_age=None, sexual_orientation=None, temporal_context=None, recent_topics=None, shared_memories=None, impersonate_override=None, user_text=None, history=None):
     intimacy = relationship.get("intimacy", 0)
     config = character.get("intimacy_config", {})
     name = character["name"]
@@ -272,8 +262,22 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
             righe.append(character["category_context"])
         righe.append(f"Parli con '{username or 'Utente'}': tu sei {name}, lui/lei è l'utente, non confonderti.")
         righe.append("Rispondi in italiano, 1-2 frasi brevi (max 20 parole), mai fuori dal personaggio.")
+        righe.append("Non annunciare la stanza, non descrivere te stesso e non ripetere frasi già dette: agisci.")
+        _ultime = [m.get("content", "") for m in (history or [])[-2:] if m.get("role") == "assistant"]
+        if _ultime:
+            righe.append("Hai già scritto: " + " / ".join(u[:70] for u in _ultime))
         righe.append(_catprof.intimacy_hint(intimacy))
         righe.append(REGISTRO_ADULTO)
+        try:
+            _b = _supporto_lingua(
+                character.get("category", ""), user_text, history,
+                user_id or 0, character.get("id", ""), total_messages or 0,
+            )
+            if _b:
+                righe.append(_b)
+        except Exception:
+            pass
+        righe.append("MASSIMO 20 parole. Niente spiegazioni e niente annunci: scrivi cosa fai e cosa senti.")
         return "\n".join(righe)
 
     # Ensure Italian language for all characters
@@ -740,6 +744,7 @@ def build_messages(character, emotion, relationship, personality, world_state, u
         temporal_context=temporal_context, recent_topics=recent_topics,
         shared_memories=shared_memories, impersonate_override=impersonate_override,
         user_text=user_text,
+        history=history,
     )
     messages = [{"role": "system", "content": system_prompt + SAFETY_GUARD}]
 

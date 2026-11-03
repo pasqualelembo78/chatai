@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "nome": "Terminologia erotica e atti",
+    "registro": "da neutro a volgare",
+    "uso": "verbi e sostantivi per le pratiche; servono una volta per scena, non in ogni frase"
+  },
+  "voci": [
+    {"termine": "scopare", "registro": "volgare", "uso": "atto completo, il più usato", "esempio": "Ti scopo da dietro e ti tengo per i fianchi.", "grammatica": "scopo, scopi, scopa, scopiamo, scopate, scopano"},
+    {"termine": "chiavare", "registro": "volgare", "uso": "alternativa a scopare, suona più cruda", "esempio": "Ti chiavo finché non ti tremano le gambe.", "grammatica": "chiavo, chiavi, chiava"},
+    {"termine": "inculare", "registro": "volgare", "uso": "sesso anale, con o senza lubrificante", "esempio": "Ti inculo piano, poi affondo.", "grammatica": "inculo, inculi, incula"},
+    {"termine": "fare un pompino", "registro": "colloquiale", "uso": "sesso orale maschile, forma comunissima", "esempio": "Mi fai un pompino e stai zitto.", "varianti": ["ciucciare", "succhiare"]},
+    {"termine": "leccare", "registro": "colloquiale", "uso": "sesso orale femminile", "esempio": "Ti lecco fino a farti piangere.", "grammatica": "lecco, lecchi, lecca"},
+    {"termine": "sega", "registro": "volgare", "uso": "masturbazione maschile", "esempio": "Ti faccio una sega lenta, guardandoti."},
+    {"termine": "segare", "registro": "volgare", "uso": "verbo della sega", "esempio": "Mi sego pensandoti.", "grammatica": "sego, seghi, sega"},
+    {"termine": "sborrare", "registro": "volgare", "uso": "eiaculare, il verbo chiave del piacere maschile", "esempio": "Sborro se continui così.", "grammatica": "sborro, sborri, sborra"},
+    {"termine": "venire", "registro": "colloquiale", "uso": "orgasmo, vale per tutti i generi", "esempio": "Fammi venire, non fermarti."},
+    {"termine": "orgasmo", "registro": "neutro", "uso": "quando serve precisione o tono più composto", "esempio": "Mi hai portata all'orgasmo due volte."},
+    {"termine": "eccitare", "registro": "neutro", "uso": "accendere, far salire", "esempio": "Mi ecciti solo a parlarmi addosso.", "grammatica": "eccito, ecciti, eccita"},
+    {"termine": "bagnata", "registro": "colloquiale", "uso": "stato di eccitazione femminile, molto usato", "esempio": "Sei bagnata da far schifo, e mi piace."},
+    {"termine": "duro", "registro": "colloquiale", "uso": "erezione", "esempio": "Sono duro da stamattina."},
+    {"termine": "penetrare", "registro": "neutro", "uso": "descrizione precisa, buona per i toni lenti", "esempio": "Ti penetro un centimetro alla volta."},
+    {"termine": "spingere", "registro": "neutro", "uso": "ritmo, anche senza nominare l'atto", "esempio": "Spingo e ti sento gemere."},
+    {"termine": "gemere", "registro": "neutro", "uso": "suono, reazione; descrive senza volgarità", "esempio": "Gemi e ti mordi il labbro.", "grammatica": "gemo, gemi, geme"},
+    {"termine": "toccare", "registro": "neutro", "uso": "contatto iniziale, si può usare in ogni registro", "esempio": "Posso toccarti?"},
+    {"termine": "spogliare", "registro": "neutro", "uso": "preliminare, tensione", "esempio": "Ti spoglio senza fretta, un bottone alla volta."},
+    {"termine": "masturbare", "registro": "neutro", "uso": "registro composto, alternativa a sega", "esempio": "Mi masturbo guardandoti."},
+    {"termine": "preliminari", "registro": "neutro", "uso": "per parlare della fase prima, anche con ironia", "esempio": "I preliminari sono la parte migliore, e tu li salti."}
+  ]
+}

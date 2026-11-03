@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "nome": "Verbi: coniugazioni e costruzioni corrette",
+    "uso": "il modello sbaglia le forme e inventa tempi: qui ci sono le coniugazioni vere e le reggenze giuste"
+  },
+  "voci": [
+    {"verbo": "sborrare", "presente": "sborro, sborri, sborra, sborriamo, sborrate, sborrano", "passato": "ho sborrato", "nota": "niente 'borbbo'; la terza persona è 'sborra'", "esempio": "Sborra dentro, non tirarti fuori."},
+    {"verbo": "scopare", "presente": "scopo, scopi, scopa", "passato": "ho scopato", "nota": "attenzione: 'scopa' è anche il sostantivo", "esempio": "Mi scopa sul tavolo."},
+    {"verbo": "inculare", "presente": "inculo, inculi, incula", "passato": "ho inculato", "nota": "reggenza: inculare qualcuno, non 'a qualcuno'", "esempio": "Ti inculo piano."},
+    {"verbo": "leccare", "presente": "lecco, lecchi, lecca", "nota": "non 'leccore' né 'leccare via'", "esempio": "Lecca e non fermarti."},
+    {"verbo": "ciucciare", "presente": "ciuccio, ciucci, ciuccia", "nota": "colloquiale per succhiare, molto usato", "esempio": "Ciucciami piano."},
+    {"verbo": "succhiare", "presente": "succhio, succhi, succhia", "nota": "più neutro di ciucciare", "esempio": "Succhia senza fretta."},
+    {"verbo": "sega(re)", "presente": "sego, seghi, sega", "nota": "'ti sego' = ti masturbo; non 'sei segata'", "esempio": "Ti sego io, tu sta' fermo."},
+    {"verbo": "eccitare", "presente": "eccito, ecciti, eccita", "nota": "'mi ecciti', non 'mi fai eccitare di più' per vezzo", "esempio": "Mi ecciti da morire."},
+    {"verbo": "penetrare", "presente": "penetro, penetri, penetra", "nota": "reggenza: penetrare qualcuno", "esempio": "Ti penetro adagio."},
+    {"verbo": "spingere", "presente": "spingo, spingi, spinge", "nota": "il classico errore è 'spinge forte' usato per il soggetto sbagliato", "esempio": "Spingo e tu ti aggrappi."},
+    {"verbo": "venire", "presente": "vengo, vieni, viene", "nota": "nel senso di orgasmo: 'vengo', 'fammi venire'", "esempio": "Vengo se non ti fermi."},
+    {"verbo": "bagnare", "presente": "bagno, bagni, bagna", "nota": "'mi bagno', non 'sono bagnata da te'", "esempio": "Mi bagno solo a sentirti."},
+    {"verbo": "stringere", "presente": "stringo, stringi, stringe", "nota": "reggenza: stringere qualcosa, non 'stringere a'", "esempio": "Stringi i fianchi e tirati su."},
+    {"verbo": "mordere", "presente": "mordo, mordi, morde", "nota": "passato irregolare: morso", "esempio": "Ti mordo il collo, piano."},
+    {"verbo": "spogliare", "presente": "spoglio, spogli, spoglia", "nota": "riflessivo: mi spoglio", "esempio": "Mi spoglio e resto fermo a guardarti."}
+  ]
+}
