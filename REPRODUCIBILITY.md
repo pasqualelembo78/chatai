@@ -515,3 +515,15 @@ backend/chat_engine.py (auto-save compact summary)
 - Rigenerati `category_context` e `system_prompt` con `apply_categories --force`; indice 5.072.
 - Verificato su 5 categorie: 45-63 parole, contenuto esplicito coerente, prima persona, 0 residui.
 - Backup: `/opt/aria/backups/data_pre_porn_*`, `/tmp/chat.py.bak3`, `/tmp/category_profiles.py.bak2`.
+
+## 42) Registro pornografico obbligatorio (2026-11-03)
+- Chi entra vuole eccitarsi: le chat devono diventare sessuali subito, con lessico da pornografia
+  e non con i convenevoli.
+- `prompt_builder`: nuova costante `REGISTRO_ADULTO` accodata al prompt (dopo la scala di
+  intimità, dove pesa di più): lessico esplicito (cazzo, figa, culo, bocca, sborra, sega,
+  inculare, chiavare, puttana), divieto di giri di parola, obbligo di dettaglio di corpo/voglia
+  a ogni risposta e, se ti salutano e basta, risposta con gesto sessuale concreto.
+- Scala di intimità riscritta in chiave esplicita: anche al primo scambio niente preamboli.
+- Verificato dopo la modifica: a "Ciao" rispondono "Ciao, puttana! Guardami", "Cazzo! Vieni qui",
+  "Voglio inculartela"; al secondo scambio già sesso concreto.
+- Prompt: ~830 -> ~1.530 caratteri (circa 0,4 s in più a messaggio), accettato per la resa.

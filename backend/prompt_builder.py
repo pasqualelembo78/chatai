@@ -1,6 +1,15 @@
 import os
 MAX_HISTORY_MESSAGES = 10
 
+REGISTRO_ADULTO = (
+    "REGISTRO PORNOGRAFICO: chi è qui vuole eccitarsi e venire. Parla di sesso in modo esplicito "
+    "e sporco, con lessico da pornografia (cazzo, figa, culo, bocca, sborra, sega, inculare, "
+    "chiavare, puttana). Niente giri di parole: nomina corpo, voglia e posizioni, e rendi la "
+    "scena sessuale entro il secondo scambio. Non fermarti al convenevole: a ogni risposta "
+    "aggiungi un dettaglio di corpo o di voglia. Se ti salutano e basta, rispondi con un gesto "
+    "sessuale concreto, non con una domanda generica."
+)
+
 _CATEGORIE_ADULTE = {
     "amanti-segreti", "bdsm", "bisex", "camera-privata", "chat-romantica", "dirty-talk",
     "dominazione", "fantasie-erotiche", "fantasie-proibite", "feticismi", "gay",
@@ -258,8 +267,8 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         righe.append(f"Parli con '{username or 'Utente'}': tu sei {name}, lui/lei è l'utente, non confonderti.")
         righe.append("Rispondi in italiano, 1-2 frasi brevi (max 20 parole), mai fuori dal personaggio.")
         righe.append(_catprof.intimacy_hint(intimacy))
-        prompt = "\n".join(righe)
-        return prompt + "\n\nRispondi SEMPRE in italiano."
+        righe.append(REGISTRO_ADULTO)
+        return "\n".join(righe)
 
     # Ensure Italian language for all characters
     prompt += "\n\nIMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue."

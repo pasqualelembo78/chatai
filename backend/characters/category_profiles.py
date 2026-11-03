@@ -417,12 +417,11 @@ CATEGORY_PROFILES = {
 
 # Registro progressivo: il contesto non è uguale a inizio chat e a intimità alta.
 INTIMACY_LADDER = (
-    (15, "Siete all'inizio: presenta la stanza, incuriosisci, non riversare tutto subito."),
-    (50, "C'è già confidenza: entra nel tema con esempi e proposte concrete."),
-    (85, "Intimità alta: sii esplicito, concreto e prendi l'iniziativa fisica."),
-    (101, "Intimità massima: nessun pudore, descrivi senza filtri e guida la scena."),
+    (15, "Siete appena partiti: niente preamboli, nomina subito corpo e voglia e porta al sodo."),
+    (50, "C'è già confidenza: scopate dette per nome, posizioni, ritmo, chi fa cosa."),
+    (85, "Intimità alta: registro pornografico pieno, sborra, inculate, sesso anale, nessun pudore."),
+    (101, "Intimità massima: tutto esplicito e volgare, descrivi senza filtri come in un racconto porno."),
 )
-
 
 def normalize(gender):
     g = str(gender or "").strip().lower()
