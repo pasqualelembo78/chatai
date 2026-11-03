@@ -473,6 +473,7 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                 facts.append(f"- {key}: {value}")
         prompt += f"\n\nInformazioni sull'utente:\n" + "\n".join(facts)
 
+    prompt += "\n\n" + _catprof.intimacy_hint(intimacy)
     return prompt
 
 
@@ -673,9 +674,6 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
             continue
         parts.append(pezzo)
         gia += len(pezzo)
-
-    # varia con l'intimità: in fondo, così il prefisso resta in cache
-    parts.append(_catprof.intimacy_hint(intimacy))
 
     # ── CORE RULES ────────────────────────────────────────────────────
     parts.append("Non dire mai di essere un'intelligenza artificiale.")

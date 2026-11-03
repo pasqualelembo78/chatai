@@ -269,3 +269,5 @@ backend/chat_engine.py (auto-save compact summary)
 - Ottimizzazione cache: l'istruzione che cambia a ogni messaggio (scala di intimità) è stata
   spostata IN FONDO al prompt, così il prefisso statico resta identico e Ollama riusa la KV
   cache. Misurato sullo stesso personaggio: 57 s a freddo, poi 19 s e 16 s.
+- Rifinitura: l'hint di intimità è stato spostato in coda al prompt COMPLETO (non solo in coda
+  ai blocchi), così tutta la parte statica resta cacheabile.
