@@ -20,6 +20,17 @@ $total_chars = count($chars);
 $room_url = get_permalink();
 ?>
 
+<?php $seo_stanza = aria_room_seo($cat_slug); ?>
+<?php if (!empty($seo_stanza['intro'])): ?>
+<div class="aria-room-intro">
+    <?php
+    foreach (preg_split('/\n\n/', $seo_stanza['intro']) as $paragrafo) {
+        echo '<p>' . esc_html($paragrafo) . '</p>';
+    }
+    ?>
+</div>
+<?php endif; ?>
+
 <?php if (!is_user_logged_in()): ?>
 <div class="aria-grid-gate">
     <h3>Accesso richiesto</h3>
@@ -120,3 +131,42 @@ $room_url = get_permalink();
 </script>
 
 <?php endif; /* fine is_user_logged_in */ ?>
+
+<?php if (!empty($seo_stanza['faq'])): ?>
+<section class="aria-room-faq">
+    <h2>Domande frequenti su <?php echo esc_html($cat_meta['name']); ?></h2>
+    <?php foreach ($seo_stanza['faq'] as $coppia): ?>
+        <details>
+            <summary><?php echo esc_html($coppia[0]); ?></summary>
+            <p><?php echo esc_html($coppia[1]); ?></p>
+        </details>
+    <?php endforeach; ?>
+</section>
+<?php
+// Dati strutturati: la pagina è una collezione di personaggi + FAQ
+$schema = array(
+    '@context' => 'https://schema.org',
+    '@graph' => array(
+        array(
+            '@type' => 'CollectionPage',
+            'name' => $cat_meta['name'],
+            'description' => wp_strip_all_tags($seo_stanza['desc'] ?? ''),
+            'url' => get_permalink(),
+            'isPartOf' => array('@type' => 'WebSite', 'name' => get_bloginfo('name'), 'url' => home_url('/')),
+            'about' => array('@type' => 'Thing', 'name' => 'Chat erotica ' . $cat_meta['name']),
+        ),
+        array(
+            '@type' => 'FAQPage',
+            'mainEntity' => array_map(function ($c) {
+                return array('@type' => 'Question', 'name' => $c[0],
+                    'acceptedAnswer' => array('@type' => 'Answer', 'text' => $c[1]));
+            }, $seo_stanza['faq']),
+        ),
+    ),
+);
+echo '<script type="application/ld+json">' . wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+?>
+<?php endif; ?>
+
+
+

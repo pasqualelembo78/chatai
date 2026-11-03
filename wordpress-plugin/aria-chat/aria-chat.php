@@ -63,6 +63,7 @@ add_action('init', 'aria_chat_register_stanza_cpt');
 require_once ARIA_CHAT_PLUGIN_DIR . 'includes/API_Client.php';
 require_once ARIA_CHAT_PLUGIN_DIR . 'includes/Auth_Manager.php';
 require_once ARIA_CHAT_PLUGIN_DIR . 'includes/Chat_Engine.php';
+require_once ARIA_CHAT_PLUGIN_DIR . 'includes/room_seo.php';
 
 function aria_chat_init() {
     add_action('wp_enqueue_scripts', 'aria_chat_enqueue_assets');
@@ -148,6 +149,108 @@ function aria_chat_shortcode($atts) {
     ob_start();
     include ARIA_CHAT_PLUGIN_DIR . 'templates/chat-box.php';
     return ob_get_clean();
+}
+
+/**
+ * INDICE DELLA GRIGLIA.
+ * I JSON dei personaggi pesano ~44 MB: rileggerli a ogni richiesta di una stanza
+ * costerebbe ~400 ms e 62 MB di RAM. Costruiamo una sola volta un indice leggero
+ * (id, nome, emoji, descrizione breve) diviso per categoria e lo validiamo con una
+ * "firma" dei file: dopo una plasmatura o un nuovo file-categoria la cache si rinnova
+ * da sola, senza interventi manuali.
+ */
+define('ARIA_GRID_CACHE_GROUP', 'aria_grid');
+
+function aria_grid_data_dir() {
+    return apply_filters('aria_chat_characters_dir', '/opt/aria/backend/characters/data');
+}
+
+function aria_grid_signature() {
+    $sig = array();
+    foreach ((array) glob(aria_grid_data_dir() . '/*.json') as $f) {
+        $sig[] = basename($f) . ':' . filesize($f) . ':' . filemtime($f);
+    }
+    sort($sig);
+    return implode('|', $sig);
+}
+
+function aria_grid_cache_file() {
+    $u = wp_upload_dir();
+    return trailingslashit($u['basedir']) . 'aria-grid/index.json';
+}
+
+function aria_grid_build_index() {
+    $index = array('signature' => '', 'categories' => array(), 'characters' => array(), 'built_at' => 0);
+    foreach ((array) glob(aria_grid_data_dir() . '/*.json') as $f) {
+        $rows = json_decode((string) file_get_contents($f), true);
+        if (!is_array($rows)) continue;
+        if (basename($f) === 'categories.json') {
+            foreach ($rows as $c) {
+                if (empty($c['id'])) continue;
+                $index['categories'][$c['id']] = array(
+                    'name' => $c['name'] ?? $c['id'],
+                    'icon' => $c['icon'] ?? 'F',
+                    'description' => $c['description'] ?? ''
+                );
+            }
+            continue;
+        }
+        foreach ($rows as $c) {
+            if (!is_array($c) || empty($c['id'])) continue;
+            $cat = !empty($c['category']) ? $c['category'] : 'altro';
+            $desc = preg_replace('/\s+/u', ' ', strval(isset($c['description']) ? $c['description'] : (isset($c['essence']) ? $c['essence'] : '')));
+            $desc = trim((string) $desc);
+            $index['characters'][$cat][] = array(
+                'id' => $c['id'],
+                'name' => isset($c['name']) ? $c['name'] : 'Personaggio',
+                'avatar' => isset($c['avatar']) ? $c['avatar'] : '💬',
+                'desc' => mb_substr($desc, 0, 90)
+            );
+        }
+    }
+    foreach ($index['characters'] as $cat => $list) {
+        usort($index['characters'][$cat], function ($a, $b) { return strcmp($a['name'], $b['name']); });
+    }
+    $index['signature'] = aria_grid_signature();
+    $index['built_at'] = time();
+    return $index;
+}
+
+function aria_grid_index($force = false) {
+    $sig = aria_grid_signature();
+    if (!$force) {
+        $cached = wp_cache_get('index', ARIA_GRID_CACHE_GROUP);
+        if (is_array($cached) && ($cached['signature'] ?? '') === $sig) return $cached;
+        $file = aria_grid_cache_file();
+        if (is_readable($file)) {
+            $data = json_decode((string) file_get_contents($file), true);
+            if (is_array($data) && ($data['signature'] ?? '') === $sig) {
+                wp_cache_set('index', $data, ARIA_GRID_CACHE_GROUP, HOUR_IN_SECONDS);
+                return $data;
+            }
+        }
+    }
+    $index = aria_grid_build_index();
+    $file = aria_grid_cache_file();
+    if (wp_mkdir_p(dirname($file))) {
+        @file_put_contents($file, json_encode($index, JSON_UNESCAPED_UNICODE));
+    }
+    wp_cache_set('index', $index, ARIA_GRID_CACHE_GROUP, HOUR_IN_SECONDS);
+    return $index;
+}
+
+/** Card di una categoria: [['id','name','avatar','desc'], ...] */
+function aria_grid_characters($cat_slug, $force = false) {
+    if ($cat_slug === '') return array();
+    $index = aria_grid_index($force);
+    return isset($index['characters'][$cat_slug]) ? $index['characters'][$cat_slug] : array();
+}
+
+/** Nome/emoji/descrizione di una categoria (da categories.json). */
+function aria_grid_category_meta($cat_slug) {
+    $index = aria_grid_index();
+    if (isset($index['categories'][$cat_slug])) return $index['categories'][$cat_slug];
+    return array('name' => ucwords(str_replace('-', ' ', $cat_slug)), 'icon' => '💬', 'description' => '');
 }
 
 function aria_chat_shortcode_grid($atts) {

@@ -368,3 +368,14 @@ backend/chat_engine.py (auto-save compact summary)
   intatti, chat che si presentano col nome nuovo ("Sono Atena...", "Mi chiamo Vani...").
 - NOTA: le conversazioni già avviate contengono i nomi vecchi nei messaggi passati; si
   esauriscono con la cronologia. Il campo `job` resta, così il mestiere non si perde.
+
+## 30) SEO delle stanze (2026-11-03)
+- Problema trovato: le stanze erano orfane (0 link dalla homepage), pagine fatte di sole card,
+  senza meta description. Ora: footer site-wide con i 24 link (24 link anche in home), intro
+  unica per stanza + FAQ (visibili anche da ospite, quindi ai crawler) e dati strutturati
+  CollectionPage + FAQPage.
+- `includes/room_seo.php`: testi unici per categoria (intro ~120 parole, 3 FAQ, title ≤62
+  caratteri, description ~110-125). Meta scritti su tutte le 24 stanze via `_yoast_wpseo_*`.
+- Archivio `/stanze-live/`: due paragrafi di presentazione (hub delle stanze).
+- Homepage NON toccata nel layout: solo il footer guadagna un blocco link.
+- Canonical: `?char=` resta canonicalizzato alla stanza (nessuna esplosione di URL sottili).

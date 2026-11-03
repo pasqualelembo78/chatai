@@ -573,3 +573,27 @@
     font: inherit;
 }
 .aria-edit-actions { display: flex; gap: 8px; margin-top: 6px; }
+
+/* Testo introduttivo e FAQ delle stanze (SEO e orientamento) */
+.aria-room-intro {
+    max-width: 860px;
+    margin: 0 auto 22px;
+    padding: 0 16px;
+    color: #cfc8dd;
+    font-size: 15px;
+    line-height: 1.65;
+}
+.aria-room-intro p { margin: 0 0 12px; }
+
+.aria-room-faq {
+    max-width: 860px;
+    margin: 26px auto 10px;
+    padding: 0 16px 10px;
+}
+.aria-room-faq h2 { font-size: 19px; margin: 0 0 10px; color: #e91e8c; }
+.aria-room-faq details {
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    padding: 10px 0;
+}
+.aria-room-faq summary { cursor: pointer; font-size: 14px; color: #e8e2f0; }
+.aria-room-faq p { margin: 8px 0 0; font-size: 14px; color: #b9b3c7; line-height: 1.6; }
