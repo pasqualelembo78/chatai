@@ -476,6 +476,8 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         prompt += f"\n\nInformazioni sull'utente:\n" + "\n".join(facts)
 
     prompt += "\n\n" + _catprof.intimacy_hint(intimacy)
+    if character.get("category") in _CATEGORIE_ADULTE:
+        prompt += "\n\nSTILE OBBLIGATORIO: massimo 20 parole. Una sola frase. Fermati al primo punto."
     return prompt
 
 

@@ -284,3 +284,14 @@ backend/chat_engine.py (auto-save compact summary)
   niente riga di brevità finale ridondante nei canali adulti.
 - Misurato: prima risposta 45 s, seconda 19,7 s; il personaggio dichiara la stanza e resta
   coerente. Rollback: `backups/amanti-segreti_pre_slim_*.json`.
+
+## 22) Perché scriveva tanto e poi tagliava (2026-11-03)
+- Cause concorrenti: (a) il modello 3B ignora la brevità sepolta a metà prompt; (b) il
+  post-processing tagliava a 18 parole/1 frase riscrivendo un testo già mostrato; (c) il
+  limite di token stream era così basso da spezzare la frase a metà.
+- Fix: (a) istruzione "STILE OBBLIGATORIO: massimo 20 parole. Una sola frase. Fermati al
+  primo punto." in CODA al prompt, dove pesa di più; (b) taglio solo oltre 45 parole e a fine
+  frase (42 parole tenute), altrimenti niente modifiche; (c) num_predict 90 e stop su riga
+  vuota, più chiusura automatica all'ultima frase completa se la generazione si interrompe.
+- Verificato su 4 risposte: 27-41 parole, testo streamato == testo finale, sempre chiuso con
+  punteggiatura.

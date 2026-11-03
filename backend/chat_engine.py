@@ -578,42 +578,36 @@ def process_message(user_id, character_id, text, username="Utente",
         except Exception as e:
             logger.warning(f"Summarize failed: {e}")
 
-    # Post-processing: forza risposte brevi in chat (regola ferrea)
+    # Post-processing: taglio SOLO se il modello esagera, e sempre a fine frase.
+    # Prima si tagliava a 18 parole e a una frase, riscrivendo un testo già mostrato
+    # in streaming: ora sotto le 45 parole non si tocca nulla.
     try:
         user_text_lower = (text or "").lower()
         force_long = any(k in user_text_lower for k in ["raccontami", "spiegami", "dimmi di più", "approfondisci", "descrivimi dettagliatamente"])
         if not force_long and isinstance(ai_text, str):
-            text_clean = ai_text.strip()
             import re
-            text_clean = re.sub(r'\*[^*]+\*', '', text_clean).strip()
-            # Rimuovi tutto dopo punto e virgola o altro
-            for sep in ['\n\n', '\n']:
-                if sep in text_clean:
-                    text_clean = text_clean.split(sep)[0].strip()
-            sentences = re.split(r'([.!?]+)', text_clean)
-            sent_list = []
-            i = 0
-            while i < len(sentences):
-                s = sentences[i].strip()
-                if s and not re.match(r'^[.!?]+$', s):
-                    punc = sentences[i+1].strip() if i+1 < len(sentences) and re.match(r'^[.!?]+$', sentences[i+1].strip()) else '.'
-                    sent_list.append(s + punc)
-                    i += 2
-                else:
-                    i += 1
-            # Solo se è davvero lunga: così una risposta già breve (e già mostrata
-            # in streaming) non viene riscritta e non "sparisce" a fine risposta.
-            if sent_list and len(sent_list) > 2:
-                ai_text = " ".join(sent_list[:2]).strip()
-            text_clean = ai_text.strip()
-            words = re.sub(r'[^a-zA-ZàèéìòùÀÈÉÌÒÙ0-9\s\!\?\.\,]', ' ', text_clean).split()
-            if len(words) > 28:
-                ai_text = " ".join(words[:26]).rstrip(',') + "…"
+            pulito = ai_text.strip()
+            pulito = re.sub(r'\*[^*]+\*', '', pulito).strip()
+            pulito = re.sub(r'[ \t]+', ' ', pulito)
+            parole = pulito.split()
+            if len(parole) > 45:
+                frasi = [f.strip() for f in re.split(r'(?<=[.!?])\s+', pulito) if f.strip()]
+                tenuto = ""
+                for frase in frasi:
+                    if tenuto and len((tenuto + " " + frase).split()) > 42:
+                        break
+                    tenuto = (tenuto + " " + frase).strip()
+                ai_text = tenuto or (" ".join(parole[:40]).rstrip(",;:") + "…")
+            else:
+                ai_text = pulito
+            # se la generazione si è fermata a metà (limite token) chiudi all'ultima frase
+            if ai_text and ai_text[-1] not in '.!?…"»':
+                taglio = max(ai_text.rfind('.'), ai_text.rfind('?'), ai_text.rfind('!'))
+                if taglio > 30:
+                    ai_text = ai_text[:taglio + 1]
     except Exception as e:
         logger.debug(f"Troncamento risposta fallito: {e}")
-    except Exception as e:
-        logger.debug(f"Troncamento risposta fallito: {e}")
-    
+
     # Anti-generico: forza azione concreta in roleplay (solo Barbara)
     try:
         if character_id == "barbara_sex":
