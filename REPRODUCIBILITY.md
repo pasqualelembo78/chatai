@@ -527,3 +527,16 @@ backend/chat_engine.py (auto-save compact summary)
 - Verificato dopo la modifica: a "Ciao" rispondono "Ciao, puttana! Guardami", "Cazzo! Vieni qui",
   "Voglio inculartela"; al secondo scambio già sesso concreto.
 - Prompt: ~830 -> ~1.530 caratteri (circa 0,4 s in più a messaggio), accettato per la resa.
+
+## 43) Lessico sicuro e spinta sui saluti (2026-11-03)
+- Problema visto in chat: il 3B inventa parole ("ti incollo", "ti borbbo", "sei segata") e sui
+  saluti resta sul convenevole.
+- `prompt_builder`: LESSICO SICURO con i termini corretti e quattro forme da imitare ("ti metto
+  in ginocchio", "te lo ficco in gola", "ti scopo da dietro", "ti sego piano") + divieto di
+  neologismi.
+- Spinta deterministica: se l'utente scrive solo un saluto (max 3 parole) il prompt aggiunge
+  "rispondi con un gesto sessuale esplicito e nomina una parte del corpo"; se il messaggio ha
+  una-due parole, "azione fisica concreta".
+- Temperatura del modello locale 0.65 -> 0.6 (meno invenzioni, più tenuta del lessico).
+- Verificato: a "Ciao" ora rispondono "Cazzo, sei qui per scopare? Ti metto in ginocchio e ti
+  prendo in bocca", "Guardami, figa!".

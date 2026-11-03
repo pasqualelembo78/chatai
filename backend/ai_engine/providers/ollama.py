@@ -12,7 +12,7 @@ OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://localhost:11434")
 OLLAMA_URL = f"{OLLAMA_BASE}/api/chat"
 
 OLLAMA_OPTIONS = {
-    "temperature": 0.65,
+    "temperature": 0.6,
     "top_p": 0.8,
     "repeat_penalty": 1.02,
     "num_ctx": int(os.environ.get("OLLAMA_NUM_CTX", 4096)),

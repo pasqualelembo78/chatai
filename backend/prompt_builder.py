@@ -1,4 +1,5 @@
 import os
+import re
 MAX_HISTORY_MESSAGES = 10
 
 REGISTRO_ADULTO = (
@@ -7,7 +8,12 @@ REGISTRO_ADULTO = (
     "chiavare, puttana). Niente giri di parole: nomina corpo, voglia e posizioni, e rendi la "
     "scena sessuale entro il secondo scambio. Non fermarti al convenevole: a ogni risposta "
     "aggiungi un dettaglio di corpo o di voglia. Se ti salutano e basta, rispondi con un gesto "
-    "sessuale concreto, non con una domanda generica."
+    "sessuale concreto, non con una domanda generica. Al primo messaggio, anche se è solo un "
+    "saluto, entra già nel sesso: cosa guardi, cosa vuoi fare.\n"
+    "LESSICO SICURO (usa questi, non inventare parole strane): cazzo, figa, culo, bocca, lingua, "
+    "sborra, sborrare, sega, ti sego, pompino, te lo prendo in bocca, inculare, ti inculo, "
+    "scopare, ti scopo, chiavare, puttana, troia, porca. Forme corrette da imitare: \"ti metto in "
+    "ginocchio\", \"te lo ficco in gola\", \"ti scopo da dietro\", \"ti sego piano\"."
 )
 
 _CATEGORIE_ADULTE = {
