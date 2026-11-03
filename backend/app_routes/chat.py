@@ -2,6 +2,7 @@ import os
 import re
 import tempfile
 import logging
+import threading
 
 from fastapi import APIRouter, Request, Depends, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse, JSONResponse, Response
@@ -23,6 +24,25 @@ router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
 logger = logging.getLogger(__name__)
+
+# Quante generazioni sono in corso adesso: Ollama ne serve una alla volta, quindi
+# il client deve sapere se sta aspettando il proprio turno o se sta scrivendo lui.
+_ATTIVI = 0
+_LOCK_CODA = threading.Lock()
+
+
+def _entra_coda():
+    global _ATTIVI
+    with _LOCK_CODA:
+        _ATTIVI += 1
+        return _ATTIVI
+
+
+def _esci_coda():
+    global _ATTIVI
+    with _LOCK_CODA:
+        _ATTIVI = max(0, _ATTIVI - 1)
+
 
 
 def _send_alert(message):
@@ -221,6 +241,7 @@ async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = 
         )
 
     coda = queue.Queue()
+    posizione = _entra_coda()
 
     def lavora():
         try:
@@ -244,41 +265,46 @@ async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = 
     threading.Thread(target=lavora, daemon=True).start()
 
     def eventi():
-        nome = (char or {}).get("name", "")
-        yield "event: meta\ndata: " + _json.dumps({"character_name": nome}, ensure_ascii=False) + "\n\n"
-        while True:
-            tipo, dato = coda.get()
-            if tipo == "delta":
-                yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
-                continue
-            if tipo == "error":
-                refund_message(user.user_id)
-                yield "event: error\ndata: " + _json.dumps({"error": dato}, ensure_ascii=False) + "\n\n"
+        try:
+            nome = (char or {}).get("name", "")
+            yield "event: meta\ndata: " + _json.dumps({"character_name": nome}, ensure_ascii=False) + "\n\n"
+            if posizione > 1:
+                yield "event: coda\ndata: " + _json.dumps({"davanti": posizione - 1}) + "\n\n"
+            while True:
+                tipo, dato = coda.get()
+                if tipo == "delta":
+                    yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
+                    continue
+                if tipo == "error":
+                    refund_message(user.user_id)
+                    yield "event: error\ndata: " + _json.dumps({"error": dato}, ensure_ascii=False) + "\n\n"
+                    return
+                result = dato
+                if not result:
+                    refund_message(user.user_id)
+                    yield "event: error\ndata: " + _json.dumps({"error": "character not found"}, ensure_ascii=False) + "\n\n"
+                    return
+                ai_text, _bloccato = moderate_output(result["ai_text"])
+                result["ai_text"] = ai_text
+                payload = {
+                    "response": ai_text,
+                    "emotion": result["emotion"],
+                    "emotion_intensity": result["intensity"],
+                    "ai_provider": result.get("ai_provider", ""),
+                    "ai_model": result.get("ai_model", ""),
+                    "character_id": character_id,
+                    "character_name": result["character"]["name"],
+                }
+                mem_updates = result.get("memory_updates", {})
+                if mem_updates:
+                    payload["memory_updates"] = mem_updates
+                evo_updates = result.get("evo_updates", {})
+                if evo_updates.get("new_stage") or evo_updates.get("unlocked"):
+                    payload["evo_updates"] = evo_updates
+                yield "event: final\ndata: " + _json.dumps(payload, ensure_ascii=False) + "\n\n"
                 return
-            result = dato
-            if not result:
-                refund_message(user.user_id)
-                yield "event: error\ndata: " + _json.dumps({"error": "character not found"}, ensure_ascii=False) + "\n\n"
-                return
-            ai_text, _bloccato = moderate_output(result["ai_text"])
-            result["ai_text"] = ai_text
-            payload = {
-                "response": ai_text,
-                "emotion": result["emotion"],
-                "emotion_intensity": result["intensity"],
-                "ai_provider": result.get("ai_provider", ""),
-                "ai_model": result.get("ai_model", ""),
-                "character_id": character_id,
-                "character_name": result["character"]["name"],
-            }
-            mem_updates = result.get("memory_updates", {})
-            if mem_updates:
-                payload["memory_updates"] = mem_updates
-            evo_updates = result.get("evo_updates", {})
-            if evo_updates.get("new_stage") or evo_updates.get("unlocked"):
-                payload["evo_updates"] = evo_updates
-            yield "event: final\ndata: " + _json.dumps(payload, ensure_ascii=False) + "\n\n"
-            return
+        finally:
+            _esci_coda()
 
     return StreamingResponse(
         eventi(),
@@ -334,6 +360,7 @@ async def api_chat_regenerate(request: Request, body: RedoRequest, user: AuthUse
         elimina_messaggio(ultimo["id"])
 
     coda = queue.Queue()
+    posizione = _entra_coda()
 
     def lavora():
         try:
@@ -351,28 +378,33 @@ async def api_chat_regenerate(request: Request, body: RedoRequest, user: AuthUse
     threading.Thread(target=lavora, daemon=True).start()
 
     def eventi():
-        yield "event: meta\ndata: " + _json.dumps({"character_name": char.get("name", "")}, ensure_ascii=False) + "\n\n"
-        while True:
-            tipo, dato = coda.get()
-            if tipo == "delta":
-                yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
-                continue
-            if tipo == "error":
-                yield "event: error\ndata: " + _json.dumps({"error": dato}, ensure_ascii=False) + "\n\n"
+        try:
+            yield "event: meta\ndata: " + _json.dumps({"character_name": char.get("name", "")}, ensure_ascii=False) + "\n\n"
+            if posizione > 1:
+                yield "event: coda\ndata: " + _json.dumps({"davanti": posizione - 1}) + "\n\n"
+            while True:
+                tipo, dato = coda.get()
+                if tipo == "delta":
+                    yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
+                    continue
+                if tipo == "error":
+                    yield "event: error\ndata: " + _json.dumps({"error": dato}, ensure_ascii=False) + "\n\n"
+                    return
+                result = dato
+                if not result:
+                    yield "event: error\ndata: " + _json.dumps({"error": "character not found"}, ensure_ascii=False) + "\n\n"
+                    return
+                testo_finale, _b = moderate_output(result["ai_text"])
+                payload = {
+                    "response": testo_finale,
+                    "emotion": result["emotion"],
+                    "ai_model": result.get("ai_model", ""),
+                    "character_name": result["character"]["name"],
+                }
+                yield "event: final\ndata: " + _json.dumps(payload, ensure_ascii=False) + "\n\n"
                 return
-            result = dato
-            if not result:
-                yield "event: error\ndata: " + _json.dumps({"error": "character not found"}, ensure_ascii=False) + "\n\n"
-                return
-            testo_finale, _b = moderate_output(result["ai_text"])
-            payload = {
-                "response": testo_finale,
-                "emotion": result["emotion"],
-                "ai_model": result.get("ai_model", ""),
-                "character_name": result["character"]["name"],
-            }
-            yield "event: final\ndata: " + _json.dumps(payload, ensure_ascii=False) + "\n\n"
-            return
+        finally:
+            _esci_coda()
 
     return StreamingResponse(
         eventi(),
@@ -493,25 +525,25 @@ async def api_chat_opening(request: Request, body: ChatRequest, user: AuthUser =
     threading.Thread(target=lavora, daemon=True).start()
 
     def eventi():
-        yield "event: template\ndata: " + _json.dumps({"text": template}, ensure_ascii=False) + "\n\n"
-        testo = ""
-        while True:
-            tipo, dato = coda.get()
-            if tipo == "delta":
-                yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
-                continue
-            testo = dato or ""
-            if not testo:
-                # modello muto: resta il template
-                yield "event: final\ndata: " + _json.dumps({"text": template, "template": True}, ensure_ascii=False) + "\n\n"
+            yield "event: template\ndata: " + _json.dumps({"text": template}, ensure_ascii=False) + "\n\n"
+            testo = ""
+            while True:
+                tipo, dato = coda.get()
+                if tipo == "delta":
+                    yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
+                    continue
+                testo = dato or ""
+                if not testo:
+                    # modello muto: resta il template
+                    yield "event: final\ndata: " + _json.dumps({"text": template, "template": True}, ensure_ascii=False) + "\n\n"
+                    return
+                try:
+                    from storage import add_message
+                    add_message(user.user_id, character_id, "assistant", testo)
+                except Exception:
+                    logger.warning("salvataggio apertura fallito", exc_info=True)
+                yield "event: final\ndata: " + _json.dumps({"text": testo}, ensure_ascii=False) + "\n\n"
                 return
-            try:
-                from storage import add_message
-                add_message(user.user_id, character_id, "assistant", testo)
-            except Exception:
-                logger.warning("salvataggio apertura fallito", exc_info=True)
-            yield "event: final\ndata: " + _json.dumps({"text": testo}, ensure_ascii=False) + "\n\n"
-            return
 
     return StreamingResponse(
         eventi(),

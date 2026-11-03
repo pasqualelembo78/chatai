@@ -397,7 +397,7 @@
      * Avanza in modo stimato sulla media reale dei tempi del server
      * (window.ariaAvgMs) e si ferma al 95% finche' non arriva la risposta.
      */
-    function showProgressBar() {
+    function showProgressBar(etichetta) {
         setStatus('typing');
         if (document.getElementById('aria-progress-bar')) return;
         var avg = parseInt(window.ariaAvgMs || 0, 10) || 12000;
@@ -405,7 +405,7 @@
             '<div id="aria-progress-bar" class="aria-typing-bar" role="status" aria-live="polite">' +
                 '<div class="aria-typing-dots"><span></span><span></span><span></span></div>' +
                 '<div class="aria-typing-track"><div class="aria-typing-fill"></div></div>' +
-                '<span class="aria-typing-label">Sta scrivendo...</span>' +
+                '<span class="aria-typing-label">' + (etichetta || 'Sta scrivendo...') + '</span>' +
             '</div>');
         scrollToBottom();
         var started = performance.now();
@@ -415,6 +415,11 @@
             $fill.css('width', Math.round(ratio * 100) + '%');
         }, 200);
     }
+    function aggiornaLabelProgresso(testo) {
+        var l = document.querySelector('#aria-progress-bar .aria-typing-label');
+        if (l && testo) l.textContent = testo;
+    }
+
     function hideProgressBar() {
         if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
         var b = document.getElementById('aria-progress-bar');
@@ -475,6 +480,8 @@
         if (ultimo && (Date.now() - ultimo) < 30 * 60 * 1000) return;
 
         window.ariaUserSent = false;
+        showProgressBar('Caricamento personaggio...');
+        setTimeout(function () { if (!parziale) hideProgressBar(); }, 2500);
         var $bolla = null;
         var $testo = null;
         var parziale = '';
@@ -486,6 +493,7 @@
                 $testo = $bolla.find('.aria-message-content');
             }
             parziale = testo;
+            hideProgressBar();
             $testo.text(parziale);
             scrollToBottom();
         }
@@ -715,8 +723,15 @@
                             var obj;
                             try { obj = JSON.parse(dati); } catch (e) { continue; }
                             if (evento === 'delta' && obj.t) {
-                                if (!ricevuto) { ricevuto = true; window.ariaFetchDoneAt = performance.now(); }
+                                if (!ricevuto) {
+                                    ricevuto = true;
+                                    window.ariaFetchDoneAt = performance.now();
+                                    aggiornaLabelProgresso('Sta scrivendo...');
+                                }
                                 scrivi(obj.t);
+                            } else if (evento === 'coda') {
+                                var davanti = parseInt(obj.davanti, 10) || 1;
+                                aggiornaLabelProgresso(davanti === 1 ? 'Sei in coda: 1 persona davanti a te' : 'Sei in coda: ' + davanti + ' persone davanti a te');
                             } else if (evento === 'final') {
                                 ricevuto = true;
                                 window.ariaFetchDoneAt = performance.now();

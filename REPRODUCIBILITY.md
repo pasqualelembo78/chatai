@@ -309,3 +309,11 @@ backend/chat_engine.py (auto-save compact summary)
 - Genere non binario: prima usciva "uno non binario"; ora "una persona non binaria" con
   licenza esplicita di essere chiamato al maschile o al femminile.
 - Troncamento: se chiude a metà di un virgolettato, lo richiude.
+
+## 24) Stato visibile: coda e caricamento personaggio (2026-11-03)
+- Il backend conta le generazioni in corso (`_entra_coda`/`_esci_coda`) e, prima del primo
+  pezzo, invia l'evento SSE `coda` con quante persone sono davanti. Ollama serve una richiesta
+  alla volta: senza questo l'attesa sembrava un blocco.
+- Frontend: la barra mostra "Sei in coda: N persone davanti a te" e torna a "Sta scrivendo..."
+  al primo pezzo; all'apertura compare "Caricamento personaggio..." finché non arriva il
+  template (max 2,5 s).
