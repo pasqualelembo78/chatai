@@ -565,3 +565,18 @@ backend/chat_engine.py (auto-save compact summary)
 - Backup: `/opt/aria/backups/pre_lingua/` (prompt_builder.py, ollama.py, category_profiles.py).
 - Limite residuo: sui messaggi molto poveri ("Ciao") il 3B a volte risponde ancora con "Come
   posso aiutarti?"; il repertorio mitiga ma non elimina l'echo della personalità.
+
+## 45) Sintassi: una azione per frase (2026-11-03)
+- Osservato: catene di verbi ("ti incolo, poi ti sego e ti scopo") e frasi senza soggetto/ritmo,
+  più errori di articolo ("una sorriso") e ripetizione dello stesso gesto d'apertura.
+- Nuovo `language/italian-syntax.json`: 6 regole (una azione principale per frase, niente catene,
+  soggetto sottinteso, articoli corretti, presente, non riaprire con lo stesso gesto) e 10 frasi
+  modello a due tempi ("Ti prendo per i fianchi e ti tira a me", "Ti metto in ginocchio con una
+  mano sulla nuca").
+- `italian-grammar.json`: aggiunte le regole su catene di verbi e articoli; il correttore non
+  tocca questi casi.
+- Prompt: riga finale "una azione principale per risposta: il secondo verbo deve essere la
+  conseguenza, non un elenco" + tre spinte deterministiche in coda (saluto, "come lo faresti",
+  messaggio cortissimo) che ora arrivano DOPO tutte le regole, dove pesano.
+- Verificato: a "Come lo faresti?" ora risponde "Ti vorrei segare, te lo metto in bocca";
+  le frasi hanno un verbo principale e un dettaglio.

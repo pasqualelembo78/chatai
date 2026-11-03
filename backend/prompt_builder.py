@@ -277,7 +277,16 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                 righe.append(_b)
         except Exception:
             pass
-        righe.append("MASSIMO 20 parole. Niente spiegazioni e niente annunci: scrivi cosa fai e cosa senti.")
+        righe.append("MASSIMO 20 parole. Niente spiegazioni e niente annunci: scrivi cosa fai e cosa senti. "
+                     "Una azione principale per risposta: se aggiungi un verbo, deve essere la conseguenza, non un elenco.")
+        # spinta deterministica sui messaggi poveri: il modello tende al convenevole
+        _breve = (user_text or "").strip().lower()
+        if re.match(r"^(ciao|ehi|hei|salve|buonasera|buongiorno|hola)\b", _breve) and len(_breve.split()) <= 3:
+            righe.append("ORA: non ricambiare il saluto e basta, fai un gesto sessuale (mano, bocca, morso) e nomina una parte del corpo.")
+        elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
+            righe.append("ORA: atto sessuale concreto (bocca, culo, sborra, scopare), non carezze né sguardi.")
+        elif len(_breve.split()) <= 2:
+            righe.append("ORA: azione fisica concreta, non parole.")
         return "\n".join(righe)
 
     # Ensure Italian language for all characters

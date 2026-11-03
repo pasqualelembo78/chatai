@@ -11,7 +11,9 @@
     "Niente doppio soggetto: 'io ti scopo', non 'io ti scopo a te'.",
     "I possessivi si usano poco nel parlato: 'la mano' prima di 'la mia mano'.",
     "Preferisci il passato prossimo al passato remoto nelle chat.",
-    "Non accumulare avverbi: 'piano' basta, non 'molto piano davvero'."
+    "Non accumulare avverbi: 'piano' basta, non 'molto piano davvero'.",
+    "Niente catene di verbi in fila: 'ti incolo, poi ti sego e ti scopo' va spezzato, un'azione principale per frase.",
+    "Articoli giusti: 'un sorriso', 'una mano', 'un ginocchio', 'una coscia'. L'errore 'una sorriso' è frequente."
   ],
   "correzioni_brevi": [
     {"sbagliato": "borbbo", "giusto": "ciuccio", "nota": "non esiste: la forma corretta è ciucciare o succhiare"},

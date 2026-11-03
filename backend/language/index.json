@@ -21,12 +21,14 @@
      "agganci": ["sempre"]},
     {"file": "italian-humor.json", "tipo": "tono", "peso": 2,
      "agganci": ["rido", "battuta", "scherzo", "provocazione", "ironia", "simpatico"]},
+    {"file": "italian-syntax.json", "tipo": "sintassi", "peso": 3,
+     "agganci": ["come lo faresti", "cosa fai", "cosa mi fai", "come", "dimmi", "sesso", "scopare"]},
     {"file": "italian-dialogues.json", "tipo": "esempi", "peso": 1,
      "agganci": ["esempio", "ritmo", "come si fa"]}
   ],
   "registri": {
     "inizio": ["italian-grammar.json", "italian-colloquial.json", "italian-dialogues.json"],
-    "sesso": ["italian-erotic.json", "italian-anatomy.json", "italian-verbs.json"],
+    "sesso": ["italian-erotic.json", "italian-syntax.json", "italian-anatomy.json"],
     "leggero": ["italian-humor.json", "italian-colloquial.json", "italian-expressions.json"],
     "tecnico": ["italian-grammar.json", "italian-verbs.json"]
   }

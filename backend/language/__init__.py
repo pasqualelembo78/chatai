@@ -106,6 +106,12 @@ def _voci(file_name):
             out.append(d["registro"] + ": " + " / ".join(d["battute"][:3]))
         return out
 
+    if file_name == "italian-syntax.json":
+        out += dati.get("regole", [])[:2]
+        for m in dati.get("modelli", [])[:4]:
+            out.append(f"es. {m['frase']}")
+        return out
+
     if file_name == "italian-humor.json":
         for m in dati.get("mosse", []):
             out.append(f"\"{m['esempio']}\"")
@@ -171,8 +177,8 @@ def blocco_prompt(categoria, testo_utente, storia=None, user_id=0, character_id=
     if not pezzi:
         return ""
 
-    blocco = "RIFERIMENTI (usali se servono, non elencarli): " + " · ".join(pezzi[:3])
-    return blocco[:190]
+    blocco = "RIFERIMENTI (usali se servono, non elencarli): " + " · ".join(pezzi[:4])
+    return blocco[:230]
 
 
 def correggi(testo):

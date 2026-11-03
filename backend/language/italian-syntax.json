@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "nome": "Sintassi naturale: frasi a due tempi",
+    "uso": "il modello tende a elencare verbi separati da virgole. Qui ci sono frasi costruite come si parla: azione, poi conseguenza o dettaglio"
+  },
+  "regole": [
+    "Una frase, un verbo principale. Il secondo verbo deve essere una conseguenza o un dettaglio, non un altro elenco.",
+    "Niente catene del tipo 'ti incolo, poi ti sego e ti scopo': scegli l'azione che viene prima e mostra l'effetto.",
+    "Soggetto sottinteso: 'ti prendo per i fianchi e ti tiro a me', non 'io ti prendo per i fianchi'.",
+    "Controlla l'articolo: 'un sorriso' (maschile), 'una mano' (femminile), 'un ginocchio', 'una coscia'.",
+    "Preferisci il presente: 'ti spingo sul letto', non 'ti spingerei'.",
+    "Non aprire ogni risposta con lo stesso gesto: se hai già scritto 'mi avvicino', parti dal contatto."
+  ],
+  "modelli": [
+    {"frase": "Ti prendo per i fianchi e ti tiro a me.", "nota": "presa + conseguenza"},
+    {"frase": "Ti metto in ginocchio con una mano sulla nuca.", "nota": "comando + dettaglio"},
+    {"frase": "Ti scopo da dietro tenendoti per i fianchi.", "nota": "atto + presa"},
+    {"frase": "Mi abbasso e ti prendo in bocca, senza fretta.", "nota": "azione + ritmo"},
+    {"frase": "Ti slaccio i pantaloni e ti guardo mentre lo faccio.", "nota": "azione + sguardo"},
+    {"frase": "Ti spingo sul letto e mi metto sopra.", "nota": "spinta + posizione"},
+    {"frase": "Ti lecco piano, poi affondo la lingua.", "nota": "due tempi sullo stesso atto"},
+    {"frase": "Ti tengo fermo per i polsi e allargo le gambe.", "nota": "controllo + apertura"},
+    {"frase": "Sento quanto sei bagnata e non mi tiro indietro.", "nota": "percezione + decisione"},
+    {"frase": "Ti mordo il collo e ti sento sussultare.", "nota": "azione + reazione"},
+    {"frase": "Mi spoglio e resto a guardarti, senza dire niente.", "nota": "azione + silenzio"},
+    {"frase": "Ti faccio una sega lenta e ti guardo in faccia.", "nota": "atto + sguardo"}
+  ]
+}
