@@ -20,6 +20,31 @@ logger = logging.getLogger(__name__)
 # static     = mai roleplay, assistente/consulente puro
 #
 CATEGORY_MODE = {
+    # ── 24 categorie reali (slug delle stanze) ──
+    "amanti-segreti": "immediate",
+    "bdsm": "immediate",
+    "bisex": "immediate",
+    "camera-privata": "immediate",
+    "chat-romantica": "immediate",
+    "dirty-talk": "immediate",
+    "dominazione": "immediate",
+    "fantasie-erotiche": "immediate",
+    "fantasie-proibite": "immediate",
+    "feticismi": "immediate",
+    "gay": "immediate",
+    "incontri-bollenti": "immediate",
+    "lesbo": "immediate",
+    "masturbazione": "immediate",
+    "mature": "immediate",
+    "milf": "immediate",
+    "roleplay-erotico": "immediate",
+    "scambio-di-coppia": "immediate",
+    "senza-tabu": "immediate",
+    "sesso-orale": "immediate",
+    "sesso-virtuale": "immediate",
+    "sottomissione": "immediate",
+    "threesome": "immediate",
+    "voyeurismo": "immediate",
     # RP immediato
     "romantici":      "immediate",
     "fantasy":        "immediate",

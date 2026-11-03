@@ -54,9 +54,14 @@ Uso: ./build_app.sh [opzioni]
 HELP
 }
 
+# MODELLO OBBLIGATORIO (AGENTS.md): UNICO modello da installare/usare nelle chat.
+# Vietato pull di Qwen/Stheno/altri: se serve un modello diverso, chiederlo all'utente.
+MANDATORY_MODEL='hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M'
+# (manteniamo il nome storico della variabile: ora indica solo il modello obbligatorio)
 ABLITERATED_MODELS='hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M'
-DEFAULT_MODELS="$ABLITERATED_MODELS"
-ADVANCED_MODELS='hf.co/mradermacher/L3-8B-Stheno-v3.2-abliterated-GGUF:Q4_K_M Manojb/Huihui-Ling-mini-2.0-abliterated.i1-Q4_K_M.gguf mradermacher/gpt-oss-20b-3MPER0RR-abliterated-GGUF'
+DEFAULT_MODELS="$MANDATORY_MODEL"
+# Modelli 'avanzati': non si installano piu' modelli diversi dall'obbligatorio (AGENTS.md)
+ADVANCED_MODELS="$MANDATORY_MODEL"
 
 SKIP_PY=false SKIP_APK=false SKIP_OLLAMA=false SKIP_AUDIO=false
 SKIP_APACHE=false SKIP_LETSENCRYPT=false SKIP_FIREWALL=false
@@ -94,12 +99,12 @@ done
 _prompt_model_selection() {
     local model_choice individual_choice all_models model idx
     echo
-    echo -e "${BLUE}=== Selezione Modelli Ollama ===${NC}"
-    echo '  1) Tutti i modelli'
-    echo '  2) Solo Qwen 3B abliterated RP (uncensored, roleplay)'
-    echo '  3) Modelli avanzati (8B, 16B, 32B)'
-    echo '  4) Selezione individuale'
-    echo '  5) Nessun modello'
+    echo -e "${BLUE}=== Modello Ollama (regola AGENTS.md: UNICO modello) ===${NC}"
+    echo '  1) hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M (obbligatorio)'
+    echo '  2) Solo il modello obbligatorio (equivalente a 1)'
+    echo '  3) Modelli avanzati: non disponibili, vietato installare altri modelli'
+    echo '  4) Selezione individuale (puoi scegliere solo il modello obbligatorio)'
+    echo '  5) Nessun modello: viene comunque installato quello obbligatorio'
     if [[ "$SKIP_PROMPTS" == true ]]; then
         warn 'Modalità non interattiva: uso i modelli predefiniti.'
         OLLAMA_MODELS="$DEFAULT_MODELS"
@@ -508,6 +513,12 @@ if [[ "$SKIP_OLLAMA" == false ]]; then
             sleep 1
         done
     fi
+    # MODELLO OBBLIGATORIO (AGENTS.md): viene installato SEMPRE, anche se la scelta
+    # dell'operatore e' "nessun modello" o una lista personalizzata.
+    if [[ " ${OLLAMA_MODELS:-} " != *" $MANDATORY_MODEL "* ]]; then
+        OLLAMA_MODELS="${OLLAMA_MODELS:+$OLLAMA_MODELS }$MANDATORY_MODEL"
+    fi
+
     if [[ "$OLLAMA_READY" != true ]]; then
         err 'API Ollama non disponibile. Non eseguo pull/create; controlla: systemctl status ollama.'
     elif [[ -z "${OLLAMA_MODELS//[[:space:]]/}" ]]; then

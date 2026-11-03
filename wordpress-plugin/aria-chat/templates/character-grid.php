@@ -1,0 +1,122 @@
+<?php
+/**
+ * Griglia card dei personaggi di una stanza (categoria).
+ * I dati arrivano da aria_grid_characters(): indice in cache (Redis/file), non
+ * una rilettura dei 44 MB di JSON del personaggio a ogni pagina.
+ * Il clic su una card apre la chat dedicata di quel personaggio (?char=id).
+ */
+$atts = shortcode_atts(array('category' => ''), $atts);
+$cat_slug = sanitize_text_field($atts['category']);
+
+// Personaggio selezionato via URL (?char=... oppure ?character=...)
+$selected_char = isset($_GET['char']) ? sanitize_text_field(wp_unslash($_GET['char'])) : '';
+if ($selected_char === '' && isset($_GET['character'])) {
+    $selected_char = sanitize_text_field(wp_unslash($_GET['character']));
+}
+
+$cat_meta = aria_grid_category_meta($cat_slug);
+$chars = aria_grid_characters($cat_slug);
+$total_chars = count($chars);
+$room_url = get_permalink();
+?>
+
+<?php if (!is_user_logged_in()): ?>
+<div class="aria-grid-gate">
+    <h3>Accesso richiesto</h3>
+    <p>Per chattare con i personaggi devi fare il login con il tuo account WordPress.</p>
+    <p><a class="button button-primary" href="<?php echo esc_url(wp_login_url(get_permalink())); ?>">Accedi</a></p>
+    <p class="aria-grid-gate-note">Non hai un account? Puoi registrarti dalla pagina di login.</p>
+</div>
+<?php else: ?>
+
+<div class="aria-grid-wrapper" id="aria-grid-wrapper">
+    <header class="aria-grid-header">
+        <span class="aria-grid-icon"><?php echo esc_html($cat_meta['icon']); ?></span>
+        <h2><?php echo esc_html($cat_meta['name']); ?></h2>
+        <?php if (!empty($cat_meta['description'])): ?>
+            <p class="aria-grid-subtitle"><?php echo esc_html($cat_meta['description']); ?></p>
+        <?php endif; ?>
+        <p class="aria-grid-count"><?php echo esc_html(number_format_i18n($total_chars)); ?> personaggi in questa stanza</p>
+    </header>
+
+    <?php
+    // Con 200+ personaggi per stanza il DOM completo e' pesante su mobile: si mostrano
+    // 60 card per volta e il resto si svela a blocchi con il pulsante.
+    $per_blocco = 60;
+    ?>
+    <?php if ($total_chars === 0): ?>
+        <p class="aria-grid-empty">Nessun personaggio trovato per questa categoria<?php echo $cat_slug ? ': ' . esc_html($cat_slug) : ' (shortcode senza category)'; ?>.</p>
+    <?php else: ?>
+        <div class="aria-character-grid">
+            <?php foreach ($chars as $i => $c):
+                // La descrizione inizia con il nome: nella card il nome è già sopra
+                $card_desc = trim(preg_replace('/^' . preg_quote($c['name'], '/') . '\s*[—–-]\s*/u', '', $c['desc']));
+                $nascosta = $i >= $per_blocco ? ' aria-card-hidden' : '';
+            ?>
+            <a class="aria-character-card<?php echo $nascosta; ?>" href="<?php echo esc_url(add_query_arg('char', rawurlencode($c['id']), $room_url)); ?>" title="Chatta con <?php echo esc_attr($c['name']); ?>">
+                <div class="aria-character-avatar"><?php echo esc_html($c['avatar']); ?></div>
+                <h3><?php echo esc_html($c['name']); ?></h3>
+                <p><?php echo esc_html($card_desc); ?></p>
+            </a>
+            <?php endforeach; ?>
+        </div>
+        <?php if ($total_chars > $per_blocco): ?>
+            <div class="aria-grid-more">
+                <button type="button" id="aria-show-more" class="aria-show-more" data-step="<?php echo (int) $per_blocco; ?>" data-total="<?php echo (int) $total_chars; ?>">
+                    Mostra altri <?php echo (int) $per_blocco; ?>
+                </button>
+                <span class="aria-grid-shown" id="aria-grid-shown"><?php echo (int) $per_blocco; ?> di <?php echo (int) $total_chars; ?></span>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>
+
+<?php /* Chat del personaggio selezionato: viene resa solo quando ?char= e' presente */ ?>
+<div id="aria-chat-wrapper" class="aria-chat-in-room" <?php echo $selected_char ? '' : 'style="display:none;"'; ?>>
+    <?php if ($selected_char): ?>
+        <p class="aria-room-back"><a href="<?php echo esc_url($room_url); ?>">&larr; Tutti i personaggi di <?php echo esc_html($cat_meta['name']); ?></a></p>
+    <?php endif; ?>
+    <?php
+    $chat_atts = array(
+        'character' => $selected_char,
+        'category'  => $cat_slug,
+        'width'     => '100%',
+        'height'    => '500px',
+    );
+    $atts = $chat_atts;
+    include ARIA_CHAT_PLUGIN_DIR . 'templates/chat-box.php';
+    ?>
+</div>
+
+<script>
+(function () {
+    // Con ?char= la griglia lascia il posto alla chat del personaggio scelto.
+    var hasChar = /[?&](char|character)=/.test(window.location.search);
+    var grid = document.getElementById('aria-grid-wrapper');
+    var box = document.getElementById('aria-chat-wrapper');
+    if (hasChar) {
+        if (grid) grid.style.display = 'none';
+        if (box) box.style.display = 'block';
+        return;
+    }
+    if (box) box.style.display = 'none';
+
+    // Svela le card a blocchi: il resto del DOM resta ma non viene dipinto
+    var piu = document.getElementById('aria-show-more');
+    var mostrate = document.getElementById('aria-grid-shown');
+    if (!piu) return;
+    piu.addEventListener('click', function () {
+        var passo = parseInt(piu.getAttribute('data-step'), 10) || 60;
+        var totale = parseInt(piu.getAttribute('data-total'), 10) || 0;
+        var nascoste = document.querySelectorAll('.aria-character-card.aria-card-hidden');
+        for (var i = 0; i < passo && i < nascoste.length; i++) {
+            nascoste[i].classList.remove('aria-card-hidden');
+        }
+        var viste = document.querySelectorAll('.aria-character-card:not(.aria-card-hidden)').length;
+        if (mostrate) mostrate.textContent = viste + ' di ' + totale;
+        if (viste >= totale && piu.parentNode) piu.parentNode.removeChild(piu);
+    });
+})();
+</script>
+
+<?php endif; /* fine is_user_logged_in */ ?>

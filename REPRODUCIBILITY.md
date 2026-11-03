@@ -31,3 +31,187 @@ backend/chat_engine.py (auto-save compact summary)
 - Copia plugin aria-chat/ o reinstalla
 - Aggiorna .env / opencode se serve
 - Riavvia chatai.service
+
+## 7) Stanze WP + invio chat — fix 2026-11-02 (causa radice e contratti)
+- CRITICO: backend/characters/__init__.py caricava solo i 26 file elencati in `_CHAR_FILES`.
+  I file delle 24 categorie nuove (es. `amanti-segreti.json`) restavano fuori dal registro:
+  /characters/{id} rispondeva "not found" e /chat "character not found" (chat morta).
+  Fix: `_char_files_on_disk()` = `_CHAR_FILES` + tutti i `data/*.json` (eccetto categories.json),
+  cosi un nuovo file-categoria non puo piu' essere ignorato. Riavviare chatai.service.
+- CRITICO: dopo la plasmatura tutti i personaggi hanno `is_adult=true`; il backend richiede
+  `age_verified` LATO SERVER (flag in user_preferences) altrimenti /chat -> 403 premium_required.
+  Fix: il gate 18+ del plugin chiama ora `aria_chat_verify_age` (prima scriveva solo localStorage)
+  e `Chat_Engine::ensure_age_verified()` riallinea il backend al login/invio.
+- CRITICO: JWT ARIA scade dopo 900s e il refresh in wp_options era morto -> il plugin rispondeva
+  "Sessione scaduta". Fix: token persistente `ptk_...` (nessuna scadenza) scambiato con
+  POST /auth/reauth; `Auth_Manager::ensure_authenticated()` + fallback in `refresh_access_token()`.
+  Il ptk viene salvato al login (`aria_chat_<uid>_persistent_token`) e, solo per un admin,
+  si puo' innescare da Impostazioni -> Aria Chat -> "Token persistente ARIA (admin)".
+- `jwt_not_expired()`: i segmenti del token ARIA sono HEX (non base64url) -> decodifica corretta.
+- assets/js/aria-chat.js: sintassi rotta (3 one-liner con `)`/apici mancanti) + funzioni cancellate
+  nelle riscritture (`doLogin`, `doRegister`, `logout`, `loadAvgResponseTime`, `saveResponseTime`,
+  `hideProgressBar`) -> ReferenceError in init() = nessun listener, Invio e freccia inutili. Ripristinate.
+- templates/chat-box.php: apici rotti nell'inline script premium (`toggle(''+id+'')` -> SyntaxError
+  su ogni pagina), variabili d'intestazione usate prima di essere definite, titolo personalizzato
+  del personaggio + greeting "Sei in una chat privata con X. Scrivi per iniziare."
+- templates/character-grid.php: card -> link `?char=id` pulito, chat del personaggio incluso nel
+  wrapper (selettore/ricerca nascosti nelle stanze dedicate), script che nasconde la griglia.
+- Enqueue: versionamento asset con filemtime (niente piu' JS in cache nel browser).
+- wp-content/themes/pornovirtuale/assets/js/theme.js: cominciava con `<?php` -> SyntaxError JS.
+- `.pv-player--empty { display:none }` e' adesso in assets/css/aria-chat.css (sempre caricato),
+  quindi "Player non configurato" di pv-core non compare nelle stanze.
+- Contratto risposta /chat: `{response|ai_text, emotion, ai_model, character_id, character_name}`;
+  il plugin legge `data.ai_text || data.response` e mostra l'errore reale del backend.
+
+## 8) Barra di caricamento in chat (fix 2026-11-02)
+- Sintomo: inviando un messaggio non compariva piu' alcun feedback di attesa.
+- Causa: `showProgressBar()` era stata ridotta a una stub (`setStatus('typing')`) e nessun
+  elemento `#aria-progress-bar` veniva creato; mancava anche il CSS. `hideProgressBar()`
+  cancellava quindi un elemento che non esisteva.
+- Fix (assets/js/aria-chat.js): `showProgressBar()` crea davvero la barra
+  (`#aria-progress-bar`, pallini animati + track + fill + "Sta scrivendo..."), avanza in modo
+  stimato sulla media reale del server (`window.ariaAvgMs`, tetto 95%) e `hideProgressBar()`
+  ferma il timer e rimuove il nodo. Chiamata al termine dello stream AI e anche sui rami di
+  errore (`!success` e `catch`), con rete di sicurezza a 180s.
+- Fix (assets/css/aria-chat.css): regole `.aria-typing-bar/.aria-typing-dots/.aria-typing-track/
+  .aria-typing-fill` + `@media (prefers-reduced-motion)`.
+- Attenzione: le regole CSS e il JS passano da Autoptimize (file `autoptimize_single_*` con
+  hash): dopo una modifica va svuotata la cache di Autoptimize/SuperCache/Redis, altrimenti
+  resta servita la versione precedente.
+
+## 9) Tempi di risposta per chat (fix 2026-11-02)
+- Sintomo: la barra di caricamento era calibrata su un valore fisso (3000 ms) e non
+  registrava nulla.
+- Causa: la tabella `chat_response_stats` NON esisteva nel DB. `ajax_save_response_time()`
+  falliva in silenzio e `ajax_get_avg_response_time()` usava sempre il fallback; in piu'
+  la query usava il cast PostgreSQL `::integer`, non valido su MySQL.
+- Fix: la tabella viene creata on demand (`ensure_stats_table()`, `CREATE TABLE IF NOT
+  EXISTS` + indici) e si misura per COPPIA utente+personaggio.
+  `avg_response_ms()` usa TUTTI i campioni di quella chat (300..180000 ms), poi allarga
+  ai campioni di tutti gli utenti su quel personaggio, poi a quelli del sito, infine a
+  5000 ms. Soglia di 3 campioni per passare di livello: la barra parte generica e si
+  specializza man mano che la singola chat accumula storia.
+- `ajax_save_response_time()` restituisce subito la nuova media (nessuna richiesta extra);
+  `ajax_get_avg_response_time()` accetta `character_id` e riporta `scope`
+  (chat/personaggio/globale/default).
+- Frontend: `loadAvgResponseTime(char)` viene chiamata all'apertura della chat del
+  personaggio e al cambio di personaggio; `saveResponseTime()` misura fino all'arrivo
+  della risposta HTTP (`ariaFetchDoneAt`), NON fino alla fine dell'effetto di digitazione
+  (che avrebbe aggiunto ~20 ms per lettera falsando le medie).
+- SQL di ripristino: `sql_chat_response_stats.sql` (da eseguire su un DB nuovo).
+
+## 10) Rinomina file personaggi: da temi a categorie (2026-11-02)
+- Prima: `backend/characters/data/` conteneva file per tema storico (anime, creativi, fantasy,
+  gamer, ...) e ogni file mescolava TUTTE le 24 categorie: nessuna corrispondenza fra nome
+  file e stanza. La griglia delle stanze filtra per `category`, quindi il nome file era
+  fuorviante e un file nuovo non elencato in `_CHAR_FILES` restava invisibile al backend.
+- Ora: un file per categoria, con lo stesso slug della categoria (`amanti-segreti.json`,
+  `bdsm.json`, ... `voyeurismo.json`, 24 file), contenente solo i personaggi di quella
+  categoria. I vecchi file tematici sono stati rimossi dopo il raggruppamento.
+- `_CHAR_FILES` in `backend/characters/__init__.py` aggiornato ai 24 slug;
+  `_char_files_on_disk()` continua comunque ad aggiungere ogni `data/*.json` non elencato.
+- Verifica: 5072 personaggi prima e dopo, 0 duplicati, 0 categorie vuote, conteggi per
+  categoria identici, `system_prompt` intatti (es. Vera 2510 caratteri), registro backend
+  5072 su 24 categorie, indici griglia 5072 card.
+- Backup dei file pre-rinomina: `/tmp/chars_backup/data_*.tar.gz` (5,3 MB).
+
+## 11) Declinazione tematica dei personaggi (2026-11-02)
+- Ogni personaggio ora CONOSCE la stanza in cui è e si comporta di conseguenza, mantenendo
+  identità, carattere e competenze proprie (deciso con l'utente: l'identità non si tocca).
+- Nuovo `backend/characters/category_profiles.py`: 24 profili (ambiente, modo di muoversi,
+  focus erotico, lessico, tag, competenze tematiche, ruolo per genere) + scaletta di
+  progressione per intimità. Il tono è calibrato: si scalda con la confidenza.
+- Nuovo `backend/characters/apply_categories.py`: applicazione deterministica e idempotente
+  (`category_version`), con `--dry-run` e `--force`. Per ogni personaggio: `category_context`,
+  `role`, `description`, riga in `essence`, tag tematici in testa, competenze tematiche
+  aggiunte (le originali restano), `system_prompt` ricostruito.
+- `prompt_builder.py`: il blocco stanza viene iniettato subito dopo l'identità (percorso con
+  e senza dati biografici) + istruzione progressiva secondo `intimacy` (<15, <50, <85, oltre).
+  Aggiunta anche la riga "Chi sei" dall'`essence`: senza, il modello conosceva solo il nome
+  (il prompt "enhanced" ignorava il background).
+- `OLLAMA_NUM_CTX` portato da 2048 a 4096: i prompt completi sono ~7,4-8,5k caratteri
+  (~2,1k token) e a 2048 veniva troncato l'inizio, cioè l'identità.
+- Card stanze: la descrizione non ripete più il nome già presente sopra.
+- Verifiche: 5072 personaggi, 24 categorie, 0 duplicati, 0 senza contesto; seconda esecuzione
+  = 0 modifiche (idempotente); chat reale su bdsm ("Siamo nella mia stanza di bondage..."),
+  su voyeurismo e su chat-romantica (tono dolce) coerenti; render stanza 211 card, 0 PHP perso.
+- Rollback: `/tmp/chars_backup/data_210535.tar.gz` (pre-rinomina) e
+  `prima_della_plasmatura_*.tar.gz`.
+
+## 12) Pulizia dati e prestazioni stanze (2026-11-02)
+- Generi incoerenti corretti su 9 personaggi (Vera, Diana, Eva x2, Luna, Maya, Sonia,
+  Andrea Sachs -> femminile; Commissario Brunetti -> maschile) e nomi sbagliati in testa
+  alle `personality` ("Marco", "Lorenzo", "Roseanne", "Tommaso", "Sawako", "Winnie the Pooh",
+  "Cribbage Connoisseur") sostituiti col nome reale + accordi femminili.
+- Rimossi i modelli Ollama non-Llama (qwen3.5, qwen2.5-coder, barbara-quant x2, llama3.2:3b):
+  restano 20 GB liberi e SOLE Llama. `FORCE_LOCAL_FIRST=1` per coerenza con la regola.
+- Griglia stanze paginata: 60 card per volta (`aria-card-hidden` + pulsante "Mostra altri",
+  contatore "x di y"), il DOM resta completo e non serve una richiesta per blocco.
+- Traduzione delle biografie inglesi (`characters/translate_identities.py`): col modello
+  locale, a lotti, con marca `identity_it` per non ripetere; traduce i primi 400 caratteri
+  (il prompt ne usa 240) e toglie il "Sono <nome>." ridondante. Al termine va rilanciato
+  `apply_categories.py --force` per rigenerare i `system_prompt` in italiano.
+
+## 13) Identità in italiano: sintesi + traduzione (2026-11-02)
+- Dato scoperto: 3.746 `personality` contengono solo la riga generica di categoria (es.
+  "Discreto/a, riservato/a e appassionato/a"), mentre la biografia vera sta solo in
+  `essence` IN INGLESE. Tradurre è utile ma non basta: il prompt riceveva un'identità in
+  inglese e una personalità vuota.
+- Doppio intervento:
+  * `characters/synthesize_identity.py`: per chi ha una `personality` ricca (861) costruisce
+    una riga identitaria italiana dai campi già italiani (personalità + lavoro, con accordo
+    femminile: operaio→operaia) e la mette al posto dell'inglese.
+  * `characters/translate_identities.py`: per tutti gli altri traduce la biografia col
+    modello locale, a lotti da 3, marcando `identity_it`.
+- `finish_translation.sh` chiude da solo: attende i worker, ritenta gli scarti, sintetizza
+  le identità rimaste vuote, rigenera i `system_prompt`, riavvia il backend, ricostruisce
+  l'indice, svuota le cache e aggiorna il backup.
+- Stato al momento della scrittura: 1.006 identità in italiano su 5.072; il resto è in coda
+  (worker attivo). Durante la coda i personaggi non tradotti hanno ancora la bio inglese,
+  che il modello comprende: nessun blocco funzionale.
+
+## 14) Audit di controllo (2026-11-02/03)
+- Errori backend mostrati in chat illeggibili: `premium_required` arrivava come token e il
+  limite giornaliero (429) come oggetto annidato, mostrato "[object Object]".
+  Aggiunto `Chat_Engine::human_error()` (messaggi italiani per 403/429/404/5xx) e controllo
+  lato JS sul tipo di `resp.error`. Verificato sui quattro casi.
+- Rollback: `/tmp` viene svuotato dal sistema, quindi gli snapshot sono spostati in
+  `/opt/aria/backups/` (`dati_originali_git.tar.gz` = 28 file tematici pre-rinomina,
+  `dati_attuali_*.tar.gz` = stato corrente) e inseriti nello zip.
+- Verificato e risultato OK: nessun `<?php` nelle 25 stanze, 0 problemi su tutte le stanze
+  (card, paginazione, chat `?char=`), archivio `/stanze-live/` e `/chat/` corretti, tutti i
+  file JSON validi, 0 id duplicati, 0 personaggi senza contesto/ruolo/descrizione/tag/
+  competenze, slug stanza = categorie, servizio attivo, opzione ptk presente, verifica età
+  funzionante, cache calda correttamente aggirata per gli utenti loggati.
+- Due file JS "KO" a `node --check` sono falsi positivi: sono script di Site Kit con optional
+  chaining e il `node` del server è la v12. Nei browser sono validi; il nostro codice evita
+  `?.`/`??` proprio per compatibilità.
+- Peso pagina: 50 KB da ospite; 600 KB solo per l'admin, perché Site Kit inietta il suo blob
+  di traduzioni per chi può vedere la dashboard (utenti normali non lo ricevono).
+
+## 15) Orientamento coerente con la stanza + latenza (2026-11-03)
+- Bug: TUTTI i personaggi avevano `sexual_orientation=etero/eterosessuale`, anche nelle
+  stanze lesbo/gay/bisex: in chat Aria (stanza lesbo) rispondeva "non sono una lesbica".
+  Fix dati: lesbo -> lesbica (F/NB) e bisessuale (M); gay -> gay (M/NB) e bisessuale (F);
+  bisex/threesome/scambio-di-coppia -> bisessuale (1.052 personaggi). Aggiunta la riga
+  "Orientamento della stanza" nei profili e nel blocco iniettato (lesbo/gay/bisex/trio/scambio).
+- Bug: `scenario_engine.CATEGORY_MODE` elencava le vecchie categorie, quindi le 24 stanze
+  cadevano nella modalità "consulenza" ("presentati come professionista, niente roleplay").
+  Aggiunte le 24 slug -> "immediate".
+- Latenza: il vero costo era la LETTURA del prompt (~2.4k token a ~30 tok/s su CPU = 80-110 s),
+  non la generazione (2-6 s). Ridotto il prompt del ~20% (BREVITY_RULE condensata, esempi di
+  stile fuori dal prompt, recap conoscenze ridotto, sezioni anagrafiche a budget 1500 char).
+- Scoperto che il runner Ollama nasce con **1 thread** se il modello viene caricato da una
+  chiamata senza `num_thread`: lo script di traduzione lo faceva, e la chat ereditava quel
+  runner (110 s). Aggiunto `num_thread` alle chiamate dello script.
+- Con la traduzione in corso la chat resta accodata (Ollama serializza): misurato 4-22 s a
+  traduzione in pausa contro 100+ s durante. La coda residua viene ripresa dopo 20 minuti
+  (`/tmp/riprendi_traduzione.sh`) così il sito resta reattivo.
+
+## 16) Il personaggio dichiara la stanza (2026-11-03)
+- Il blocco stanza diceva solo "rispondi restando sul tema": alla domanda "dove siamo?"
+  i personaggi restavano vaghi. Ora il blocco contiene la frase esplicita: siete nella stanza
+  "<nome>" e il tema è quello descritto. Verificato: roleplay -> 'Siamo nella stanza
+  "Roleplay erotico"', lesbo -> 'Siamo nella stanza "Lesbo", qui ci incontriamo...'.
+- NOTA: non esiste una categoria "trans" fra le 24 (lesbo/gay/bisex ci sono). Servirebbe una
+  stanza nuova con riassegnazione di personaggi da altre categorie.

@@ -1,0 +1,194 @@
+[
+  {
+    "id": "amanti-segreti",
+    "name": "Amanti segreti",
+    "icon": "🔐",
+    "adult": true,
+    "premium": false,
+    "description": "Relazioni clandestine e incontri segreti"
+  },
+  {
+    "id": "bdsm",
+    "name": "BDSM",
+    "icon": "🖤",
+    "adult": true,
+    "premium": false,
+    "description": "Bondage, dominazione, sadismo e masochismo"
+  },
+  {
+    "id": "bisex",
+    "name": "Bisex",
+    "icon": "💜",
+    "adult": true,
+    "premium": false,
+    "description": "Personaggi bisessuali per esperienze senza limiti di genere"
+  },
+  {
+    "id": "camera-privata",
+    "name": "Camera privata",
+    "icon": "🚪",
+    "adult": true,
+    "premium": false,
+    "description": "Incontri intimi in ambienti riservati e privati"
+  },
+  {
+    "id": "chat-romantica",
+    "name": "Chat romantica",
+    "icon": "💕",
+    "adult": true,
+    "premium": false,
+    "description": "Conversazioni dolci, sentimentali e romantiche"
+  },
+  {
+    "id": "dirty-talk",
+    "name": "Dirty Talk",
+    "icon": "💋",
+    "adult": true,
+    "premium": false,
+    "description": "Linguaggio esplicito e conversazioni piccanti"
+  },
+  {
+    "id": "dominazione",
+    "name": "Dominazione",
+    "icon": "👑",
+    "adult": true,
+    "premium": false,
+    "description": "Personaggi dominanti e giochi di potere"
+  },
+  {
+    "id": "fantasie-erotiche",
+    "name": "Fantasie erotiche",
+    "icon": "🌹",
+    "adult": true,
+    "premium": false,
+    "description": "Scenario e desideri erotici da condividere"
+  },
+  {
+    "id": "fantasie-proibite",
+    "name": "Fantasie proibite",
+    "icon": "🚫",
+    "adult": true,
+    "premium": false,
+    "description": "Desideri nascosti e situazioni fuori dagli schemi"
+  },
+  {
+    "id": "feticismi",
+    "name": "Feticismi",
+    "icon": "🦶",
+    "adult": true,
+    "premium": false,
+    "description": "Fetish e attrazioni particolari"
+  },
+  {
+    "id": "gay",
+    "name": "Gay",
+    "icon": "🏳️‍🌈",
+    "adult": true,
+    "premium": false,
+    "description": "Personaggi maschili per incontri tra uomini"
+  },
+  {
+    "id": "incontri-bollenti",
+    "name": "Incontri bollenti",
+    "icon": "🔥",
+    "adult": true,
+    "premium": false,
+    "description": "Incontri passionali e ad alta intensità"
+  },
+  {
+    "id": "lesbo",
+    "name": "Lesbo",
+    "icon": "💗",
+    "adult": true,
+    "premium": false,
+    "description": "Personaggi femminili per incontri tra donne"
+  },
+  {
+    "id": "masturbazione",
+    "name": "Masturbazione",
+    "icon": "✋",
+    "adult": true,
+    "premium": false,
+    "description": "Piacere solitario e guida all'autoerotismo"
+  },
+  {
+    "id": "mature",
+    "name": "Mature",
+    "icon": "👩",
+    "adult": true,
+    "premium": false,
+    "description": "Personaggi over 40 con esperienza e fascino"
+  },
+  {
+    "id": "milf",
+    "name": "MILF",
+    "icon": "🍷",
+    "adult": true,
+    "premium": false,
+    "description": "Donne mature, affascinanti e disinibite"
+  },
+  {
+    "id": "roleplay-erotico",
+    "name": "Roleplay erotico",
+    "icon": "🎭",
+    "adult": true,
+    "premium": false,
+    "description": "Scenari di ruolo e fantasie da interpretare"
+  },
+  {
+    "id": "scambio-di-coppia",
+    "name": "Scambio di coppia",
+    "icon": "🔄",
+    "adult": true,
+    "premium": false,
+    "description": "Coppie aperte e scambi tra partner"
+  },
+  {
+    "id": "senza-tabu",
+    "name": "Senza tabù",
+    "icon": "⚡",
+    "adult": true,
+    "premium": false,
+    "description": "Conversazioni senza limiti né restrizioni"
+  },
+  {
+    "id": "sesso-orale",
+    "name": "Sesso orale",
+    "icon": "👄",
+    "adult": true,
+    "premium": false,
+    "description": "Pratiche orali e piacere reciproco"
+  },
+  {
+    "id": "sesso-virtuale",
+    "name": "Sesso virtuale",
+    "icon": "💻",
+    "adult": true,
+    "premium": false,
+    "description": "Eccitazione e intimità tramite chat e webcam"
+  },
+  {
+    "id": "sottomissione",
+    "name": "Sottomissione",
+    "icon": "🔗",
+    "adult": true,
+    "premium": false,
+    "description": "Personaggi sottomessi e giochi di resa"
+  },
+  {
+    "id": "threesome",
+    "name": "Threesome",
+    "icon": "👥",
+    "adult": true,
+    "premium": false,
+    "description": "Incontri a tre e dinamiche di gruppo"
+  },
+  {
+    "id": "voyeurismo",
+    "name": "Voyeurismo",
+    "icon": "👁️",
+    "adult": true,
+    "premium": false,
+    "description": "Piacere dell'osservazione e dello sguardo"
+  }
+]

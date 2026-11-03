@@ -5,6 +5,8 @@ logger = logging.getLogger(__name__)
 
 PROVIDERS = {}
 DEFAULT_PROVIDER = "ollama"
+# MODELLO OBBLIGATORIO (AGENTS.md): UNICO modello ammesso per le chat.
+# Non installare/usare Qwen o altri modelli: solo Llama-3.2-3B-Instruct-abliterated.
 DEFAULT_MODEL = "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M"
 user_providers = {}
 user_api_keys = {}

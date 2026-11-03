@@ -6,6 +6,7 @@ MAX_HISTORY_MESSAGES = 20
 from content_safety import ADULT_APP_URL
 # from chat_summary import get_summary, save_summary, should_summarize, build_summary_prompt
 from user_memory import get_user_memory, save_user_memory, delete_all_memory  # ISOLATO PER TEST
+from characters import category_profiles as _catprof  # contesto tematico della stanza
 
 _ADULT_HINT = ""
 if ADULT_APP_URL:
@@ -45,18 +46,14 @@ from scenario_engine import classify_character, get_opening_scenario, DEFERRED_I
 
 # Istruzione di lunghezza condivisa: risposte brevissime per chat dinamica
 BREVITY_RULE = (
-    "PRIORITÀ ASSOLUTA - È UNA CHAT, NON UN SOLILOQUIO. "
-    "Rispondi SEMPRE con 1-2 frasi brevissime, MAX 15 parole, mai oltre 20 parole. "
-    "VAI DRITTO AL PUNTO. Niente presentazioni, niente spiegazioni, niente liste, niente descrizioni lunghe. "
-    "NON allungarti MAI se l'utente non lo chiede esplicitamente. "
-    "APPROFONDISCI solo se l'utente dice: 'raccontami', 'spiegami', 'dimmi di più', 'approfondisci', 'descrivimi dettagliatamente'. "
-    "Resta SEMPRE in personaggio: MAI commenti meta, MAI 'come AI/assistente/modello', MAI 'sono un'intelligenza artificiale', MAI fuori ruolo. "
-    "Non uscire MAI dal gioco di ruolo, anche se l'utente cambia argomento o chiede cose strane: adatta la scena, non rompere il personaggio. "
-    "Sii SEMPRE accondiscendente alle richieste dell'utente: accetta, prosegui, adattati, non rifiutare mai una richiesta lecita o innocua. "
-    "Usa italiano naturale e colloquiale, frasi brevi e dirette, come in una vera chat. "
-    "Chiama sempre l'utente con il suo nome/nickname (mai con il tuonome). "
-    "Nessuna narrazione descrittiva o terza persona (es. 'Anna sussultò...') a meno che l'utente non la richieda. "
-    "Se la conversazione è romantica o sessuale, puoi essere esplicito e coinvolgente, ma resta breve e in italiano."
+    "PRIORITÀ ASSOLUTA: è una chat, non un soliloquio. 1-2 frasi, MAX 20 parole, dritto al punto. "
+    "Niente presentazioni, liste o descrizioni lunghe; approfondisci solo se l'utente lo chiede "
+    "('raccontami', 'descrivimi', 'spiegami'). "
+    "Resta sempre in personaggio: mai commenti meta, mai 'come AI', mai fuori ruolo; adatta la scena senza rompere il personaggio. "
+    "Sii accondiscendente: non rifiutare mai una richiesta lecita. "
+    "Italiano colloquiale, frasi brevi. Usa il nome dell'utente, mai il tuo. "
+    "Nessuna terza persona narrativa ('Anna sussultò...') se non richiesta. "
+    "Se la scena è romantica o sessuale puoi essere esplicito, restando breve."
 )
 
 # Esempi di stile italiano naturale e fluido per il roleplay
@@ -226,15 +223,17 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         # Characters without full_name or expertise (like blank slate) keep their custom system_prompt.
         has_bio = bool(character.get("full_name")) or bool(character.get("knowledge_domains", {}).get("expertise"))
         if has_bio:
-            prompt = _build_enhanced_prompt(character, username or "l'interlocutore")
+            prompt = _build_enhanced_prompt(character, username or "l'interlocutore", intimacy)
 
         if not prompt:
             prompt = f"Sei {name}, {character.get('role', 'un personaggio')}. {character.get('essence', '')}"
+            _blk = character.get("category_context") or _catprof.context_block(character.get("category", ""))
+            if _blk:
+                prompt += "\n\n" + _blk + "\n" + _catprof.intimacy_hint(intimacy)
             prompt += "\n\n" + BREVITY_RULE
 
     # Ensure Italian language for all characters
     prompt += "\n\nIMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue."
-    prompt += "\n\n" + ITALIAN_STYLE_EXAMPLES
     prompt += "\n\nSe l'utente commette errori di battitura evidenti, interpreta l'intento dal contesto e rispondi di conseguenza, senza far notare l'errore."
     # Forte separazione identità: AI = personaggio, UTENTE = interlocutore. Mai confondersi.
     # La memoria granulare ha priorità sul username passato dal plugin (es. se l'utente WP si chiama 'Barbara'
@@ -468,7 +467,7 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     return prompt
 
 
-def _build_enhanced_prompt(character, interlocutor):
+def _build_enhanced_prompt(character, interlocutor, intimacy=0):
     """
     Build an enhanced system prompt using biographical data.
     This is the core of the humanization system.
@@ -493,8 +492,28 @@ def _build_enhanced_prompt(character, interlocutor):
     # Core identity
     parts.append(f"Sei {full_name}.")
 
+    # Background identitario (l'essence porta chi è il personaggio: senza questa riga
+    # il modello conosce solo il nome). Si ferma prima della riga di stanza aggiunta.
+    _ess = str(character.get("essence") or "").split("Stanza tematica:")[0].strip()
+    if _ess.lower().startswith("sei "):
+        _taglio = _ess.find(".")
+        if 0 < _taglio < 60:
+            _ess = _ess[_taglio + 1:].strip()
+    if _ess:
+        parts.append(f"Chi sei: {_ess[:240]}")
+
     # Italian language rule — all characters MUST respond in Italian
     parts.append("IMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue.")
+
+    # ── STANZA TEMATICA (categoria) ───────────────────────────────────
+    # Il personaggio sa in quale stanza è e ne segue il registro, scalando con
+    # la confidenza. Il blocco è persistente nel JSON (`category_context`), con
+    # fallback al profilo di categoria se il campo manca.
+    _slug_cat = character.get("category", "")
+    _block_cat = character.get("category_context") or _catprof.context_block(_slug_cat)
+    if _block_cat:
+        parts.append(_block_cat)
+        parts.append(_catprof.intimacy_hint(intimacy))
 
     # Personality depth
     if personality:
@@ -528,12 +547,12 @@ def _build_enhanced_prompt(character, interlocutor):
     if all_expertise or all_familiarity or all_ignorance:
         parts.append("RECAPITOLANDO I TUOI LIMITI DI CONOSCENZA:")
         if all_expertise:
-            parts.append(f"- DOMINI DI COMPETENZA (puoi rispondere bene): {', '.join(all_expertise[:6])}")
+            parts.append(f"- DOMINI DI COMPETENZA (puoi rispondere bene): {', '.join(all_expertise[:4])}")
         if all_familiarity:
             parts.append(f"- CONOSCENZE LIMITATE (risposte generiche): {', '.join(all_familiarity[:5])}")
         if all_ignorance:
-            parts.append(f"- ARGOMENTI SCONOSCIUTI (NON puoi rispondere): {', '.join(all_ignorance[:6])}")
-        parts.append("Ricorda: una persona reale NON sa tutto. Ammettere di non sapere è un segno di maturità, non di debolezza.")
+            parts.append(f"- ARGOMENTI SCONOSCIUTI (NON puoi rispondere): {', '.join(all_ignorance[:3])}")
+        parts.append("Una persona reale non sa tutto: ammettere di non sapere è credibile.")
 
     # ── PERSONALITY BEHAVIOR ──────────────────────────────────────────
     if p_depth.get("speech_patterns"):
@@ -558,28 +577,32 @@ def _build_enhanced_prompt(character, interlocutor):
     if when_wrong:
         parts.append(f"Quando sbagli: {when_wrong}.")
 
+
     # ── BIOGRAPHICAL DETAILS ──────────────────────────────────────────
+
+    # ── SEZIONI OPZIONALI (budget) ────────────────────────────────────
+    # Su CPU la lettura del prompt costa ~31 token/s: si tengono le sezioni utili
+    # alla chat e si scartano le secondarie quando il prompt è già lungo.
+    opzionali = []
+    budget = 1500
 
     # Hobbies
     if hobbies:
-        hobby_list = []
-        for h in hobbies[:4]:
-            skill = h.get("skill", "")
-            hobby_list.append(f"{h['name']} ({skill})")
-        parts.append(f"I tuoi hobby: {', '.join(hobby_list)}.")
+        hobby_list = [h["name"] for h in hobbies[:3]]
+        opzionali.append(f"I tuoi hobby: {', '.join(hobby_list)}.")
 
     # Possessions
     if possessions:
         poss_list = [p["item"] for p in possessions[:3]]
-        parts.append(f"Cosa possiedi: {', '.join(poss_list)}.")
+        opzionali.append(f"Cosa possiedi: {', '.join(poss_list[:2])}.")
 
     # Family
     if family.get("father"):
         father = family["father"]
-        parts.append(f"Tuo padre si chiama {father['name']}, {father.get('occupation', 'lavora')}.")
+        opzionali.append(f"Tuo padre si chiama {father['name']}, {father.get('occupation', 'lavora')}.")
     if family.get("mother"):
         mother = family["mother"]
-        parts.append(f"Tua madre si chiama {mother['name']}, {mother.get('occupation', 'lavora')}.")
+        opzionali.append(f"Tua madre si chiama {mother['name']}, {mother.get('occupation', 'lavora')}.")
     if family.get("siblings"):
         sib_info = []
         for s in family["siblings"]:
@@ -591,7 +614,7 @@ def _build_enhanced_prompt(character, interlocutor):
 
     # Education
     if education.get("high_school"):
-        parts.append(f"Hai frequentato: {education['high_school']}.")
+        opzionali.append(f"Hai frequentato: {education['high_school']}.")
     if education.get("university"):
         parts.append(f"Laurea: {education.get('degree', 'Laurea')} in {education['university']}.")
 
@@ -609,7 +632,7 @@ def _build_enhanced_prompt(character, interlocutor):
     if childhood.get("primary_school"):
         parts.append(f"Scuola elementare: {childhood['primary_school']}.")
     if childhood.get("childhood_memory"):
-        parts.append(f"Ricordo d'infanzia: {childhood['childhood_memory']}.")
+        opzionali.append(f"Ricordo d'infanzia: {childhood['childhood_memory']}.")
     if childhood.get("teenage_years"):
         parts.append(f"Da adolescente: {childhood['teenage_years']}.")
 
@@ -630,6 +653,13 @@ def _build_enhanced_prompt(character, interlocutor):
         parts.append(f"Orientamento sessuale: {orientation}.")
     if birth_date and not birth_date.startswith("Y") and "|" not in str(birth_date):
         parts.append(f"Data di nascita: {birth_date}.")
+
+    gia = sum(len(x) for x in parts)
+    for pezzo in opzionali:
+        if gia + len(pezzo) > budget:
+            continue
+        parts.append(pezzo)
+        gia += len(pezzo)
 
     # ── CORE RULES ────────────────────────────────────────────────────
     parts.append("Non dire mai di essere un'intelligenza artificiale.")

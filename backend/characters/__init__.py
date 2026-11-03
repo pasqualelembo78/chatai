@@ -13,14 +13,34 @@ _ENRICH_CACHE_TTL = 300  # 5 minutes
 
 _DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
+# File-categoria (un file per categoria). _char_files_on_disk() aggiunge comunque
+# ogni nuovo data/*.json, cosi un file non elencato non resta invisibile.
 _CHAR_FILES = [
-    "amicizia", "anime", "business", "creativi", "cucina",
-    "detective", "esperti", "fantasy", "gamer", "horror",
-    "intrattenimento", "medicina", "motivazione", "premium", "quotidiano",
-    "romantici", "sci_fi", "scuola", "sex",
-    "sopravvivenza", "speciale", "sport", "storia", "supereroi",
-    "tecnici", "tecnologia", "viaggi",
+    "amanti-segreti", "bdsm", "bisex", "camera-privata",
+    "chat-romantica", "dirty-talk", "dominazione", "fantasie-erotiche",
+    "fantasie-proibite", "feticismi", "gay", "incontri-bollenti",
+    "lesbo", "masturbazione", "mature", "milf",
+    "roleplay-erotico", "scambio-di-coppia", "senza-tabu", "sesso-orale",
+    "sesso-virtuale", "sottomissione", "threesome", "voyeurismo",
 ]
+
+
+def _char_files_on_disk():
+    """File lista in _CHAR_FILES + eventuali nuovi file-categoria presenti su disco.
+
+    Le stanze WordPress sono costruite sulle 24 categorie nuove (un file JSON per
+    slug): se il loader si fermasse all'elenco fisso, i personaggi di quei file
+    non esisterebbero per il backend e /chat risponderebbe "character not found".
+    """
+    names = list(_CHAR_FILES)
+    if os.path.isdir(_DATA_DIR):
+        for fname in sorted(os.listdir(_DATA_DIR)):
+            if not fname.endswith(".json") or fname == "categories.json":
+                continue
+            base = fname[:-5]
+            if base not in names:
+                names.append(base)
+    return names
 
 
 def _load_all():
@@ -32,7 +52,7 @@ def _load_all():
             categories = json.load(f)
 
     chars = []
-    for name in _CHAR_FILES:
+    for name in _char_files_on_disk():
         path = os.path.join(_DATA_DIR, f"{name}.json")
         if not os.path.exists(path):
             logger.warning(f"Character data file not found: {path}")

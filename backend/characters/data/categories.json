@@ -1,227 +1,194 @@
 [
   {
-    "id": "per_te",
-    "name": "Per Te",
-    "icon": "⭐",
-    "adult": false,
+    "id": "amanti-segreti",
+    "name": "Amanti segreti",
+    "icon": "🔐",
+    "adult": true,
     "premium": false,
-    "description": "Personaggi selezionati in base ai tuoi interessi"
+    "description": "Relazioni clandestine e incontri segreti"
   },
   {
-    "id": "romantici",
-    "name": "Romantici",
+    "id": "bdsm",
+    "name": "BDSM",
+    "icon": "🖤",
+    "adult": true,
+    "premium": false,
+    "description": "Bondage, dominazione, sadismo e masochismo"
+  },
+  {
+    "id": "bisex",
+    "name": "Bisex",
+    "icon": "💜",
+    "adult": true,
+    "premium": false,
+    "description": "Personaggi bisessuali per esperienze senza limiti di genere"
+  },
+  {
+    "id": "camera-privata",
+    "name": "Camera privata",
+    "icon": "🚪",
+    "adult": true,
+    "premium": false,
+    "description": "Incontri intimi in ambienti riservati e privati"
+  },
+  {
+    "id": "chat-romantica",
+    "name": "Chat romantica",
     "icon": "💕",
-    "adult": false,
+    "adult": true,
     "premium": false,
-    "description": "Personaggi romantici e sognatori per conversazioni intime e poetiche"
+    "description": "Conversazioni dolci, sentimentali e romantiche"
   },
   {
-    "id": "sex",
-    "name": "Sex",
+    "id": "dirty-talk",
+    "name": "Dirty Talk",
     "icon": "💋",
     "adult": true,
     "premium": false,
-    "description": "Personaggi amichevoli e complici per conversazioni vivaci e senza tabù"
+    "description": "Linguaggio esplicito e conversazioni piccanti"
   },
   {
-    "id": "amicizia",
-    "name": "Amicizia",
-    "icon": "🤝",
-    "adult": false,
+    "id": "dominazione",
+    "name": "Dominazione",
+    "icon": "👑",
+    "adult": true,
     "premium": false,
-    "description": "Amici fedeli e compagni di avventure per chiacchiere leggere"
+    "description": "Personaggi dominanti e giochi di potere"
   },
   {
-    "id": "fantasy",
-    "name": "Fantasy",
-    "icon": "🧙",
-    "adult": false,
+    "id": "fantasie-erotiche",
+    "name": "Fantasie erotiche",
+    "icon": "🌹",
+    "adult": true,
     "premium": false,
-    "description": "Personaggi magici e leggendari da mondi incantati"
+    "description": "Scenario e desideri erotici da condividere"
   },
   {
-    "id": "horror",
-    "name": "Horror",
-    "icon": "👻",
-    "adult": false,
-    "premium": true,
-    "mvc_cost": 200,
-    "description": "Entita oscure e misteriose per brividi e suspense"
-  },
-  {
-    "id": "anime",
-    "name": "Anime",
-    "icon": "🎮",
-    "adult": false,
+    "id": "fantasie-proibite",
+    "name": "Fantasie proibite",
+    "icon": "🚫",
+    "adult": true,
     "premium": false,
-    "description": "Personaggi ispirati al mondo degli anime e manga"
+    "description": "Desideri nascosti e situazioni fuori dagli schemi"
   },
   {
-    "id": "scuola",
-    "name": "Scuola",
-    "icon": "🎓",
-    "adult": false,
+    "id": "feticismi",
+    "name": "Feticismi",
+    "icon": "🦶",
+    "adult": true,
     "premium": false,
-    "description": "Insegnanti e studenti per conversazioni educative"
+    "description": "Fetish e attrazioni particolari"
   },
   {
-    "id": "gamer",
-    "name": "Gamer",
-    "icon": "🕹️",
-    "adult": false,
+    "id": "gay",
+    "name": "Gay",
+    "icon": "🏳️‍🌈",
+    "adult": true,
     "premium": false,
-    "description": "Giocatori e personaggi virtuali per sfide e gaming"
+    "description": "Personaggi maschili per incontri tra uomini"
   },
   {
-    "id": "detective",
-    "name": "Detective",
-    "icon": "🕵️",
-    "adult": false,
+    "id": "incontri-bollenti",
+    "name": "Incontri bollenti",
+    "icon": "🔥",
+    "adult": true,
     "premium": false,
-    "description": "Investigatori e agenti per misteri da risolvere"
+    "description": "Incontri passionali e ad alta intensità"
   },
   {
-    "id": "medicina",
-    "name": "Medicina",
-    "icon": "🏥",
-    "adult": false,
+    "id": "lesbo",
+    "name": "Lesbo",
+    "icon": "💗",
+    "adult": true,
     "premium": false,
-    "description": "Medici e professionisti della salute"
+    "description": "Personaggi femminili per incontri tra donne"
   },
   {
-    "id": "business",
-    "name": "Business",
-    "icon": "💼",
-    "adult": false,
+    "id": "masturbazione",
+    "name": "Masturbazione",
+    "icon": "✋",
+    "adult": true,
     "premium": false,
-    "description": "Imprenditori e coach per consigli professionali"
+    "description": "Piacere solitario e guida all'autoerotismo"
   },
   {
-    "id": "viaggi",
-    "name": "Viaggi",
-    "icon": "✈️",
-    "adult": false,
+    "id": "mature",
+    "name": "Mature",
+    "icon": "👩",
+    "adult": true,
     "premium": false,
-    "description": "Esploratori e viaggiatori per racconti di avventure"
+    "description": "Personaggi over 40 con esperienza e fascino"
   },
   {
-    "id": "motivazione",
-    "name": "Motivazione",
-    "icon": "💪",
-    "adult": false,
+    "id": "milf",
+    "name": "MILF",
+    "icon": "🍷",
+    "adult": true,
     "premium": false,
-    "description": "Motivatori e mentori per ispirazione e crescita personale"
+    "description": "Donne mature, affascinanti e disinibite"
   },
   {
-    "id": "cucina",
-    "name": "Cucina",
-    "icon": "🍝️",
-    "adult": false,
-    "premium": false,
-    "description": "Chef e appassionati di cucina per ricette e sapori"
-  },
-  {
-    "id": "tecnologia",
-    "name": "Tecnologia",
-    "icon": "💻",
-    "adult": false,
-    "premium": false,
-    "description": "Hacker e ingegneri per conversazioni tech"
-  },
-  {
-    "id": "tecnici",
-    "name": "Tecnici",
-    "icon": "🔧",
-    "adult": false,
-    "premium": false,
-    "description": "Esperti tecnici per consulenze professionali su programmazione e matematica"
-  },
-  {
-    "id": "storia",
-    "name": "Storia",
-    "icon": "🏺",
-    "adult": false,
-    "premium": false,
-    "description": "Storici e archeologi per viaggi nel passato"
-  },
-  {
-    "id": "supereroi",
-    "name": "Supereroi",
-    "icon": "🤜",
-    "adult": false,
-    "premium": false,
-    "description": "Eroi con superpoteri per avventure epiche"
-  },
-  {
-    "id": "sopravvivenza",
-    "name": "Sopravvivenza",
-    "icon": "🏕️",
-    "adult": false,
-    "premium": false,
-    "description": "Survivalist e esploratori per sfide nella natura"
-  },
-  {
-    "id": "sci-fi",
-    "name": "Sci-Fi",
-    "icon": "🚀",
-    "adult": false,
-    "premium": false,
-    "description": "Personaggi del futuro per conversazioni cosmiche"
-  },
-  {
-    "id": "sport",
-    "name": "Sport",
-    "icon": "⚽",
-    "adult": false,
-    "premium": false,
-    "description": "Atleti e istruttori per conversazioni sportive"
-  },
-  {
-    "id": "esperti",
-    "name": "Esperti Professionali",
-    "icon": "💼",
-    "adult": false,
-    "premium": false,
-    "description": "Consulenti e professionisti avanzati per business, marketing e finanza"
-  },
-  {
-    "id": "creativi",
-    "name": "Creativi e Narrativi",
+    "id": "roleplay-erotico",
+    "name": "Roleplay erotico",
     "icon": "🎭",
-    "adult": false,
+    "adult": true,
     "premium": false,
-    "description": "Narratori, sceneggiatori e game master per esperienze creative immersive"
+    "description": "Scenari di ruolo e fantasie da interpretare"
   },
   {
-    "id": "quotidiano",
-    "name": "Vita Quotidiana",
-    "icon": "📋",
-    "adult": false,
+    "id": "scambio-di-coppia",
+    "name": "Scambio di coppia",
+    "icon": "🔄",
+    "adult": true,
     "premium": false,
-    "description": "Assistenti pratici per organizzazione casa, lavoro e vita di tutti i giorni"
+    "description": "Coppie aperte e scambi tra partner"
   },
   {
-    "id": "premium",
-    "name": "Premium",
-    "icon": "💎",
-    "adult": false,
-    "premium": true,
-    "description": "Consulenti strategici e assistenti evoluti di alto livello"
+    "id": "senza-tabu",
+    "name": "Senza tabù",
+    "icon": "⚡",
+    "adult": true,
+    "premium": false,
+    "description": "Conversazioni senza limiti né restrizioni"
   },
   {
-    "id": "intrattenimento",
-    "name": "Intrattenimento",
-    "icon": "🎲",
-    "adult": false,
+    "id": "sesso-orale",
+    "name": "Sesso orale",
+    "icon": "👄",
+    "adult": true,
     "premium": false,
-    "description": "Personaggi divertenti e coinvolgenti per conversazioni innovative"
+    "description": "Pratiche orali e piacere reciproco"
   },
   {
-    "id": "speciale",
-    "name": "Speciale",
-    "icon": "❓",
-    "adult": false,
+    "id": "sesso-virtuale",
+    "name": "Sesso virtuale",
+    "icon": "💻",
+    "adult": true,
     "premium": false,
-    "description": "Personaggi speciali, sperimentali e personalizzabili dall'utente"
+    "description": "Eccitazione e intimità tramite chat e webcam"
+  },
+  {
+    "id": "sottomissione",
+    "name": "Sottomissione",
+    "icon": "🔗",
+    "adult": true,
+    "premium": false,
+    "description": "Personaggi sottomessi e giochi di resa"
+  },
+  {
+    "id": "threesome",
+    "name": "Threesome",
+    "icon": "👥",
+    "adult": true,
+    "premium": false,
+    "description": "Incontri a tre e dinamiche di gruppo"
+  },
+  {
+    "id": "voyeurismo",
+    "name": "Voyeurismo",
+    "icon": "👁️",
+    "adult": true,
+    "premium": false,
+    "description": "Piacere dell'osservazione e dello sguardo"
   }
 ]

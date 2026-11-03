@@ -11,7 +11,7 @@ class Aria_API_Client {
     private $access_token;
     
     public function __construct($base_url = null) {
-        $this->base_url = $base_url ?: get_option('aria_chat_backend_url', 'http://82.165.218.56:5000');
+        $this->base_url = $base_url ? $base_url : get_option('aria_chat_backend_url', 'http://82.165.218.56:5000');
         $this->access_token = null;
     }
     
@@ -35,7 +35,7 @@ class Aria_API_Client {
         $args = array(
             'method' => $method,
             'headers' => $this->get_headers($needs_auth),
-            'timeout' => 60,
+            'timeout' => 240,
             'sslverify' => false
         );
         
@@ -50,12 +50,13 @@ class Aria_API_Client {
         }
         
         $code = wp_remote_retrieve_response_code($response);
-        $body = wp_remote_retrieve_body($response);
+        $body_response = wp_remote_retrieve_body($response);
         
         if ($code >= 200 && $code < 300) {
-            return array('success' => true, 'data' => json_decode($body, true) ?: $body);
+            $decoded = json_decode($body_response, true);
+            return array('success' => true, 'data' => $decoded !== null ? $decoded : $body_response);
         } else {
-            return array('success' => false, 'error' => $body, 'code' => $code);
+            return array('success' => false, 'error' => $body_response, 'code' => $code);
         }
     }
     
@@ -70,13 +71,28 @@ class Aria_API_Client {
     
     public function get_characters($category = null, $limit = 50, $offset = 0) {
         $params = array('limit' => $limit, 'offset' => $offset);
-        if ($category) $params['category'] = $category;
+        if ($category) {
+            $params['category'] = $category;
+        }
         $endpoint = '/characters?' . http_build_query($params);
+        return $this->request($endpoint);
+    }
+    
+    public function search_characters($query, $category = null) {
+        $params = array('q' => $query);
+        if ($category) {
+            $params['category'] = $category;
+        }
+        $endpoint = '/characters/search?' . http_build_query($params);
         return $this->request($endpoint);
     }
     
     public function get_character($character_id) {
         return $this->request('/characters/' . urlencode($character_id));
+    }
+    
+    public function verify_age($birth_year) {
+        return $this->request('/me/verify-age', 'POST', array('birth_year' => intval($birth_year)));
     }
     
     public function get_providers() {
@@ -106,6 +122,14 @@ class Aria_API_Client {
     
     public function refresh_token($refresh_token) {
         return $this->request('/auth/refresh', 'POST', array('refresh_token' => $refresh_token), false);
+    }
+    
+    /**
+     * Scambia il token persistente (ptk_..., senza scadenza) con una coppia JWT fresca.
+     * Usato per ri-autenticare in modo trasparente quando il JWT scade.
+     */
+    public function reauth($persistent_token) {
+        return $this->request('/auth/reauth', 'POST', array('persistent_token' => $persistent_token), false);
     }
     
     public function logout($refresh_token) {
