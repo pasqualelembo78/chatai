@@ -32,13 +32,16 @@ $room_url = get_permalink();
 <?php endif; ?>
 
 <?php if (!is_user_logged_in()): ?>
-<div class="aria-grid-gate">
-    <h3>Accesso richiesto</h3>
-    <p>Per chattare con i personaggi devi fare il login con il tuo account WordPress.</p>
-    <p><a class="button button-primary" href="<?php echo esc_url(wp_login_url(get_permalink())); ?>">Accedi</a></p>
-    <p class="aria-grid-gate-note">Non hai un account? Puoi registrarti dalla pagina di login.</p>
+<div class="aria-grid-gate aria-grid-gate--prova">
+    <h3>Provala gratis, senza registrarti</h3>
+    <p>Hai <strong>4 messaggi gratis</strong> in ogni stanza: apri un personaggio e scrivi. Poi, se ti piace, accedi per continuare.</p>
+    <p>
+        <a class="button button-primary" href="<?php echo esc_url(wp_login_url(get_permalink())); ?>">Accedi</a>
+        <a class="button" href="<?php echo esc_url(wp_registration_url()); ?>">Registrati</a>
+    </p>
+    <p class="aria-grid-gate-note">Bastano un nome utente e una password. La prova resta legata al browser.</p>
 </div>
-<?php else: ?>
+<?php endif; ?>
 
 <div class="aria-grid-wrapper" id="aria-grid-wrapper">
     <header class="aria-grid-header">
@@ -130,7 +133,6 @@ $room_url = get_permalink();
 })();
 </script>
 
-<?php endif; /* fine is_user_logged_in */ ?>
 
 <?php if (!empty($seo_stanza['faq'])): ?>
 <section class="aria-room-faq">

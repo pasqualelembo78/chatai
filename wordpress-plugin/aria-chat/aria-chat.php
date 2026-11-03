@@ -76,6 +76,7 @@ add_shortcode('aria_grid', 'aria_chat_shortcode_grid');
     if (class_exists('Aria_Chat_Engine')) {
         $aria_chat_engine = new Aria_Chat_Engine();
         $aria_chat_engine->init_ajax();
+        add_action('wp_login', array($aria_chat_engine, 'merge_guest_on_wp_login'), 10, 2);
     }
 }
 add_action('plugins_loaded', 'aria_chat_init');

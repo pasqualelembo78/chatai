@@ -16,7 +16,7 @@ from auth_fastapi import (
     GOOGLE_CLIENT_ID, _verify_google_token,
     generate_password_hash, check_password_hash,
     revoke_refresh_token, _verify_jwt, _blacklist_lock, _token_blacklist,
-    reauth_from_persistent_token, require_adult,
+    reauth_from_persistent_token, require_adult, jwt_required,
 )
 
 limiter = Limiter(key_func=get_remote_address)
@@ -389,6 +389,62 @@ async def reauth(request: Request):
         "refresh_token": refresh_token,
         "persistent_token": persistent_token,
     }
+
+
+class MergeGuestRequest(BaseModel):
+    guest_user_id: str
+
+
+@router.post("/me/merge-guest")
+async def merge_guest(body: MergeGuestRequest, user: AuthUser = Depends(jwt_required)):
+    """Sposta la cronologia di una prova da ospite sull'account vero.
+
+    Serve al flusso "4 messaggi gratis senza login": chi si registra dopo la prova
+    ritrova le battute già fatte invece di ripartire da zero.
+    """
+    ospite = (body.guest_user_id or "").strip()
+    if not ospite or ospite == user.user_id:
+        return {"merged": 0}
+
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT username FROM users WHERE id = %s", (ospite,))
+        riga = cur.fetchone()
+        if not riga or not str(riga["username"]).startswith("ospite_"):
+            return {"merged": 0}
+
+        cur.execute("UPDATE messages SET user_id = %s WHERE user_id = %s", (user.user_id, ospite))
+        mossi = cur.rowcount or 0
+        cur.execute(
+            "INSERT INTO user_memory (user_id, memory_data) "
+            "SELECT %s, memory_data FROM user_memory WHERE user_id = %s "
+            "ON CONFLICT (user_id) DO NOTHING",
+            (user.user_id, ospite),
+        )
+        cur.execute("DELETE FROM user_memory WHERE user_id = %s", (ospite,))
+        # relazioni/personalità/evoluzione: si spostano con un savepoint per tabella,
+        # così una tabella con schema diverso non annulla le altre operazioni
+        for tabella in ("relationships", "character_evolution", "user_characters"):
+            try:
+                cur.execute("SAVEPOINT sp_merge")
+                cur.execute(f"DELETE FROM {tabella} WHERE user_id = %s", (user.user_id,))
+                cur.execute(f"UPDATE {tabella} SET user_id = %s WHERE user_id = %s", (user.user_id, ospite))
+                cur.execute("RELEASE SAVEPOINT sp_merge")
+            except Exception:
+                cur.execute("ROLLBACK TO SAVEPOINT sp_merge")
+        # l'account di prova si elimina solo se non ha più riferimenti, altrimenti resta
+        try:
+            cur.execute("SAVEPOINT sp_del")
+            cur.execute("DELETE FROM refresh_tokens WHERE user_id = %s", (ospite,))
+            cur.execute("DELETE FROM users WHERE id = %s AND username LIKE 'ospite_%%'", (ospite,))
+            cur.execute("RELEASE SAVEPOINT sp_del")
+        except Exception:
+            cur.execute("ROLLBACK TO SAVEPOINT sp_del")
+        conn.commit()
+    finally:
+        put_conn(conn)
+    return {"merged": mossi}
 
 
 @router.post("/logout")

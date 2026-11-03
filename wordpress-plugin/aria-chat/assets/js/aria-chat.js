@@ -88,6 +88,9 @@
             window.location.href = base + '?action=aria_chat_export&character=' + encodeURIComponent(char);
         });
         aggiornaAzioni();
+        if (!(config && config.userLoggedIn)) {
+            avviaProva();
+        }
     }
     
     
@@ -556,6 +559,22 @@
     }
 
 
+
+    /** Apre la sessione di prova (4 messaggi) per chi non è registrato. */
+    function avviaProva() {
+        ajaxPost({ action: 'aria_chat_guest' }, function (r) {
+            if (r && r.success) {
+                window.ariaProva = { usati: r.usati, limite: r.limite };
+            }
+        });
+    }
+
+    function fineProva() {
+        hideProgressBar();
+        addSystemMessage('Prova terminata. Accedi o registrati per continuare: la conversazione resta salvata.');
+        showLoginModal();
+    }
+
     /** Mostra i pulsanti rigenera/modifica solo sull'ultimo scambio. */
     function aggiornaAzioni() {
         $('.aria-msg-actions').remove();
@@ -752,6 +771,7 @@
                                 chiudi(obj.emotion, obj.response || obj.ai_text || '(nessuna risposta)');
                                 fine = true;
                             } else if (evento === 'error') {
+                                if (obj.code === 'guest_limit') { fineProva(); fine = true; return; }
                                 if (!ricevuto) { fallback(); return; }
                                 hideProgressBar();
                                 if (aperta) { $bolla.removeClass('aria-message-streaming'); $bolla.find('.aria-caret').remove(); }

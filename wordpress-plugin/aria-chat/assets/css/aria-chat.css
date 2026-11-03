@@ -597,3 +597,9 @@
 }
 .aria-room-faq summary { cursor: pointer; font-size: 14px; color: #e8e2f0; }
 .aria-room-faq p { margin: 8px 0 0; font-size: 14px; color: #b9b3c7; line-height: 1.6; }
+
+/* Banner della prova gratuita */
+.aria-grid-gate--prova { max-width: 680px; padding: 18px 20px; }
+.aria-grid-gate--prova h3 { font-size: 17px; }
+.aria-grid-gate--prova p { margin: 0 0 8px; font-size: 14px; }
+.aria-grid-gate--prova .button { margin-right: 8px; }

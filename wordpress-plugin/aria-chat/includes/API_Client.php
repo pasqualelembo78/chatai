@@ -20,6 +20,11 @@ class Aria_API_Client {
         $this->access_token = null;
     }
     
+    /** Token impostato (serve ai proxy SSE che costruiscono l'header a mano). */
+    public function get_access_token() {
+        return $this->access_token;
+    }
+
     public function set_access_token($token) {
         $this->access_token = $token;
     }
@@ -118,6 +123,11 @@ class Aria_API_Client {
         ), false);
     }
     
+    /** Unisce la cronologia della prova all'account vero. */
+    public function merge_guest($guest_user_id) {
+        return $this->request('/auth/me/merge-guest', 'POST', array('guest_user_id' => $guest_user_id));
+    }
+
     public function login($username, $password) {
         return $this->request('/auth/login', 'POST', array(
             'username' => $username,

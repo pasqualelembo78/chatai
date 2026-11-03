@@ -27,6 +27,11 @@ class Aria_Chat_Engine {
         add_action('wp_ajax_aria_chat_opening', array($this, 'ajax_chat_opening'));
         add_action('wp_ajax_aria_chat_regenerate', array($this, 'ajax_regenerate'));
         add_action('wp_ajax_aria_chat_export', array($this, 'ajax_export'));
+        add_action('wp_ajax_nopriv_aria_chat_guest', array($this, 'ajax_chat_guest'));
+        add_action('wp_ajax_aria_chat_guest', array($this, 'ajax_chat_guest'));
+        add_action('wp_ajax_nopriv_aria_chat_send', array($this, 'ajax_send_message'));
+        add_action('wp_ajax_nopriv_aria_chat_stream', array($this, 'ajax_send_stream'));
+        add_action('wp_ajax_nopriv_aria_chat_regenerate', array($this, 'ajax_regenerate'));
         add_action('wp_ajax_nopriv_aria_chat_send', array($this, 'ajax_send_message'));
         add_action('wp_ajax_aria_chat_characters', array($this, 'ajax_get_characters'));
         add_action('wp_ajax_nopriv_aria_chat_characters', array($this, 'ajax_get_characters'));
@@ -64,9 +69,31 @@ class Aria_Chat_Engine {
             $this->send_json(array('success' => false, 'error' => 'Username e password richiesti'));
             return;
         }
+        $prova = $this->guest_session();
         $result = $this->auth_manager->login($username, $password);
+
+        // se ARIA non conosce l'utente, provo le credenziali WordPress: è l'account
+        // vero del sito, l'ARIA viene creato/collegato qui
+        if (empty($result['success'])) {
+            $wp = wp_authenticate($username, $password);
+            if (!is_wp_error($wp)) {
+                wp_set_current_user($wp->ID);
+                wp_set_auth_cookie($wp->ID, true, is_ssl());
+                $this->auth_manager->set_user_id($wp->ID);
+                if ($this->assicura_account() && $this->auth_manager->ensure_authenticated()) {
+                    $result = array('success' => true, 'auto_login' => true);
+                }
+            }
+        }
+
         if (isset($result['success']) && $result['success']) {
             $this->ensure_age_verified();
+            if ($prova && !empty($prova['uid'])) {
+                $this->api_client->set_access_token($this->auth_manager->get_access_token());
+                $this->api_client->merge_guest($prova['uid']);
+                delete_transient('aria_guest_' . $this->guest_token());
+                setcookie('aria_guest', '', array('expires' => time() - 3600, 'path' => '/'));
+            }
             $stored_birth_date = get_option('aria_chat_' . get_current_user_id() . '_birth_date', '');
             if ($stored_birth_date) {
                 if (preg_match('/^(\d{4})/', $stored_birth_date, $m)) {
@@ -104,6 +131,25 @@ class Aria_Chat_Engine {
                 $birth_year = 0;
                 if (preg_match('/^(\d{4})/', $birth_date, $m)) {
                     $birth_year = intval($m[1]);
+                }
+                // crea anche l'utente WordPress e lo autentica: senza, dopo la
+                // registrazione si resterebbe comunque fuori dal sito
+                $wp_user_id = username_exists($username);
+                if (!$wp_user_id) {
+                    $wp_user_id = wp_create_user($username, $password, $email);
+                }
+                if (!is_wp_error($wp_user_id)) {
+                    $u = new WP_User($wp_user_id);
+                    $u->set_role('subscriber');
+                    wp_set_current_user($wp_user_id);
+                    wp_set_auth_cookie($wp_user_id, true, is_ssl());
+                    $prova_reg = $this->guest_session();
+                    if ($prova_reg && !empty($prova_reg['uid'])) {
+                        $this->auth_manager->set_user_id($wp_user_id);
+                        $this->api_client->set_access_token($this->auth_manager->get_access_token());
+                        $this->api_client->merge_guest($prova_reg['uid']);
+                        delete_transient('aria_guest_' . $this->guest_token());
+                    }
                 }
                 update_option('aria_chat_' . get_current_user_id() . '_birth_date', $birth_date, false);
                 if ($birth_year > 0) {
@@ -211,11 +257,9 @@ class Aria_Chat_Engine {
             echo "event: error\ndata: {\"error\":\"Personaggio mancante\"}\n\n";
             exit;
         }
-        if (!$this->auth_manager->ensure_authenticated()) {
-            echo "event: error\ndata: {\"error\":\"Sessione scaduta: rifai il login\"}\n\n";
+        if (!$this->autorizza(true)) {
             exit;
         }
-        $this->api_client->set_access_token($this->auth_manager->get_access_token());
 
         $corpo = array('character' => $character_id, 'username' => $username);
         if ($testo !== null) {
@@ -226,7 +270,7 @@ class Aria_Chat_Engine {
         curl_setopt_array($ch, array(
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => wp_json_encode($corpo),
-            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Authorization: Bearer ' . $this->auth_manager->get_access_token(), 'Accept: text/event-stream'),
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Authorization: Bearer ' . $this->api_client->get_access_token(), 'Accept: text/event-stream'),
             CURLOPT_TIMEOUT => 400,
             CURLOPT_WRITEFUNCTION => function ($curl, $pezzo) use (&$resto) {
                 $resto .= $pezzo;
@@ -306,7 +350,7 @@ class Aria_Chat_Engine {
         curl_setopt_array($ch, array(
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $payload,
-            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Authorization: Bearer ' . $token, 'Accept: text/event-stream'),
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Authorization: Bearer ' . $this->api_client->get_access_token(), 'Accept: text/event-stream'),
             CURLOPT_TIMEOUT => 240,
             CURLOPT_WRITEFUNCTION => function ($curl, $pezzo) use (&$resto) {
                 $resto .= $pezzo;
@@ -324,6 +368,153 @@ class Aria_Chat_Engine {
             echo $resto;
         }
         exit;
+    }
+
+
+
+    /**
+     * Login WordPress: se c'è una prova in corso la unisce all'account dell'utente,
+     * così i messaggi scritti da ospite non si perdono.
+     */
+    public function merge_guest_on_wp_login($user_login, $user) {
+        $sess = $this->guest_session();
+        if (!$sess || empty($sess['uid']) || !($user instanceof WP_User)) {
+            return;
+        }
+        wp_set_current_user($user->ID); // al wp_login il cookie non è ancora attivo
+        $this->auth_manager->set_user_id($user->ID);
+        if (!$this->assicura_account() || !$this->auth_manager->ensure_authenticated()) {
+            return; // utente senza account ARIA: niente da unire
+        }
+        $this->api_client->set_access_token($this->auth_manager->get_access_token());
+        $this->api_client->merge_guest($sess['uid']);
+        delete_transient('aria_guest_' . $this->guest_token());
+        setcookie('aria_guest', '', array('expires' => time() - 3600, 'path' => '/'));
+    }
+
+
+    /**
+     * Ogni utente WordPress ottiene un account ARIA trasparente: senza, il login
+     * WordPress non basterebbe per chattare e la prova da ospite non avrebbe dove
+     * essere unita. Il token persistente viene salvato sull'utente.
+     */
+    private function assicura_account() {
+        if ($this->auth_manager->get_persistent_token()) {
+            return true;
+        }
+        if (!is_user_logged_in()) {
+            return false;
+        }
+        $username = 'wp_' . get_current_user_id() . '_' . bin2hex(random_bytes(4));
+        $password = bin2hex(random_bytes(12));
+        $reg = $this->api_client->register($username, '', $password, '1990-01-01');
+        if (empty($reg['success'])) {
+            return false;
+        }
+        $dati = $reg['data'];
+        $this->auth_manager->save_tokens($dati['access_token'] ?? '', $dati['refresh_token'] ?? '');
+        $this->auth_manager->save_persistent_token($dati['persistent_token'] ?? '');
+        return !empty($dati['persistent_token']);
+    }
+
+    /** Quanti messaggi può scrivere chi non è registrato. */
+    const GUEST_LIMIT = 4;
+
+    private function guest_token() {
+        $t = isset($_COOKIE['aria_guest']) ? preg_replace('/[^a-f0-9]/', '', (string) $_COOKIE['aria_guest']) : '';
+        return $t;
+    }
+
+    private function guest_session() {
+        $t = $this->guest_token();
+        if (!$t) {
+            return null;
+        }
+        $sess = get_transient('aria_guest_' . $t);
+        return is_array($sess) && !empty($sess['uid']) ? $sess : null;
+    }
+
+    private function guest_save($t, $sess) {
+        set_transient('aria_guest_' . $t, $sess, 7 * DAY_IN_SECONDS);
+    }
+
+    /**
+     * Apre una sessione di prova: crea un utente ARIA usa e getta e lascia
+     * scrivere pochi messaggi. Serve a far provare la chat prima del login.
+     */
+    public function ajax_chat_guest() {
+        $sess = $this->guest_session();
+        if ($sess) {
+            $this->send_json(array('success' => true, 'usati' => (int) $sess['n'], 'limite' => self::GUEST_LIMIT));
+            return;
+        }
+        $username = 'ospite_' . bin2hex(random_bytes(6));
+        $password = bin2hex(random_bytes(12));
+        $reg = $this->api_client->register($username, '', $password, '1990-01-01');
+        if (empty($reg['success'])) {
+            $this->send_json(array('success' => false, 'error' => 'Prova non disponibile'));
+            return;
+        }
+        $dati = $reg['data'];
+        $ptk = $dati['persistent_token'] ?? '';
+        if (empty($ptk)) {
+            $this->send_json(array('success' => false, 'error' => 'Prova non disponibile'));
+            return;
+        }
+        $this->api_client->set_access_token($dati['access_token'] ?? '');
+        $this->api_client->verify_age(1990);
+
+        $t = bin2hex(random_bytes(16));
+        $this->guest_save($t, array('uid' => $dati['user']['id'] ?? '', 'ptk' => $ptk, 'n' => 0));
+        setcookie('aria_guest', $t, array(
+            'expires' => time() + 7 * DAY_IN_SECONDS,
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+            'secure' => is_ssl(),
+        ));
+        $this->send_json(array('success' => true, 'usati' => 0, 'limite' => self::GUEST_LIMIT));
+    }
+
+    /**
+     * Autentica la richiesta: utente WordPress normale oppure sessione di prova.
+     * Restituisce true se si può proseguire, altrimenti emette l'errore.
+     */
+    private function autorizza($stream = false) {
+        $errore = function ($msg, $codice = '') use ($stream) {
+            if ($stream) {
+                echo "event: error\ndata: " . wp_json_encode(array('error' => $msg, 'code' => $codice)) . "\n\n";
+                exit;
+            }
+            $this->send_json(array('success' => false, 'error' => $msg, 'code' => $codice));
+        };
+
+        $sess = $this->guest_session();
+        if (!$sess) {
+            $this->assicura_account();
+            if (!$this->auth_manager->ensure_authenticated()) {
+                $errore('Sessione scaduta: esegui di nuovo il login nella chat');
+                return false;
+            }
+            $this->api_client->set_access_token($this->auth_manager->get_access_token());
+            return true;
+        }
+
+        $t = $this->guest_token();
+        if ((int) $sess['n'] >= self::GUEST_LIMIT) {
+            $errore('Prova terminata: accedi o registrati per continuare a chattare.', 'guest_limit');
+            return false;
+        }
+        $reauth = $this->api_client->reauth($sess['ptk']);
+        if (empty($reauth['success']) || empty($reauth['data']['access_token'])) {
+            delete_transient('aria_guest_' . $t);
+            $errore('Prova scaduta: accedi per continuare.', 'guest_limit');
+            return false;
+        }
+        $this->api_client->set_access_token($reauth['data']['access_token']);
+        $sess['n'] = (int) $sess['n'] + 1;
+        $this->guest_save($t, $sess);
+        return true;
     }
 
     public function ajax_send_stream() {
@@ -349,17 +540,12 @@ class Aria_Chat_Engine {
             $esci('error', array('error' => 'Personaggio e messaggio richiesti'));
             exit;
         }
-        if (!$this->auth_manager->ensure_authenticated()) {
-            $esci('error', array('error' => 'Sessione scaduta: esegui di nuovo il login nella chat'));
+        if (!$this->autorizza(true)) {
             exit;
         }
-        $token = $this->auth_manager->get_access_token();
-        if (!$token) {
-            $esci('error', array('error' => 'Token mancante: riprova il login'));
-            exit;
+        if (!$this->guest_session()) {
+            $this->ensure_age_verified();
         }
-        $this->api_client->set_access_token($token);
-        $this->ensure_age_verified();
 
         $payload = wp_json_encode(array(
             'character' => $character_id,
@@ -374,7 +560,7 @@ class Aria_Chat_Engine {
             CURLOPT_POSTFIELDS => $payload,
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Authorization: Bearer ' . $token,
+                'Authorization: Bearer ' . $this->api_client->get_access_token(),
                 'Accept: text/event-stream',
             ),
             CURLOPT_TIMEOUT => 300,

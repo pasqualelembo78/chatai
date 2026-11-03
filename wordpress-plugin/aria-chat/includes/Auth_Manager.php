@@ -15,6 +15,11 @@ class Aria_Auth_Manager {
         $this->api_client = new Aria_API_Client();
     }
     
+    /** Cambia utente (serve al merge dopo il login WordPress). */
+    public function set_user_id($user_id) {
+        $this->user_id = (int) $user_id;
+    }
+
     private function get_option_key($key) {
         return 'aria_chat_' . $this->user_id . '_' . $key;
     }

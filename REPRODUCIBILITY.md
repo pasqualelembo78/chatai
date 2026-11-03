@@ -379,3 +379,19 @@ backend/chat_engine.py (auto-save compact summary)
 - Archivio `/stanze-live/`: due paragrafi di presentazione (hub delle stanze).
 - Homepage NON toccata nel layout: solo il footer guadagna un blocco link.
 - Canonical: `?char=` resta canonicalizzato alla stanza (nessuna esplosione di URL sottili).
+
+## 31) Prova gratuita senza login, 4 messaggi (2026-11-03)
+- Prima: chat chiusa da un muro di login. Ora il visitatore vede le card, apre un personaggio e
+  scrive **4 messaggi gratis**; al quinto gli si apre il login con "Prova terminata".
+- Backend: `POST /auth/me/merge-guest` sposta cronologia e memoria della prova sull'account vero
+  (savepoint per tabella; l'account ospite viene eliminato solo se senza riferimenti).
+- Plugin: `ajax_chat_guest` crea un utente ARIA usa e getta (`ospite_<hex>`), token persistente
+  in transient 7 giorni + cookie HttpOnly; `autorizza()` gestisce ospite o utente WP e blocca
+  oltre 4. Alla registrazione e al login WordPress la prova viene unita e l'utente autenticato
+  (creazione utente WP in `ajax_register`, `wp_authenticate` come fallback in `ajax_login`).
+- `users_can_register` era **disattivo**: attivato con ruolo `subscriber`, altrimenti la
+  registrazione non esisteva proprio.
+- Ogni utente WordPress riceve un account ARIA trasparente (`assicura_account`) al primo uso:
+  niente doppio login.
+- Verificato: apertura prova, chat da ospite (58 pezzi), blocco al 5° messaggio, registrazione
+  con login automatico, login con credenziali WP, messaggi uniti dopo il login.
