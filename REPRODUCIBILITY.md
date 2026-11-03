@@ -647,3 +647,18 @@ backend/chat_engine.py (auto-save compact summary)
 - Interruttore `STILE_ESEMPI` in `backend/.env` (1 attivo, 0 spento) senza toccare il codice.
 - Zip: aggiunto `italian-style.json`, aggiornato `backend/.env`, rimossa una vecchia copia
   `language/` alla radice dello zip (restava solo `backend/language/`).
+
+## 52) Rimossi Temporal, Elasticsearch e Docker dalla macchina (2026-11-03)
+- Trovato acceso e inutile: stack Docker `temporal` + `temporal-elasticsearch`, avviato due settimane
+  prima, con **solo workflow di sistema** (history/tq scanner) e nessun client: `ARIA`, `.env` e le
+  unit systemd non citano la porta 7233. Costava ~450 MB di RAM e 4 allarmi GC della JVM in 24 ore.
+- Rimossi: container, immagini (`temporalio/auto-setup`, `elasticsearch:7.17.27`), DB PostgreSQL
+  `temporal` e `temporal_visibility`. Poi Docker intero: purge di `docker-ce*`, `containerd.io`,
+  `docker-buildx-plugin`, `docker-compose-plugin`, disattivazione servizi, `/var/lib/docker`,
+  `/var/lib/containerd` (13 GB), `/etc/docker`, gruppo `docker`, repo apt, interfaccia `docker0`.
+- Effetto: disponibile da 1.715 a **3.273 MB**, swap da 3.227 a **2.643 MB**, disco libero da 98 a
+  **111 GB**. Sito (home, stanza, archivio, articoli) tutto 200 e chat 200: nessun effetto.
+- `build_app.sh` **non installa Docker** e non ne ha bisogno: nessuna modifica. I `docker-compose.yml`
+  di postiz, chatadult, krona e mevacoin restano sui rispettivi percorsi, inservibili finché Docker
+  non viene reinstallato: è una scelta, non un guasto.
+- Con 3,2 GB liberi il filtro LanguageTool online torna sostenibile, se lo si vorrà.
