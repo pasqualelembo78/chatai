@@ -166,6 +166,9 @@ class Aria_Chat_Engine {
         if ($detail === 'premium_required' || $code === 403) {
             return "Per questa chat serve la verifica dell'eta': conferma il gate 18+ e riprova.";
         }
+        if ($detail === 'risposta_in_corso') {
+            return "Hai già una risposta in corso: aspetta che finisca e riprova.";
+        }
         if ($detail === 'daily_limit_reached' || $code === 429) {
             return "Limite giornaliero di messaggi raggiunto. Torna domani oppure sblocca i messaggi illimitati.";
         }

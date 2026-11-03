@@ -317,3 +317,13 @@ backend/chat_engine.py (auto-save compact summary)
 - Frontend: la barra mostra "Sei in coda: N persone davanti a te" e torna a "Sta scrivendo..."
   al primo pezzo; all'apertura compare "Caricamento personaggio..." finché non arriva il
   template (max 2,5 s).
+
+## 25) Tetto di una richiesta in volo per utente (2026-11-03)
+- Con `NUM_PARALLEL=1` (impostato in entrambi i drop-in) Ollama serve una generazione alla
+  volta: senza limite un utente impaziente occupa l'unico slot e mette in coda tutti.
+- Backend: set `_IN_CORSO` protetto da lock. `/chat/stream` e `/chat/regenerate` rispondono
+  429 `risposta_in_corso` se l'utente ha già una generazione in corso; il flag si libera nel
+  `finally` del generatore.
+- Frontend: il 429 viene mostrato come messaggio ("Hai già una risposta in corso...") senza
+  fallback inutile sull'invio normale.
+- Misura verificata: seconda richiesta concorrente rifiutata con 429 e messaggio chiaro.

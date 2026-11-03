@@ -699,6 +699,20 @@
         data.append('action', azione || 'aria_chat_stream');
         fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data, headers: { 'Accept': 'text/event-stream' } })
             .then(function (r) {
+                if (r.status === 429) {
+                    // utente già occupato: nessun fallback, si mostra il motivo
+                    return r.text().then(function (t) {
+                        var m = 'Hai già una risposta in corso: aspetta che finisca.';
+                        try {
+                            var d = JSON.parse(t);
+                            if (d && d.detail && d.detail.message) m = d.detail.message;
+                            else if (d && d.detail && typeof d.detail === 'string') m = d.detail;
+                        } catch (e) {}
+                        hideProgressBar();
+                        ricevuto = true;
+                        addSystemMessage(m);
+                    });
+                }
                 if (!r.ok || !r.body || !r.body.getReader) throw new Error('stream non disponibile');
                 var reader = r.body.getReader();
                 var decoder = new TextDecoder('utf-8');

@@ -30,6 +30,24 @@ logger = logging.getLogger(__name__)
 _ATTIVI = 0
 _LOCK_CODA = threading.Lock()
 
+# Una sola generazione in volo per utente: senza tetto un utente impaziente
+# occupa l'unico slot e mette tutti gli altri in coda.
+_IN_CORSO = set()
+_LOCK_UTENTE = threading.Lock()
+
+
+def _utente_occupato(user_id):
+    with _LOCK_UTENTE:
+        if user_id in _IN_CORSO:
+            return True
+        _IN_CORSO.add(user_id)
+        return False
+
+
+def _libera_utente(user_id):
+    with _LOCK_UTENTE:
+        _IN_CORSO.discard(user_id)
+
 
 def _entra_coda():
     global _ATTIVI
@@ -240,6 +258,12 @@ async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = 
             },
         )
 
+    if _utente_occupato(user.user_id):
+        raise HTTPException(429, {
+            "error": "risposta_in_corso",
+            "message": "Hai già una risposta in corso: aspetta che finisca e riprova.",
+        })
+
     coda = queue.Queue()
     posizione = _entra_coda()
 
@@ -305,6 +329,7 @@ async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = 
                 return
         finally:
             _esci_coda()
+            _libera_utente(user.user_id)
 
     return StreamingResponse(
         eventi(),
@@ -359,6 +384,12 @@ async def api_chat_regenerate(request: Request, body: RedoRequest, user: AuthUse
     elif ultimo["role"] == "assistant":
         elimina_messaggio(ultimo["id"])
 
+    if _utente_occupato(user.user_id):
+        raise HTTPException(429, {
+            "error": "risposta_in_corso",
+            "message": "Hai già una risposta in corso: aspetta che finisca e riprova.",
+        })
+
     coda = queue.Queue()
     posizione = _entra_coda()
 
@@ -405,6 +436,7 @@ async def api_chat_regenerate(request: Request, body: RedoRequest, user: AuthUse
                 return
         finally:
             _esci_coda()
+            _libera_utente(user.user_id)
 
     return StreamingResponse(
         eventi(),
