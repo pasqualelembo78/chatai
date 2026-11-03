@@ -628,3 +628,16 @@ backend/chat_engine.py (auto-save compact summary)
 - Verificato: due salvataggi sulla stessa coppia → 1 riga, testo aggiornato, `get_summary`
   restituisce l'ultimo. Chat reale 200 con final.
 - Backup: `/opt/aria/backups/pre_lingua/chat_summary.py.bak`.
+
+## 51) Esempi di stile in-contesto al posto del fine-tuning (2026-11-03)
+- "Addestramento" senza fine-tuning: il modello imita il ritmo, non copia. Nuovo
+  `backend/language/italian-style.json` con 2 battute per ognuna delle 24 categorie.
+- `language.esempi_stile()` pesca **1** esempio per messaggio (default 2, chiamato con 1) e ruota
+  in base a hash di utente+personaggio+turno, così due risposte di fila non hanno lo stesso spunto.
+- `prompt_builder`: blocco "STILE DA IMITARE (ritmo e registro, non copiare le frasi)" subito prima
+  della regola di lunghezza. Costo ~60 caratteri di prompt.
+- A/B fatto sulla stessa categoria: con esempio le risposte sono più asciutte e concrete, senza
+  esempio tornano descrittive e col generico "come stai". Da qui la scelta di tenerlo.
+- Interruttore `STILE_ESEMPI` in `backend/.env` (1 attivo, 0 spento) senza toccare il codice.
+- Zip: aggiunto `italian-style.json`, aggiornato `backend/.env`, rimossa una vecchia copia
+  `language/` alla radice dello zip (restava solo `backend/language/`).

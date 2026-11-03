@@ -232,6 +232,16 @@ def parole_sconosciute(testo, limite=6):
     return fuori[:limite]
 
 
+def esempi_stile(categoria, seed=0, quanti=2, esclusi=()):
+    """Due battute di esempio nella categoria: il modello imita ritmo e registro."""
+    dati = _carica("italian-style.json").get("stili", {})
+    voci = [v for v in dati.get(categoria, []) if v not in esclusi]
+    if not voci:
+        return []
+    inizio = seed % len(voci)
+    return [voci[(inizio + i) % len(voci)] for i in range(min(quanti, len(voci)))]
+
+
 def correggi(testo):
     """Corregge le forme sbagliate già osservate, senza toccare altro."""
     if not testo:

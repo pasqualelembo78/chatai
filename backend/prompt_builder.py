@@ -1,5 +1,6 @@
 import os
 import re
+import hashlib
 MAX_HISTORY_MESSAGES = 10
 
 REGISTRO_ADULTO = (
@@ -27,6 +28,7 @@ from content_safety import ADULT_APP_URL
 from user_memory import get_user_memory, save_user_memory, delete_all_memory  # ISOLATO PER TEST
 from characters import category_profiles as _catprof  # contesto tematico della stanza
 from language import blocco_prompt as _supporto_lingua
+import language as _lingua
 
 _ADULT_HINT = ""
 if ADULT_APP_URL:
@@ -275,6 +277,16 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
             )
             if _b:
                 righe.append(_b)
+        except Exception:
+            pass
+        try:
+            _esempi = _lingua.esempi_stile(
+                character.get("category", ""),
+                int(hashlib.md5(f"{user_id}:{character.get('id','')}:{total_messages}".encode()).hexdigest()[:6], 16),
+                1,
+            )
+            if _esempi and os.environ.get("STILE_ESEMPI", "1") == "1":
+                righe.append("STILE DA IMITARE (ritmo e registro, non copiare le frasi): " + " / ".join(_esempi))
         except Exception:
             pass
         righe.append("MASSIMO 20 parole. Niente spiegazioni e niente annunci: scrivi cosa fai e cosa senti. "
