@@ -356,3 +356,15 @@ backend/chat_engine.py (auto-save compact summary)
   esclusivamente dove l'essenza non lo citava. Costo nel prompt: ~25 caratteri (~1%).
 - Nel prompt leggero la riga è "Di mestiere: X.". Verificato: personaggio milf risponde
   "Sono un musicista" e dichiara comunque la stanza.
+
+## 29) Via i nomi reali: identità inventate per tutti (2026-11-03)
+- 4.982 personaggi su 5.072 arrivavano da HuggingFace con nomi reali o protetti (Axl Rose,
+  Arale Norimaki, Thomas Jefferson, Donnie Darko...). Regola: solo nomi inventati, italiani.
+- `characters/rename_characters.py`: nome e cognome inventati in modo DETERMINISTICO dall'id
+  (stesso personaggio = stesso nome a ogni esecuzione), coerenti col genere, unici su tutto
+  l'archivio (5.072 nomi unici, 0 duplicati, 0 incoerenze di genere). Essenza riscritta senza
+  titoli di opere, descrizione aggiornata col nuovo nome, vecchio nome conservato in `old_name`.
+- Verificato: 0 essenze con brand noti, 5072 descrizioni col nuovo nome, stanze e indice
+  intatti, chat che si presentano col nome nuovo ("Sono Atena...", "Mi chiamo Vani...").
+- NOTA: le conversazioni già avviate contengono i nomi vecchi nei messaggi passati; si
+  esauriscono con la cronologia. Il campo `job` resta, così il mestiere non si perde.
