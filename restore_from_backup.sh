@@ -41,7 +41,7 @@ chown -R chatai:chatai "$ROOT_DIR/backend" 2>/dev/null || true
 
 echo "== Installazione dipendenze, modelli e servizi (build_app.sh) =="
 # senza flag: installazione completa. Passa le stesse opzioni di build_app.sh se servono.
-bash "$ROOT_DIR/build_app.sh" "${@:2}" || {
+bash "$ROOT_DIR/build_app.sh" "$@" || {
     echo "build_app.sh è terminato con errori: controlla l'output sopra." >&2
 }
 
