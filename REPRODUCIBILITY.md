@@ -499,3 +499,19 @@ backend/chat_engine.py (auto-save compact summary)
   65 si taglia a fine frase. Resta invariato il comportamento "una sola volta" (guardia 30 minuti).
 - Verificato su 10 categorie diverse: 44-64 parole, prima persona, 0 duplicati, seconda chiamata
   con `skip`. Backup: `/tmp/chat.py.bak3`, `/tmp/category_profiles.py.bak2`.
+
+## 41) Personalità riscritte in chiave pornografica (2026-11-03)
+- Contesto: le `personality` erano righe generiche di categoria ("Discreto/a, riservato/a") con
+  forme "/a" e nessun contenuto sessuale.
+- `characters/riscrivi_personality.py`: per ogni categoria, tre pool (attitudine, voglia esplicita,
+  modo di agire) + un dettaglio e una coda condivisi. Tutto coerente col tema: lesbo -> figa,
+  gay -> cazzo, sottomissione -> prende ordini, dominazione -> comanda, feticismi -> materiali,
+  sesso orale -> bocca, voyeurismo -> guardare, ecc.
+- Accordo di genere con forme esplicite f|m|n (femminile, maschile, neutro maschile): 0 residui in
+  terza persona verificati su 5.072 testi. Scelta deterministica dall'id, 172 duplicati interni
+  (3,4%, accettabile), lunghezza media 171 caratteri (max 243).
+- Presentazioni: ora includono anche la frase della voglia (2 frasi di personalità) e non solo
+  l'attitudine, con accordo corretto (Le/Gli, Morbida/Morbido).
+- Rigenerati `category_context` e `system_prompt` con `apply_categories --force`; indice 5.072.
+- Verificato su 5 categorie: 45-63 parole, contenuto esplicito coerente, prima persona, 0 residui.
+- Backup: `/opt/aria/backups/data_pre_porn_*`, `/tmp/chat.py.bak3`, `/tmp/category_profiles.py.bak2`.

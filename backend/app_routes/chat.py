@@ -482,7 +482,8 @@ async def api_chat_export(character: str, user: AuthUser = Depends(jwt_required)
 def _prima_persona(tratto, nome):
     """Porta in prima persona un tratto scritto in terza ("X è una persona...")."""
     t = re.sub(r"\s+", " ", str(tratto or "")).strip()
-    t = re.split(r"(?<=[.!?])\s+", t)[0] if t else ""
+    frasi = re.split(r"(?<=[.!?])\s+", t) if t else []
+    t = " ".join(frasi[:2]).strip()
     if not t:
         return ""
     # il tratto può iniziare con il nome vero o con quello vecchio: in entrambi i casi
@@ -534,7 +535,7 @@ def _presentazione(char, meta, seme):
     frasi = [chi, stanza]
     if tratto:
         frasi.append(tratto)
-    if tag and len(" ".join(frasi).split()) < 50:
+    if tag and len(" ".join(frasi).split()) < 42:
         frasi.append([
             "Chi mi cerca sa che mi muovo tra " + ", ".join(tag) + ".",
             "Mi riconosci da " + ", ".join(tag) + ".",
