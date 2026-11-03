@@ -606,3 +606,13 @@ backend/chat_engine.py (auto-save compact summary)
   in `/var/www` e `/usr/local`, sistema i permessi, esegue `build_app.sh` e stampa i passaggi
   residui (SQL, attivazione plugin, token ptk, token GitHub).
 - `AGENTS.md` aggiornato: il ripristino è `restore_from_backup.sh`, non `build_app.sh` da solo.
+
+## 49) SQL: chiariti i due database, corretto il file dei riassunti (2026-11-03)
+- Errore trovato: `sql_chat_summaries.sql` era in sintassi MySQL (`AUTO_INCREMENT`, prefisso `wp_`)
+  e creava `wp_chat_summaries`, ma `chat_summary.py` legge `chat_summaries` su **PostgreSQL**:
+  eseguito su un server nuovo non creava niente di utile.
+- Ora il file è PostgreSQL, con il nome reale, la colonna `updated_at` e l'indice unico
+  `(user_id, character_id)` che serve all'`ON CONFLICT`.
+- `sql_chat_response_stats.sql`: intestazione esplicita — è MySQL/WordPress, letto con `$wpdb`,
+  e il plugin lo crea comunque da sé.
+- `restore_from_backup.sh`: i passaggi SQL ora indicano il motore giusto per ciascun file.

@@ -1,3 +1,7 @@
+-- TEMPI DI RISPOSTA — database MySQL di WORDPRESS (letti dal plugin con $wpdb).
+-- Non va sul PostgreSQL del backend. Il plugin crea comunque la tabella da solo
+-- (ensure_stats_table): questo file serve per pre-crearla su un DB nuovo.
+
 -- Tempi di risposta per chat (utente + personaggio) — tabella della barra di caricamento.
 -- Va eseguita su un DB nuovo PRIMA di usare il plugin: senza tabella la media
 -- ricade sul default (5000 ms) e le misurazioni non vengono registrate.

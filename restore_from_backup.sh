@@ -48,9 +48,12 @@ bash "$ROOT_DIR/build_app.sh" "$@" || {
 cat <<'FINE'
 
 == FATTO. Passaggi che restano da fare a mano ==
-1. Database PostgreSQL: crea il DB e applica gli SQL del progetto:
-     psql "$DATABASE_URL" -f backend/sql_chat_summaries.sql
-     psql "$DATABASE_URL" -f backend/sql_chat_response_stats.sql
+1. Database, due motori distinti:
+   a) PostgreSQL del backend (riassunti):
+        psql "$DATABASE_URL" -f sql_chat_summaries.sql
+   b) MySQL di WordPress (tempi di risposta), con le credenziali di wp-config.php:
+        mysql -u <utente wp> -p <db wp> < sql_chat_response_stats.sql
+   Le altre tabelle del backend le crea da solo all'avvio.
 2. WordPress: attiva il plugin aria-chat, verifica i permalink e il login obbligatorio.
 3. Impostazioni → Aria Chat: incolla il token persistente `ptk_...` dell'admin ARIA.
 4. Token GitHub per i push futuri (fuori dal repo, per definizione).
