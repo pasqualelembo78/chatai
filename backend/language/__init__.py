@@ -181,6 +181,57 @@ def blocco_prompt(categoria, testo_utente, storia=None, user_id=0, character_id=
     return blocco[:230]
 
 
+_BIANCA = None
+
+
+def _bianca():
+    """Parole ammesse anche se il dizionario non le conosce: gergo e nomi."""
+    global _BIANCA
+    if _BIANCA is not None:
+        return _BIANCA
+    base = {
+        "cazzo", "figa", "fica", "figo", "fico", "sborra", "sborro", "sborrare", "sborrata",
+        "inculo", "incolo", "inculare", "inculato", "sego", "segare", "segata", "sega", "seghe",
+        "scopo", "scopare", "scopata", "chiavo", "chiavare", "chiavata", "pompino", "pompini",
+        "ciuccio", "ciucciare", "lecco", "leccare", "leccata", "topa", "passera", "mazzo",
+        "tette", "poppe", "succhio", "succhiare", "orgasmo", "orgasmi", "preliminari",
+        "sfizio", "ghirba", "sballare", "figata", "boh", "dai", "ok", "okay",
+    }
+    for f in ("italian-anatomy.json", "italian-erotic.json", "italian-colloquial.json",
+              "italian-syntax.json", "italian-expressions.json", "italian-humor.json"):
+        for campo in ("voci", "modelli", "mosse"):
+            for voce in (_carica(f).get(campo) or []):
+                for chiave in ("termine", "espressione", "frase", "esempio", "nota"):
+                    for parola in str(voce.get(chiave, "")).lower().replace(",", " ").split():
+                        pulita = "".join(c for c in parola if c.isalpha() or c == "'")
+                        if pulita:
+                            base.add(pulita)
+    _BIANCA = base
+    return base
+
+
+def parole_sconosciute(testo, limite=6):
+    """Parole che il dizionario italiano non riconosce (per log e revisione)."""
+    if not testo:
+        return []
+    try:
+        import subprocess
+        esito = subprocess.run(
+            ["hunspell", "-d", "it_IT", "-l"], input=testo.encode("utf-8"),
+            capture_output=True, timeout=4,
+        )
+    except Exception:
+        return []
+    bianca = _bianca()
+    fuori = []
+    for riga in esito.stdout.decode("utf-8", "ignore").splitlines():
+        parola = riga.strip()
+        if len(parola) < 4 or parola.lower() in bianca or parola[0].isupper():
+            continue
+        fuori.append(parola)
+    return fuori[:limite]
+
+
 def correggi(testo):
     """Corregge le forme sbagliate già osservate, senza toccare altro."""
     if not testo:

@@ -561,8 +561,11 @@ def process_message(user_id, character_id, text, username="Utente",
         ai_text, ai_provider, ai_model = get_ai_response(messages, user_id=user_id)
     # correzioni linguistiche note (non tocca altro)
     try:
-        from language import correggi as _correggi
+        from language import correggi as _correggi, parole_sconosciute as _sconosciute
         ai_text = _correggi(ai_text)
+        _brutte = _sconosciute(ai_text)
+        if _brutte:
+            logger.info(f"parole non riconosciute: {_brutte}")
     except Exception:
         pass
     logger.info(f"AI response: provider={ai_provider} model={ai_model} len={len(ai_text) if ai_text else 0}")

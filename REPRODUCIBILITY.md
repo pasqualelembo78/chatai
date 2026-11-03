@@ -580,3 +580,12 @@ backend/chat_engine.py (auto-save compact summary)
   messaggio cortissimo) che ora arrivano DOPO tutte le regole, dove pesano.
 - Verificato: a "Come lo faresti?" ora risponde "Ti vorrei segare, te lo metto in bocca";
   le frasi hanno un verbo principale e un dettaglio.
+
+## 46) Controllo ortografico con dizionario italiano (2026-11-03)
+- Installati `hunspell` + `hunspell-it` (dizionario italiano di sistema).
+- `language.parole_sconosciute()`: passa il testo generato a hunspell, scarta nomi propri,
+  parole corte e un elenco bianco di gergo (cazzo, figa, sborra, incolo, sego...), e restituisce
+  le parole non riconosciute, che finiscono nel log per revisione. ~90 ms, nessuna chiamata LLM.
+- Non riscrive: le sostituzioni restano quelle mappate in `correggizioni_brevi` (es. borbbo→ciuccio),
+  applicate prima del controllo.
+- Verificato: "ti borbbo il cazzo" → "ti ciuccio il cazzo"; frase corretta senza parole ignote.
