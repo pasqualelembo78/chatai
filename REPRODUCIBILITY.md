@@ -228,3 +228,16 @@ backend/chat_engine.py (auto-save compact summary)
   lampeggiante, barra nascosta al primo pezzo. Se lo stream non parte il client ricade da
   solo su `aria_chat_send`. Misurato TTFB 0,13 s contro 20-100 s della risposta completa.
 - `API_Client::get_base_url()` aggiunto (la proprietà è privata).
+
+## 18) Apertura automatica della chat (variante ibrida, 2026-11-03)
+- `POST /chat/opening`: primo evento `template` con una battuta della stanza (scelta
+  deterministica su utente+personaggio), poi il modello la riscrive in streaming e la
+  sostituisce. Non consuma il limite giornaliero e salta se la conversazione è recente
+  (`OPENING_IDLE_MINUTES`, default 30).
+- Frontend: `apriConversazione()` all'apertura del personaggio, guardia localStorage 30 min,
+  template immediato (TTFB 0,15 s), stop automatico se l'utente scrive prima che finisca.
+- Prompt dedicato e COMPATTO (identità + blocco stanza + istruzione), non tutta la biografia:
+  meno token, meno attesa. Ripulito l'eco "assistant"/virgolette del template chatml sia
+  nello stream sia nel testo finale.
+- Backup: `Chat_Engine.php`, `API_Client.php`, JS e CSS; nessuna modifica ai dati personaggi
+  (le battute vivono in `category_profiles.py`, campo `openings`).

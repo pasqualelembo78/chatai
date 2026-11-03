@@ -4,7 +4,7 @@ import tempfile
 import logging
 
 from fastapi import APIRouter, Request, Depends, UploadFile, File, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 
@@ -278,6 +278,141 @@ async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = 
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
     )
+
+
+@router.post("/chat/opening")
+@limiter.limit("30/minute")
+async def api_chat_opening(request: Request, body: ChatRequest, user: AuthUser = Depends(jwt_required)):
+    """Il personaggio apre lui la conversazione.
+
+    Prima riga: template della stanza, immediato (0 ms). Subito dopo il modello
+    riscrive l'apertura in streaming e la sostituisce. Non consuma il limite
+    giornaliero; si salta se la conversazione è recente.
+    """
+    import json as _json
+    import queue
+    import threading
+    import hashlib
+
+    from characters import category_profiles as cp
+    from storage import get_recent_messages
+    from prompt_builder import build_messages
+
+    character_id = body.character
+    char = get_character(character_id) if character_id else None
+    if not char:
+        raise HTTPException(404, "character not found")
+    if not _check_character_access(user.user_id, char):
+        raise HTTPException(403, "premium_required")
+
+    inattivita = int(os.environ.get("OPENING_IDLE_MINUTES", "30"))
+    ultimo = _ultimo_messaggio(user.user_id, character_id)
+    logger.info(f"opening guard: ultimo={ultimo} inattivita={inattivita}")
+    if ultimo:
+        import time as _time
+        if (_time.time() - ultimo) < inattivita * 60:
+            return JSONResponse({"skip": True, "reason": "conversation_active"})
+
+    prof = cp.profile_for(char.get("category", ""))
+    aperture = prof.get("openings") or []
+    seme = int(hashlib.md5(f"{user.user_id}:{character_id}".encode()).hexdigest()[:8], 16)
+    template = aperture[seme % len(aperture)] if aperture else "Eccomi. Da dove iniziamo?"
+
+    history = get_recent_messages(user.user_id, character_id, limit=6)
+
+    def sistema():
+        # Prompt compatto: per un'apertura non serve tutta la biografia, e su CPU
+        # ogni 100 token in meno sono secondi risparmiati.
+        essenza = str(char.get("essence") or "").split("Stanza tematica:")[0].strip()
+        blocchi = [f"Sei {char.get('full_name') or char.get('name')}."]
+        if essenza:
+            blocchi.append("Chi sei: " + essenza[:220])
+        if char.get("category_context"):
+            blocchi.append(char["category_context"])
+        blocchi.append(
+            "Apri tu la conversazione: UNA sola frase breve, nel personaggio e nel tema della "
+            "stanza, che inviti l'utente a rispondere. Niente presentazioni formali, niente "
+            "spiegazioni, non ripetere il template. Rispondi solo con la frase."
+        )
+        return [{"role": "system", "content": "\n\n".join(blocchi)}]
+
+    coda = queue.Queue()
+
+    def lavora():
+        try:
+            msgs = sistema()
+            from ai_engine.streaming import get_ai_response_stream
+            completo = ""
+            avviato = False
+            for token, _pid, _mid in get_ai_response_stream(msgs, user_id=user.user_id):
+                if not token:
+                    continue
+                completo += token
+                if not avviato:
+                    # il template chatml fa riecheggiare "assistant"/a capo iniziali
+                    ripulito = re.sub(r'^assistant\s*[:\n]*["\s]*', "", completo, flags=re.I)
+                    if not ripulito.strip():
+                        continue
+                    avviato = True
+                    coda.put(("delta", ripulito))
+                    continue
+                coda.put(("delta", token))
+            testo = re.sub(r'^assistant\s*[:\n]*["\s]*', "", completo, flags=re.I).strip()
+            testo = testo.strip('"').strip("«»“”").strip()
+            coda.put(("result", testo))
+        except Exception as e:
+            logger.exception("opening errore")
+            coda.put(("result", ""))
+
+    threading.Thread(target=lavora, daemon=True).start()
+
+    def eventi():
+        yield "event: template\ndata: " + _json.dumps({"text": template}, ensure_ascii=False) + "\n\n"
+        testo = ""
+        while True:
+            tipo, dato = coda.get()
+            if tipo == "delta":
+                yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
+                continue
+            testo = dato or ""
+            if not testo:
+                # modello muto: resta il template
+                yield "event: final\ndata: " + _json.dumps({"text": template, "template": True}, ensure_ascii=False) + "\n\n"
+                return
+            try:
+                from storage import add_message
+                add_message(user.user_id, character_id, "assistant", testo)
+            except Exception:
+                logger.warning("salvataggio apertura fallito", exc_info=True)
+            yield "event: final\ndata: " + _json.dumps({"text": testo}, ensure_ascii=False) + "\n\n"
+            return
+
+    return StreamingResponse(
+        eventi(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+def _ultimo_messaggio(user_id, character_id):
+    """Timestamp (epoch) dell'ultimo messaggio della coppia utente+personaggio."""
+    from db import get_conn, put_conn
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT EXTRACT(EPOCH FROM MAX(timestamp)) AS ultimo FROM messages WHERE user_id=%s AND character_id=%s",
+            (user_id, character_id),
+        )
+        riga = cur.fetchone()
+        if not riga:  # il cursore restituisce righe-dizionario
+            return 0.0
+        valore = riga["ultimo"] if "ultimo" in riga else list(riga.values())[0]
+        return float(valore) if valore else 0.0
+    except Exception:
+        return 0.0
+    finally:
+        put_conn(conn)
 
 
 @router.post("/transcribe")

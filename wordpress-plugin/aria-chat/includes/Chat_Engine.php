@@ -24,6 +24,7 @@ class Aria_Chat_Engine {
         add_action('wp_ajax_nopriv_aria_chat_logout', array($this, 'ajax_logout'));
         add_action('wp_ajax_aria_chat_send', array($this, 'ajax_send_message'));
         add_action('wp_ajax_aria_chat_stream', array($this, 'ajax_send_stream'));
+        add_action('wp_ajax_aria_chat_opening', array($this, 'ajax_chat_opening'));
         add_action('wp_ajax_nopriv_aria_chat_send', array($this, 'ajax_send_message'));
         add_action('wp_ajax_aria_chat_characters', array($this, 'ajax_get_characters'));
         add_action('wp_ajax_nopriv_aria_chat_characters', array($this, 'ajax_get_characters'));
@@ -185,6 +186,61 @@ class Aria_Chat_Engine {
      * riverbera, svuotando i buffer a ogni pezzo. Se qualcosa non va, il client
      * ricade da solo sull'invio normale (`aria_chat_send`).
      */
+
+    /** Apertura automatica della chat da parte del personaggio (ponte SSE). */
+    public function ajax_chat_opening() {
+        while (ob_get_level() > 0) {
+            @ob_end_flush();
+        }
+        header('Content-Type: text/event-stream; charset=utf-8');
+        header('Cache-Control: no-cache, no-transform');
+        header('X-Accel-Buffering: no');
+
+        $character_id = sanitize_text_field($_POST['character'] ?? '');
+        $current_user = wp_get_current_user();
+        $username = sanitize_text_field($_POST['username'] ?? (($current_user && $current_user->exists()) ? $current_user->user_login : 'Ospite'));
+
+        if (!$character_id) {
+            echo "event: skip\ndata: {}\n\n";
+            exit;
+        }
+        if (!$this->auth_manager->ensure_authenticated()) {
+            echo "event: skip\ndata: {}\n\n";
+            exit;
+        }
+        $token = $this->auth_manager->get_access_token();
+        if (!$token) {
+            echo "event: skip\ndata: {}\n\n";
+            exit;
+        }
+        $this->api_client->set_access_token($token);
+
+        $payload = wp_json_encode(array('character' => $character_id, 'username' => $username));
+        $resto = '';
+        $ch = curl_init(rtrim($this->api_client->get_base_url(), '/') . '/chat/opening');
+        curl_setopt_array($ch, array(
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Authorization: Bearer ' . $token, 'Accept: text/event-stream'),
+            CURLOPT_TIMEOUT => 240,
+            CURLOPT_WRITEFUNCTION => function ($curl, $pezzo) use (&$resto) {
+                $resto .= $pezzo;
+                while (($pos = strpos($resto, "\n\n")) !== false) {
+                    echo substr($resto, 0, $pos + 2);
+                    $resto = substr($resto, $pos + 2);
+                    @flush();
+                }
+                return strlen($pezzo);
+            },
+        ));
+        curl_exec($ch);
+        curl_close($ch);
+        if ($resto !== '') {
+            echo $resto;
+        }
+        exit;
+    }
+
     public function ajax_send_stream() {
         while (ob_get_level() > 0) {
             @ob_end_flush();

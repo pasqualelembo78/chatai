@@ -40,6 +40,7 @@
         if (preset && preset.value) {
             currentCharacter = preset.value;
             loadAvgResponseTime(currentCharacter);
+            apriConversazione(currentCharacter);
             // Seleziona nell'option del select se esiste
             var $sel = $('#aria-character-select');
             if ($sel.length) {
@@ -434,6 +435,7 @@
         $input.val('');
         $input.css('height', 'auto');
         window.ariaLastChar = charId;
+        window.ariaUserSent = true;   // interrompe una eventuale apertura in corso
         showProgressBar();
         // Rete di sicurezza: nessuna barra puo' restare appesa all'infinito
         setTimeout(hideProgressBar, 180000);
@@ -448,6 +450,91 @@
         data.append('user_id', userId);
 
         inviaInStreaming(ajaxUrl, data);
+    }
+
+
+    /**
+     * Apertura automatica: il personaggio scrive per primo.
+     * Il template della stanza appare subito (0 ms); il modello lo riscrive in
+     * streaming e lo sostituisce. Non riapre se la conversazione è recente.
+     */
+    function apriConversazione(charId) {
+        if (!charId) return;
+        var chiave = 'aria_open_' + charId;
+        var ultimo = parseInt(localStorage.getItem(chiave) || '0', 10);
+        if (ultimo && (Date.now() - ultimo) < 30 * 60 * 1000) return;
+
+        window.ariaUserSent = false;
+        var $bolla = null;
+        var $testo = null;
+        var parziale = '';
+
+        function mostra(testo) {
+            if (!parziale) {
+                $bolla = $('<div class="aria-message aria-message-ai aria-message-opening"><div class="aria-message-content"></div><div class="aria-message-meta">' + new Date().toLocaleTimeString() + '</div></div>');
+                $messages.append($bolla);
+                $testo = $bolla.find('.aria-message-content');
+            }
+            parziale = testo;
+            $testo.text(parziale);
+            scrollToBottom();
+        }
+
+        var ajaxUrl = (typeof ariaChatConfig !== 'undefined' && ariaChatConfig.ajaxUrl) ? ariaChatConfig.ajaxUrl : '/wp-admin/admin-ajax.php';
+        var dati = new FormData();
+        dati.append('action', 'aria_chat_opening');
+        dati.append('character', charId);
+        dati.append('username', (typeof ariaChatConfig !== 'undefined') ? ariaChatConfig.username : '');
+
+        fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: dati, headers: { 'Accept': 'text/event-stream' } })
+            .then(function (r) {
+                if (!r.body || !r.body.getReader) return r.text().then(gestisci);
+                var reader = r.body.getReader();
+                var decoder = new TextDecoder('utf-8');
+                var buffer = '';
+                function leggi() {
+                    return reader.read().then(function (res) {
+                        if (res.done) { if (buffer.trim().charAt(0) === '{') gestisci(buffer); return; }
+                        buffer += decoder.decode(res.value, { stream: true });
+                        var p2;
+                        while ((p2 = buffer.indexOf('\n\n')) !== -1) {
+                            gestisci(buffer.slice(0, p2) + '\n\n');
+                            buffer = buffer.slice(p2 + 2);
+                        }
+                        return leggi();
+                    });
+                }
+                return leggi();
+            })
+            .catch(function () { /* apertura fallita: resta la chat vuota */ });
+
+        function gestisci(corpo) {
+            if (!corpo) return;
+            if (corpo.trim().charAt(0) === '{') {
+                try { if (JSON.parse(corpo).skip) return; } catch (e) {}
+            }
+            corpo.split('\n\n').forEach(function (frame) {
+                if (!frame.trim()) return;
+                var evento = 'message', dati2 = '';
+                frame.split('\n').forEach(function (riga) {
+                    if (riga.indexOf('event:') === 0) evento = riga.slice(6).trim();
+                    else if (riga.indexOf('data:') === 0) dati2 += riga.slice(5).trim();
+                });
+                if (!dati2) return;
+                var obj; try { obj = JSON.parse(dati2); } catch (e) { return; }
+                if (window.ariaUserSent) return;   // l'utente ha preso la parola
+                if (evento === 'template') mostra(obj.text || '');
+                else if (evento === 'delta') mostra(parziale + (obj.t || ''));
+                else if (evento === 'final') {
+                    if ($testo) {
+                        $bolla.removeClass('aria-message-opening');
+                        $testo.text(obj.text || parziale);
+                    }
+                    localStorage.setItem(chiave, String(Date.now()));
+                    scrollToBottom();
+                }
+            });
+        }
     }
 
     /**
