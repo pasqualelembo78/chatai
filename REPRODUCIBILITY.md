@@ -431,3 +431,16 @@ backend/chat_engine.py (auto-save compact summary)
   per stanza e meno duplicazione. Restano intro, card e FAQ.
 - Cache Redis per categoria (`aria_char_list`), pagina personaggio servita in ~0,25 s.
 - Verificato: stanza 200 senza chat, FAQ e 210 card; campione di 8 pagine su 8 categorie tutte 200.
+
+## 35) Misurazione, peso, pagine di fiducia, anteprime social, menu (2026-11-03)
+- GA4: eventi `chat_aperta`, `messaggio_inviato`, `prova_limite`, `registrazione`, `errore_chat`
+  in `aria-chat.js` tramite `traccia()` (usa `gtag` se presente). Si attivano appena colleghi
+  la proprietà da Site Kit: al momento GA4 non è collegata, quindi non parte nulla.
+- Stanze paginate dal server: 60 card nel markup + `aria_chat_grid_more` in AJAX.
+  Peso pagina 112 KB → 75 KB.
+- Create le pagine `come-funziona` e `personaggi-inventati` (quest'ultima dichiara nomi e
+  biografie fittizi, senza diritti di terzi) con link nel footer in "Naviga".
+- Voce di menu "Chat con i personaggi" → archivio stanze.
+- Anteprime social: 24 immagini 1200x630 generate con ImageMagick (il generatore AI è senza
+  crediti), impostate come immagine in evidenza e stampate come `og:image`/`twitter:image`
+  per stanze e pagine personaggio.

@@ -407,6 +407,31 @@ function aria_char_page_testo($c, $stadio) {
     );
 }
 
+
+/**
+ * Anteprima social delle stanze: usa l'immagine in evidenza (generata per categoria).
+ * Yoast non la emette per questo tipo di contenuto, quindi la scriviamo noi.
+ */
+function aria_social_image() {
+    if (!is_singular('stanza')) {
+        return;
+    }
+    $id = get_post_thumbnail_id(get_queried_object_id());
+    if (!$id) {
+        return;
+    }
+    $url = wp_get_attachment_image_url($id, 'full');
+    if (!$url) {
+        return;
+    }
+    printf('<meta property="og:image" content="%s" />' . "\n", esc_url($url));
+    printf('<meta property="og:image:width" content="1200" />' . "\n");
+    printf('<meta property="og:image:height" content="630" />' . "\n");
+    printf('<meta name="twitter:card" content="summary_large_image" />' . "\n");
+    printf('<meta name="twitter:image" content="%s" />' . "\n", esc_url($url));
+}
+add_action('wp_head', 'aria_social_image', 6);
+
 function aria_rewrite_personaggi() {
     add_rewrite_rule('^stanza/([^/]+)/([^/]+)/?$', 'index.php?stanza=$matches[1]&personaggio=$matches[2]', 'top');
 }

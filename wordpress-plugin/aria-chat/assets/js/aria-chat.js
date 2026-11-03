@@ -453,6 +453,7 @@
         $input.val('');
         $input.css('height', 'auto');
         window.ariaLastChar = charId;
+        traccia('messaggio_inviato', { personaggio: charId, stanza: (config && config.category) || '' });
         window.ariaUserSent = true;   // interrompe una eventuale apertura in corso
         showProgressBar();
         // Rete di sicurezza: nessuna barra puo' restare appesa all'infinito
@@ -483,6 +484,7 @@
         if (ultimo && (Date.now() - ultimo) < 30 * 60 * 1000) return;
 
         window.ariaUserSent = false;
+        traccia('chat_aperta', { personaggio: charId });
         showProgressBar('Caricamento personaggio...');
         setTimeout(function () { if (!parziale) hideProgressBar(); }, 2500);
         var $bolla = null;
@@ -560,6 +562,16 @@
 
 
 
+
+    /**
+     * Eventi Analytics (GA4 via Site Kit). Se gtag non c'è non succede nulla:
+     * gli eventi iniziano a funzionare appena colleghi la proprietà.
+     */
+    function traccia(nome, parametri) {
+        if (typeof window.gtag !== 'function') return;
+        window.gtag('event', nome, parametri || {});
+    }
+
     /** Apre la sessione di prova (4 messaggi) per chi non è registrato. */
     function avviaProva() {
         ajaxPost({ action: 'aria_chat_guest' }, function (r) {
@@ -570,6 +582,7 @@
     }
 
     function fineProva() {
+        traccia('prova_limite');
         hideProgressBar();
         addSystemMessage('Prova terminata. Accedi o registrati per continuare: la conversazione resta salvata.');
         showLoginModal();

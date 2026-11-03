@@ -28,6 +28,8 @@ class Aria_Chat_Engine {
         add_action('wp_ajax_aria_chat_regenerate', array($this, 'ajax_regenerate'));
         add_action('wp_ajax_aria_chat_export', array($this, 'ajax_export'));
         add_action('wp_ajax_nopriv_aria_chat_guest', array($this, 'ajax_chat_guest'));
+        add_action('wp_ajax_nopriv_aria_chat_grid_more', array($this, 'ajax_grid_more'));
+        add_action('wp_ajax_aria_chat_grid_more', array($this, 'ajax_grid_more'));
         add_action('wp_ajax_aria_chat_guest', array($this, 'ajax_chat_guest'));
         add_action('wp_ajax_nopriv_aria_chat_send', array($this, 'ajax_send_message'));
         add_action('wp_ajax_nopriv_aria_chat_stream', array($this, 'ajax_send_stream'));
@@ -415,6 +417,38 @@ class Aria_Chat_Engine {
         $this->auth_manager->save_tokens($dati['access_token'] ?? '', $dati['refresh_token'] ?? '');
         $this->auth_manager->save_persistent_token($dati['persistent_token'] ?? '');
         return !empty($dati['persistent_token']);
+    }
+
+
+    /** Blocco successivo di card della griglia (paginazione dal server). */
+    public function ajax_grid_more() {
+        $cat = sanitize_title($_POST['category'] ?? '');
+        $offset = max(0, (int) ($_POST['offset'] ?? 0));
+        $passo = min(120, max(12, (int) ($_POST['step'] ?? 60)));
+        if (!$cat) {
+            wp_die('');
+        }
+        $personaggi = array_slice(aria_grid_characters($cat), $offset, $passo);
+        $base = trailingslashit(get_post_type_archive_link('stanza'));
+        $stanza = get_page_by_path($cat, OBJECT, 'stanza');
+        $room_url = $stanza ? get_permalink($stanza) : $base;
+        ob_start();
+        foreach ($personaggi as $c) {
+            $link = !empty($c['slug'])
+                ? trailingslashit($room_url) . $c['slug'] . '/'
+                : add_query_arg('char', rawurlencode($c['id']), $room_url);
+            $desc = trim(preg_replace('/^' . preg_quote($c['name'], '/') . '\s*[—–-]\s*/u', '', $c['desc']));
+            printf(
+                '<a class="aria-character-card" href="%s" title="Chatta con %s"><div class="aria-character-avatar">%s</div><h3>%s</h3><p>%s</p></a>',
+                esc_url($link),
+                esc_attr($c['name']),
+                esc_html($c['avatar']),
+                esc_html($c['name']),
+                esc_html($desc)
+            );
+        }
+        echo ob_get_clean();
+        wp_die();
     }
 
     /** Quanti messaggi può scrivere chi non è registrato. */

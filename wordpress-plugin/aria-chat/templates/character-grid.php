@@ -62,15 +62,14 @@ $room_url = get_permalink();
         <p class="aria-grid-empty">Nessun personaggio trovato per questa categoria<?php echo $cat_slug ? ': ' . esc_html($cat_slug) : ' (shortcode senza category)'; ?>.</p>
     <?php else: ?>
         <div class="aria-character-grid">
-            <?php foreach ($chars as $i => $c):
+            <?php foreach (array_slice($chars, 0, $per_blocco) as $i => $c):
                 // La descrizione inizia con il nome: nella card il nome è già sopra
                 $card_desc = trim(preg_replace('/^' . preg_quote($c['name'], '/') . '\s*[—–-]\s*/u', '', $c['desc']));
-                $nascosta = $i >= $per_blocco ? ' aria-card-hidden' : '';
                 $link_card = !empty($c['slug'])
                     ? trailingslashit($room_url) . $c['slug'] . '/'
                     : add_query_arg('char', rawurlencode($c['id']), $room_url);
             ?>
-            <a class="aria-character-card<?php echo $nascosta; ?>" href="<?php echo esc_url($link_card); ?>" title="Chatta con <?php echo esc_attr($c['name']); ?>">
+            <a class="aria-character-card" href="<?php echo esc_url($link_card); ?>" title="Chatta con <?php echo esc_attr($c['name']); ?>">
                 <div class="aria-character-avatar"><?php echo esc_html($c['avatar']); ?></div>
                 <h3><?php echo esc_html($c['name']); ?></h3>
                 <p><?php echo esc_html($card_desc); ?></p>
@@ -79,7 +78,7 @@ $room_url = get_permalink();
         </div>
         <?php if ($total_chars > $per_blocco): ?>
             <div class="aria-grid-more">
-                <button type="button" id="aria-show-more" class="aria-show-more" data-step="<?php echo (int) $per_blocco; ?>" data-total="<?php echo (int) $total_chars; ?>">
+                <button type="button" id="aria-show-more" class="aria-show-more" data-step="<?php echo (int) $per_blocco; ?>" data-total="<?php echo (int) $total_chars; ?>" data-categoria="<?php echo esc_attr($cat_slug); ?>">
                     Mostra altri <?php echo (int) $per_blocco; ?>
                 </button>
                 <span class="aria-grid-shown" id="aria-grid-shown"><?php echo (int) $per_blocco; ?> di <?php echo (int) $total_chars; ?></span>
@@ -87,6 +86,41 @@ $room_url = get_permalink();
         <?php endif; ?>
     <?php endif; ?>
 </div>
+
+
+<script>
+(function () {
+    // Le card arrivano a blocchi dal server: la stanza non porta 200 link in una volta
+    var piu = document.getElementById('aria-show-more');
+    var mostrate = document.getElementById('aria-grid-shown');
+    if (!piu) return;
+    piu.addEventListener('click', function () {
+        var passo = parseInt(piu.getAttribute('data-step'), 10) || 60;
+        var totale = parseInt(piu.getAttribute('data-total'), 10) || 0;
+        var categoria = piu.getAttribute('data-categoria') || '';
+        var viste = document.querySelectorAll('.aria-character-card').length;
+        piu.disabled = true;
+        var corpo = new FormData();
+        corpo.append('action', 'aria_chat_grid_more');
+        corpo.append('category', categoria);
+        corpo.append('offset', viste);
+        corpo.append('step', passo);
+        fetch((window.ariaChatConfig && ariaChatConfig.ajaxUrl) || '/wp-admin/admin-ajax.php', {
+            method: 'POST', credentials: 'same-origin', body: corpo
+        })
+            .then(function (r) { return r.text(); })
+            .then(function (html) {
+                var griglia = document.querySelector('.aria-character-grid');
+                if (griglia) griglia.insertAdjacentHTML('beforeend', html);
+                var ora = document.querySelectorAll('.aria-character-card').length;
+                if (mostrate) mostrate.textContent = ora + ' di ' + totale;
+                piu.disabled = false;
+                if (ora >= totale && piu.parentNode) piu.parentNode.removeChild(piu);
+            })
+            .catch(function () { piu.disabled = false; });
+    });
+})();
+</script>
 
 <?php if (!empty($seo_stanza['faq'])): ?>
 <section class="aria-room-faq">
