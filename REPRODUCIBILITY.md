@@ -463,3 +463,14 @@ backend/chat_engine.py (auto-save compact summary)
   e link): è la pagina che si cita quando qualcuno parla del progetto.
 - `BACKLINK.md`: piano in 3 fasi (directory, blog di nicchia, Reddit), dati pronti da copiare,
   due template di contatto, cosa evitare, misurazione. I link esterni vanno inviati a mano.
+
+## 38) Riduzione della scala in sitemap (2026-11-03)
+- 5.072 pagine personaggio in 24 sitemap erano troppe per un sito senza autorità: Google tende a
+  lasciarle in "trovate, non indicizzate" e il crawl si satura.
+- Ora nell'indice c'è UNA sitemap `?aria_char_sitemap=top` con **360 personaggi** (15 per
+  categoria, scelti per dati completi: mestiere e carattere). Le altre sitemap per categoria
+  restano raggiungibili a mano ma non sono più annunciate.
+- Le 5.072 pagine restano tutte linkate dalle card delle stanze: Google le scopre col tempo,
+  senza che gliele si dichiari tutte insieme.
+- Sitemap da inviare in Search Console: **`sitemap_index.xml`** (indice), che ora contiene 7 voci:
+  post, pagine, stanze, video, categorie, pv_categoria e la selezione personaggi.

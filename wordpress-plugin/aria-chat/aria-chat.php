@@ -547,7 +547,39 @@ function aria_char_sitemap() {
 add_action('template_redirect', 'aria_char_sitemap', 1);
 
 /** Elenco URL delle pagine personaggio (per la sitemap). */
+function aria_char_sitemap_top($max = 360) {
+    $scelti = array();
+    $per_categoria = max(2, (int) floor($max / 24));
+    foreach ((array) glob(aria_grid_data_dir() . '/*.json') as $f) {
+        if (basename($f) === 'categories.json') {
+            continue;
+        }
+        $cat = basename($f, '.json');
+        $righe = json_decode((string) file_get_contents($f), true) ?: array();
+        usort($righe, function ($a, $b) {
+            $qa = (!empty($a['job']) ? 2 : 0) + (strlen((string) ($a['personality'] ?? '')) >= 90 ? 1 : 0);
+            $qb = (!empty($b['job']) ? 2 : 0) + (strlen((string) ($b['personality'] ?? '')) >= 90 ? 1 : 0);
+            return $qb <=> $qa;
+        });
+        $presi = 0;
+        foreach ($righe as $c) {
+            if (empty($c['slug']) || $presi >= $per_categoria) {
+                continue;
+            }
+            $scelti[] = array(
+                'url'  => home_url('/stanza/' . $cat . '/' . $c['slug'] . '/'),
+                'data' => gmdate('Y-m-d', filemtime($f)),
+            );
+            $presi++;
+        }
+    }
+    return $scelti;
+}
+
 function aria_grid_character_slugs($solo = '') {
+    if ($solo === 'top') {
+        return aria_char_sitemap_top();
+    }
     $urls = array();
     foreach ((array) glob(aria_grid_data_dir() . '/*.json') as $f) {
         if (basename($f) === 'categories.json') {
@@ -572,12 +604,8 @@ function aria_grid_character_slugs($solo = '') {
 }
 
 function aria_char_sitemap_index($index) {
-    foreach (aria_room_seo_data() as $cat => $null) {
-        if (!file_exists(aria_char_data_file($cat))) {
-            continue;
-        }
-        $index .= '<sitemap><loc>' . esc_url(home_url('/?aria_char_sitemap=' . $cat)) . '</loc><lastmod>' . gmdate('c') . '</lastmod></sitemap>' . "\n";
-    }
+    // solo i personaggi con dati completi: gli altri si scoprono dai link delle stanze
+    $index .= '<sitemap><loc>' . esc_url(home_url('/?aria_char_sitemap=top')) . '</loc><lastmod>' . gmdate('c') . '</lastmod></sitemap>' . "\n";
     return $index;
 }
 add_filter('wpseo_sitemap_index', 'aria_char_sitemap_index', 20);
