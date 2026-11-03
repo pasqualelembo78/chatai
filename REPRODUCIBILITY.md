@@ -339,3 +339,12 @@ backend/chat_engine.py (auto-save compact summary)
 - Verificato: scarica e libera memoria; con una generazione attiva resta a guardare e logga
   "non scarico"; il messaggio dopo ricarica (33 s).
 - Log: `/var/log/chatai_watchdog.log`, auto-compattato oltre 500 righe.
+
+## 27) Asciugatura estesa a tutti i personaggi (2026-11-03)
+- `slim_characters.py --tutte`: applicato alle 23 categorie rimanenti (amanti-segreti era già
+  stata fatta come prova). JSON totale 31 MB -> 13 MB.
+- Verificato dopo l'applicazione: 5.072 personaggi, 24 categorie, 0 campi vuoti (id, nome,
+  categoria, descrizione, essenza, personalità, tag, contesto stanza, ruolo, intimacy_config,
+  core_traits), 0 categorie vuote, indice 5.072 card, stanze 200 con card e paginazione.
+- Prompt per personaggio ~1.000 caratteri (erano ~4.600): chat di prova su bdsm e milf
+  dichiarano la stanza e restano in tema, 20-24 s a freddo.
