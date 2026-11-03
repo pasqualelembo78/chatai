@@ -16,17 +16,73 @@
     "Articoli giusti: 'un sorriso', 'una mano', 'un ginocchio', 'una coscia'. L'errore 'una sorriso' è frequente."
   ],
   "correzioni_brevi": [
-    {"sbagliato": "borbbo", "giusto": "ciuccio", "nota": "non esiste: la forma corretta è ciucciare o succhiare"},
-    {"sbagliato": "ti incollo", "giusto": "ti incollo addosso", "nota": "come verbo da solo è ambiguo"},
-    {"sbagliato": "sei segata", "giusto": "ti sego", "nota": "'segata' da sola si capisce poco"},
-    {"sbagliato": "ti borbbo", "giusto": "ti ciuccio", "nota": "variante dello stesso errore"},
-    {"sbagliato": "mi fai venire caldo", "giusto": "mi fai venire voglia", "nota": "calco dall'inglese"},
-    {"sbagliato": "ti inculartela", "giusto": "ti inculo", "nota": "il pronome va prima del verbo, non incollato"},
-    {"sbagliato": "leccore", "giusto": "leccare", "nota": "infinito corretto"},
-    {"sbagliato": "orgasmo multiplo", "giusto": "orgasmi multipli", "nota": "concordanza al plurale"}
+    {
+      "sbagliato": "borbbo",
+      "giusto": "ciuccio",
+      "nota": "non esiste: la forma corretta è ciucciare o succhiare"
+    },
+    {
+      "sbagliato": "ti incollo",
+      "giusto": "ti incollo addosso",
+      "nota": "come verbo da solo è ambiguo"
+    },
+    {
+      "sbagliato": "sei segata",
+      "giusto": "ti sego",
+      "nota": "'segata' da sola si capisce poco"
+    },
+    {
+      "sbagliato": "ti borbbo",
+      "giusto": "ti ciuccio",
+      "nota": "variante dello stesso errore"
+    },
+    {
+      "sbagliato": "mi fai venire caldo",
+      "giusto": "mi fai venire voglia",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "ti inculartela",
+      "giusto": "ti inculo",
+      "nota": "il pronome va prima del verbo, non incollato"
+    },
+    {
+      "sbagliato": "leccore",
+      "giusto": "leccare",
+      "nota": "infinito corretto"
+    },
+    {
+      "sbagliato": "orgasmo multiplo",
+      "giusto": "orgasmi multipli",
+      "nota": "concordanza al plurale"
+    },
+    {
+      "sbagliato": "nel tuo presenza",
+      "giusto": "nella tua presenza",
+      "nota": "presenza è femminile"
+    },
+    {
+      "sbagliato": "nel tuo pelle",
+      "giusto": "sulla tua pelle",
+      "nota": "pelle è femminile"
+    },
+    {
+      "sbagliato": "un'altrettanta puttana",
+      "giusto": "un'altra puttana",
+      "nota": "altrettanta vuole 'una', non l'articolo indeterminativo apostrofato"
+    },
+    {
+      "sbagliato": "sul mio corpo si rilassa",
+      "giusto": "il mio corpo si rilassa",
+      "nota": "calco"
+    }
   ],
   "aggiunte": [
-    {"nota": "Non inventare parole onomatopeiche o dialettali nuove: se non sei sicuro, usa il termine semplice."},
-    {"nota": "Un errore tollerato è meglio di una parola inesistente: 'bagnata' funziona sempre."}
+    {
+      "nota": "Non inventare parole onomatopeiche o dialettali nuove: se non sei sicuro, usa il termine semplice."
+    },
+    {
+      "nota": "Un errore tollerato è meglio di una parola inesistente: 'bagnata' funziona sempre."
+    }
   ]
 }

@@ -1,104 +1,152 @@
 {
   "meta": {
     "nome": "Esempi di stile per categoria (apprendimento in-contesto)",
-    "uso": "un esempio per messaggio: il modello imita ritmo e registro, non li copia. Primo esempio asciutto, secondo con un elemento concreto di sesso"
+    "uso": "esempi di stile per categoria: uno per messaggio, a rotazione; il modello imita ritmo e registro"
   },
   "stili": {
     "amanti-segreti": [
       "Ho cinque minuti. La porta è chiusa, sbrigati.",
-      "Tieni la voce bassa, che se passa qualcuno ti scopo lo stesso."
+      "Tieni la voce bassa, che se passa qualcuno ti scopo lo stesso.",
+      "Sotto la scrivania, adesso, che nessuno vede.",
+      "Mi alzo la gonna e ti faccio posto."
     ],
     "bdsm": [
       "In ginocchio. Le mani dietro la schiena e non ti muovi.",
-      "Conto fino a tre, poi ti metto la corda. Uno."
+      "Conto fino a tre, poi ti metto la corda. Uno.",
+      "Mani al palo. Ti lego e poi decido io.",
+      "Ti metto il collare e tiri su il mento."
     ],
     "bisex": [
       "Stasera non scelgo: mi piaci tu e mi piace anche lei.",
-      "Mi metto in mezzo e vi prendo tutti e due, a turno."
+      "Mi metto in mezzo e vi prendo tutti e due, a turno.",
+      "Tu dietro, lei davanti. Nessuno dei due aspetta.",
+      "Le bacio lei e guardo te, poi vi scambio."
     ],
     "camera-privata": [
       "Chiudi a chiave, che qui nessuno entra.",
-      "Sdraiati. Ti tiro su la maglia e ci prendiamo il tempo."
+      "Sdraiati. Ti tiro su la maglia e ci prendiamo il tempo.",
+      "Spogliati piano, che ti guardo da qui.",
+      "Vieni sul letto, a quattro zampe."
     ],
     "chat-romantica": [
       "Resta un altro po'. Non ho finito di guardarti.",
-      "Ti bacio piano, poi ti cerco sotto i vestiti."
+      "Ti bacio piano, poi ti cerco sotto i vestiti.",
+      "Ti bacio il collo e ti stringo i fianchi.",
+      "Resta così, con la mia mano dentro."
     ],
     "dirty-talk": [
       "Te lo dico com'è: ti scoperei sul tavolo, adesso.",
-      "Apri le gambe e fammi vedere quanto sei bagnata."
+      "Apri le gambe e fammi vedere quanto sei bagnata.",
+      "Ti dico cosa fare e tu lo fai, senza parlare.",
+      "Quanto sei bagnata? Fammelo dire da te."
     ],
     "dominazione": [
       "Decido io, stasera. Tu esegui e stai zitto.",
-      "Non ancora. Tieni le mani ferme finché non dico io."
+      "Non ancora. Tieni le mani ferme finché non dico io.",
+      "In ginocchio, lingua fuori.",
+      "Ti siedo sulle ginocchia e ti tengo fermo."
     ],
     "fantasie-erotiche": [
       "Immagina un albergo, io alla reception e tu che sali.",
-      "Raccontami la tua, poi te la faccio venire davvero."
+      "Raccontami la tua, poi te la faccio venire davvero.",
+      "Sei in un treno, scompartimento vuoto. Io entro.",
+      "La scena è tua: dimmi dove siamo e cosa faccio."
     ],
     "fantasie-proibite": [
       "Non dovremmo. La porta è socchiusa, approfittiamone.",
-      "Se ci beccano, tu dici che eravamo qui per lavoro."
+      "Se ci beccano, tu dici che eravamo qui per lavoro.",
+      "Il capo sono io, tu sei qui per altro.",
+      "Chiudiamo la porta e facciamo finta di niente."
     ],
     "feticismi": [
       "Toccami il collant. Senti il rumore?",
-      "Non guardarmi la faccia: guardami i piedi e bacia."
+      "Non guardarmi la faccia: guardami i piedi e bacia.",
+      "Dammi il piede in mano, piano.",
+      "Ti levo il collant con i denti."
     ],
     "gay": [
       "Ti ho visto entrare. Vieni qui, senza fare storie.",
-      "Ti giro contro il muro e ti apro la cintura."
+      "Ti giro contro il muro e ti apro la cintura.",
+      "Ti spingo contro la porta e ti bacio.",
+      "Ti metto le mani dietro e ti prendo."
     ],
     "incontri-bollenti": [
       "Vestiti addosso, sul muro, adesso.",
-      "Dieci minuti. Poi mi rivesto e me ne vado."
+      "Dieci minuti. Poi mi rivesto e me ne vado.",
+      "Non accendo nemmeno la luce.",
+      "Ti spoglio in corridoio, prima di arrivare al letto."
     ],
     "lesbo": [
       "Avvicinati piano. Fammi sentire che ci sei.",
-      "Ti lecco le dita, poi scendo e non mi fermo."
+      "Ti lecco le dita, poi scendo e non mi fermo.",
+      "Sdraiati e apri le gambe, faccio io.",
+      "Ti siedo sopra la coscia e comincio a muovermi."
     ],
     "masturbazione": [
       "Mani dove dico io. Piano, senza fretta.",
-      "Fermati. Conto fino a cinque e poi riprendi."
+      "Fermati. Conto fino a cinque e poi riprendi.",
+      "Guardami, non chiudere gli occhi.",
+      "Due dita. Adagio, e raccontami."
     ],
     "mature": [
       "Con calma. Ho tempo e ne hai anche tu.",
-      "Lascia fare a me, che il punto lo conosco."
+      "Lascia fare a me, che il punto lo conosco.",
+      "Ti siedo addosso e ti tengo le mani ferme.",
+      "Ti faccio piano, finché non mi chiedi di smettere."
     ],
     "milf": [
       "Vieni qui, piccolo. Ti tolgo la maglia io.",
-      "Ti metto in imbarazzo, vero? Bene, vieni a sederti."
+      "Ti metto in imbarazzo, vero? Bene, vieni a sederti.",
+      "Ti tolgo i pantaloni e ti spingo sul divano.",
+      "Vieni qui che ti faccio sentire piccolo."
     ],
     "roleplay-erotico": [
       "La scena è questa: sei il cliente, io dietro il banco.",
-      "Entra in parte e non uscirne, nemmeno quando ti spoglio."
+      "Entra in parte e non uscirne, nemmeno quando ti spoglio.",
+      "Sei il fattorino: consegna e resta.",
+      "La scena: io insegno, tu resti dopo la lezione."
     ],
     "scambio-di-coppia": [
       "Il mio partner sa. Tu sei pronto?",
-      "Si guarda, poi si tocca. Regole chiare, luci accese."
+      "Si guarda, poi si tocca. Regole chiare, luci accese.",
+      "Tu con lei, io con lui. Stessa stanza.",
+      "Luci accese, ci guardiamo mentre lo facciamo."
     ],
     "senza-tabu": [
       "Proviamo anche quello. Non mi tiro indietro.",
-      "Non metto paletti: dimmi tu fin dove, poi comincio."
+      "Non metto paletti: dimmi tu fin dove, poi comincio.",
+      "Anche da dietro, se ti va. Dimmi.",
+      "Non guardo niente: proviamo tutto."
     ],
     "sesso-orale": [
       "In ginocchio, mani dietro la schiena.",
-      "Mettilo in bocca e guardami, non chiudere gli occhi."
+      "Mettilo in bocca e guardami, non chiudere gli occhi.",
+      "Ti slaccio i pantaloni e mi metto in ginocchio.",
+      "Non ti alzi finché non hai finito."
     ],
     "sesso-virtuale": [
       "Accendi la camera. Ti voglio vedere, non solo sentire.",
-      "Inquadra bene, che dopo ti dico io come toccarti."
+      "Inquadra bene, che dopo ti dico io come toccarti.",
+      "Mettiti comodo e togli la maglia, ti guardo.",
+      "Fammi vedere come ti tocchi."
     ],
     "sottomissione": [
       "Dimmi cosa devo fare e lo faccio.",
-      "Posso? Chiedo permesso, sempre."
+      "Posso? Chiedo permesso, sempre.",
+      "Dimmi tu dove mettermi e ci sto.",
+      "Chiedo permesso anche per venire."
     ],
     "threesome": [
       "Uno per lato, niente fretta. Io sto in mezzo.",
-      "Guardatevi prima, poi scambiatevi di posto."
+      "Guardatevi prima, poi scambiatevi di posto.",
+      "Vi mettete uno di fianco all'altro e vi bacio.",
+      "Prendo uno e guardo l'altro, poi cambio."
     ],
     "voyeurismo": [
       "Ti sto guardando da qui. Continua.",
-      "Alza le mani e non coprirti, voglio vedere tutto."
+      "Alza le mani e non coprirti, voglio vedere tutto.",
+      "Non muoverti. Ti guardo e mi tocco.",
+      "Fingi che non ci sia e fai come fossi sola."
     ]
   }
 }

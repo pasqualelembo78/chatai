@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "nome": "Regole grammaticali e errori noti",
+    "uso": "correzioni brevi applicabili al testo generato e regole stabili per il modello"
+  },
+  "regole": [
+    "Usa la forma corretta dei verbi: 'sborra' (non 'borbbo'), 'ti sego' (non 'sei segata'), 'ti inculo' (non 'ti inculartela').",
+    "Gli articoli seguono il genere del personaggio e dell'utente, non il caso: 'la figa', 'il cazzo', 'il culo'.",
+    "Non tradurre dall'inglese: 'fare una doccia' non 'prendere una doccia'; 'mi piace' non 'mi piace quello'.",
+    "I riflessivi: 'mi sego', 'ti tocchi', 'si spoglia'; non 'sego me' né 'tocchi te'.",
+    "Niente doppio soggetto: 'io ti scopo', non 'io ti scopo a te'.",
+    "I possessivi si usano poco nel parlato: 'la mano' prima di 'la mia mano'.",
+    "Preferisci il passato prossimo al passato remoto nelle chat.",
+    "Non accumulare avverbi: 'piano' basta, non 'molto piano davvero'.",
+    "Niente catene di verbi in fila: 'ti incolo, poi ti sego e ti scopo' va spezzato, un'azione principale per frase.",
+    "Articoli giusti: 'un sorriso', 'una mano', 'un ginocchio', 'una coscia'. L'errore 'una sorriso' è frequente."
+  ],
+  "correzioni_brevi": [
+    {
+      "sbagliato": "borbbo",
+      "giusto": "ciuccio",
+      "nota": "non esiste: la forma corretta è ciucciare o succhiare"
+    },
+    {
+      "sbagliato": "ti incollo",
+      "giusto": "ti incollo addosso",
+      "nota": "come verbo da solo è ambiguo"
+    },
+    {
+      "sbagliato": "sei segata",
+      "giusto": "ti sego",
+      "nota": "'segata' da sola si capisce poco"
+    },
+    {
+      "sbagliato": "ti borbbo",
+      "giusto": "ti ciuccio",
+      "nota": "variante dello stesso errore"
+    },
+    {
+      "sbagliato": "mi fai venire caldo",
+      "giusto": "mi fai venire voglia",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "ti inculartela",
+      "giusto": "ti inculo",
+      "nota": "il pronome va prima del verbo, non incollato"
+    },
+    {
+      "sbagliato": "leccore",
+      "giusto": "leccare",
+      "nota": "infinito corretto"
+    },
+    {
+      "sbagliato": "orgasmo multiplo",
+      "giusto": "orgasmi multipli",
+      "nota": "concordanza al plurale"
+    },
+    {
+      "sbagliato": "nel tuo presenza",
+      "giusto": "nella tua presenza",
+      "nota": "presenza è femminile"
+    },
+    {
+      "sbagliato": "nel tuo pelle",
+      "giusto": "sulla tua pelle",
+      "nota": "pelle è femminile"
+    },
+    {
+      "sbagliato": "un'altrettanta puttana",
+      "giusto": "un'altra puttana",
+      "nota": "altrettanta vuole 'una', non l'articolo indeterminativo apostrofato"
+    },
+    {
+      "sbagliato": "sul mio corpo si rilassa",
+      "giusto": "il mio corpo si rilassa",
+      "nota": "calco"
+    }
+  ],
+  "aggiunte": [
+    {
+      "nota": "Non inventare parole onomatopeiche o dialettali nuove: se non sei sicuro, usa il termine semplice."
+    },
+    {
+      "nota": "Un errore tollerato è meglio di una parola inesistente: 'bagnata' funziona sempre."
+    }
+  ]
+}

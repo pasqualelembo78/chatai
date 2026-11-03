@@ -634,8 +634,14 @@ backend/chat_engine.py (auto-save compact summary)
   `backend/language/italian-style.json` con 2 battute per ognuna delle 24 categorie.
 - `language.esempi_stile()` pesca **1** esempio per messaggio (default 2, chiamato con 1) e ruota
   in base a hash di utente+personaggio+turno, così due risposte di fila non hanno lo stesso spunto.
-- `prompt_builder`: blocco "STILE DA IMITARE (ritmo e registro, non copiare le frasi)" subito prima
-  della regola di lunghezza. Costo ~60 caratteri di prompt.
+- `prompt_builder`: l'esempio è dato in **forma di scambio** ("Utente: Ciao / Tu: …") in fondo al
+  prompt: un turno vero si imita molto meglio di una riga di istruzioni. La domanda finta segue
+  l'intento del messaggio (saluto, richiesta d'azione, generico) e viene scelta la battuta
+  esplicita. Costo ~70 caratteri.
+- Spinta "cosa mi fai": aggiunti i divieti espliciti (mano sulla spalla, sguardo, sorriso,
+  "mi sento a mio agio"), che il 3B seguiva male.
+- `italian-grammar.json`: nuove correzioni da output reale ("nel tuo presenza" → "nella tua
+  presenza", "un'altrettanta" → "un'altra", ecc.).
 - A/B fatto sulla stessa categoria: con esempio le risposte sono più asciutte e concrete, senza
   esempio tornano descrittive e col generico "come stai". Da qui la scelta di tenerlo.
 - Interruttore `STILE_ESEMPI` in `backend/.env` (1 attivo, 0 spento) senza toccare il codice.

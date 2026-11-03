@@ -279,16 +279,6 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                 righe.append(_b)
         except Exception:
             pass
-        try:
-            _esempi = _lingua.esempi_stile(
-                character.get("category", ""),
-                int(hashlib.md5(f"{user_id}:{character.get('id','')}:{total_messages}".encode()).hexdigest()[:6], 16),
-                1,
-            )
-            if _esempi and os.environ.get("STILE_ESEMPI", "1") == "1":
-                righe.append("STILE DA IMITARE (ritmo e registro, non copiare le frasi): " + " / ".join(_esempi))
-        except Exception:
-            pass
         righe.append("MASSIMO 20 parole. Niente spiegazioni e niente annunci: scrivi cosa fai e cosa senti. "
                      "Una azione principale per risposta: se aggiungi un verbo, deve essere la conseguenza, non un elenco.")
         # spinta deterministica sui messaggi poveri: il modello tende al convenevole
@@ -296,9 +286,31 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         if re.match(r"^(ciao|ehi|hei|salve|buonasera|buongiorno|hola)\b", _breve) and len(_breve.split()) <= 3:
             righe.append("ORA: non ricambiare il saluto e basta, fai un gesto sessuale (mano, bocca, morso) e nomina una parte del corpo.")
         elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
-            righe.append("ORA: atto sessuale concreto (bocca, culo, sborra, scopare), non carezze né sguardi.")
+            righe.append("ORA: atto sessuale concreto (bocca, culo, sborra, scopare). Vietati: mano sulla spalla, sguardo, sorriso, 'mi sento a mio agio'.")
         elif len(_breve.split()) <= 2:
             righe.append("ORA: azione fisica concreta, non parole.")
+
+        # esempi in-contesto in forma di scambio: il modello piccolo imita un turno vero
+        # molto meglio di una riga di istruzioni. Uno solo, a rotazione.
+        if os.environ.get("STILE_ESEMPI", "1") == "1":
+            try:
+                _seed = int(hashlib.md5(
+                    f"{user_id}:{character.get('id', '')}:{total_messages}".encode()).hexdigest()[:6], 16)
+                _es = _lingua.esempi_stile(character.get("category", ""), _seed, 2)
+                if _es:
+                    if re.match(r"^(ciao|ehi|hei|salve|buonasera|buongiorno|hola)\b", _breve):
+                        _domanda = "Ciao"
+                    elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
+                        _domanda = "Che mi fai?"
+                    else:
+                        _domanda = "Dimmi."
+                    # saluto e richiesta diretta: uso la battuta esplicita (seconda), non quella asciutta
+                    _scelta = _es[1] if (len(_es) > 1 and _domanda != "Dimmi.") else _es[0]
+                    righe.append("ESEMPIO DI SCAMBIO (imita ritmo e registro, non copiare le parole):")
+                    righe.append(f"Utente: {_domanda}")
+                    righe.append("Tu: " + _scelta)
+            except Exception:
+                pass
         return "\n".join(righe)
 
     # Ensure Italian language for all characters
