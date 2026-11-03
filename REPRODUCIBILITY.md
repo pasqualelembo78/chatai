@@ -327,3 +327,6 @@ backend/chat_engine.py (auto-save compact summary)
 - Frontend: il 429 viene mostrato come messaggio ("Hai già una risposta in corso...") senza
   fallback inutile sull'invio normale.
 - Misura verificata: seconda richiesta concorrente rifiutata con 429 e messaggio chiaro.
+- Correzione: il rilascio del flag è nel `finally` del WORKER (sempre eseguito), non in quello
+  del generatore SSE, che può non essere chiuso: con il rilascio nel generatore il primo
+  messaggio lasciava l'utente bloccato in 429.

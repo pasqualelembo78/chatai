@@ -285,6 +285,8 @@ async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = 
         except Exception as e:  # qualunque errore va raccontato al client
             logger.exception("stream/chat errore")
             coda.put(("error", str(e)))
+        finally:
+            _libera_utente(user.user_id)
 
     threading.Thread(target=lavora, daemon=True).start()
 
@@ -329,7 +331,6 @@ async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = 
                 return
         finally:
             _esci_coda()
-            _libera_utente(user.user_id)
 
     return StreamingResponse(
         eventi(),
@@ -405,6 +406,8 @@ async def api_chat_regenerate(request: Request, body: RedoRequest, user: AuthUse
         except Exception as e:
             logger.exception("regenerate errore")
             coda.put(("error", str(e)))
+        finally:
+            _libera_utente(user.user_id)
 
     threading.Thread(target=lavora, daemon=True).start()
 
@@ -436,7 +439,6 @@ async def api_chat_regenerate(request: Request, body: RedoRequest, user: AuthUse
                 return
         finally:
             _esci_coda()
-            _libera_utente(user.user_id)
 
     return StreamingResponse(
         eventi(),
