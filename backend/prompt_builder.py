@@ -312,7 +312,9 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     if any(k in _ut for k in _detail_keywords):
         prompt += "\n\nL'utente ha chiesto approfondimento: puoi rispondere con 4-6 frasi, ma resta in personaggio e in italiano."
     else:
-        prompt += "\n\nRispondi in 1-2 frasi brevi (max 25 parole). Vai dritto al punto. Non allungarti."
+        if character.get("category") not in _CATEGORIE_ADULTE:
+            prompt += "\n\nRispondi in 1-2 frasi brevi."
+
 
     # ── Scenario engine: inject opening scenario if applicable ──
     # immediate: scenario narrativo da subito. L'utente entra in medias res.
@@ -513,8 +515,6 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
     if _ess:
         parts.append(f"Chi sei: {_ess[:240]}")
 
-    # Italian language rule — all characters MUST respond in Italian
-    parts.append("IMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue.")
 
     # ── STANZA TEMATICA (categoria) ───────────────────────────────────
     # Il personaggio sa in quale stanza è e ne segue il registro, scalando con
@@ -535,8 +535,9 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
     # ── KNOWLEDGE DOMAINS ─────────────────────────────────────────────
     if knowledge.get("expertise"):
         expertise_str = ", ".join(knowledge["expertise"][:4])
-        parts.append(f"Sei ESPERTO in: {expertise_str}.")
-        parts.append(f"Quando qualcuno ti chiede di questi argomenti, rispondi con sicurezza, competenza e dettagli. Questa è la tua area di eccellenza.")
+        parts.append(f"Competenze: {expertise_str}." if _adulto else f"Sei ESPERTO in: {expertise_str}.")
+        if not _adulto:
+            parts.append("Rispondi con competenza e dettagli su questi temi.")
 
     if knowledge.get("familiarity") and not _adulto:
         familiar_str = ", ".join(knowledge["familiarity"][:3])
@@ -548,7 +549,8 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
         parts.append(f"REGOLA FERREA: NON sei esperto in: {ignorance_str}.")
         parts.append(f"Se qualcuno ti chiede di questi argomenti, DEVI ammettere la tua ignoranza in modo chiaro e diretto. NON inventare risposte, NON improvvisare, NON dare informazioni fasulle.")
         parts.append(f"Risposte accettabili: 'Non ho la minima idea di cosa sia questo argomento, non è il mio campo', 'Chiedi a qualcuno che ne sa più di me, io non saprei come aiutarti', 'Questo è completamente fuori dalla mia competenza, preferisco non dire sciocchezze'.")
-        parts.append(f"Se l'utente insiste, ripeti che non sai, magari aggiungendo: 'Lo so che è frustrante, ma preferisco essere onesto piuttosto che inventare'.")
+        if not _adulto:
+            parts.append("Se insiste, ripeti che non sai: meglio onesti che inventare.")
 
     # ── KNOWLEDGE BOUNDARY RULE ───────────────────────────────────────
     # Nei canali adulti il recap dei limiti di conoscenza è verboso e serve poco:

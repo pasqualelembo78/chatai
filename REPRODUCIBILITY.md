@@ -271,3 +271,16 @@ backend/chat_engine.py (auto-save compact summary)
   cache. Misurato sullo stesso personaggio: 57 s a freddo, poi 19 s e 16 s.
 - Rifinitura: l'hint di intimità è stato spostato in coda al prompt COMPLETO (non solo in coda
   ai blocchi), così tutta la parte statica resta cacheabile.
+
+## 21) Alleggerimento personaggi: prova su amanti-segreti (2026-11-03)
+- Motivo: il costo di ogni risposta è la lettura del prompt; ogni campo inutile si paga in secondi.
+- `characters/slim_characters.py`: rimuove evolution, personality_depth, possessions, family,
+  education, occupation, backstory, opening_scenario, conversations, species, birth_date,
+  speaking_style, e riduce essenza (180 car.), personality (220), tag (5), competenze (3),
+  system_prompt (240). Tiene identità, stanza, descrizione, core_traits, intimacy_config.
+- Applicato SOLO a `amanti-segreti.json` come prova: JSON 1530 KB -> 487 KB, prompt medio
+  4.624 -> 3.189 caratteri (-31%). Contesto di stanza riscritto compatto.
+- `prompt_builder`: via il doppione della regola "rispondi in italiano", competenze in una riga,
+  niente riga di brevità finale ridondante nei canali adulti.
+- Misurato: prima risposta 45 s, seconda 19,7 s; il personaggio dichiara la stanza e resta
+  coerente. Rollback: `backups/amanti-segreti_pre_slim_*.json`.
