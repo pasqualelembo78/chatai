@@ -685,3 +685,12 @@ backend/chat_engine.py (auto-save compact summary)
   **unico peggioramento**, in parte dovuto a un misuratore che conta anche i "che" legittimi
   (3+ "che" per risposta: 2%→2%).
 - Fuori tema: prima "Sono le 12." nudo, ora "Sono le 00:52. Ho venti minuti, vieni qui."
+
+## 54) Memoria del runner Ollama: limite sul numero di token generati (2026-11-04)
+- Dopo ~250 richieste di prova il processo `llama-server` era cresciuto a **5.561 MB** (RAM
+  disponibile 287 MB): la cache di contesto si gonfia e non si sgonfia da sola.
+- `OLLAMA_NUM_PREDICT` era 512, mentre le risposte sono limitate a ~30 parole: portato a **200**.
+  `OLLAMA_NUM_CTX` resta 2048. Ripulite due chiavi duplicate nell'`.env`.
+- Dopo riavvio di ollama e backend: `llama-server` **2.317 MB**, disponibile **3.539 MB**,
+  latenza invariata (23-32 s), chat regolare.
+- Nota: resta attivo il watchdog RAM già presente, ma con questi valori non viene sfiorato.
