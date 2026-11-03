@@ -454,3 +454,12 @@ backend/chat_engine.py (auto-save compact summary)
 - `traccia()` ora usa `gtag` e, se non è ancora definito, accoda su `dataLayer`: nessun evento
   perso nei primi millisecondi di caricamento.
 - Verificato: Google Tag presente anche da utente autenticato, script servito con gli eventi.
+
+## 37) Base per i backlink (2026-11-03)
+- Scoperto che il blog era **vuoto**: zero articoli, quindi niente da linkare e nessun link interno
+  in uscita. Creati due articoli con link contestuali alle stanze:
+  `chat-erotiche-come-scegliere-la-stanza` e `cinque-difetti-delle-chat-erotiche`.
+- Archivio `/stanze-live/` riscritto anche come **indice descrittivo** (24 stanze con descrizione
+  e link): è la pagina che si cita quando qualcuno parla del progetto.
+- `BACKLINK.md`: piano in 3 fasi (directory, blog di nicchia, Reddit), dati pronti da copiare,
+  due template di contatto, cosa evitare, misurazione. I link esterni vanno inviati a mano.
