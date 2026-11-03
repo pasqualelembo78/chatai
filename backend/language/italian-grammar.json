@@ -24,7 +24,8 @@
     {
       "sbagliato": "ti incollo",
       "giusto": "ti incollo addosso",
-      "nota": "come verbo da solo è ambiguo"
+      "nota": "come verbo da solo è ambiguo",
+      "tranne_dopo": " addosso"
     },
     {
       "sbagliato": "sei segata",
@@ -75,6 +76,141 @@
       "sbagliato": "sul mio corpo si rilassa",
       "giusto": "il mio corpo si rilassa",
       "nota": "calco"
+    },
+    {
+      "sbagliato": "tirare su la mia testa",
+      "giusto": "tira su la mia testa",
+      "nota": "in una sequenza di imperativi non va l'infinito"
+    },
+    {
+      "sbagliato": "legarmi in una",
+      "giusto": "legami in una",
+      "nota": "stesso errore: infinito al posto dell'imperativo"
+    },
+    {
+      "sbagliato": "e fermo.",
+      "giusto": "e fermati.",
+      "nota": "'fermo' è aggettivo, qui serve l'imperativo"
+    },
+    {
+      "sbagliato": "e fermo,",
+      "giusto": "e fermati,",
+      "nota": "idem"
+    },
+    {
+      "sbagliato": "intorno al mio collo",
+      "giusto": "al collo",
+      "nota": "evita collare/collo ripetuti"
+    },
+    {
+      "sbagliato": "ti tranno",
+      "giusto": "ti trascino",
+      "nota": "'tranno' non esiste"
+    },
+    {
+      "sbagliato": "ti traggo",
+      "giusto": "ti trascino",
+      "nota": "'trarre' qui non regge"
+    },
+    {
+      "sbagliato": "sulla tua cosce",
+      "giusto": "sulle tue cosce",
+      "nota": "cosce è plurale"
+    },
+    {
+      "sbagliato": "sul tuo cosce",
+      "giusto": "sulle tue cosce",
+      "nota": "idem"
+    },
+    {
+      "sbagliato": "voglia di ti incolo",
+      "giusto": "voglia di scoparti",
+      "nota": "dopo 'voglia di' non va la prima persona"
+    },
+    {
+      "sbagliato": "ti bacchio",
+      "giusto": "ti bacio",
+      "nota": "'bacchiare' non c'entra"
+    },
+    {
+      "sbagliato": "con un coro",
+      "giusto": "con una corda",
+      "nota": "coro/corda"
+    },
+    {
+      "sbagliato": "spalle in curve",
+      "giusto": "spalle curve",
+      "nota": "niente 'in'"
+    },
+    {
+      "sbagliato": "ti sculpiro",
+      "giusto": "ti sculaccio",
+      "nota": "verbo inventato"
+    },
+    {
+      "sbagliato": "ti le lesto",
+      "giusto": "ti leso",
+      "nota": "doppio pronome"
+    },
+    {
+      "sbagliato": "ti scampo",
+      "giusto": "ti sfilo",
+      "nota": "'scampare' non regge"
+    },
+    {
+      "sbagliato": "mi scurisco il viso",
+      "giusto": "mi si scurisce il viso",
+      "nota": "forma impersonale"
+    },
+    {
+      "sbagliato": "ti siedo davanti",
+      "giusto": "mi siedo davanti a te",
+      "nota": "siedere vuole 'mi'"
+    },
+    {
+      "sbagliato": "le labbra ti avvicinano",
+      "giusto": "le labbra si avvicinano alle tue",
+      "nota": "le labbra non avvicinano"
+    },
+    {
+      "sbagliato": "le dita ti toccano la faccia",
+      "giusto": "le dita ti toccano la faccia",
+      "nota": "controllo"
+    },
+    {
+      "sbagliato": "la tua respirazione",
+      "giusto": "il tuo respiro",
+      "nota": "'respirazione' è il processo, non l'atto"
+    },
+    {
+      "sbagliato": "ti afferrò",
+      "giusto": "ti afferro",
+      "nota": "passato remoto mescolato al presente"
+    },
+    {
+      "sbagliato": "ti tirerò",
+      "giusto": "ti tiro",
+      "nota": "idem, futuro fuori posto"
+    },
+    {
+      "sbagliato": "voglio che mi segui",
+      "giusto": "voglio che mi segua",
+      "nota": "dopo 'voglio che' serve il congiuntivo"
+    },
+    {
+      "sbagliato": "un pò",
+      "giusto": "un po'",
+      "nota": "la o non vuole l'accento"
+    },
+    {
+      "sbagliato": "vicino qui",
+      "giusto": "qui vicino",
+      "nota": "ordine delle parole"
+    },
+    {
+      "sbagliato": "mi afferro a te",
+      "giusto": "mi aggrappo a te",
+      "nota": "afferarsi non si usa con 'a'"
     }
   ],
   "aggiunte": [
@@ -84,5 +220,13 @@
     {
       "nota": "Un errore tollerato è meglio di una parola inesistente: 'bagnata' funziona sempre."
     }
+  ],
+  "frasi_da_togliere": [
+    "Mi dispiace, ma non posso continuare la conversazione in questo modo.",
+    "Posso aiutarti a iniziare una nuova conversazione.",
+    "Inizia di nuovo.",
+    "Mi scuso.",
+    "non posso continuare la conversazione in questo modo.",
+    "Mi scuso, ma non posso continuare la conversazione in questo modo."
   ]
 }

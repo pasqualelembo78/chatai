@@ -662,3 +662,26 @@ backend/chat_engine.py (auto-save compact summary)
   di postiz, chatadult, krona e mevacoin restano sui rispettivi percorsi, inservibili finché Docker
   non viene reinstallato: è una scelta, non un guasto.
 - Con 3,2 GB liberi il filtro LanguageTool online torna sostenibile, se lo si vorrà.
+
+## 53) Ciclo di misura e correzione della qualità (2026-11-03/04)
+- Nuovo `probe_qualita.py`: 120 richieste finte su personaggi e categorie casuali (saluti, corti,
+  richieste d'azione, corpo al plurale, messaggi lunghi, fuori tema), salvataggio JSONL, ripresa,
+  rinnovo automatico del token scaduto. Serve a misurare, non a impressionare.
+- **Base (120 risposte)**: apertura fissa "Mi avvicino a te" 13%, catene di "che" 8%, verbi
+  inventati 6% (bacchio, sculpiro, scampo, un coro), frasi fatte 3%, "una" + vocale 1%;
+  parole più usate: sento 19, avvicino 19, guardo 19, mani 17.
+- Correzioni deterministiche in `language.correggi` (ora 39 voci): forme sbagliate osservate,
+  cancellazione delle frasi fatte con fallback a un gesto, apostrofo su "una"+vocale, riparazione
+  delle clausole ripetute ("X, X che…", "X e X"), maiuscola dopo il punto, orari con i due punti,
+  rotazione di apertura e di "negli occhi".
+- `prompt_builder`: regola finale "CHI AGISCE: sei tu, l'utente ha già fatto la sua mossa",
+  divieto dei riempitivi, obbligo di almeno una parola sessuale concreta, divieto di aprire con
+  "sento", spinta dedicata alle domande fuori tema (risposta secca + gesto).
+- `chat_engine`: tetto di lunghezza reale (30 parole, 24 su messaggi corti, due frasi), data/ora/
+  mese calcolati dal server e anteposti alla risposta (il 3B li inventava), coda di gesto sulle
+  risposte fuori tema rimaste nude.
+- **Dopo (60 risposte)**: apertura fissa 0%, verbi inventati 0%, frasi fatte 0%, "negli occhi" 5%→2%,
+  "sento" fuori dalle prime posizioni, sostituito da guardo/mani/tocco. Catene di "che" 8%→12%:
+  **unico peggioramento**, in parte dovuto a un misuratore che conta anche i "che" legittimi
+  (3+ "che" per risposta: 2%→2%).
+- Fuori tema: prima "Sono le 12." nudo, ora "Sono le 00:52. Ho venti minuti, vieni qui."

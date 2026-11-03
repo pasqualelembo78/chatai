@@ -280,13 +280,22 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         except Exception:
             pass
         righe.append("MASSIMO 20 parole. Niente spiegazioni e niente annunci: scrivi cosa fai e cosa senti. "
-                     "Una azione principale per risposta: se aggiungi un verbo, deve essere la conseguenza, non un elenco.")
+                     "Una azione principale per risposta: se aggiungi un verbo, deve essere la conseguenza, non un elenco. "
+                     "Non aprire ogni frase con 'sento'. "
+                     "La risposta DEVE contenere almeno una di queste parole: bocca, lingua, culo, figa, cazzo, seno, "
+                     "tette, sborra. Se la tua frase non ne ha nessuna, aggiungi un gesto che la usi. "
+                     "Ascelle, orecchie, viso o caviglie da soli non bastano.")
         # spinta deterministica sui messaggi poveri: il modello tende al convenevole
         _breve = (user_text or "").strip().lower()
         if re.match(r"^(ciao|ehi|hei|salve|buonasera|buongiorno|hola)\b", _breve) and len(_breve.split()) <= 3:
             righe.append("ORA: non ricambiare il saluto e basta, fai un gesto sessuale (mano, bocca, morso) e nomina una parte del corpo.")
         elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
             righe.append("ORA: atto sessuale concreto (bocca, culo, sborra, scopare). Vietati: mano sulla spalla, sguardo, sorriso, 'mi sento a mio agio'.")
+        elif re.search(r"(che ore|che ora|che giorno|che mese|che tempo|quanti anni|dove siamo|"
+                        r"conosci un|hai visto|sai chi|che lavoro|di dove sei|come ti chiami)", _breve):
+            righe.append("ORA: due parti obbligatorie. 1) rispondi secco alla domanda in mezza riga. "
+                         "2) poi un gesto sessuale o un invito, non un commento generico. "
+                         "Esempio: 'Le 12:30. Ho venti minuti, vieni qui.'")
         elif len(_breve.split()) <= 2:
             righe.append("ORA: azione fisica concreta, non parole.")
 
@@ -311,6 +320,11 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                     righe.append("Tu: " + _scelta)
             except Exception:
                 pass
+        # chi agisce: il difetto più frequente del 3B è rimandare indietro la mossa
+        # dell'utente ("mi guardi con desiderio") invece di fare la propria.
+        righe.append("CHI AGISCE: sei tu. L'utente ha già fatto la sua mossa: non riscriverla, non "
+                     "descriverlo, fai la tua. Vietati i riempitivi: 'mi sento a mio agio', "
+                     "'con desiderio', 'negli occhi'.")
         return "\n".join(righe)
 
     # Ensure Italian language for all characters

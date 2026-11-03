@@ -12,6 +12,7 @@ Uso tipico (prompt_builder):
 
 import hashlib
 import json
+import re
 import os
 import threading
 from collections import deque
@@ -246,10 +247,72 @@ def correggi(testo):
     """Corregge le forme sbagliate già osservate, senza toccare altro."""
     if not testo:
         return testo
+    originale = testo
     dati = _carica("italian-grammar.json")
     for c in dati.get("correzioni_brevi", []):
         sbagliato, giusto = c.get("sbagliato"), c.get("giusto")
         if not sbagliato or not giusto:
             continue
+        dopo = c.get("tranne_dopo")
+        if dopo:
+            # sostituisce solo se il testo NON è già corretto ("ti incollo addosso")
+            fuori = []
+            pos = 0
+            while True:
+                i = testo.find(sbagliato, pos)
+                if i < 0:
+                    fuori.append(testo[pos:])
+                    break
+                fuori.append(testo[pos:i])
+                if testo[i + len(sbagliato):].lower().startswith(dopo):
+                    fuori.append(sbagliato)
+                else:
+                    fuori.append(giusto)
+                pos = i + len(sbagliato)
+            testo = "".join(fuori)
+            continue
         testo = testo.replace(sbagliato, giusto)
+    # frasi fatte da buttare (l'utente le trova inutili)
+    for frase in sorted(dati.get("frasi_da_togliere", []), key=len, reverse=True):
+        testo = testo.replace(frase, "")
+    testo = re.sub(r"\s{2,}", " ", testo).strip()
+    testo = re.sub(r"^[,\s]*(ma|e|quindi)[,\s]+", "", testo, flags=re.IGNORECASE)
+
+    # "una" davanti a vocale prende l'apostrofo ("una atmosfera" -> "un'atmosfera")
+    testo = re.sub(r"\buna ([aeiouàèéìòù])", r"un'\1", testo, flags=re.IGNORECASE)
+
+    # varietà: le aperture e i "negli occhi" del modello sono sempre le stesse
+    _seme = sum(ord(c) for c in testo)
+    if testo.lower().startswith("mi avvicino a te"):
+        _alt = ("Ti arrivo vicino", "Mi sposto verso di te", "Vengo addosso", "Ti sono addosso")
+        testo = _alt[_seme % len(_alt)] + testo[len("mi avvicino a te"):]
+    if "negli occhi" in testo.lower() and _seme % 3:
+        _alt = ("in faccia", "bene")
+        testo = re.sub(r"negli occhi", _alt[_seme % len(_alt)], testo, count=1, flags=re.IGNORECASE)
+
+    # "la tua fronte, la tua fronte che si abbassa" -> "la tua fronte che si abbassa"
+    testo = re.sub(
+        r"\b((?:il|lo|la|le|gli|i|un|una|il tuo|la tua|i tuoi|le tue|il mio|la mia|i miei|le mie)"
+        r"(?:\s+[\wàèéìòù']+){0,3}),\s*\1\s+che\b",
+        r"\1 che", testo, flags=re.IGNORECASE)
+
+    # clausola identica ripetuta con " e " ("ti avvicinassi a me e ti avvicinassi a me")
+    testo = re.sub(r"\b((?:[\wàèéìòù']+\s+){2,6}[\wàèéìòù']+) e \1\b", r"\1", testo, flags=re.IGNORECASE)
+
+    # clausola identica ripetuta ("la tua fronte che si abbassa, la tua fronte che si abbassa")
+    testo = re.sub(r"\b((?:[\wàèéìòù']+\s+){2,7}[\wàèéìòù']+),\s*\1\b", r"\1", testo, flags=re.IGNORECASE)
+
+    # orario con la virgola al posto dei due punti ("14,30")
+    testo = re.sub(r"\b([01]?\d|2[0-3]),(\d{2})\b", r"\1:\2", testo)
+
+    # maiuscola dopo il punto ("È novembre. e sono") — piccola pulizia tipografica
+    testo = re.sub(r"([.!?]\s+)([a-zàèéìòù])", lambda m: m.group(1) + m.group(2).upper(), testo)
+
+    # parole identiche ripetute di fila ("addosso addosso"): tipico del modello piccolo.
+    # Restano le ripetizioni che in italiano hanno senso (piano piano, molto molto...).
+    testo = re.sub(r"\b(il|lo|la|le|gli|i|un|una|di|da|e|a|o|in|con|su|per|al|dal|del|nel|sul)\s+\1\b",
+                   lambda m: m.group(1), testo, flags=re.IGNORECASE)
+    testo = re.sub(r"\b(\w{3,})\s+\1\b",
+                   lambda m: m.group(0) if m.group(1).lower() in {"che", "piano", "molto", "poco", "tanto", "solo", "via", "oltre", "prima", "dopo", "mai", "già"} else m.group(1),
+                   testo, flags=re.IGNORECASE)
     return testo

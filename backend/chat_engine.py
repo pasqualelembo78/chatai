@@ -563,6 +563,44 @@ def process_message(user_id, character_id, text, username="Utente",
     try:
         from language import correggi as _correggi, parole_sconosciute as _sconosciute
         ai_text = _correggi(ai_text)
+        if not ai_text.strip():
+            # la risposta era solo frase fatta, cancellata: rimpiazzala con un gesto
+            ai_text = "Ti arrivo vicino e ti bacio, senza dire niente."
+        # domanda fuori tema: se risponde nudo ("Sono le 12.") il gesto lo aggiungo io,
+        # perché il modello lo salta quasi sempre
+        _fuori_tema = re.search(r"(che ore|che ora|che giorno|che mese|che tempo|quanti anni|dove siamo|"
+                                r"conosci un|hai visto|sai chi|che lavoro|di dove sei)", (text or "").lower())
+        if _fuori_tema:
+            # data e ora le so io: se il modello non risponde, la risposta la metto davanti
+            import datetime as _dt
+            _ora = _dt.datetime.now()
+            _mesi = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
+                     "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+            _giorni = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
+            _risposta_esatta = None
+            _tipo = _fuori_tema.group(0)
+            if "giorno" in _tipo:
+                _risposta_esatta = f"È {_giorni[_ora.weekday()]}"
+            elif "mese" in _tipo:
+                _risposta_esatta = f"È {_mesi[_ora.month - 1]}"
+            elif "or" in _tipo:  # "che ore", "che ora"
+                _risposta_esatta = f"Sono le {_ora:%H:%M}"
+            if _risposta_esatta:
+                # il modello inventa spesso l'ora o il giorno: se apre con la sua versione, la sostituisco
+                inizio = re.match(r"^(sono le |sono alle |le |alle |oggi è |è )?"
+                                  r"(\d{1,2}[:.,]\d{2}|luned\w|marted\w|mercoled\w|gioved\w|venerd\w|"
+                                  r"sabato|domenica|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|"
+                                  r"agosto|settembre|ottobre|novembre|dicembre)[.,]?\s*",
+                                  ai_text, flags=re.IGNORECASE)
+                if inizio:
+                    ai_text = ai_text[inizio.end():]
+                ai_text = _risposta_esatta + ". " + ai_text.lstrip()
+            _esplicito = re.search(r"(bocca|culo|figa|cazzo|seno|tette|scop|lecc|baci|nud|vieni|"
+                                   r"gambe|cosce|lingua|addosso)", ai_text.lower())
+            if len(ai_text.split()) <= 20 and not _esplicito:
+                _coda = ("Vieni qui, che ti distraggo.", "Ho ancora qualche minuto per te.",
+                         "Intanto avvicinati.", "Non fermarti qui, però.")
+                ai_text = ai_text.rstrip(" .") + ". " + _coda[sum(ord(c) for c in ai_text) % len(_coda)]
         _brutte = _sconosciute(ai_text)
         if _brutte:
             logger.info(f"parole non riconosciute: {_brutte}")
@@ -588,25 +626,33 @@ def process_message(user_id, character_id, text, username="Utente",
             logger.warning(f"Summarize failed: {e}")
 
     # Post-processing: taglio SOLO se il modello esagera, e sempre a fine frase.
-    # Prima si tagliava a 18 parole e a una frase, riscrivendo un testo già mostrato
-    # in streaming: ora sotto le 45 parole non si tocca nulla.
+    # Il prompt chiede max 20 parole ma il 3B lo ignora spesso: qui il limite è reale.
+    # Su messaggi molto corti ("sì", "continua") il tetto scende, altrimenti il modello
+    # risponde con un paragrafo di riflessioni invece di un gesto.
     try:
         user_text_lower = (text or "").lower()
         force_long = any(k in user_text_lower for k in ["raccontami", "spiegami", "dimmi di più", "approfondisci", "descrivimi dettagliatamente"])
         if not force_long and isinstance(ai_text, str):
             import re
+            corto = len(user_text_lower.split()) <= 2
+            tetto, margine = (24, 22) if corto else (30, 28)
             pulito = ai_text.strip()
             pulito = re.sub(r'\*[^*]+\*', '', pulito).strip()
             pulito = re.sub(r'[ \t]+', ' ', pulito)
+            # massimo due frasi: il 3B tende ad accumulare subordinate
+            frasi_tutte = [f.strip() for f in re.split(r'(?<=[.!?])\s+', pulito) if f.strip()]
+            if len(frasi_tutte) > 2:
+                # due frasi bastano: la prima dice, la seconda chiude
+                pulito = " ".join(frasi_tutte[:2])
             parole = pulito.split()
-            if len(parole) > 45:
+            if len(parole) > tetto:
                 frasi = [f.strip() for f in re.split(r'(?<=[.!?])\s+', pulito) if f.strip()]
                 tenuto = ""
                 for frase in frasi:
-                    if tenuto and len((tenuto + " " + frase).split()) > 42:
+                    if tenuto and len((tenuto + " " + frase).split()) > margine:
                         break
                     tenuto = (tenuto + " " + frase).strip()
-                ai_text = tenuto or (" ".join(parole[:40]).rstrip(",;:") + "…")
+                ai_text = tenuto or (" ".join(parole[:margine]).rstrip(",;:— ") + ".")
             else:
                 ai_text = pulito
             # se la generazione si è fermata a metà (limite token) chiudi all'ultima frase
