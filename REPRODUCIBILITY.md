@@ -330,3 +330,12 @@ backend/chat_engine.py (auto-save compact summary)
 - Correzione: il rilascio del flag è nel `finally` del WORKER (sempre eseguito), non in quello
   del generatore SSE, che può non essere chiuso: con il rilascio nel generatore il primo
   messaggio lasciava l'utente bloccato in 429.
+
+## 26) Watchdog RAM (2026-11-03)
+- Una volta Apache è morto per OOM: ora c'è `/usr/local/bin/chatai_ram_watchdog.sh`, cron ogni
+  minuto (root), che se `MemAvailable` scende sotto **350 MB** scarica il modello dalla RAM.
+- Non scarica se c'è una generazione attiva (usa `GET /health/stato` → `{"attivi":N}`): non
+  butta via risposte in corso. Il modello torna su alla richiesta successiva (costo: ricarica).
+- Verificato: scarica e libera memoria; con una generazione attiva resta a guardare e logga
+  "non scarico"; il messaggio dopo ricarica (33 s).
+- Log: `/var/log/chatai_watchdog.log`, auto-compattato oltre 500 righe.

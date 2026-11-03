@@ -447,6 +447,12 @@ async def api_chat_regenerate(request: Request, body: RedoRequest, user: AuthUse
     )
 
 
+@router.get("/health/stato")
+async def api_health_stato():
+    """Stato interno per il watchdog RAM: quante generazioni in corso."""
+    return {"attivi": _ATTIVI}
+
+
 @router.get("/chat/export")
 async def api_chat_export(character: str, user: AuthUser = Depends(jwt_required)):
     """Conversazione completa in testo semplice, per il download."""
