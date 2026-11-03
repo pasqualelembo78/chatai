@@ -159,7 +159,7 @@ def _ollama_generate_stream(messages, model, user_id=None):
         resp = requests.post(
             OLLAMA_URL,
             json={"model": model, "messages": messages, "options": OLLAMA_STREAM_OPTIONS, "stream": True},
-            stream=True, timeout=120
+            stream=True, timeout=300
         )
         resp.encoding = "utf-8"
         if resp.status_code != 200:
@@ -216,6 +216,18 @@ def get_ai_response_stream(messages, user_id=None, force_provider=None):
             except Exception as e:
                 logger.warning(f"  force_provider {force_provider}/{fmodel} errore ({e}), fallback catena normale")
 
+    # Regola di progetto: prima il modello locale, anche in streaming.
+    force_first = os.environ.get("FORCE_LOCAL_FIRST", "0") == "1"
+    if force_first and DEFAULT_PROVIDER in PROVIDERS and _provider_ready(DEFAULT_PROVIDER):
+        try:
+            for token in PROVIDERS[DEFAULT_PROVIDER]["generate_stream"](messages, DEFAULT_MODEL, user_id=user_id):
+                if token:
+                    yield token, DEFAULT_PROVIDER, DEFAULT_MODEL
+            logger.info(f"Risposta AI da {DEFAULT_PROVIDER}/{DEFAULT_MODEL} (FORCE_LOCAL_FIRST, stream)")
+            return
+        except Exception as e:
+            logger.warning(f"  forced stream {DEFAULT_PROVIDER}/{DEFAULT_MODEL} errore ({e})")
+
     if ENSEMBLE_ENABLED:
         ensemble_gen = _ensemble_parallel_stream(messages, user_id=user_id)
         first_token = None
@@ -235,11 +247,6 @@ def get_ai_response_stream(messages, user_id=None, force_provider=None):
 
     if CHAT_PROVIDER in ("local", "ollama") and DEFAULT_PROVIDER in PROVIDERS and _provider_ready(DEFAULT_PROVIDER):
         chain.append((DEFAULT_PROVIDER, DEFAULT_MODEL))
-
-    force_first = os.environ.get("FORCE_LOCAL_FIRST", "0") == "1"
-    if force_first and DEFAULT_PROVIDER in PROVIDERS and _provider_ready(DEFAULT_PROVIDER):
-        if (DEFAULT_PROVIDER, DEFAULT_MODEL) not in chain:
-            chain.append((DEFAULT_PROVIDER, DEFAULT_MODEL))
 
     if user_id and user_id in user_providers:
         cfg = user_providers[user_id]

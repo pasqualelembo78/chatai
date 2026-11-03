@@ -25,6 +25,8 @@ class Aria_Chat_Engine {
         add_action('wp_ajax_aria_chat_send', array($this, 'ajax_send_message'));
         add_action('wp_ajax_aria_chat_stream', array($this, 'ajax_send_stream'));
         add_action('wp_ajax_aria_chat_opening', array($this, 'ajax_chat_opening'));
+        add_action('wp_ajax_aria_chat_regenerate', array($this, 'ajax_regenerate'));
+        add_action('wp_ajax_aria_chat_export', array($this, 'ajax_export'));
         add_action('wp_ajax_nopriv_aria_chat_send', array($this, 'ajax_send_message'));
         add_action('wp_ajax_aria_chat_characters', array($this, 'ajax_get_characters'));
         add_action('wp_ajax_nopriv_aria_chat_characters', array($this, 'ajax_get_characters'));
@@ -186,6 +188,86 @@ class Aria_Chat_Engine {
      * riverbera, svuotando i buffer a ogni pezzo. Se qualcosa non va, il client
      * ricade da solo sull'invio normale (`aria_chat_send`).
      */
+
+
+    /** Rigenera (o corregge e rigenera) l'ultima risposta: ponte SSE. */
+    public function ajax_regenerate() {
+        while (ob_get_level() > 0) {
+            @ob_end_flush();
+        }
+        header('Content-Type: text/event-stream; charset=utf-8');
+        header('Cache-Control: no-cache, no-transform');
+        header('X-Accel-Buffering: no');
+
+        $character_id = sanitize_text_field($_POST['character'] ?? '');
+        $testo = isset($_POST['text']) ? sanitize_textarea_field($_POST['text']) : null;
+        $current_user = wp_get_current_user();
+        $username = sanitize_text_field($_POST['username'] ?? (($current_user && $current_user->exists()) ? $current_user->user_login : 'Ospite'));
+
+        if (!$character_id) {
+            echo "event: error\ndata: {\"error\":\"Personaggio mancante\"}\n\n";
+            exit;
+        }
+        if (!$this->auth_manager->ensure_authenticated()) {
+            echo "event: error\ndata: {\"error\":\"Sessione scaduta: rifai il login\"}\n\n";
+            exit;
+        }
+        $this->api_client->set_access_token($this->auth_manager->get_access_token());
+
+        $corpo = array('character' => $character_id, 'username' => $username);
+        if ($testo !== null) {
+            $corpo['text'] = $testo;
+        }
+        $resto = '';
+        $ch = curl_init(rtrim($this->api_client->get_base_url(), '/') . '/chat/regenerate');
+        curl_setopt_array($ch, array(
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => wp_json_encode($corpo),
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json', 'Authorization: Bearer ' . $this->auth_manager->get_access_token(), 'Accept: text/event-stream'),
+            CURLOPT_TIMEOUT => 400,
+            CURLOPT_WRITEFUNCTION => function ($curl, $pezzo) use (&$resto) {
+                $resto .= $pezzo;
+                while (($pos = strpos($resto, "\n\n")) !== false) {
+                    echo substr($resto, 0, $pos + 2);
+                    $resto = substr($resto, $pos + 2);
+                    @flush();
+                }
+                return strlen($pezzo);
+            },
+        ));
+        curl_exec($ch);
+        curl_close($ch);
+        if ($resto !== '') {
+            echo $resto;
+        }
+        exit;
+    }
+
+    /** Esporta la conversazione in .txt (download). */
+    public function ajax_export() {
+        $character_id = sanitize_text_field($_GET['character'] ?? '');
+        if (!$character_id || !$this->auth_manager->ensure_authenticated()) {
+            status_header(400);
+            exit('Personaggio mancante o sessione non valida');
+        }
+        $this->api_client->set_access_token($this->auth_manager->get_access_token());
+        $url = rtrim($this->api_client->get_base_url(), '/') . '/chat/export?character=' . rawurlencode($character_id);
+        $risposta = wp_remote_get($url, array(
+            'timeout' => 60,
+            'headers' => array('Authorization' => 'Bearer ' . $this->auth_manager->get_access_token()),
+        ));
+        if (is_wp_error($risposta)) {
+            status_header(502);
+            exit('Export non riuscito');
+        }
+        $corpo = wp_remote_retrieve_body($risposta);
+        nocache_headers();
+        header('Content-Type: text/plain; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $character_id . '.txt"');
+        header('Content-Length: ' . strlen($corpo));
+        echo $corpo;
+        exit;
+    }
 
     /** Apertura automatica della chat da parte del personaggio (ponte SSE). */
     public function ajax_chat_opening() {

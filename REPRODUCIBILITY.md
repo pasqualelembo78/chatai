@@ -241,3 +241,19 @@ backend/chat_engine.py (auto-save compact summary)
   nello stream sia nel testo finale.
 - Backup: `Chat_Engine.php`, `API_Client.php`, JS e CSS; nessuna modifica ai dati personaggi
   (le battute vivono in `category_profiles.py`, campo `openings`).
+
+## 19) Rigenera, modifica, chip di regia, export (2026-11-03)
+- `POST /chat/regenerate` (SSE): rigenera l'ultima risposta. Con `text` sostituisce prima
+  l'ultimo messaggio dell'utente (modifica) e cancella la risposta precedente, poi rigenera.
+  Non aggiunge doppioni e non consuma il limite giornaliero. Cancella la risposta precedente
+  quando si rigenera, così la storia resta lineare.
+- `process_message(..., salva_utente=False)` per non duplicare il messaggio utente.
+- Streaming: se il flusso si interrompe ma del testo è già arrivato lo si tiene (non si
+  rilancia una seconda generazione, che raddoppierebbe l'attesa); timeout Ollama 120→300 s.
+- `force_local` in `streaming.py` spostato PRIMA dell'ensemble: prima lo streaming rispondeva
+  col cloud anche con `FORCE_LOCAL_FIRST=1`.
+- UI: pulsante ↻ sull'ultima risposta e ✎ sull'ultimo messaggio utente (modifica in linea con
+  "Salva e rigenera"), chip di regia per categoria sopra l'input (6 comandi rapidi),
+  pulsante Esporta (download .txt). `GET /chat/export` + proxy `wp_remote_get`.
+- Verificato: export con `Content-Disposition` e conversazione completa; rigenera 25 delta +
+  final col modello locale; chip resi nel render.

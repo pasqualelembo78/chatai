@@ -78,6 +78,16 @@
         $('#aria-switch-to-register').on('click', function(e) { e.preventDefault(); hideLoginModal(); showRegisterModal(); });
         $('#aria-switch-to-login').on('click', function(e) { e.preventDefault(); hideLoginModal(); showLoginModal(); });
         $input.on('input', autoResizeInput);
+        $('#aria-chips').on('click', '.aria-chip', function () {
+            $input.val($(this).text()).trigger('input').focus();
+            sendMessage();
+        });
+        $('#aria-export-btn').on('click', function () {
+            var char = window.ariaLastChar || currentCharacter || (config && config.character) || '';
+            var base = (config && config.ajaxUrl) ? config.ajaxUrl : '/wp-admin/admin-ajax.php';
+            window.location.href = base + '?action=aria_chat_export&character=' + encodeURIComponent(char);
+        });
+        aggiornaAzioni();
     }
     
     
@@ -232,7 +242,7 @@
     
     function autoResizeInput() { if (!$input.length) return; $input.css('height', 'auto'); $input.css('height', Math.min($input[0].scrollHeight, 100) + 'px'); }
 
-    function addUserMessage(text) { $messages.append($('<div class="aria-message aria-message-user"><div class="aria-message-content">'+escapeHtml(text)+'</div><div class="aria-message-meta">'+new Date().toLocaleTimeString()+'</div></div>')); scrollToBottom(); }
+    function addUserMessage(text) { $messages.append($('<div class="aria-message aria-message-user"><div class="aria-message-content">'+escapeHtml(text)+'</div><div class="aria-message-meta">'+new Date().toLocaleTimeString()+'</div></div>')); scrollToBottom(); aggiornaAzioni(); }
 
     function refreshMemoryPanel() {
         if (typeof loadMemory === 'function') { loadMemory(); }
@@ -537,13 +547,70 @@
         }
     }
 
+
+    /** Mostra i pulsanti rigenera/modifica solo sull'ultimo scambio. */
+    function aggiornaAzioni() {
+        $('.aria-msg-actions').remove();
+        var $ultimoAi = $('.aria-message-ai').last();
+        if ($ultimoAi.length && !$ultimoAi.hasClass('aria-message-opening')) {
+            var $barra = $('<div class="aria-msg-actions"></div>');
+            $('<button type="button" class="aria-msg-btn" title="Rigenera la risposta">&#8635;</button>')
+                .on('click', function () { rigenera(); })
+                .appendTo($barra);
+            $barra.appendTo($ultimoAi);
+        }
+        var $ultimoUser = $('.aria-message-user').last();
+        if ($ultimoUser.length && !$ultimoUser.hasClass('aria-in-modifica')) {
+            $('<button type="button" class="aria-msg-btn" title="Modifica il messaggio">&#9998;</button>')
+                .on('click', function () { modificaMessaggio($ultimoUser); })
+                .appendTo($('<div class="aria-msg-actions"></div>').appendTo($ultimoUser));
+        }
+    }
+
+    function rigenera() {
+        var char = window.ariaLastChar || currentCharacter;
+        if (!char) return;
+        $('.aria-message-ai').last().remove();
+        var dati = new FormData();
+        dati.append('character', char);
+        dati.append('username', (typeof ariaChatConfig !== 'undefined') ? ariaChatConfig.username : '');
+        showProgressBar();
+        window.chatStartTime = performance.now();
+        inviaInStreaming((typeof ariaChatConfig !== 'undefined' && ariaChatConfig.ajaxUrl) ? ariaChatConfig.ajaxUrl : '/wp-admin/admin-ajax.php', dati, 'aria_chat_regenerate');
+    }
+
+    function modificaMessaggio($bolla) {
+        if ($bolla.hasClass('aria-in-modifica')) return;
+        var testo = $bolla.find('.aria-message-content').text();
+        $bolla.addClass('aria-in-modifica');
+        var $cont = $bolla.find('.aria-message-content').hide();
+        var $box = $('<div class="aria-edit"><textarea class="aria-edit-text" rows="2"></textarea><div class="aria-edit-actions"><button type="button" class="aria-btn aria-btn-small aria-edit-save">Salva e rigenera</button><button type="button" class="aria-btn aria-btn-small aria-edit-cancel">Annulla</button></div></div>').appendTo($bolla);
+        $box.find('textarea').val(testo).focus();
+        $box.find('.aria-edit-cancel').on('click', function () {
+            $box.remove(); $cont.show(); $bolla.removeClass('aria-in-modifica'); aggiornaAzioni();
+        });
+        $box.find('.aria-edit-save').on('click', function () {
+            var nuovo = $box.find('textarea').val().trim();
+            if (!nuovo) return;
+            $box.remove(); $cont.text(nuovo).show(); $bolla.removeClass('aria-in-modifica');
+            $('.aria-message-ai').last().remove();
+            var dati = new FormData();
+            dati.append('character', window.ariaLastChar || currentCharacter);
+            dati.append('text', nuovo);
+            dati.append('username', (typeof ariaChatConfig !== 'undefined') ? ariaChatConfig.username : '');
+            showProgressBar();
+            window.chatStartTime = performance.now();
+            inviaInStreaming((typeof ariaChatConfig !== 'undefined' && ariaChatConfig.ajaxUrl) ? ariaChatConfig.ajaxUrl : '/wp-admin/admin-ajax.php', dati, 'aria_chat_regenerate');
+        });
+    }
+
     /**
      * Invio con risposta in streaming.
      * Il primo pezzo arriva in pochi secondi e le parole si compongono mentre il
      * modello scrive. Se lo stream non parte o si rompe prima di qualsiasi testo,
      * si ricade da soli sull'invio normale: l'utente non resta mai a mani vuote.
      */
-    function inviaInStreaming(ajaxUrl, data) {
+    function inviaInStreaming(ajaxUrl, data, azione) {
         var ricevuto = false;
         var $bolla = null;
         var $testo = null;
@@ -582,13 +649,14 @@
                 $bolla.find('.aria-message-meta').append(' <span style="font-size:10px;color:#888;">(' + (ms / 1000).toFixed(1) + 's)</span>');
             }
             scrollToBottom();
+            aggiornaAzioni();
             setTimeout(function () { if (typeof refreshMemoryPanel === 'function') refreshMemoryPanel(); }, 300);
         }
 
         function fallback() {
             var d2 = new FormData();
             data.forEach(function (v, k) { d2.append(k, v); });
-            d2.append('action', 'aria_chat_send');
+            d2.append('action', azione || 'aria_chat_send');
             fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: d2 })
                 .then(function (r) { return r.text(); })
                 .then(function (t) {
@@ -620,7 +688,7 @@
                 });
         }
 
-        data.append('action', 'aria_chat_stream');
+        data.append('action', azione || 'aria_chat_stream');
         fetch(ajaxUrl, { method: 'POST', credentials: 'same-origin', body: data, headers: { 'Accept': 'text/event-stream' } })
             .then(function (r) {
                 if (!r.ok || !r.body || !r.body.getReader) throw new Error('stream non disponibile');

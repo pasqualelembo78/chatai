@@ -101,3 +101,54 @@ def get_time_events(event_type=None, limit=50):
         return result
     finally:
         put_conn(conn)
+
+
+def ultimo_messaggio(user_id, character_id):
+    """Ultimo messaggio della coppia: {'id','role','content'} oppure None."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT id, role, content FROM messages WHERE user_id=%s AND character_id=%s "
+            "ORDER BY timestamp DESC LIMIT 1",
+            (user_id, character_id),
+        )
+        row = cur.fetchone()
+        return dict(row) if row else None
+    finally:
+        put_conn(conn)
+
+
+def aggiorna_messaggio(message_id, contenuto):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("UPDATE messages SET content=%s WHERE id=%s", (contenuto, message_id))
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+def elimina_messaggio(message_id):
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM messages WHERE id=%s", (message_id,))
+        conn.commit()
+    finally:
+        put_conn(conn)
+
+
+def storico_completo(user_id, character_id, limite=500):
+    """Conversazione in ordine cronologico (per l'export)."""
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT role, content, timestamp FROM messages WHERE user_id=%s AND character_id=%s "
+            "ORDER BY timestamp ASC LIMIT %s",
+            (user_id, character_id, limite),
+        )
+        return [dict(r) for r in cur.fetchall()]
+    finally:
+        put_conn(conn)

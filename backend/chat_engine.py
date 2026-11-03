@@ -110,8 +110,11 @@ def _streamed_response(messages, user_id, on_delta):
             except Exception:
                 pass
     except Exception as e:
-        logger.warning(f"Streaming fallito ({e}): ricado sulla risposta completa")
-        pezzi = []
+        logger.warning(f"Streaming interrotto ({e})")
+        # Se qualcosa è già arrivato si tiene quello: rifare tutto vorrebbe dire
+        # altri 30-90 s e il client ha già il testo a metà.
+        if not pezzi:
+            logger.warning("Streaming senza testo: ricado sulla risposta completa")
 
     if pezzi:
         return "".join(pezzi), provider, model
@@ -124,7 +127,7 @@ def process_message(user_id, character_id, text, username="Utente",
                      memory_context=None, user_memory=None,
                      character_data=None, image_base64="", image_mime="image/jpeg",
                      client_storage=False, client_state=None, is_favorite=False,
-                     tone=None, on_delta=None):
+                     tone=None, on_delta=None, salva_utente=True):
     import re
     client_state = client_state or {}
     character = get_character(character_id)
@@ -368,7 +371,8 @@ def process_message(user_id, character_id, text, username="Utente",
 
     if not client_storage:
         is_first = count_all_user_messages(user_id) == 0
-        add_message(user_id, character_id, "user", text)
+        if salva_utente:
+            add_message(user_id, character_id, "user", text)
         if is_first:
             credit_referral_first_message(user_id)
         # Phase 5: Track conversation session

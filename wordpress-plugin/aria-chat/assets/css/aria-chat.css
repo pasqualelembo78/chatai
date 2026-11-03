@@ -519,3 +519,57 @@
 
 /* Apertura automatica del personaggio */
 .aria-message-opening .aria-message-content { white-space: pre-wrap; }
+
+/* Chip di regia */
+.aria-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px 2px;
+}
+.aria-chip {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 99px;
+    border: 1px solid rgba(233, 30, 140, .45);
+    background: rgba(233, 30, 140, .10);
+    color: #ff9ad6;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.aria-chip:hover { background: rgba(233, 30, 140, .22); }
+
+/* Azioni sui messaggi */
+.aria-message { position: relative; }
+.aria-msg-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+    justify-content: flex-end;
+}
+.aria-msg-btn {
+    width: 26px;
+    height: 22px;
+    line-height: 1;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    background: rgba(255, 255, 255, .06);
+    color: #cfc8dd;
+    cursor: pointer;
+}
+.aria-msg-btn:hover { background: rgba(233, 30, 140, .2); color: #fff; }
+
+/* Modifica in linea */
+.aria-edit { width: 100%; margin-top: 6px; }
+.aria-edit-text {
+    width: 100%;
+    resize: vertical;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(233, 30, 140, .45);
+    background: rgba(0, 0, 0, .25);
+    color: inherit;
+    font: inherit;
+}
+.aria-edit-actions { display: flex; gap: 8px; margin-top: 6px; }

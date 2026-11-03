@@ -4,7 +4,7 @@ import tempfile
 import logging
 
 from fastapi import APIRouter, Request, Depends, UploadFile, File, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
+from fastapi.responses import FileResponse, StreamingResponse, JSONResponse, Response
 from pydantic import BaseModel
 from typing import Optional
 
@@ -71,6 +71,13 @@ class ChatRequest(BaseModel):
     evolution_state: Optional[dict] = None
     shifts: Optional[list] = None
     summaries: Optional[list] = None
+
+
+class RedoRequest(BaseModel):
+    character: str
+    text: Optional[str] = None
+    username: str = "Utente"
+    character_data: Optional[dict] = None
 
 
 class TtsRequest(BaseModel):
@@ -277,6 +284,125 @@ async def api_chat_stream(request: Request, body: ChatRequest, user: AuthUser = 
         eventi(),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
+    )
+
+
+@router.post("/chat/regenerate")
+@limiter.limit("60/minute")
+async def api_chat_regenerate(request: Request, body: RedoRequest, user: AuthUser = Depends(jwt_required)):
+    """Rigenera l'ultima risposta (o la rigenera su un messaggio modificato).
+
+    Se `text` è presente sostituisce l'ultimo messaggio dell'utente; in ogni caso
+    cancella l'ultima risposta del personaggio e la rifà in streaming, senza
+    aggiungere un doppione e senza consumare il limite giornaliero.
+    """
+    import json as _json
+    import queue
+    import threading
+
+    from storage.messages import ultimo_messaggio, aggiorna_messaggio, elimina_messaggio
+    from content_safety import moderate_output
+
+    char = get_character(body.character) if body.character else None
+    if not char:
+        raise HTTPException(404, "character not found")
+    if not _check_character_access(user.user_id, char):
+        raise HTTPException(403, "premium_required")
+
+    ultimo = ultimo_messaggio(user.user_id, body.character)
+    if not ultimo:
+        raise HTTPException(400, "nessun messaggio da rigenerare")
+
+    testo = ultimo["content"]
+    if body.text is not None:
+        nuovo = body.text.strip()
+        if not nuovo:
+            raise HTTPException(400, "testo vuoto")
+        ok, msg = security_utils.nsfw_check_text(nuovo)
+        if not ok:
+            raise HTTPException(400, msg)
+        if ultimo["role"] == "user":
+            aggiorna_messaggio(ultimo["id"], nuovo)
+        else:
+            from storage.messages import add_message
+            add_message(user.user_id, body.character, "user", nuovo)
+        testo = nuovo
+        # la risposta precedente non è più coerente col nuovo testo
+        if ultimo["role"] == "assistant":
+            elimina_messaggio(ultimo["id"])
+    elif ultimo["role"] == "assistant":
+        elimina_messaggio(ultimo["id"])
+
+    coda = queue.Queue()
+
+    def lavora():
+        try:
+            result = process_message(
+                user.user_id, body.character, testo, body.username,
+                character_data=body.character_data,
+                salva_utente=False,
+                on_delta=lambda pezzo: coda.put(("delta", pezzo)),
+            )
+            coda.put(("result", result))
+        except Exception as e:
+            logger.exception("regenerate errore")
+            coda.put(("error", str(e)))
+
+    threading.Thread(target=lavora, daemon=True).start()
+
+    def eventi():
+        yield "event: meta\ndata: " + _json.dumps({"character_name": char.get("name", "")}, ensure_ascii=False) + "\n\n"
+        while True:
+            tipo, dato = coda.get()
+            if tipo == "delta":
+                yield "event: delta\ndata: " + _json.dumps({"t": dato}, ensure_ascii=False) + "\n\n"
+                continue
+            if tipo == "error":
+                yield "event: error\ndata: " + _json.dumps({"error": dato}, ensure_ascii=False) + "\n\n"
+                return
+            result = dato
+            if not result:
+                yield "event: error\ndata: " + _json.dumps({"error": "character not found"}, ensure_ascii=False) + "\n\n"
+                return
+            testo_finale, _b = moderate_output(result["ai_text"])
+            payload = {
+                "response": testo_finale,
+                "emotion": result["emotion"],
+                "ai_model": result.get("ai_model", ""),
+                "character_name": result["character"]["name"],
+            }
+            yield "event: final\ndata: " + _json.dumps(payload, ensure_ascii=False) + "\n\n"
+            return
+
+    return StreamingResponse(
+        eventi(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+@router.get("/chat/export")
+async def api_chat_export(character: str, user: AuthUser = Depends(jwt_required)):
+    """Conversazione completa in testo semplice, per il download."""
+    from storage.messages import storico_completo
+
+    char = get_character(character)
+    if not char:
+        raise HTTPException(404, "character not found")
+
+    righe = [f"Conversazione con {char.get('name', '')} — {char.get('category', '')}", ""]
+    for m in storico_completo(user.user_id, character):
+        chi = char.get("name", "Personaggio") if m["role"] == "assistant" else "Tu"
+        quando = m["timestamp"].strftime("%d/%m/%Y %H:%M") if m.get("timestamp") else ""
+        righe.append(f"[{quando}] {chi}: {m['content']}")
+        righe.append("")
+
+    corpo = "\n".join(righe)
+    nome = f"{char.get('name', 'personaggio').replace(' ', '-').lower()}.txt"
+    return Response(
+        content=corpo.encode("utf-8"),
+        media_type="text/plain; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="{nome}"'},
     )
 
 
