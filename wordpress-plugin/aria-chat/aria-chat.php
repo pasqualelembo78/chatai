@@ -275,59 +275,47 @@ function aria_char_data_file($categoria) {
 }
 
 /** Personaggio dal suo slug dentro la categoria. */
-function aria_char_by_slug($categoria, $slug) {
+function aria_char_list($categoria) {
     static $cache = array();
-    $chiave = $categoria . '|' . $slug;
-    if (isset($cache[$chiave])) {
-        return $cache[$chiave];
+    $categoria = sanitize_title($categoria);
+    if (isset($cache[$categoria])) {
+        return $cache[$categoria];
     }
     $file = aria_char_data_file($categoria);
-    $trovato = null;
+    $righe = array();
     if ($file) {
-        $righe = json_decode((string) file_get_contents($file), true);
-        if (is_array($righe)) {
-            foreach ($righe as $c) {
-                if (!empty($c['slug']) && $c['slug'] === $slug) {
-                    $trovato = $c;
-                    break;
-                }
-            }
+        $lette = json_decode((string) file_get_contents($file), true);
+        if (is_array($lette)) {
+            $righe = $lette;
         }
     }
-    $cache[$chiave] = $trovato;
-    return $trovato;
+    $cache[$categoria] = $righe;
+    return $righe;
+}
+
+function aria_char_by_slug($categoria, $slug) {
+    foreach (aria_char_list($categoria) as $c) {
+        if (!empty($c['slug']) && $c['slug'] === $slug) {
+            return $c;
+        }
+    }
+    return null;
 }
 
 /** Personaggio dal suo id dentro la categoria (per i vecchi link ?char=). */
 function aria_char_by_id($categoria, $id) {
-    static $cache = array();
-    $chiave = $categoria . '|' . $id;
-    if (isset($cache[$chiave])) {
-        return $cache[$chiave];
-    }
-    $trovato = null;
-    $file = aria_char_data_file($categoria);
-    if ($file) {
-        foreach ((array) json_decode((string) file_get_contents($file), true) as $c) {
-            if (!empty($c['id']) && $c['id'] === $id) {
-                $trovato = $c;
-                break;
-            }
+    foreach (aria_char_list($categoria) as $c) {
+        if (!empty($c['id']) && $c['id'] === $id) {
+            return $c;
         }
     }
-    $cache[$chiave] = $trovato;
-    return $trovato;
+    return null;
 }
 
 /** Altri personaggi della stanza che hanno una pagina propria. */
 function aria_characters_with_slug($categoria, $escludi = '', $quanti = 6) {
-    $file = aria_char_data_file($categoria);
-    if (!$file) {
-        return array();
-    }
-    $righe = json_decode((string) file_get_contents($file), true) ?: array();
     $out = array();
-    foreach ($righe as $c) {
+    foreach (aria_char_list($categoria) as $c) {
         if (empty($c['slug']) || $c['id'] === $escludi) {
             continue;
         }
@@ -437,14 +425,15 @@ function aria_char_og($titolo) {
 }
 add_filter('wpseo_opengraph_title', 'aria_char_og', 20);
 
-/** Sitemap dedicata delle sole pagine personaggio. */
+/** Sitemap delle pagine personaggio, una per categoria. */
 function aria_char_sitemap() {
     if (!isset($_GET['aria_char_sitemap'])) {
         return;
     }
+    $solo = sanitize_title((string) $_GET['aria_char_sitemap']);
     header('Content-Type: application/xml; charset=utf-8');
     echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-    foreach (aria_grid_character_slugs() as $voce) {
+    foreach (aria_grid_character_slugs($solo) as $voce) {
         echo '  <url><loc>' . esc_url($voce['url']) . '</loc><lastmod>' . esc_html($voce['data']) . '</lastmod></url>' . "\n";
     }
     echo '</urlset>';
@@ -453,15 +442,16 @@ function aria_char_sitemap() {
 add_action('template_redirect', 'aria_char_sitemap', 1);
 
 /** Elenco URL delle pagine personaggio (per la sitemap). */
-function aria_grid_character_slugs() {
-    $file = aria_grid_cache_file();
+function aria_grid_character_slugs($solo = '') {
     $urls = array();
-    $indice = aria_grid_index();
     foreach ((array) glob(aria_grid_data_dir() . '/*.json') as $f) {
         if (basename($f) === 'categories.json') {
             continue;
         }
         $cat = basename($f, '.json');
+        if ($solo && $solo !== '1' && $solo !== $cat) {
+            continue;
+        }
         $righe = json_decode((string) file_get_contents($f), true) ?: array();
         foreach ($righe as $c) {
             if (empty($c['slug'])) {
@@ -477,7 +467,12 @@ function aria_grid_character_slugs() {
 }
 
 function aria_char_sitemap_index($index) {
-    $index .= '<sitemap><loc>' . esc_url(home_url('/?aria_char_sitemap=1')) . '</loc><lastmod>' . gmdate('c') . '</lastmod></sitemap>' . "\n";
+    foreach (aria_room_seo_data() as $cat => $null) {
+        if (!file_exists(aria_char_data_file($cat))) {
+            continue;
+        }
+        $index .= '<sitemap><loc>' . esc_url(home_url('/?aria_char_sitemap=' . $cat)) . '</loc><lastmod>' . gmdate('c') . '</lastmod></sitemap>' . "\n";
+    }
     return $index;
 }
 add_filter('wpseo_sitemap_index', 'aria_char_sitemap_index', 20);

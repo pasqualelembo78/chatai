@@ -407,3 +407,17 @@ backend/chat_engine.py (auto-save compact summary)
   Sitemap dedicata `?aria_char_sitemap=1` (200 URL) aggiunta all'indice Yoast.
 - Le card della stanza linkano la pagina quando esiste (link interni), altrimenti `?char=`.
 - Nota scala: si allarga solo se Search Console indicizza (soglia 70% in 4 settimane).
+
+## 33) Pagine personaggio per tutti i 5.072 (2026-11-03)
+- Slug assegnati a tutti (deterministici, unici, 0 duplicati). `assegna_slug.py --tutte`.
+- Pagina arricchita per l'SEO interno: H1 "Chat con <nome>, <mestiere>", H2 di sezione
+  ("Chi è", "Come si comporta in chat", "Parole chiave", "Scrivi a", "Domande", "Altri
+  personaggi", "Altre stanze"), 12 link a compagni di stanza + 4 stanze vicine + archivio.
+- Cache della lista per categoria (`aria_char_list`) per non rileggere il file più volte.
+- Sitemap: una per categoria (24 voci nell'indice Yoast), non un unico file da 5.072 URL.
+- Room: tutte le card linkano la pagina; `?char=` fa 301 per tutti; 0 residui.
+- Verificato: 200 su campione casuale di 6 categorie, canonical self, 8 H2, 13 link
+  personaggio, nessun PHP perso.
+- ATTENZIONE scala: 5.072 pagine su un sito nuovo possono saturare il crawl. Regola: se in
+  Search Console l'indicizzato resta sotto il 50% in 4 settimane, si tolgono dalla sitemap
+  le categorie più deboli e si migliorano i testi.

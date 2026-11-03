@@ -37,6 +37,9 @@ def main():
     per_categoria = 9
     if "--per-categoria" in sys.argv:
         per_categoria = int(sys.argv[sys.argv.index("--per-categoria") + 1])
+    if "--tutte" in sys.argv:
+        per_categoria = 10000
+        globals()['TOTALE_MAX'] = 100000
 
     file_cat = [p for p in sorted(glob.glob(os.path.join(DATA, "*.json"))) if not p.endswith("categories.json")]
     dati = {p: json.load(open(p, encoding="utf-8")) for p in file_cat}
@@ -52,9 +55,9 @@ def main():
             candidati = [c for c in dati[p] if not c.get("slug")]
             # prima i personaggi con più dati utili
             candidati.sort(key=lambda c: (0 if c.get("job") else 1, len(c.get("personality") or "") * -1, c["id"]))
-            if len(candidati) <= giro:
+            if not candidati:
                 continue
-            c = candidati[giro]
+            c = candidati[0]
             base = slugify(c.get("full_name") or c.get("name") or c["id"])
             slug, i = base, 2
             while slug in occupati:

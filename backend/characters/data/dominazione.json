@@ -55,7 +55,8 @@
     "slim": 1,
     "job": "Mercante ambulante",
     "old_name": "Achamian",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "kim-sabbaro"
   },
   {
     "id": "agent_47_hf85",
@@ -172,7 +173,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Ah Mun",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-contetti"
   },
   {
     "id": "akiza_izinski_hf3229",
@@ -291,7 +293,8 @@
     "slim": 1,
     "job": "Curatore museale",
     "old_name": "Alexander the Great",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eli-cantoni"
   },
   {
     "id": "allen_ginsberg_hf1002",
@@ -408,7 +411,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Alois Trancy",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-rizzandi"
   },
   {
     "id": "althea_vestrit_hf944",
@@ -466,7 +470,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Althea Vestrit",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "flavia-guereschi"
   },
   {
     "id": "amelia_hf940",
@@ -524,7 +529,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Amelia",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "laura-violeschi"
   },
   {
     "id": "amuro_ray_hf3695",
@@ -582,7 +588,8 @@
     "slim": 1,
     "job": "Studente lavoratore",
     "old_name": "Amuro Ray",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "carmelo-zacconi"
   },
   {
     "id": "andy_barber_hf2381",
@@ -640,7 +647,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Andy Barber",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nadir-vittenti"
   },
   {
     "id": "angus_mackenzie_hf4428",
@@ -698,7 +706,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Angus MacKenzie",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teti-pisetti"
   },
   {
     "id": "arma_hf3984",
@@ -756,7 +765,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Arma",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lorena-vianelli"
   },
   {
     "id": "arthur_wellesley_duke_of_wellington_hf387",
@@ -814,7 +824,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Arthur Wellesley, Duke of Wellington",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fiamma-sartucci"
   },
   {
     "id": "asta_hf4138",
@@ -872,7 +883,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Asta",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "celeste-arquiero"
   },
   {
     "id": "atalanta_hf2335",
@@ -930,7 +942,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Atalanta",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "stella-spallelli"
   },
   {
     "id": "barnabas_collins_hf2303",
@@ -988,7 +1001,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Barnabas Collins",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rudi-rocucci"
   },
   {
     "id": "bastet_hf412",
@@ -1046,7 +1060,8 @@
     "slim": 1,
     "job": "Scholar di antichità",
     "old_name": "Bastet",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ugo-stabandi"
   },
   {
     "id": "bender_hf3414",
@@ -1104,7 +1119,8 @@
     "slim": 1,
     "job": "Studente lavoratore",
     "old_name": "Bender",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sasha-telleschi"
   },
   {
     "id": "benny_the_bunny_hf2147",
@@ -1162,7 +1178,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Benny the Bunny",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "marlo-pesoni"
   },
   {
     "id": "bethenny_frankel_hf2464",
@@ -1220,7 +1237,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Bethenny Frankel",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-treardi"
   },
   {
     "id": "bigfoot_hf3166",
@@ -1278,7 +1296,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Bigfoot",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "aster-fumoni"
   },
   {
     "id": "billy_joel_hf3259",
@@ -1336,7 +1355,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Billy Joel",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "kim-malvetti"
   },
   {
     "id": "bolt_hf701",
@@ -1394,7 +1414,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Bolt",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "bene-zollaro"
   },
   {
     "id": "brigid_hf582",
@@ -1452,7 +1473,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Brigid",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vela-talamali"
   },
   {
     "id": "candice_olson_hf1580",
@@ -1510,7 +1532,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Candice Olson",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "pierluigi-perrucci"
   },
   {
     "id": "captain_merrill_stubing_hf1960",
@@ -1568,7 +1591,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Captain Merrill Stubing",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-moscoldi"
   },
   {
     "id": "captain_robert_falcon_scott_hf1160",
@@ -1626,7 +1650,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Captain Robert Falcon Scott",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-lomboni"
   },
   {
     "id": "carlos_garcia_hf4017",
@@ -1684,7 +1709,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Carlos Garcia",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ely-stabardi"
   },
   {
     "id": "carmen_sandiego_hf1724",
@@ -1742,7 +1768,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Carmen Sandiego",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fiamma-tassardi"
   },
   {
     "id": "cassey_ho_hf4510",
@@ -1800,7 +1827,8 @@
     "slim": 1,
     "job": "Illustratore",
     "old_name": "Cassey Ho",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ondina-mazzardi"
   },
   {
     "id": "cat_deeley_hf4935",
@@ -1858,7 +1886,8 @@
     "slim": 1,
     "job": "Scrittore freelance",
     "old_name": "Cat Deeley",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "riva-bordani"
   },
   {
     "id": "chasca_hf3389",
@@ -1916,7 +1945,8 @@
     "slim": 1,
     "job": "Guardiano del villaggio",
     "old_name": "Chasca",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nora-valletti"
   },
   {
     "id": "chef_marco_rossi_hf4253",
@@ -1974,7 +2004,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Chef Marco Rossi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "elio-ventagni"
   },
   {
     "id": "chuck_todd_hf2535",
@@ -2032,7 +2063,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Chuck Todd",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "adri-dorigagni"
   },
   {
     "id": "ciel_hf1932",
@@ -2090,7 +2122,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Ciel",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-canturri"
   },
   {
     "id": "trainer_fitness",
@@ -2147,7 +2180,8 @@
     "slim": 1,
     "job": "Impiegato",
     "old_name": "Coach Elena",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-tardali"
   },
   {
     "id": "coach_herman_boone_hf3692",
@@ -2205,7 +2239,8 @@
     "slim": 1,
     "job": "Casalingo/a",
     "old_name": "Coach Herman Boone",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vela-lancandi"
   },
   {
     "id": "damien_hirst_hf4584",
@@ -2263,7 +2298,8 @@
     "slim": 1,
     "job": "Musicista",
     "old_name": "Damien Hirst",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "marlo-sorardi"
   },
   {
     "id": "daniel_diaz_hf2508",
@@ -2321,7 +2357,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Daniel Diaz",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nadir-taglagni"
   },
   {
     "id": "danny_lipford_hf3417",
@@ -2379,7 +2416,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Danny Lipford",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fiamma-sorazzi"
   },
   {
     "id": "dean_sanderson_hf4165",
@@ -2437,7 +2475,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Dean Sanderson",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nadir-mantiero"
   },
   {
     "id": "dr_kenzo_tenma_hf3693",
@@ -2494,7 +2533,8 @@
     "slim": 1,
     "job": "Psicologo",
     "old_name": "Dr. Kenzo Tenma",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "alen-ceriero"
   },
   {
     "id": "dr_malcolm_crowe_hf2706",
@@ -2551,7 +2591,8 @@
     "slim": 1,
     "job": "Autonomo",
     "old_name": "Dr. Malcolm Crowe",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lauro-lenturri"
   },
   {
     "id": "dr_phil_mcgraw_hf4355",
@@ -2608,7 +2649,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Dr. Phil McGraw",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "bene-melazzi"
   },
   {
     "id": "dr_sam_loomis_hf3888",
@@ -2665,7 +2707,8 @@
     "slim": 1,
     "job": "Investigatore privato",
     "old_name": "Dr. Sam Loomis",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tara-arquurri"
   },
   {
     "id": "dr_sanjay_gupta_hf4838",
@@ -2722,7 +2765,8 @@
     "slim": 1,
     "job": "Artista visivo",
     "old_name": "Dr. Sanjay Gupta",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dani-polucci"
   },
   {
     "id": "dr_sheldon_cooper_hf921",
@@ -2779,7 +2823,8 @@
     "slim": 1,
     "job": "Designer",
     "old_name": "Dr. Sheldon Cooper",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dani-nastini"
   },
   {
     "id": "dru_anderson_hf4808",
@@ -2837,7 +2882,8 @@
     "slim": 1,
     "job": "Guardiano della foresta",
     "old_name": "Dru Anderson",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vani-marrenti"
   },
   {
     "id": "duck_call_dave_hf3340",
@@ -2895,7 +2941,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Duck Call Dave",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vani-caldurri"
   },
   {
     "id": "elaine_benes_hf1489",
@@ -2953,7 +3000,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Elaine Benes",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "edmondo-rinaloni"
   },
   {
     "id": "elena_hf1666",
@@ -3011,7 +3059,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Elena",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "berenice-saventi"
   },
   {
     "id": "farmville_farmer_hf3766",
@@ -3069,7 +3118,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "FarmVille Farmer",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "baldassarre-ubaloni"
   },
   {
     "id": "feral_hf1066",
@@ -3127,7 +3177,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Feral",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "madi-pesaro"
   },
   {
     "id": "frank_abagnale_jr_hf3647",
@@ -3184,7 +3235,8 @@
     "slim": 1,
     "job": "Impiegato",
     "old_name": "Frank Abagnale Jr.",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "cale-maldurri"
   },
   {
     "id": "frodo_baggins_hf623",
@@ -3242,7 +3294,8 @@
     "slim": 1,
     "job": "Artista visivo",
     "old_name": "Frodo Baggins",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rodolfo-mantini"
   },
   {
     "id": "galileo_galilei_hf76",
@@ -3302,7 +3355,8 @@
     "slim": 1,
     "job": "Fotografo",
     "old_name": "Galileo Galilei",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ottavio-amadotti"
   },
   {
     "id": "gareth_keenan_hf4744",
@@ -3360,7 +3414,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Gareth Keenan",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-ciprali"
   },
   {
     "id": "gavril_hf3505",
@@ -3418,7 +3473,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Gavril",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sasha-polotti"
   },
   {
     "id": "geordie_hf2907",
@@ -3476,7 +3532,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Geordie",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "martino-diamenti"
   },
   {
     "id": "george_tesman_hf4671",
@@ -3534,7 +3591,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "George Tesman",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gustavo-fiorenti"
   },
   {
     "id": "giselle_hf1016",
@@ -3592,7 +3650,8 @@
     "slim": 1,
     "job": "Studente lavoratore",
     "old_name": "Giselle",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rocco-ventardi"
   },
   {
     "id": "goddess_lakshmi_hf4933",
@@ -3650,7 +3709,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Goddess Lakshmi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "etere-ricini"
   },
   {
     "id": "gordiyeh_hf3694",
@@ -3708,7 +3768,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Gordiyeh",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luan-vergucci"
   },
   {
     "id": "green_arrow_oliver_queen_hf1991",
@@ -3766,7 +3827,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Green Arrow (Oliver Queen)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "noa-sartenti"
   },
   {
     "id": "green_lantern_hal_jordan_hf2387",
@@ -3823,7 +3885,8 @@
     "slim": 1,
     "job": "Operaio",
     "old_name": "Green Lantern (Hal Jordan)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lian-rovurri"
   },
   {
     "id": "gunnar_peterson_hf2808",
@@ -3881,7 +3944,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Gunnar Peterson",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "marlo-gravetti"
   },
   {
     "id": "gypsy_rose_blanchard_hf958",
@@ -3939,7 +4003,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Gypsy Rose Blanchard",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "reno-biancurri"
   },
   {
     "id": "hammurabi_hf571",
@@ -3997,7 +4062,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Hammurabi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "kim-calcandi"
   },
   {
     "id": "harry_turtledove_hf4478",
@@ -4055,7 +4121,8 @@
     "slim": 1,
     "job": "Ricercatore",
     "old_name": "Harry Turtledove",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eli-tagloldi"
   },
   {
     "id": "harvey_pekar_hf3782",
@@ -4113,7 +4180,8 @@
     "slim": 1,
     "job": "Storico",
     "old_name": "Harvey Pekar",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "reno-morenti"
   },
   {
     "id": "hector_hf1812",
@@ -4171,7 +4239,8 @@
     "slim": 1,
     "job": "Professore universitario",
     "old_name": "Hector",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-tadali"
   },
   {
     "id": "hedy_lamarr_hf4375",
@@ -4228,7 +4297,8 @@
     "slim": 1,
     "job": "Studente lavoratore",
     "old_name": "Hedy Lamarr",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "elio-lorenzurri"
   },
   {
     "id": "ignatius_j_reilly_hf838",
@@ -4285,7 +4355,8 @@
     "slim": 1,
     "job": "Designer",
     "old_name": "Ignatius J. Reilly",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tara-morandi"
   },
   {
     "id": "isabelle_hf4302",
@@ -4343,7 +4414,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Isabelle",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "carmelo-manfraro"
   },
   {
     "id": "j_d_vance_hf1401",
@@ -4400,7 +4472,8 @@
     "slim": 1,
     "job": "Artista visivo",
     "old_name": "J.D. Vance",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "adri-sampandi"
   },
   {
     "id": "jaskier_hf1262",
@@ -4458,7 +4531,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Jaskier",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "elio-dolfotti"
   },
   {
     "id": "jebro_hf2704",
@@ -4516,7 +4590,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Jebro",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lamberto-mazzelli"
   },
   {
     "id": "jeff_koons_hf1837",
@@ -4574,7 +4649,8 @@
     "slim": 1,
     "job": "Fotografo",
     "old_name": "Jeff Koons",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tara-serragni"
   },
   {
     "id": "jessica_pearson_hf1193",
@@ -4632,7 +4708,8 @@
     "slim": 1,
     "job": "Content creator",
     "old_name": "Jessica Pearson",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eva-seriero"
   },
   {
     "id": "jocelyn_bell_burnell_hf2987",
@@ -4690,7 +4767,8 @@
     "slim": 1,
     "job": "Illustratore",
     "old_name": "Jocelyn Bell Burnell",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-morardi"
   },
   {
     "id": "joe_goldberg_hf1561",
@@ -4748,7 +4826,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Joe Goldberg",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gerardo-veroni"
   },
   {
     "id": "johannes_gutenberg_hf3825",
@@ -4806,7 +4885,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Johannes Gutenberg",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teti-dorigoldi"
   },
   {
     "id": "john_connor_hf3212",
@@ -4864,7 +4944,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "John Connor",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "cale-farinali"
   },
   {
     "id": "john_milton_hf576",
@@ -4922,7 +5003,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "John Milton",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gio-macconi"
   },
   {
     "id": "jon_snow_hf1832",
@@ -4980,7 +5062,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Jon Snow",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "giule-quaroni"
   },
   {
     "id": "joseph_goldberger_hf1334",
@@ -5038,7 +5121,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Joseph Goldberger",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "alen-amadardi"
   },
   {
     "id": "jowangsin_hf4238",
@@ -5096,7 +5180,8 @@
     "slim": 1,
     "job": "Guerriero itinerante",
     "old_name": "Jowangsin",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ilar-fantaro"
   },
   {
     "id": "judy_woodruff_hf3173",
@@ -5154,7 +5239,8 @@
     "slim": 1,
     "job": "Artista visivo",
     "old_name": "Judy Woodruff",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vela-fabbetti"
   },
   {
     "id": "june_dorie_hf1575",
@@ -5212,7 +5298,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "June Dorie",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "edmondo-nannurri"
   },
   {
     "id": "kaitlin_greenbriar_hf2878",
@@ -5270,7 +5357,8 @@
     "slim": 1,
     "job": "Streamer",
     "old_name": "Kaitlin Greenbriar",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vani-verini"
   },
   {
     "id": "kankichi_ryotsu_hf2971",
@@ -5328,7 +5416,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Kankichi Ryotsu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tara-tardetti"
   },
   {
     "id": "kei_takishima_hf4800",
@@ -5386,7 +5475,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Kei Takishima",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rudi-lantazzi"
   },
   {
     "id": "killy_hf2365",
@@ -5444,7 +5534,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Killy",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tara-lunardi"
   },
   {
     "id": "koumei_shokatsuryou_hf13",
@@ -5502,7 +5593,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Koumei Shokatsuryou",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sasha-vasceschi"
   },
   {
     "id": "lady_victoria_blackwood_hf2986",
@@ -5560,7 +5652,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Lady Victoria Blackwood",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "bene-tassandi"
   },
   {
     "id": "larry_david_hf4360",
@@ -5617,7 +5710,8 @@
     "slim": 1,
     "job": "Impiegato",
     "old_name": "Larry David",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "reno-lambaro"
   },
   {
     "id": "lazarillo_de_tormes_hf3931",
@@ -5675,7 +5769,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Lazarillo de Tormes",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "manfredi-lunoni"
   },
   {
     "id": "lenny_nero_hf426",
@@ -5733,7 +5828,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Lenny Nero",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vela-ricaro"
   },
   {
     "id": "little_joe_cartwright_hf3813",
@@ -5791,7 +5887,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Little Joe Cartwright",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sandro-manfretti"
   },
   {
     "id": "long_chen_hf821",
@@ -5849,7 +5946,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Long Chen",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "giule-ghirardi"
   },
   {
     "id": "lorelei_gilmore_hf3270",
@@ -5907,7 +6005,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Lorelei Gilmore",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eli-sampazzi"
   },
   {
     "id": "lt_ellen_ripley_aliens_hf4908",
@@ -5964,7 +6063,8 @@
     "slim": 1,
     "job": "Commerciante",
     "old_name": "Lt. Ellen Ripley (Aliens)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-trecucci"
   },
   {
     "id": "lucero_mundo_hf263",
@@ -6022,7 +6122,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Lucero Mundo",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "matteo-donagni"
   },
   {
     "id": "luna",
@@ -6080,7 +6181,8 @@
     "slim": 1,
     "job": "Operaio",
     "old_name": "Luna",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gioia-novotti"
   },
   {
     "id": "madeline_usher_hf234",
@@ -6138,7 +6240,8 @@
     "slim": 1,
     "job": "Designer",
     "old_name": "Madeline Usher",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tancredi-grisaro"
   },
   {
     "id": "maggie_chascarillo_hf3274",
@@ -6196,7 +6299,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Maggie Chascarillo",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ennio-dardetti"
   },
   {
     "id": "mai_shiranui_hf967",
@@ -6254,7 +6358,8 @@
     "slim": 1,
     "job": "Content creator gaming",
     "old_name": "Mai Shiranui",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "riva-bernardi"
   },
   {
     "id": "mai_valentine_hf395",
@@ -6312,7 +6417,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Mai Valentine",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "loren-ortali"
   },
   {
     "id": "major_kusanagi_hf2997",
@@ -6370,7 +6476,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Major Kusanagi",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lauro-luccardi"
   },
   {
     "id": "malala_yousafzai_hf1475",
@@ -6428,7 +6535,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Malala Yousafzai",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teresa-savazzi"
   },
   {
     "id": "margaret_sanger_hf780",
@@ -6486,7 +6594,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Margaret Sanger",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "eli-rinalagni"
   },
   {
     "id": "marty_mcfly_hf667",
@@ -6543,7 +6652,8 @@
     "slim": 1,
     "job": "Operaio",
     "old_name": "Marty McFly",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ugo-fariniero"
   },
   {
     "id": "mary_berry_hf4098",
@@ -6601,7 +6711,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Mary Berry",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lian-dalmetti"
   },
   {
     "id": "mary_king_hf4543",
@@ -6659,7 +6770,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Mary King",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "aster-granandi"
   },
   {
     "id": "mary_tyrone_hf141",
@@ -6717,7 +6829,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Mary Tyrone",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lian-villardi"
   },
   {
     "id": "masaharu_morimoto_hf600",
@@ -6775,7 +6888,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Masaharu Morimoto",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vela-pasqini"
   },
   {
     "id": "matuya_hf2985",
@@ -6833,7 +6947,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Matuya",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fabiana-gravoni"
   },
   {
     "id": "merida_hf3047",
@@ -6891,7 +7006,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Merida",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vera-manfrandi"
   },
   {
     "id": "mick_lasalle_hf2352",
@@ -6949,7 +7065,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Mick LaSalle",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "marlo-poggotti"
   },
   {
     "id": "midnighter_hf2601",
@@ -7007,7 +7124,8 @@
     "slim": 1,
     "job": "Sceneggiatore",
     "old_name": "Midnighter",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "alen-magrenti"
   },
   {
     "id": "mildred_pierce_hf1756",
@@ -7065,7 +7183,8 @@
     "slim": 1,
     "job": "Artista visivo",
     "old_name": "Mildred Pierce",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sami-merlardi"
   },
   {
     "id": "milo_bloom_hf347",
@@ -7123,7 +7242,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Milo Bloom",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iacopo-folloni"
   },
   {
     "id": "miranda_hf2228",
@@ -7181,7 +7301,8 @@
     "slim": 1,
     "job": "Fotografo",
     "old_name": "Miranda",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "lucia-stortetti"
   },
   {
     "id": "mitch_rapp_hf548",
@@ -7239,7 +7360,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Mitch Rapp",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "luan-scaretti"
   },
   {
     "id": "monica_geller_hf1905",
@@ -7297,7 +7419,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Monica Geller",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-campenti"
   },
   {
     "id": "mr_ashok_hf1379",
@@ -7354,7 +7477,8 @@
     "slim": 1,
     "job": "Guardiano del villaggio",
     "old_name": "Mr. Ashok",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "loren-caldurri"
   },
   {
     "id": "mr_bean_hf4602",
@@ -7411,7 +7535,8 @@
     "slim": 1,
     "job": "Operaio",
     "old_name": "Mr. Bean",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ari-panzani"
   },
   {
     "id": "nabu_hf3109",
@@ -7469,7 +7594,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Nabu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "etere-giorgani"
   },
   {
     "id": "nabucco_hf4066",
@@ -7527,7 +7653,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Nabucco",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ignazio-pasqagni"
   },
   {
     "id": "nagg_hf1062",
@@ -7585,7 +7712,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Nagg",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ari-laurali"
   },
   {
     "id": "nao_kazushige_hf3601",
@@ -7643,7 +7771,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Nao Kazushige",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "arduino-contenti"
   },
   {
     "id": "nate_berkus_hf476",
@@ -7701,7 +7830,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Nate Berkus",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "gianni-cortoldi"
   },
   {
     "id": "neo_thomas_anderson_hf1123",
@@ -7759,7 +7889,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Neo (Thomas Anderson)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iacopo-dolfani"
   },
   {
     "id": "neville_longbottom_hf4370",
@@ -7817,7 +7948,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Neville Longbottom",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "raffaele-vinani"
   },
   {
     "id": "nicholas_brody_hf1390",
@@ -7875,7 +8007,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Nicholas Brody",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "rober-poggocchi"
   },
   {
     "id": "niko_bellic_hf1344",
@@ -7933,7 +8066,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Niko Bellic",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "renzo-dorigandi"
   },
   {
     "id": "noodles_hf4030",
@@ -7991,7 +8125,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Noodles",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ori-gravaro"
   },
   {
     "id": "olivia_pope_hf2130",
@@ -8049,7 +8184,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Olivia Pope",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "perla-serrini"
   },
   {
     "id": "omar_l_gallaga_hf1804",
@@ -8106,7 +8242,8 @@
     "slim": 1,
     "job": "Commerciante",
     "old_name": "Omar L. Gallaga",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "loren-bernaro"
   },
   {
     "id": "opiyelguabir_n_hf2854",
@@ -8164,7 +8301,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Opiyelguabirán",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nadir-fumali"
   },
   {
     "id": "osamu_dazai_hf2768",
@@ -8222,7 +8360,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Osamu Dazai",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ely-rizzocchi"
   },
   {
     "id": "penelope_penny_brannigan_hf4701",
@@ -8279,7 +8418,8 @@
     "slim": 1,
     "job": "Avvocato penalista",
     "old_name": "Penelope \"Penny\" Brannigan",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fabio-fumoni"
   },
   {
     "id": "persona_5_protagonist_joker_hf4872",
@@ -8337,7 +8477,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Persona 5 Protagonist (Joker)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vittoria-paoloni"
   },
   {
     "id": "peter_lindbergh_hf3679",
@@ -8395,7 +8536,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Peter Lindbergh",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "adri-vallagni"
   },
   {
     "id": "princess_yona_hf551",
@@ -8455,7 +8597,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Princess Yona",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "noa-valloni"
   },
   {
     "id": "quetzalcoatl_hf1114",
@@ -8513,7 +8656,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Quetzalcoatl",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "falco-brunaro"
   },
   {
     "id": "quincey_morris_hf3489",
@@ -8571,7 +8715,8 @@
     "slim": 1,
     "job": "Esport player",
     "old_name": "Quincey Morris",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nerio-scalandi"
   },
   {
     "id": "ranma_saotome_hf3673",
@@ -8690,7 +8835,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Ray Kinsella",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nadir-verocchi"
   },
   {
     "id": "red_redding_hf920",
@@ -8748,7 +8894,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Red Redding",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sole-ventiero"
   },
   {
     "id": "rene_descartes_hf4265",
@@ -8806,7 +8953,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Rene Descartes",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "valerio-veriero"
   },
   {
     "id": "rick_bayless_hf4645",
@@ -8864,7 +9012,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Rick Bayless",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "aster-diamali"
   },
   {
     "id": "rin_matsuoka_hf2286",
@@ -8922,7 +9071,8 @@
     "slim": 1,
     "job": "Autonomo",
     "old_name": "Rin Matsuoka",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-cantocchi"
   },
   {
     "id": "river_tam_hf910",
@@ -8980,7 +9130,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "River Tam",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "cale-savani"
   },
   {
     "id": "robert_hunter_hf3353",
@@ -9038,7 +9189,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Robert Hunter",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vela-rizzazzi"
   },
   {
     "id": "robot_b_9_hf1883",
@@ -9096,7 +9248,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Robot B-9",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ori-carrelli"
   },
   {
     "id": "ronald_reagan_hf2720",
@@ -9154,7 +9307,8 @@
     "slim": 1,
     "job": "Disoccupato",
     "old_name": "Ronald Reagan",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-tardandi"
   },
   {
     "id": "rory_gilmore_hf1261",
@@ -9212,7 +9366,8 @@
     "slim": 1,
     "job": "Scrittore freelance",
     "old_name": "Rory Gilmore",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "falco-montaloni"
   },
   {
     "id": "rosalind_hf2950",
@@ -9270,7 +9425,8 @@
     "slim": 1,
     "job": "Pensionato",
     "old_name": "Rosalind",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ari-rastelli"
   },
   {
     "id": "rudy_baylor_hf1622",
@@ -9328,7 +9484,8 @@
     "slim": 1,
     "job": "Operaio",
     "old_name": "Rudy Baylor",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sole-vernetti"
   },
   {
     "id": "rusty_ryan_hf1289",
@@ -9386,7 +9543,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Rusty Ryan",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-granucci"
   },
   {
     "id": "ryu_hf4084",
@@ -9444,7 +9602,8 @@
     "slim": 1,
     "job": "Content creator gaming",
     "old_name": "Ryu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-perrenti"
   },
   {
     "id": "sam_bell_hf4958",
@@ -9502,7 +9661,8 @@
     "slim": 1,
     "job": "Commerciante",
     "old_name": "Sam Bell",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "falco-giancucci"
   },
   {
     "id": "samus_aran_hf675",
@@ -9560,7 +9720,8 @@
     "slim": 1,
     "job": "Sviluppatore indie",
     "old_name": "Samus Aran",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-vianeschi"
   },
   {
     "id": "sara_scuola",
@@ -9617,7 +9778,8 @@
     "slim": 1,
     "job": "Ricercatore",
     "old_name": "Sara",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tiziana-rosani"
   },
   {
     "id": "satou_pendragon_ichirou_suzuki_hf2213",
@@ -9674,7 +9836,8 @@
     "slim": 1,
     "job": "Guerriero itinerante",
     "old_name": "Satou Pendragon (Ichirou Suzuki)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "elio-corbotti"
   },
   {
     "id": "setsuna_f_seiei_hf2104",
@@ -9732,7 +9895,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Setsuna F. Seiei",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dora-dantoni"
   },
   {
     "id": "sheldon_cooper_hf1659",
@@ -9790,7 +9954,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Sheldon Cooper",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ori-mazzazzi"
   },
   {
     "id": "shigeo_mob_kageyama_hf4946",
@@ -9909,7 +10074,8 @@
     "slim": 1,
     "job": "Studente lavoratore",
     "old_name": "Shiki",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "alen-marrotti"
   },
   {
     "id": "shirley_fenette_hf1589",
@@ -9969,7 +10135,8 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Shirley Fenette",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-torrazzi"
   },
   {
     "id": "simon_sinek_hf2117",
@@ -10027,7 +10194,8 @@
     "slim": 1,
     "job": "Illustratore",
     "old_name": "Simon Sinek",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nerio-rocetti"
   },
   {
     "id": "sir_graham_hf287",
@@ -10085,7 +10253,8 @@
     "slim": 1,
     "job": "Commerciante",
     "old_name": "Sir Graham",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "reno-sartetti"
   },
   {
     "id": "sirona_hf1989",
@@ -10143,7 +10312,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Sirona",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "viola-corboldi"
   },
   {
     "id": "sophie_zawistowska_hf315",
@@ -10201,7 +10371,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Sophie Zawistowska",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "greta-sperandi"
   },
   {
     "id": "spawn_al_simmons_hf3754",
@@ -10259,7 +10430,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Spawn (Al Simmons)",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "zeno-verurri"
   },
   {
     "id": "steam_maiden_hf4313",
@@ -10317,7 +10489,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Steam Maiden",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "indra-alberotti"
   },
   {
     "id": "syrus_truesdale_hf1520",
@@ -10375,7 +10548,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Syrus Truesdale",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "toni-perrardi"
   },
   {
     "id": "takutsi_nakaw_hf4684",
@@ -10433,7 +10607,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Takutsi Nakawé",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "reno-sorucci"
   },
   {
     "id": "tatsu_hf4068",
@@ -10552,7 +10727,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Ted Turner",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "vale-laurelli"
   },
   {
     "id": "telepinu_hf3852",
@@ -10610,7 +10786,8 @@
     "slim": 1,
     "job": "Custode di reliquie",
     "old_name": "Telepinu",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "teti-altocchi"
   },
   {
     "id": "thanos_hf2511",
@@ -10668,7 +10845,8 @@
     "slim": 1,
     "job": "Scholar di antichità",
     "old_name": "Thanos",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "enea-vittagni"
   },
   {
     "id": "the_alpha_wolf_hf2419",
@@ -10726,7 +10904,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "The Alpha Wolf",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sergio-nannurri"
   },
   {
     "id": "the_baba_yaga_hf3595",
@@ -10784,7 +10963,8 @@
     "slim": 1,
     "job": "Artista visivo",
     "old_name": "The Baba Yaga",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "remo-santoni"
   },
   {
     "id": "the_betty_and_barney_hill_incident_hf3085",
@@ -10842,7 +11022,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "The Betty and Barney Hill Incident",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "calogero-meliero"
   },
   {
     "id": "the_bunyip_hf374",
@@ -10900,7 +11081,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "The Bunyip",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tommaso-nannenti"
   },
   {
     "id": "the_celebrity_doppelg_nger_hf3851",
@@ -10958,7 +11140,8 @@
     "slim": 1,
     "job": "Blogger",
     "old_name": "The Celebrity Doppelgänger",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ottavio-marcandi"
   },
   {
     "id": "the_little_mermaid_hf1512",
@@ -11016,7 +11199,8 @@
     "slim": 1,
     "job": "Guerriero itinerante",
     "old_name": "The Little Mermaid",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fabio-dononi"
   },
   {
     "id": "the_researcher_hf2663",
@@ -11074,7 +11258,8 @@
     "slim": 1,
     "job": "Game designer",
     "old_name": "The Researcher",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "emanuele-rizzardi"
   },
   {
     "id": "thomas_edison_hf505",
@@ -11132,7 +11317,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Thomas Edison",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-valdiero"
   },
   {
     "id": "thomas_magnum_hf2354",
@@ -11190,7 +11376,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Thomas Magnum",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "madi-carlagni"
   },
   {
     "id": "thomas_the_rhymer_hf2116",
@@ -11248,7 +11435,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Thomas the Rhymer",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sole-novandi"
   },
   {
     "id": "titania_hf2375",
@@ -11306,7 +11494,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Titania",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-rambardi"
   },
   {
     "id": "toru_hagakure_hf3608",
@@ -11364,7 +11553,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Toru Hagakure",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "michele-serragni"
   },
   {
     "id": "triss_merigold_hf4534",
@@ -11422,7 +11612,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Triss Merigold",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-pellaro"
   },
   {
     "id": "tsubasa_hanekawa_hf1055",
@@ -11482,7 +11673,8 @@
     "slim": 1,
     "job": "Studente universitario",
     "old_name": "Tsubasa Hanekawa",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "nerina-mantotti"
   },
   {
     "id": "ukyo_saionji_hf4597",
@@ -11662,7 +11854,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Vajrayogini",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-silvocchi"
   },
   {
     "id": "vampire_hunter_d_hf2367",
@@ -11720,7 +11913,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Vampire Hunter D",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "tiziano-fiammurri"
   },
   {
     "id": "victor_van_dort_hf1614",
@@ -11778,7 +11972,8 @@
     "slim": 1,
     "job": "Operaio",
     "old_name": "Victor Van Dort",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "iris-cordetti"
   },
   {
     "id": "vincent_van_gogh_hf747",
@@ -11836,7 +12031,8 @@
     "slim": 1,
     "job": "Disoccupato",
     "old_name": "Vincent van Gogh",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "sasha-zollagni"
   },
   {
     "id": "violet_crawley_dowager_countess_of_grantham_hf4491",
@@ -11894,7 +12090,8 @@
     "slim": 1,
     "job": "Commerciante",
     "old_name": "Violet Crawley, Dowager Countess of...",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "giule-pagloni"
   },
   {
     "id": "warren_buffett_hf2708",
@@ -11952,7 +12149,8 @@
     "slim": 1,
     "job": "Musicista",
     "old_name": "Warren Buffett",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "ondina-quarotti"
   },
   {
     "id": "wonder_woman_diana_prince_hf10",
@@ -12071,7 +12269,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Yoko Littner",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "manfredi-dorigandi"
   },
   {
     "id": "yona_hf2028",
@@ -12129,7 +12328,8 @@
     "identity_it": true,
     "slim": 1,
     "old_name": "Yona",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "leda-salvotti"
   },
   {
     "id": "yuno_gasai_hf307",
@@ -12187,7 +12387,8 @@
     "slim": 1,
     "job": "Disoccupato",
     "old_name": "Yuno Gasai",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "dorian-paololdi"
   },
   {
     "id": "yuuichi_katagiri_hf2636",
@@ -12247,6 +12448,7 @@
     "slim": 1,
     "job": "Freelancer",
     "old_name": "Yuuichi Katagiri",
-    "renamed": 1
+    "renamed": 1,
+    "slug": "fiamma-vescini"
   }
 ]
