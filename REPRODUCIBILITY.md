@@ -257,3 +257,15 @@ backend/chat_engine.py (auto-save compact summary)
   pulsante Esporta (download .txt). `GET /chat/export` + proxy `wp_remote_get`.
 - Verificato: export con `Content-Disposition` e conversazione completa; rigenera 25 delta +
   final col modello locale; chip resi nel render.
+
+## 20) Streaming: niente più testo che sparisce e prompt più corto (2026-11-03)
+- Bug segnalato: la risposta si scriveva e poi veniva cancellata, restava una frase.
+  Causa: il post-processing teneva SOLO la prima frase e tagliava a 18 parole, riscrivendo
+  il testo già mostrato. Ora interviene solo oltre 2 frasi / 28 parole e taglia a 26 parole
+  con "…": quello che leggi in streaming resta.
+- Prompt ridotto di ~44% (7.754 → 4.362 caratteri): nei canali adulti niente recap di
+  familiarità/ignoranza, regole generiche accorpate, "Chi sei" e iniziativa più brevi.
+  Generazione stream limitata a 110 token.
+- Ottimizzazione cache: l'istruzione che cambia a ogni messaggio (scala di intimità) è stata
+  spostata IN FONDO al prompt, così il prefisso statico resta identico e Ollama riusa la KV
+  cache. Misurato sullo stesso personaggio: 57 s a freddo, poi 19 s e 16 s.

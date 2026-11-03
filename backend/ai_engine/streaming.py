@@ -152,7 +152,7 @@ def _anthropic_generate_stream(messages, model, user_id=None):
 
 def _ollama_generate_stream(messages, model, user_id=None):
     from ai_engine.providers.ollama import OLLAMA_URL, OLLAMA_OPTIONS, _ensure_ollama
-    OLLAMA_STREAM_OPTIONS = {**OLLAMA_OPTIONS, "num_predict": 200}
+    OLLAMA_STREAM_OPTIONS = {**OLLAMA_OPTIONS, "num_predict": 110}
     if not _ensure_ollama():
         return
     try:

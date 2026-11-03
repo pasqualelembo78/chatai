@@ -1,5 +1,13 @@
 MAX_HISTORY_MESSAGES = 20
 
+_CATEGORIE_ADULTE = {
+    "amanti-segreti", "bdsm", "bisex", "camera-privata", "chat-romantica", "dirty-talk",
+    "dominazione", "fantasie-erotiche", "fantasie-proibite", "feticismi", "gay",
+    "incontri-bollenti", "lesbo", "masturbazione", "mature", "milf", "roleplay-erotico",
+    "scambio-di-coppia", "senza-tabu", "sesso-orale", "sesso-virtuale", "sottomissione",
+    "threesome", "voyeurismo",
+}
+
 # L'URL dell'app adulta è letto SOLO da env (vedi content_safety.ADULT_APP_URL).
 # Se assente (build Play/AdMob), i messaggi di sicurezza restano neutri e il binario
 # non contiene alcun riferimento a contenuti/adult -> conforme a Google Play e AdMob.
@@ -200,7 +208,8 @@ def _build_pretend_prompt(target, interlocutor):
     parts.append("Non dire mai di essere un'intelligenza artificiale.")
     parts.append("Non uscire mai dal personaggio.")
     parts.append(f"Rispondi sempre come {full_name}.")
-    parts.append("Sii umano: le persone non sono perfette.")
+    if not _adulto:
+        parts.append("Sii umano: ammetti dubbi e incertezze.")
     parts.append(BREVITY_RULE)
 
     return "\n".join(parts)
@@ -266,9 +275,9 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     prompt += f"\n══════════════════"
 
     # Coerenza e anti-ripetizione
-    prompt += "\n\nMantieni sempre la personalità, il background e lo stile del personaggio. Non contraddirti. Non ripetere frasi già usate: varia il vocabolario."
+    prompt += "\n\nResta coerente col personaggio, non ripetere frasi già dette."
     # Iniziativa
-    prompt += "\n\nPrendi iniziativa nella conversazione e nel roleplay: proponi, suggerisci, guida la scena. Non aspettare sempre che l'utente faccia la prima mossa."
+    prompt += "\n\nPrendi tu l'iniziativa: proponi, guida la scena, non aspettare l'utente."
     prompt += "\n\nIn roleplay descrivi azioni concrete in prima persona (es. 'ti avvicino', 'ti tocco'), non chiedere all'utente cosa fare."
 
     # Riassunto conversazione precedente (per non appesantire AI)
@@ -488,6 +497,7 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
     p_depth = character.get("personality_depth", {})
 
     parts = []
+    _adulto = character.get("category") in _CATEGORIE_ADULTE
 
     # Core identity
     parts.append(f"Sei {full_name}.")
@@ -513,7 +523,6 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
     _block_cat = character.get("category_context") or _catprof.context_block(_slug_cat)
     if _block_cat:
         parts.append(_block_cat)
-        parts.append(_catprof.intimacy_hint(intimacy))
 
     # Personality depth
     if personality:
@@ -528,12 +537,12 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
         parts.append(f"Sei ESPERTO in: {expertise_str}.")
         parts.append(f"Quando qualcuno ti chiede di questi argomenti, rispondi con sicurezza, competenza e dettagli. Questa è la tua area di eccellenza.")
 
-    if knowledge.get("familiarity"):
+    if knowledge.get("familiarity") and not _adulto:
         familiar_str = ", ".join(knowledge["familiarity"][:3])
         parts.append(f"Conosci un po' di: {familiar_str}.")
         parts.append(f"Se ti chiedono di questi argomenti, dai risposte generiche e ammetti apertamente: 'Non sono un esperto in questo, ma quello che so è che...' oppure 'Ho sentito dire che...'. Non pretendere di saperne più di quanto sai.")
 
-    if knowledge.get("ignorance"):
+    if knowledge.get("ignorance") and not _adulto:
         ignorance_str = ", ".join(knowledge["ignorance"][:5])
         parts.append(f"REGOLA FERREA: NON sei esperto in: {ignorance_str}.")
         parts.append(f"Se qualcuno ti chiede di questi argomenti, DEVI ammettere la tua ignoranza in modo chiaro e diretto. NON inventare risposte, NON improvvisare, NON dare informazioni fasulle.")
@@ -541,10 +550,14 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
         parts.append(f"Se l'utente insiste, ripeti che non sai, magari aggiungendo: 'Lo so che è frustrante, ma preferisco essere onesto piuttosto che inventare'.")
 
     # ── KNOWLEDGE BOUNDARY RULE ───────────────────────────────────────
+    # Nei canali adulti il recap dei limiti di conoscenza è verboso e serve poco:
+    # si tiene solo la riga delle competenze.
+    _adulto = character.get("category") in _CATEGORIE_ADULTE
+
     all_expertise = knowledge.get("expertise", [])
     all_familiarity = knowledge.get("familiarity", [])
     all_ignorance = knowledge.get("ignorance", [])
-    if all_expertise or all_familiarity or all_ignorance:
+    if not _adulto and (all_expertise or all_familiarity or all_ignorance):
         parts.append("RECAPITOLANDO I TUOI LIMITI DI CONOSCENZA:")
         if all_expertise:
             parts.append(f"- DOMINI DI COMPETENZA (puoi rispondere bene): {', '.join(all_expertise[:4])}")
@@ -661,13 +674,18 @@ def _build_enhanced_prompt(character, interlocutor, intimacy=0):
         parts.append(pezzo)
         gia += len(pezzo)
 
+    # varia con l'intimità: in fondo, così il prefisso resta in cache
+    parts.append(_catprof.intimacy_hint(intimacy))
+
     # ── CORE RULES ────────────────────────────────────────────────────
     parts.append("Non dire mai di essere un'intelligenza artificiale.")
     parts.append("Non uscire mai dal personaggio.")
     parts.append(f"Rispondi sempre come {full_name}.")
-    parts.append("Ricorda le conversazioni precedenti.")
-    parts.append("Sii umano: le persone non sono perfette. Ammetti quando non sai qualcosa, quando hai dubbi, o quando stai pensando.")
-    parts.append("Se l'utente ti fa una domanda che non c'entra con la tua area di competenza, rispondi in modo onesto: 'Non sono il miglior esperto in questo, ma posso dirti quello che so' oppure 'Questo non è il mio campo, ma proviamo'.")
+    parts.append("Ricorda la conversazione.")
+    if not _adulto:
+        parts.append("Sii umano: ammetti dubbi e incertezze.")
+    if not _adulto:
+        parts.append("Se chiede qualcosa fuori dalla tua area, dillo con onestà.")
     parts.append("Se l'utente insiste su un argomento che non conosci, potresti dare una risposta non perfetta o generica, come farebbe una persona normale.")
     parts.append(BREVITY_RULE + " Approfondisci solo se esplicitamente richiesto.")
 

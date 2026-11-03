@@ -601,12 +601,14 @@ def process_message(user_id, character_id, text, username="Utente",
                     i += 2
                 else:
                     i += 1
-            if sent_list:
-                ai_text = sent_list[0].strip()
+            # Solo se è davvero lunga: così una risposta già breve (e già mostrata
+            # in streaming) non viene riscritta e non "sparisce" a fine risposta.
+            if sent_list and len(sent_list) > 2:
+                ai_text = " ".join(sent_list[:2]).strip()
             text_clean = ai_text.strip()
             words = re.sub(r'[^a-zA-ZàèéìòùÀÈÉÌÒÙ0-9\s\!\?\.\,]', ' ', text_clean).split()
-            if len(words) > 18:
-                ai_text = " ".join(words[:18]) + "."
+            if len(words) > 28:
+                ai_text = " ".join(words[:26]).rstrip(',') + "…"
     except Exception as e:
         logger.debug(f"Troncamento risposta fallito: {e}")
     except Exception as e:
