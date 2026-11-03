@@ -421,3 +421,13 @@ backend/chat_engine.py (auto-save compact summary)
 - ATTENZIONE scala: 5.072 pagine su un sito nuovo possono saturare il crawl. Regola: se in
   Search Console l'indicizzato resta sotto il 50% in 4 settimane, si tolgono dalla sitemap
   le categorie più deboli e si migliorano i testi.
+
+## 34) Testi delle pagine variati + stanza alleggerita (2026-11-03)
+- Problema: molti personaggi condividono la stessa `essence`/`personality` di categoria, quindi
+  le pagine risultavano identiche. `aria_char_page_testo()` ora compone le frasi da pool diverse
+  scelte dall'hash dell'id (apertura 4 varianti, lavoro 3, carattere 10, contesto 3, taglio 4):
+  con 210 personaggi per stanza le combinazioni bastano a evitare il copia-incolla.
+- La stanza non rende più la chat nascosta (tutte le card portano alla pagina): −18 KB di HTML
+  per stanza e meno duplicazione. Restano intro, card e FAQ.
+- Cache Redis per categoria (`aria_char_list`), pagina personaggio servita in ~0,25 s.
+- Verificato: stanza 200 senza chat, FAQ e 210 card; campione di 8 pagine su 8 categorie tutte 200.

@@ -281,6 +281,12 @@ function aria_char_list($categoria) {
     if (isset($cache[$categoria])) {
         return $cache[$categoria];
     }
+    $memo = 'chars_' . $categoria;
+    $salvata = wp_cache_get($memo, 'aria_char_page');
+    if (is_array($salvata)) {
+        $cache[$categoria] = $salvata;
+        return $salvata;
+    }
     $file = aria_char_data_file($categoria);
     $righe = array();
     if ($file) {
@@ -290,6 +296,7 @@ function aria_char_list($categoria) {
         }
     }
     $cache[$categoria] = $righe;
+    wp_cache_set($memo, $righe, 'aria_char_page', HOUR_IN_SECONDS);
     return $righe;
 }
 
@@ -325,6 +332,79 @@ function aria_characters_with_slug($categoria, $escludi = '', $quanti = 6) {
         }
     }
     return $out;
+}
+
+
+/**
+ * Testi della pagina personaggio, composti da pool di frasi diverse.
+ *
+ * Molti personaggi condividono la stessa descrizione di categoria: senza varietà
+ * le pagine sarebbero identiche. Le frasi sono scelte dall'hash dell'id (stabile)
+ * e incrociate con età, lavoro, tag e stanza.
+ */
+function aria_char_page_testo($c, $stadio) {
+    $nome = $c['name'] ?? '';
+    $eta = (int) ($c['age'] ?? 0);
+    $lavoro = trim((string) ($c['job'] ?? ''));
+    $tag = array_slice(array_filter((array) ($c['tags'] ?? array())), 0, 4);
+    $r = hexdec(substr(md5((string) ($c['id'] ?? '')), 0, 6));
+
+    $apertura = $eta
+        ? array(
+            "$nome ha $eta anni.",
+            "$nome, $eta anni.",
+            "Ha $eta anni, $nome.",
+            "$eta anni portati con disinvoltura.",
+        )[$r % 4]
+        : "$nome è un personaggio di questa stanza.";
+
+    if ($lavoro) {
+        $apertura .= ' ' . array(
+            "Di mestiere fa " . strtolower($lavoro) . ".",
+            "Lavora come " . strtolower($lavoro) . ".",
+            "Il suo lavoro: " . strtolower($lavoro) . ".",
+        )[($r >> 2) % 3];
+    } else {
+        $apertura .= ' ' . array(
+            "Nella vita se la cava, e qui dentro si muove con la stessa disinvoltura.",
+            "Non dice subito cosa fa: preferisce farsi scoprire parlando.",
+            "Ha le sue abitudini e le porta nella conversazione.",
+            "Arriva nella stanza senza presentazioni lunghe, e va bene così.",
+        )[($r >> 2) % 4];
+    }
+
+    $carattere = array(
+        "In chat è diretto: dice cosa vuole e si aspetta che tu risponda.",
+        "Ha un modo di fare tranquillo, ma non passivo: conduce quando serve.",
+        "Alterna ironia e concretezza, senza perdere il filo della scena.",
+        "Parla poco e tocca molto, con frasi brevi e gesti descritti.",
+        "È paziente e attento ai dettagli, di quelli che si notano.",
+        "Parte cauto, poi si scalda e prende l'iniziativa.",
+        "Ha sicurezza da vendere e la usa per metterti a tuo agio.",
+        "Gioca sul contrasto: dolce all'inizio, deciso appena capisce che ci stai.",
+        "Non ha bisogno di spiegare: entra nella parte e la sostiene.",
+        "Sa aspettare il momento giusto e lo allunga apposta.",
+    )[($r >> 4) % 10];
+
+    $contesto = array(
+        "La stanza è {$stadio['name']}: " . strtolower($stadio['description']) . ".",
+        "Il tema è quello di {$stadio['name']}, " . strtolower($stadio['description']) . ".",
+        "Siamo nella stanza {$stadio['name']}, dove " . strtolower($stadio['description']) . ".",
+    )[($r >> 7) % 3];
+
+    $taglio = array(
+        "Risponde in una o due frasi, come in una chat vera.",
+        "Tiene le risposte corte: qui funziona così.",
+        "Non scrive monologhi: una battuta e avanti.",
+        "Va dritto al punto, senza preamboli.",
+    )[($r >> 9) % 4];
+
+    return array(
+        'chi' => trim($apertura),
+        'come' => trim($carattere . ' ' . $contesto),
+        'parole' => $tag ? 'Si riconosce da: ' . implode(', ', $tag) . '.' : '',
+        'nota' => $taglio,
+    );
 }
 
 function aria_rewrite_personaggi() {

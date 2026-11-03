@@ -88,55 +88,6 @@ $room_url = get_permalink();
     <?php endif; ?>
 </div>
 
-<?php /* Chat del personaggio selezionato: viene resa solo quando ?char= e' presente */ ?>
-<div id="aria-chat-wrapper" class="aria-chat-in-room" <?php echo $selected_char ? '' : 'style="display:none;"'; ?>>
-    <?php if ($selected_char): ?>
-        <p class="aria-room-back"><a href="<?php echo esc_url($room_url); ?>">&larr; Tutti i personaggi di <?php echo esc_html($cat_meta['name']); ?></a></p>
-    <?php endif; ?>
-    <?php
-    $chat_atts = array(
-        'character' => $selected_char,
-        'category'  => $cat_slug,
-        'width'     => '100%',
-        'height'    => '500px',
-    );
-    $atts = $chat_atts;
-    include ARIA_CHAT_PLUGIN_DIR . 'templates/chat-box.php';
-    ?>
-</div>
-
-<script>
-(function () {
-    // Con ?char= la griglia lascia il posto alla chat del personaggio scelto.
-    var hasChar = /[?&](char|character)=/.test(window.location.search);
-    var grid = document.getElementById('aria-grid-wrapper');
-    var box = document.getElementById('aria-chat-wrapper');
-    if (hasChar) {
-        if (grid) grid.style.display = 'none';
-        if (box) box.style.display = 'block';
-        return;
-    }
-    if (box) box.style.display = 'none';
-
-    // Svela le card a blocchi: il resto del DOM resta ma non viene dipinto
-    var piu = document.getElementById('aria-show-more');
-    var mostrate = document.getElementById('aria-grid-shown');
-    if (!piu) return;
-    piu.addEventListener('click', function () {
-        var passo = parseInt(piu.getAttribute('data-step'), 10) || 60;
-        var totale = parseInt(piu.getAttribute('data-total'), 10) || 0;
-        var nascoste = document.querySelectorAll('.aria-character-card.aria-card-hidden');
-        for (var i = 0; i < passo && i < nascoste.length; i++) {
-            nascoste[i].classList.remove('aria-card-hidden');
-        }
-        var viste = document.querySelectorAll('.aria-character-card:not(.aria-card-hidden)').length;
-        if (mostrate) mostrate.textContent = viste + ' di ' + totale;
-        if (viste >= totale && piu.parentNode) piu.parentNode.removeChild(piu);
-    });
-})();
-</script>
-
-
 <?php if (!empty($seo_stanza['faq'])): ?>
 <section class="aria-room-faq">
     <h2>Domande frequenti su <?php echo esc_html($cat_meta['name']); ?></h2>

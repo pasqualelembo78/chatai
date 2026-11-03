@@ -69,27 +69,21 @@ get_header();
 
         <div class="aria-char-page">
             <div class="aria-char-page__testo">
+                <?php $testo = aria_char_page_testo($personaggio, $stadio); ?>
                 <h2>Chi è <?php echo esc_html($nome); ?></h2>
-                <p>
-                    <?php echo esc_html($nome); ?> ha <?php echo (int) $eta; ?> anni<?php echo $mestiere ? ' e di mestiere fa ' . esc_html(strtolower($mestiere)) : ''; ?>.
-                    <?php if ($essenza) : ?>
-                        <?php echo esc_html($essenza); ?>
-                    <?php endif; ?>
-                </p>
+                <p><?php echo esc_html($testo['chi']); ?></p>
 
                 <h2>Come si comporta in chat</h2>
+                <p><?php echo esc_html($testo['come']); ?></p>
                 <p>
-                    <?php echo esc_html($comportamento ?: 'Personaggio della stanza ' . $stadio['name']); ?>.
-                    <?php if ($carattere) : ?>
-                        <?php echo esc_html($carattere); ?>
-                    <?php endif; ?>
-                </p>
-                <p>
-                    Si muove dentro il tema della stanza: <?php echo esc_html(strtolower($stadio['description'])); ?>.
+                    <?php echo esc_html($testo['nota']); ?>
                     La chat è già aperta qui sotto: scrivi e risponde in pochi secondi, restando nel personaggio.
                     Hai <strong>quattro messaggi gratis</strong>, poi serve l'accesso.
                 </p>
 
+                <?php if ($testo['parole']) : ?>
+                    <p><?php echo esc_html($testo['parole']); ?></p>
+                <?php endif; ?>
                 <?php if ($tag) : ?>
                     <h2>Parole chiave</h2>
                     <ul class="aria-char-page__tag">
