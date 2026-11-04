@@ -1,0 +1,11 @@
+- parliamoitaliano — http://parliamoitaliano.altervista.org/il-linguaggio-volgare-del-sesso/ — licenza: CC BY-NC-ND 3.0
+- sensamo — https://sensamo.it/glossario-sesso/ — licenza: sito commerciale, uso informativo
+- parliamoitaliano — http://parliamoitaliano.altervista.org/il-linguaggio-volgare-del-sesso/ — licenza: CC BY-NC-ND 3.0
+- sensamo — https://sensamo.it/glossario-sesso/ — licenza: sito commerciale, uso informativo
+- parliamoitaliano — http://parliamoitaliano.altervista.org/il-linguaggio-volgare-del-sesso/ — licenza: CC BY-NC-ND 3.0
+- raccontivietati — https://raccontivietati.com/dizionario-del-sesso-e-porno/ — licenza: sito commerciale, uso informativo
+- sensamo — https://sensamo.it/glossario-sesso/ — licenza: sito commerciale, uso informativo
+- parliamoitaliano — http://parliamoitaliano.altervista.org/il-linguaggio-volgare-del-sesso/ — licenza: CC BY-NC-ND 3.0
+- parliamoitaliano-espressioni — http://parliamoitaliano.altervista.org/espressioni-volgari/ — licenza: CC BY-NC-ND 3.0
+- raccontivietati — https://raccontivietati.com/dizionario-del-sesso-e-porno/ — licenza: sito commerciale, uso informativo
+- sensamo — https://sensamo.it/glossario-sesso/ — licenza: sito commerciale, uso informativo

@@ -806,3 +806,14 @@ tua destra, "inalato il profumo" → annusato.
 - Aggiunta regola: due verbi di azione consecutivi senza "e" vengono separati ("mi siedo e sciolgo").
   Vale per una lista chiusa di verbi comuni, per non toccare le costruzioni corrette.
 - "i legacci" → "i lacci". Tre nuovi casi in `verifica_correzioni.py` (36/36).
+
+## 63) Estrazione lemmi da fonti pubbliche (2026-11-04)
+- `estrai_lessico.py`: raccoglie **solo i lemmi** da glossari pubblici (parliamo italiano, le sue
+  pagine collegate, dizionario di RaccontiVietati, Sensamo) e li salva in `lessico-grezzo.json`
+  con registro e fonte. Si tengono i termini, non i testi: così le fonti CC BY-NC-ND non vengono
+  violate, essendo l'elenco di parole un fatto. Le fonti sono annotate in `fonti.md`.
+- Filtro con hunspell + lista di gergo noto; gli scarti finiscono in `lessico-scartati.txt` per
+  revisione. Esito della prima prova: 69 lemmi tenuti (39 volgari, 24 tecnici, 3 vezzeggiativi,
+  3 colloquiali), 35 scartati.
+- Le voci sono solo termini: definizione ed esempio vanno riscritti a mano, e i termini tecnici
+  (parafilie) servono meno di quelli colloquiali.
