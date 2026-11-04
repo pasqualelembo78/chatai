@@ -631,11 +631,11 @@
 .aria-spunto-row { display: flex; align-items: center; gap: 10px; margin: 8px 0 4px; }
 .aria-spunto {
     flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
-    border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.06);
-    color: inherit; font-size: 1.15rem; font-weight: 700; cursor: pointer;
+    border: 1px solid #d0d0d0; background: #fff;
+    color: #111 !important; font-size: 1.2rem; font-weight: 800; line-height: 1; cursor: pointer;
 }
-.aria-spunto:hover { background: rgba(255,255,255,.14); }
+.aria-spunto:hover { background: #f1f1f1; color: #000 !important; }
 .aria-spunto:disabled { opacity: .5; cursor: wait; }
 .aria-spunto-carica { animation: aria-pulsa 1s infinite; }
 @keyframes aria-pulsa { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-.aria-spunto-hint { font-size: .82rem; opacity: .7; }
+.aria-spunto-hint { font-size: .82rem; color: #ddd; opacity: .85; }

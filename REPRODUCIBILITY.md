@@ -1013,3 +1013,13 @@ tua destra, "inalato il profumo" → annusato.
 - Nota sui dati: **3.336 personaggi su 5.072 sono "non binari"** (66%), quindi la sezione "Non
   binari" è la più affollata. È un problema di dati, non di pagina: da rivedere quando si rigenerano
   le personalità.
+
+### Correzioni al pulsante "?" (stesso giorno)
+- Il clic non produceva nulla: l'HTML in cache puntava a un bundle JS costruito **prima** che
+  l'handler esistesse. Svuotate le cache di WP Super Cache e Autoptimize (due volte, la prima non
+  era bastata) e riscritto l'handler.
+- Ora il pulsante risolve il personaggio come fa l'invio (campo nascosto, select, config), crea da
+  sé la sessione ospite se manca e riprova una volta, mostra "Ci penso un attimo…" e un messaggio
+  d'errore se fallisce: prima i fallimenti erano muti.
+- Colore: il punto interrogativo era invisibile. Ora cerchio bianco con testo nero (#111), bordo
+  grigio, 1.2rem.

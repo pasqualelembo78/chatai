@@ -78,29 +78,60 @@
         $('#aria-switch-to-register').on('click', function(e) { e.preventDefault(); hideLoginModal(); showRegisterModal(); });
         $('#aria-switch-to-login').on('click', function(e) { e.preventDefault(); hideLoginModal(); showLoginModal(); });
         $input.on('input', autoResizeInput);
-        // Pulsante "?": il personaggio propone lui una domanda d'apertura
+        // Pulsante "?": il personaggio propone lui una domanda d'apertura.
+        // Se il visitatore non ha ancora una sessione (nessun messaggio inviato), la creiamo
+        // prima con l'azione degli ospiti e poi riproviamo: altrimenti il primo clic non fa nulla.
         $('#aria-spunto').on('click', function () {
             var bottone = $(this);
-            var char = window.ariaLastChar || currentCharacter || (config && config.character) || '';
-            if (!char || bottone.prop('disabled')) return;
+            var suggerimento = $('#aria-spunto-hint');
+            var testoOriginale = suggerimento.length ? suggerimento.text() : '';
+            var base = (config && config.ajaxUrl) ? config.ajaxUrl : '/wp-admin/admin-ajax.php';
+
+            function idPersonaggio() {
+                var preset = document.getElementById('aria-preset-character');
+                return window.ariaLastChar || currentCharacter
+                    || (preset && preset.value) || ($('#aria-character-select').val() || '')
+                    || (config && config.character) || '';
+            }
+
+            function proponi(riprova) {
+                var char = idPersonaggio();
+                if (!char) { return; }
+                var corpo = new FormData();
+                corpo.append('action', 'aria_chat_spunto');
+                corpo.append('character', char);
+                fetch(base, { method: 'POST', credentials: 'same-origin', body: corpo })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (d && d.success && d.data && d.data.testo) {
+                            $input.val(d.data.testo).trigger('input').focus();
+                            sendMessage();
+                            return;
+                        }
+                        if (!riprova) {
+                            var g = new FormData();
+                            g.append('action', 'aria_chat_guest');
+                            fetch(base, { method: 'POST', credentials: 'same-origin', body: g })
+                                .then(function () { proponi(true); });
+                            return;
+                        }
+                        if (suggerimento.length) suggerimento.text('Non riesco a propormi una domanda, riprova.');
+                    })
+                    .catch(function () {
+                        if (suggerimento.length) suggerimento.text('Non riesco a propormi una domanda, riprova.');
+                    })
+                    .then(function () {
+                        bottone.prop('disabled', false).removeClass('aria-spunto-carica');
+                        setTimeout(function () {
+                            if (suggerimento.length && testoOriginale) suggerimento.text(testoOriginale);
+                        }, 4000);
+                    });
+            }
+
+            if (bottone.prop('disabled')) { return; }
             bottone.prop('disabled', true).addClass('aria-spunto-carica');
-            var corpo = new FormData();
-            corpo.append('action', 'aria_chat_spunto');
-            corpo.append('character', char);
-            fetch((config && config.ajaxUrl) ? config.ajaxUrl : '/wp-admin/admin-ajax.php', {
-                method: 'POST', credentials: 'same-origin', body: corpo
-            })
-                .then(function (r) { return r.json(); })
-                .then(function (d) {
-                    if (d && d.success && d.data && d.data.testo) {
-                        $input.val(d.data.testo).trigger('input').focus();
-                        sendMessage();
-                    }
-                })
-                .catch(function () {})
-                .then(function () {
-                    bottone.prop('disabled', false).removeClass('aria-spunto-carica');
-                });
+            if (suggerimento.length) suggerimento.text('Ci penso un attimo…');
+            proponi(false);
         });
         $('#aria-export-btn').on('click', function () {
             var char = window.ariaLastChar || currentCharacter || (config && config.character) || '';
