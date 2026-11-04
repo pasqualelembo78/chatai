@@ -565,7 +565,27 @@ def process_message(user_id, character_id, text, username="Utente",
         ai_text = _correggi(ai_text)
         if not ai_text.strip():
             # la risposta era solo frase fatta, cancellata: rimpiazzala con un gesto
-            ai_text = "Ti arrivo vicino e ti bacio, senza dire niente."
+            _ripieghi = ("Ti arrivo vicino e ti bacio, senza dire niente.",
+                         "Sì, e non ho intenzione di stare a parlarne.",
+                         "Ti tiro a me e comincio da dove eravamo rimasti.")
+            ai_text = _ripieghi[len(text or "") % len(_ripieghi)]
+        # risposta troppo corta su una richiesta d'azione: aggiungo una battuta della categoria
+        try:
+            _chiede_azione = re.search(
+                r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai|fammi|toccami|prendimi)",
+                (text or "").lower())
+            _chiede_perche = re.match(r"^(perch\w*|come mai|davvero|sul serio)", (text or "").lower())
+            _limite = 6 if _chiede_azione else 12
+            _nudo = not re.search(r"(bocca|culo|figa|cazzo|seno|tette|scop|lecc|baci|nud|vieni|"
+                                  r"gambe|cosce|lingua|addosso)", ai_text.lower())
+            if (_chiede_azione or _chiede_perche) and len(ai_text.split()) <= _limite and _nudo:
+                import language as _lingua
+                _es = _lingua.esempi_stile(character.get("category", ""),
+                                           sum(ord(c) for c in ai_text), 1)
+                if _es and _es[0][:20].lower() not in ai_text.lower():
+                    ai_text = ai_text.rstrip(" .") + ". " + _es[0]
+        except Exception:
+            pass
         # domanda fuori tema: se risponde nudo ("Sono le 12.") il gesto lo aggiungo io,
         # perché il modello lo salta quasi sempre
         _fuori_tema = re.search(r"(che ore|che ora|che giorno|che mese|che tempo|quanti anni|dove siamo|"

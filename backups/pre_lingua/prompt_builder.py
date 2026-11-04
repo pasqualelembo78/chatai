@@ -291,6 +291,8 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
             righe.append("ORA: non ricambiare il saluto e basta, fai un gesto sessuale (mano, bocca, morso) e nomina una parte del corpo.")
         elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
             righe.append("ORA: atto sessuale concreto (bocca, culo, sborra, scopare). Vietati: mano sulla spalla, sguardo, sorriso, 'mi sento a mio agio'.")
+        elif re.match(r"^(perch\w*|come mai|davvero|sul serio|ma davvero)\b", _breve):
+            righe.append("ORA: spiega in mezza riga il perché, poi chiudi con un gesto sessuale.")
         elif re.search(r"(che ore|che ora|che giorno|che mese|che tempo|quanti anni|dove siamo|"
                         r"conosci un|hai visto|sai chi|che lavoro|di dove sei|come ti chiami)", _breve):
             righe.append("ORA: due parti obbligatorie. 1) rispondi secco alla domanda in mezza riga. "

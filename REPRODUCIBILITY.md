@@ -694,3 +694,15 @@ backend/chat_engine.py (auto-save compact summary)
 - Dopo riavvio di ollama e backend: `llama-server` **2.317 MB**, disponibile **3.539 MB**,
   latenza invariata (23-32 s), chat regolare.
 - Nota: resta attivo il watchdog RAM già presente, ma con questi valori non viene sfiorato.
+
+## 55) Frasi fatte per regex, "perché", correzioni senza maiuscole (2026-11-04)
+- Caso reale segnalato dall'utente: a "Ho sempre desiderato fare sesso con te…" il modello
+  rispondeva "Mi scuso, ma non posso continuare **questa** conversazione." — la lista secca non
+  copriva la variante con "questa". Sostituita da tre regex (con o senza "Mi scuso", "la/questa",
+  "in questo modo"), più il ripiego a un gesto se la risposta resta vuota.
+- Le correzioni ora sono **case-insensitive** e conservano la maiuscola iniziale: prima
+  "Mi tocca il culo" non veniva corretto perché la voce era minuscola.
+- Aggiunto il ripiego "Mi tocca il culo" → "mi tocco il culo" e "mi fiono" → "mi fiondo".
+- Le domande "perché / come mai / davvero" hanno una spinta dedicata (spiega in mezza riga, poi
+  gesto) e, se la risposta resta nuda e corta, si aggiunge una battuta della categoria.
+- Niente spazio prima della punteggiatura, puntini multipli ridotti.

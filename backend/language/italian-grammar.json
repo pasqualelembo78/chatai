@@ -211,6 +211,41 @@
       "sbagliato": "mi afferro a te",
       "giusto": "mi aggrappo a te",
       "nota": "afferarsi non si usa con 'a'"
+    },
+    {
+      "sbagliato": "ti frego la mano",
+      "giusto": "ti sfioro la mano",
+      "nota": "'fregare' non è toccare"
+    },
+    {
+      "sbagliato": "ti bisogno",
+      "giusto": "ti bacio",
+      "nota": "'bisogno' è un sostantivo"
+    },
+    {
+      "sbagliato": "ti le poso",
+      "giusto": "te le poso",
+      "nota": "pronome doppio: te le"
+    },
+    {
+      "sbagliato": "con desiderio",
+      "giusto": "",
+      "nota": "riempitivo: se togli 'con desiderio' la frase regge"
+    },
+    {
+      "sbagliato": "inuncio",
+      "giusto": "infilo",
+      "nota": "verbo inventato"
+    },
+    {
+      "sbagliato": "mi tocca il culo",
+      "giusto": "mi tocco il culo",
+      "nota": "'toccare' transitivo: mi tocco = tocco me"
+    },
+    {
+      "sbagliato": "mi fiono",
+      "giusto": "mi fiondo",
+      "nota": "da fiondarsi"
     }
   ],
   "aggiunte": [

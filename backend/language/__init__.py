@@ -251,27 +251,27 @@ def correggi(testo):
     dati = _carica("italian-grammar.json")
     for c in dati.get("correzioni_brevi", []):
         sbagliato, giusto = c.get("sbagliato"), c.get("giusto")
-        if not sbagliato or not giusto:
+        # giusto può essere vuoto: significa "togli questa forma"
+        if not sbagliato or giusto is None:
             continue
         dopo = c.get("tranne_dopo")
+        # confronto senza distinzione fra maiuscole e minuscole, e la maiuscola
+        # iniziale si conserva ("Ti bacchio" -> "Ti bacio")
+        def _sost(m, g=giusto):
+            return g[:1].upper() + g[1:] if m.group(0)[:1].isupper() and g else g
         if dopo:
-            # sostituisce solo se il testo NON è già corretto ("ti incollo addosso")
-            fuori = []
-            pos = 0
-            while True:
-                i = testo.find(sbagliato, pos)
-                if i < 0:
-                    fuori.append(testo[pos:])
-                    break
-                fuori.append(testo[pos:i])
-                if testo[i + len(sbagliato):].lower().startswith(dopo):
-                    fuori.append(sbagliato)
-                else:
-                    fuori.append(giusto)
-                pos = i + len(sbagliato)
-            testo = "".join(fuori)
-            continue
-        testo = testo.replace(sbagliato, giusto)
+            testo = re.sub(re.escape(sbagliato) + r"(?!" + re.escape(dopo) + ")",
+                           _sost, testo, flags=re.IGNORECASE)
+        else:
+            testo = re.sub(re.escape(sbagliato), _sost, testo, flags=re.IGNORECASE)
+
+    # frasi fatte da buttare. Le prime tre per regex: il modello le varia
+    # ("questa conversazione", "Mi scuso, ma…") e la lista secca non le prendeva.
+    testo = re.sub(r"(?i)\b(?:mi scuso|mi dispiace)?[,\s]*(?:ma\s+)?non posso continuare "
+                   r"(?:la|questa) conversazione(?: in questo modo)?\s*[.!]?\s*", "", testo)
+    testo = re.sub(r"(?i)posso aiutarti a iniziare una nuova conversazione\s*[.!]?\s*", "", testo)
+    testo = re.sub(r"(?i)\b(?:inizia di nuovo|ricominciamo(?: da capo)?)\s*[.!]?\s*", "", testo)
+
     # frasi fatte da buttare (l'utente le trova inutili)
     for frase in sorted(dati.get("frasi_da_togliere", []), key=len, reverse=True):
         testo = testo.replace(frase, "")
@@ -304,6 +304,10 @@ def correggi(testo):
 
     # orario con la virgola al posto dei due punti ("14,30")
     testo = re.sub(r"\b([01]?\d|2[0-3]),(\d{2})\b", r"\1:\2", testo)
+
+    # niente spazio prima della punteggiatura ("faccia , ")
+    testo = re.sub(r"\s+([,.;:!?])", r"\1", testo)
+    testo = re.sub(r"\.{2,}", ".", testo)
 
     # maiuscola dopo il punto ("È novembre. e sono") — piccola pulizia tipografica
     testo = re.sub(r"([.!?]\s+)([a-zàèéìòù])", lambda m: m.group(1) + m.group(2).upper(), testo)
