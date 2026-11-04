@@ -91,6 +91,11 @@ def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=170, 
     richiesta = " OR ".join(f'"{_radice(c)}"*' if len(c) >= 4 else f'"{c}"' for c in chiavi)
     filtri = ["cerca MATCH ?"]
     parametri = [richiesta]
+    # se il messaggio non parla di sesso, meglio escludere gli espliciti
+    _caldo = re.search(r"(sesso|scopare|scoparti|cazzo|figa|culo|tette|nudo|nuda|spogliati|toccami|"
+                       r"baci|leccare|succhia|pompino|orgasmo|eccitat)", (testo or "").lower())
+    if not collezione and not esplicito and not _caldo:
+        filtri.append("f.esplicito = 0")
     if collezione == "erotico" or esplicito:
         filtri.append("f.esplicito = 1")
         filtri.append(f"f.stile >= {max(1, stile_min)}")
@@ -99,7 +104,7 @@ def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=170, 
                   "AND f.utente NOT LIKE 'Traduci%' AND f.utente NOT LIKE 'Riassumi%' "
                   "AND f.utente NOT LIKE 'Crea%' AND f.utente NOT LIKE 'Elenca%' "
                   "AND f.utente NOT LIKE 'Correggi%' AND length(f.utente) < 160)")
-    sql = ("SELECT f.utente, f.risposta, f.categoria, f.registro, f.stile FROM cerca "
+    sql = ("SELECT f.utente, f.risposta, f.categoria, f.registro, f.stile, f.provenienza FROM cerca "
            "JOIN frammenti f ON f.rowid = cerca.rowid WHERE " + " AND ".join(filtri) +
            " ORDER BY bm25(cerca) LIMIT 15")
 
@@ -117,7 +122,7 @@ def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=170, 
         try:
             conn = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
             extra = conn.execute(
-                "SELECT utente, risposta, categoria, registro, stile FROM frammenti "
+                "SELECT utente, risposta, categoria, registro, stile, provenienza FROM frammenti "
                 "WHERE parole BETWEEN 4 AND 20 "
                 + ("AND esplicito = 1 " if (collezione == "erotico" or esplicito) else "")
                 + "ORDER BY abs((rowid * 31 + ?) % 997) LIMIT ?", (seme, mancanti * 4)).fetchall()
@@ -128,10 +133,19 @@ def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=170, 
 
     righe = _riempi(righe, quanti - len(righe), sum(ord(c) for c in (testo or "")))
 
-    # fra i 15 più pertinenti, davanti quelli che sembrano una chat
-    righe = sorted(righe, key=lambda r: -(r[4] if len(r) > 4 else 0))
+    # fra i 15 più pertinenti: davanti chi parla come una persona.
+    # su un messaggio non erotico, il parlato vero batte la prosa del racconto.
+    def _peso(r):
+        fonte = (r[5] if len(r) > 5 else "") or ""
+        stile = r[4] if len(r) > 4 else 0
+        if fonte.startswith("KIParla"):
+            return 3 + stile
+        if "http" in fonte:
+            return 0 + stile if not _caldo else 2 + stile
+        return 2 + stile
+    righe = sorted(righe, key=lambda r: -_peso(r))
     fuori, visti = [], set()
-    for utente, risposta, categoria, registro, _stile in righe:
+    for utente, risposta, categoria, registro, _stile, _fonte in righe:
         impronta = risposta[:60].lower()
         if impronta in visti:
             continue

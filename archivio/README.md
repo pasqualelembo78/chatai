@@ -109,3 +109,12 @@ La fonte migliore sono i racconti: `archivio/racconti.py` preleva dalle storie d
 - italiano nativo, registro adulto, attacchi secchi: *"Guarda che cazzo che ti prendi stasera"*
 - diritti: racconti pubblicati, autori singoli. Uso in lettura e per il fine-tuning; per una
   redistribuzione commerciale del dataset va chiesto il permesso.
+
+## KIParla (parlato spontaneo) — licenza NC-SA
+`archivio/kiparla.py` estrae scambi dalle trascrizioni **ortografiche** di KIParla (350 ore, 994
+parlanti). Prova su KIPasti (conversazioni al bar): 2.500 coppie, 728 dopo la pulizia, perché i
+turni parlati sono corti.
+- registro vero, non costruito: "mh sci nonna dice tante cagate", "c'hai il matrimonio"
+- **licenza CC BY-NC-SA 4.0**, consultazione senza fini di lucro, e i responsabili chiedono che i
+  dati non entrino in un'altra risorsa senza accordo: va tenuta come collezione separata e marcata
+- adatta al lessico e alla chat normale, rumorosa da iniettare in un 3B (troncamenti, dialetto)

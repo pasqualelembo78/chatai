@@ -974,3 +974,13 @@ tua destra, "inalato il profumo" → annusato.
 - Corretto `fase_indice` perché accetti record senza `id`, `categoria`, `registro` (li genera).
 - Diritti: racconti di autori singoli pubblicati sul sito; uso in lettura e per il training, da
   verificare se un giorno si redistribuisce il dataset.
+
+## 77) KIParla per il parlato normale (2026-11-04)
+- `archivio/kiparla.py`: estrae coppie di battute dalle trascrizioni ortografiche KIParla (zip del
+  repo GitHub, nessuna registrazione). Prima versione usava `linear-enriched`: incollava parole
+  ("appuntopensava"). Passato a `linear-orthographic`.
+- KIPasti: 2.500 coppie, 728 dopo la pulizia (i turni parlati sono corti per natura).
+- Licenza verificata nel repository: **CC BY-NC-SA 4.0**; i responsabili chiedono che i dati non
+  siano inclusi in un'altra risorsa senza accordo → collezione separata, marcata, non commerciale.
+- Recupero: su messaggi non erotici ora si preferisce il parlato alla prosa dei racconti
+  ("mh sci nonna dice tante cagate"); sugli erotici restano i racconti.

@@ -1,14 +1,23 @@
 {
- "creato": "2026-11-04T18:11:21+01:00",
+ "creato": "2026-11-04T18:39:04+01:00",
  "formato": "ChatML (messages)",
  "system": "Sei un personaggio italiano che chatta in modo naturale, breve e colloquiale.",
  "conteggi": {
-  "train": 13714,
-  "valid": 788,
-  "test": 725
+  "train": 15739,
+  "valid": 913,
+  "test": 836
  },
  "per_fonte": {
   "DeepMount00/due-chiacchiere": 2588,
+  "KIParla/KIPasti (KPC001.txt)": 226,
+  "KIParla/KIPasti (KPC002.txt)": 464,
+  "KIParla/KIPasti (KPC003.txt)": 170,
+  "KIParla/KIPasti (KPC004.txt)": 173,
+  "KIParla/KIPasti (KPC005.txt)": 240,
+  "KIParla/KIPasti (KPC006.txt)": 140,
+  "KIParla/KIPasti (KPC007.txt)": 402,
+  "KIParla/KIPasti (KPC008.txt)": 115,
+  "KIParla/KIPasti (KPC009.txt)": 247,
   "Raphael172/NSFW_Multilanguage_Chat_Dataset": 3768,
   "https://raccontimilu.com/racconti-erotici-sulla-dominazione/il-club-delle-dottoresse-cap-1-laggancio/": 3,
   "https://raccontimilu.com/etero/la-lunga-notte-22-non-sono-un-santo/": 32,
@@ -501,7 +510,7 @@
   "https://raccontimilu.com/etero/la-stanza-dei-vetri/": 2,
   "https://raccontimilu.com/racconti-erotici-sulla-dominazione/errori-2-la-volpe/": 7,
   "chimbiwide/RolePlay-NPCv2": 18,
-  "minas2025/WarmRoleplay (tradotto it)": 490,
+  "minas2025/WarmRoleplay (tradotto it)": 574,
   "minas2025/WarmRoleplay": 39,
   "parliamoitaliano-espressioni": 9,
   "wiktionary-sessualita": 73,
