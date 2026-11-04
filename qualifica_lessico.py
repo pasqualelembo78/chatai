@@ -152,6 +152,17 @@ def main():
                 visti.add(chiave)
             tutti.append(e)
 
+    # le voci aggiunte a mano al lessico non devono sparire a ogni giro:
+    # se stanno già nei file attivi, restano
+    for gruppo in gruppi:
+        percorso = os.path.join(DESTINAZIONE, f"{gruppo}.json")
+        if not os.path.exists(percorso):
+            continue
+        attive = {v["termine"].lower() for v in json.load(open(percorso, encoding="utf-8"))}
+        for e in tutti:
+            if e["gruppo"] == gruppo and e["termine"].lower() in attive and e["esito"] != "utile":
+                e["esito"], e["motivo"] = "utile", "presente nel lessico attivo"
+
     utili = [e for e in tutti if e["esito"] == "utile"]
     scarti = [e for e in tutti if e["esito"] != "utile"]
 

@@ -24,6 +24,18 @@
   "fonte": "wikt-espressioni"
  },
  {
+  "termine": "a fiocchi",
+  "registro": "comune",
+  "senso": "sfioccato",
+  "fonte": "wikt-locuzioni-aggettivali"
+ },
+ {
+  "termine": "a fiori",
+  "registro": "comune",
+  "senso": "fioronato",
+  "fonte": "wikt-locuzioni-aggettivali"
+ },
+ {
   "termine": "a fortiori",
   "registro": "comune",
   "senso": "a maggior ragione",
@@ -33,6 +45,12 @@
   "termine": "a non domino",
   "registro": "comune",
   "senso": "da chi non è proprietario",
+  "fonte": "wikt-locuzioni-aggettivali"
+ },
+ {
+  "termine": "a parte",
+  "registro": "comune",
+  "senso": "distinto",
   "fonte": "wikt-locuzioni-aggettivali"
  },
  {
@@ -58,6 +76,12 @@
   "registro": "comune",
   "senso": "che ha un periodo predefinito",
   "fonte": "wikt-locuzioni-aggettivali"
+ },
+ {
+  "termine": "a tratti",
+  "registro": "comune",
+  "senso": "ogni tanto",
+  "fonte": "wikt-locuzioni-verbali"
  },
  {
   "termine": "a vuoto",
@@ -96,12 +120,6 @@
   "fonte": "wikt-interiezioni"
  },
  {
-  "termine": "accidenti",
-  "registro": "comune",
-  "senso": "interiezione stizzosa, rabbiosa, causata da evento negativo non atteso ~~ la morte è una forma reputata quale uno tra gli accidenti che potrebbero intercorrere durante l'esistenza",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "accipicchia",
   "registro": "colloquiale",
   "senso": "eufemismo per accidenti ~~ accipicchia, ho bevuto tutto il vino",
@@ -114,10 +132,10 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "ad ora",
-  "registro": "colloquiale",
-  "senso": "tutt'oggi; sino a questo momento ~~ La Bibbia, ad ora il libro più studiato, è di origine divina",
-  "fonte": "wikt-espressioni"
+  "termine": "ad ancora",
+  "registro": "comune",
+  "senso": "ancorato",
+  "fonte": "wikt-locuzioni-aggettivali"
  },
  {
   "termine": "addio",
@@ -354,6 +372,12 @@
   "fonte": "wikt-espressioni"
  },
  {
+  "termine": "anima e corpo",
+  "registro": "comune",
+  "senso": "del tutto",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "animo",
   "registro": "comune",
   "senso": "l'anima di una persona ~~ Morremo. Il velo indegno a terra sparto, rifuggirà l'ignudo animo a Dite (Leopardi)",
@@ -504,9 +528,21 @@
   "fonte": "wikt-interiezioni"
  },
  {
+  "termine": "bagnarsi il becco",
+  "registro": "comune",
+  "senso": "bere vino",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "bagnarsi la bocca",
   "registro": "comune",
   "senso": "bere, in modo particolare vino",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "bagnarsi la lingua",
+  "registro": "comune",
+  "senso": "bere vino",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -568,6 +604,12 @@
   "registro": "comune",
   "senso": "sbattere una mano sopra l'altra in segno di approvazione",
   "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "ben disposto",
+  "registro": "comune",
+  "senso": "bendisposto",
+  "fonte": "wikt-locuzioni-aggettivali"
  },
  {
   "termine": "ben piantato",
@@ -726,12 +768,6 @@
   "fonte": "wikt-espressioni"
  },
  {
-  "termine": "caspita",
-  "registro": "colloquiale",
-  "senso": "eufemismo per cazzo ~~ caspita, ho bevuto tutto il vino\"",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "causa persa",
   "registro": "colloquiale",
   "senso": "sebbene abbia una valenza simile ad alcuni \"dibattiti\" nei vari tribunali, ebbene: è una resa per un padre e/o una madre ~~ Con il groppo in gola e le lacrime agli occhi, il padre affranto gemette: \"Figlio mio, ormai sei una causa persa\"",
@@ -750,12 +786,6 @@
   "fonte": "wikt-interiezioni"
  },
  {
-  "termine": "cazzo",
-  "registro": "volgare",
-  "senso": "interiezione usata per esprimere sorpresa o rabbia ~~ cazzo, ho mancato il bersaglio!",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "centri sociali",
   "registro": "colloquiale",
   "senso": "nell'immaginario comune sono locali malsani e quindi poco curati in cui si fa apertamente uso di alcol e di droghe di va ~~ molti centri sociali sono già stati chiusi",
@@ -765,12 +795,6 @@
   "termine": "che merda",
   "registro": "comune",
   "senso": "esclamazione di disgusto ~~ Quello sarebbe il mare? Che merda!",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "che palle",
-  "registro": "volgare",
-  "senso": "esprime forte noia o frustrazione",
   "fonte": "wikt-espressioni"
  },
  {
@@ -876,21 +900,9 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "contrarre matrimonio",
-  "registro": "comune",
-  "senso": "congiungersi in matrimonio",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "contratto di governo",
   "registro": "colloquiale",
   "senso": "programma per la realizzazione di una o più leggi effettive, generalmente con interventi immediati",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "corpo a corpo",
-  "registro": "comune",
-  "senso": "con le mani o con un'arma da taglio ~~ Hanno combattuto corpo a corpo",
   "fonte": "wikt-espressioni"
  },
  {
@@ -984,6 +996,12 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
+  "termine": "dare adito",
+  "registro": "comune",
+  "senso": "far nascere",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "dare aiuto",
   "registro": "comune",
   "senso": "intervenire  tempestivamente in una circostanza imprevista",
@@ -993,12 +1011,6 @@
   "termine": "dare alla luce",
   "registro": "comune",
   "senso": "mettere al mondo",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "dare alle stampe",
-  "registro": "comune",
-  "senso": "rendere conosciuto tramite la stampa",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -1050,6 +1062,12 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
+  "termine": "dare corso",
+  "registro": "comune",
+  "senso": "dare inizio",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "dare credito",
   "registro": "comune",
   "senso": "dare affidamento",
@@ -1095,6 +1113,12 @@
   "termine": "dare le dimissioni",
   "registro": "comune",
   "senso": "licenziarsi dal lavoro",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "dare le mosse",
+  "registro": "comune",
+  "senso": "dare inizio",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -1368,12 +1392,6 @@
   "fonte": "wikt-interiezioni"
  },
  {
-  "termine": "eccocela",
-  "registro": "comune",
-  "senso": "ecco a noi una cosa nominata in precedenza",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "eccoci",
   "registro": "comune",
   "senso": "ecco noi, ecco la persona che sta parlando o scrivendo insieme con altri o qualcun altro ~~ Eccoci separati, eccoci lontani l'uno dall'altra. <small>(Iginio Ugo Tarchetti: Fosca, Capitolo VIII)</small>",
@@ -1395,12 +1413,6 @@
   "termine": "eccoglieli",
   "registro": "comune",
   "senso": "ecco, ad una persona nominata in precedenza, alcune cose nominate in precedenza ~~ E Dio le scrisse sette figliuoli, / eccoglieli, sorella, alle mammelle. <small>(Tradotto da Niccolò Tommaseo: Canto serbico)</small>",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "eccoglielo",
-  "registro": "comune",
-  "senso": "ecco, ad una persona nominata in precedenza, una cosa nominata in precedenza ~~ Sabato scorso non potei spedirle il breve, ma eccoglielo qui acchiuso. <small>(Vittorio Alfieri, Lettere inedite, Alla madre, 4.)</small>",
   "fonte": "wikt-espressioni"
  },
  {
@@ -1560,6 +1572,12 @@
   "fonte": "wikt-interiezioni"
  },
  {
+  "termine": "essere a conoscenza",
+  "registro": "comune",
+  "senso": "sapere che",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "essere al mondo",
   "registro": "comune",
   "senso": "esistere ~~ Perché le zanzare sono al mondo? Non servono a niente!",
@@ -1698,6 +1716,12 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
+  "termine": "fare affidamento",
+  "registro": "comune",
+  "senso": "fare conto",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "fare aggio",
   "registro": "comune",
   "senso": "avere un prezzo superiore  di quello nominale",
@@ -1830,6 +1854,12 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
+  "termine": "fare buio",
+  "registro": "comune",
+  "senso": "fare notte",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "fare buon pro",
   "registro": "comune",
   "senso": "augurare felicità",
@@ -1911,6 +1941,12 @@
   "termine": "fare chiarezza",
   "registro": "comune",
   "senso": "dirimere  una questione",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "fare chiaro",
+  "registro": "comune",
+  "senso": "albeggiare",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -2064,6 +2100,12 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
+  "termine": "fare fagotto",
+  "registro": "comune",
+  "senso": "andare via",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "fare fallimento",
   "registro": "comune",
   "senso": "essere insolvente",
@@ -2124,6 +2166,12 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
+  "termine": "fare fortuna",
+  "registro": "comune",
+  "senso": "farsi ricco",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "fare fronte",
   "registro": "comune",
   "senso": "affrontare una situazione disagevole",
@@ -2148,6 +2196,12 @@
   "fonte": "wikt-espressioni"
  },
  {
+  "termine": "fare giorno",
+  "registro": "comune",
+  "senso": "albeggiare",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "fare gli occhiacci",
   "registro": "comune",
   "senso": "manifestare rimprovero con una faccia scura, in particolar modo nei confronti di un bambino per spaventarlo",
@@ -2157,6 +2211,12 @@
   "termine": "fare gola",
   "registro": "comune",
   "senso": "rendere  goloso",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "fare i bagagli",
+  "registro": "comune",
+  "senso": "andare via",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -2214,12 +2274,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "fare il culo",
-  "registro": "volgare",
-  "senso": "redarguire bruscamente",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "fare il deserto",
   "registro": "comune",
   "senso": "fare il vuoto",
@@ -2253,12 +2307,6 @@
   "termine": "fare il militare",
   "registro": "comune",
   "senso": "essere  sotto le armi",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "fare il morto",
-  "registro": "comune",
-  "senso": "stare a galla sul dorso rimanendo  immobile con le braccia larghe",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -2313,6 +2361,12 @@
   "termine": "fare il vuoto",
   "registro": "comune",
   "senso": "tenere lontano gli altri a causa del proprio modo di fare",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "fare in fretta",
+  "registro": "comune",
+  "senso": "fare presto",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -2418,24 +2472,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "fare la festa",
-  "registro": "volgare",
-  "senso": "ammazzare qualcuno",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "fare la fica",
-  "registro": "volgare",
-  "senso": "detto di una donna: tirarsela",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "fare la figa",
-  "registro": "volgare",
-  "senso": "settentrionale",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "fare la fila",
   "registro": "comune",
   "senso": "attendere il proprio turno",
@@ -2481,6 +2517,12 @@
   "termine": "fare la notte",
   "registro": "comune",
   "senso": "essere al lavoro dalla sera alla mattina",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "fare la pappa",
+  "registro": "comune",
+  "senso": "mangiare",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -2628,12 +2670,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "fare marcia indietro",
-  "registro": "volgare",
-  "senso": "rinunciare ad un progetto",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "fare mattina",
   "registro": "comune",
   "senso": "rimanere desti  fino all’alba",
@@ -2698,12 +2734,6 @@
   "registro": "comune",
   "senso": "agire  per uno scopo ben preciso",
   "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "fare scacco",
-  "registro": "comune",
-  "senso": "muovere un pezzo o una pedina in modo da poter, al turno seguente, mangiare il Re avversario",
-  "fonte": "wikt-espressioni"
  },
  {
   "termine": "farsi forte",
@@ -2824,12 +2854,6 @@
   "registro": "comune",
   "senso": "inutilizzabile perché rovinato",
   "fonte": "wikt-locuzioni-aggettivali"
- },
- {
-  "termine": "gergo della strada",
-  "registro": "comune",
-  "senso": "nella criminalità o per piccoli illeciti, per esempio nello spaccio delle droghe, si tratta di un vero e proprio \"sistem ~~ oggigiorno anche molti ragazzini minorenni sono completamente in balia del gergo della strada quasi fosse una sorta di schiavitù esistenziale",
-  "fonte": "wikt-espressioni"
  },
  {
   "termine": "gettare la spugna",
@@ -3024,6 +3048,18 @@
   "fonte": "wikt-locuzioni-aggettivali"
  },
  {
+  "termine": "in riposo",
+  "registro": "comune",
+  "senso": "coricato",
+  "fonte": "wikt-locuzioni-aggettivali"
+ },
+ {
+  "termine": "in rovina",
+  "registro": "comune",
+  "senso": "fatiscente",
+  "fonte": "wikt-locuzioni-aggettivali"
+ },
+ {
   "termine": "in seconda",
   "registro": "comune",
   "senso": "di secondo grado",
@@ -3126,12 +3162,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "legge di bilancio",
-  "registro": "comune",
-  "senso": "~~ con la legge di bilancio viene valutata anche la condizione del tesoretto",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "levare le tende",
   "registro": "comune",
   "senso": "andare via  affrettatamente",
@@ -3180,6 +3210,12 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
+  "termine": "mandare fuori",
+  "registro": "comune",
+  "senso": "fare uscire",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
   "termine": "mandare giù",
   "registro": "comune",
   "senso": "introdurre cibo tramite la bocca nello stomaco",
@@ -3204,12 +3240,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "mannaggia",
-  "registro": "comune",
-  "senso": "imprecazione che esprime disappunto, rabbia, contrarietà e simili ~~ mannaggia, ho lasciato a casa le chiavi della macchina...",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "masticare amaro",
   "registro": "comune",
   "senso": "essere incazzato, ma non darlo a vedere  reprimendo la propria reazione",
@@ -3225,6 +3255,12 @@
   "termine": "menare vanto",
   "registro": "comune",
   "senso": "mostrare compiacimento per se stessi",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "mettere a frutto",
+  "registro": "comune",
+  "senso": "far rendere",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -3267,6 +3303,12 @@
   "termine": "mettere al corrente",
   "registro": "comune",
   "senso": "dare informazioni",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "mettere al mondo",
+  "registro": "comune",
+  "senso": "far nascere",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -3408,12 +3450,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "mettere in serbo",
-  "registro": "comune",
-  "senso": "porre da parte",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "mettere insieme",
   "registro": "colloquiale",
   "senso": "concentrare in un unico luogo",
@@ -3537,12 +3573,6 @@
   "termine": "mucca pazza",
   "registro": "comune",
   "senso": "per un motivo apparentemente inspiegabile, in tutto il globo si è diffuso un “disturbo per la salute” di molte mandrie d ~~ mai vi furono casi di mucca pazza prima di allora",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "muro del pianto",
-  "registro": "comune",
-  "senso": "parte costruita da Re David, è il muro rimasto sin dalla distruzione del Tempio di Gerusalemme, luogo che conteneva il s ~~ la terminologia che descrive il muro del pianto come tale esprime il sentimento del popolo ebraico per la bontà di Dio promessa",
   "fonte": "wikt-espressioni"
  },
  {
@@ -3687,12 +3717,6 @@
   "termine": "passare il segno",
   "registro": "comune",
   "senso": "rendere eccessivo",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "passare in esame",
-  "registro": "comune",
-  "senso": "vagliare  con cura",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -4038,12 +4062,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "prendere moglie",
-  "registro": "comune",
-  "senso": "unirsi in matrimonio",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "prendere nota",
   "registro": "comune",
   "senso": "scrivere come annotazione",
@@ -4090,12 +4108,6 @@
   "registro": "comune",
   "senso": "ascoltare con attenzione",
   "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "prezzo pieno",
-  "registro": "colloquiale",
-  "senso": "seppur onestamente, significa vendere al prezzo massimo qualcosa secondo il suo valore reale ~~ \"Se tu vorrai, potrei venderti la mia auto al prezzo pieno di 14.000,00 euro: è una cabrio. Altrimenti... vediamo un po'. Ok?\"",
-  "fonte": "wikt-espressioni"
  },
  {
   "termine": "pronto",
@@ -4182,12 +4194,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "ripresa economica",
-  "registro": "colloquiale",
-  "senso": "massima espressione di macroeconomia e di ogni piccolo o grande sistema dei mercati per stimolare ottimisticamente ancor ~~ con il cessare delle ostilità belliche, la ripresa economica è un'ovvia naturale conseguenza",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "rompere i timpani",
   "registro": "comune",
   "senso": "stordire  con un suono  fortissimo  e irritante",
@@ -4218,12 +4224,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "rompersi i denti",
-  "registro": "comune",
-  "senso": "finire per essere molto avvilito",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "rompersi il collo",
   "registro": "comune",
   "senso": "farsi parecchio male, in modo particolare piombando a terra",
@@ -4240,12 +4240,6 @@
   "registro": "comune",
   "senso": "nuocere al buon nome di qualcuno",
   "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "salsa rosa",
-  "registro": "comune",
-  "senso": "crema costituita da un composto a base di panna, ketchup, talvolta aceto e/o persino un liquore; alcuni vi aggiungono un ~~ molto apprezzati anche i condimenti per insalata con salsa rosa",
-  "fonte": "wikt-espressioni"
  },
  {
   "termine": "saltare addosso",
@@ -4356,6 +4350,12 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
+  "termine": "sopra il tutto",
+  "registro": "comune",
+  "senso": "sul tutto",
+  "fonte": "wikt-locuzioni-aggettivali"
+ },
+ {
   "termine": "sotto pressione",
   "registro": "colloquiale",
   "senso": "che si prova a pressione superiore a quella atmosferica ~~ inconsapevolmente alcuni sotto pressione potrebbero dire cose indirizzandole in modo erroneo, cioè quasi scambiando una persona per un'altra",
@@ -4372,6 +4372,12 @@
   "registro": "comune",
   "senso": "malmenare con violenza",
   "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "spinato allargato",
+  "registro": "comune",
+  "senso": "scanalato",
+  "fonte": "wikt-locuzioni-aggettivali"
  },
  {
   "termine": "sputare sentenze",
@@ -4719,6 +4725,12 @@
   "termine": "voler dire",
   "registro": "comune",
   "senso": "significare ~~ Cosa vuol dire to mean in inglese?",
+  "fonte": "wikt-locuzioni-verbali"
+ },
+ {
+  "termine": "volgere le spalle",
+  "registro": "comune",
+  "senso": "correre via",
   "fonte": "wikt-locuzioni-verbali"
  },
  {

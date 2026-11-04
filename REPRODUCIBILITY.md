@@ -990,3 +990,12 @@ tua destra, "inalato il profumo" → annusato.
   Giro su 25 casi: dato giusto 4 vs 4, lemmi/parola 0,54 → 0,52, parole medie invariate.
 - Quattro corpus provati (istruzioni, dialoghi generici, due-chiacchiere, racconti erotici):
   il massimo è la parità. `RAG_ESEMPI=0` definitivo; l'archivio resta per il fine-tuning.
+
+## 79) Lessico comune: qualificazione avviata e difetti di persistenza (2026-11-04)
+- Prima passata a mano sul lessico **comune**: 18 modi di dire enciclopedici o da manuale tolti
+  (muro del pianto, legge di bilancio, ripresa economica, fare scacco, eccoglielo, ad ora…).
+- Due difetti trovati provando e corretti: (1) `qualifica_lessico.py` ricostruiva i file attivi dal
+  solo archivio grezzo, quindi **cancellava le 23 espressioni aggiunte a mano**; ora le rimette nei
+  grezzi e, se una voce è già nel lessico attivo, la conserva. (2) la deduplica fra gruppi funziona
+  solo eseguendo entrambi i gruppi: `--gruppo comune` da solo non vede gli erotici.
+- Stato: 187 erotiche (di cui 23 espressioni dal corpus) e 792 comuni, nessuna sovrapposizione.

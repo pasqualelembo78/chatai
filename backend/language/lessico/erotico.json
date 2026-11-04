@@ -104,7 +104,7 @@
  {
   "termine": "cazzo",
   "registro": "volgare",
-  "senso": "pene",
+  "senso": "pene ~~ cazzo, ho mancato il bersaglio!",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -176,7 +176,7 @@
  {
   "termine": "culo",
   "registro": "volgare",
-  "senso": "sedere, natiche",
+  "senso": "omosessuale ~~ culo di bottiglia",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -250,12 +250,6 @@
   "registro": "tecnico",
   "senso": "relativo all'eterosessualità ~~ una rapporto eterosessuale può generare figli",
   "fonte": "wiktionary-sessualita"
- },
- {
-  "termine": "fammi un pompino",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (16 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
  },
  {
   "termine": "fare cagare",
@@ -408,18 +402,6 @@
   "fonte": "wiktionary-volgari"
  },
  {
-  "termine": "guarda il succo",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (10 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "guarda quanto è",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (10 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
   "termine": "impalare",
   "registro": "volgare",
   "senso": "sottoporre a rapporto sessuale anale",
@@ -438,18 +420,6 @@
   "fonte": "wiktionary-volgari"
  },
  {
-  "termine": "leccalo sì tesoro",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (8 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "leccami il cazzo",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (32 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
   "termine": "libidine",
   "registro": "colloquiale",
   "senso": "desiderio incontenibile di piaceri sessuali",
@@ -466,12 +436,6 @@
   "registro": "tecnico",
   "senso": "desiderio sessuale tra uomo e donna",
   "fonte": "wiktionary-sessualita"
- },
- {
-  "termine": "lo stai succhiando",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (9 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
  },
  {
   "termine": "maggiorata",
@@ -498,15 +462,9 @@
   "fonte": "wiktionary-sessualita"
  },
  {
-  "termine": "mi sta entrando",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (16 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
   "termine": "mignotta",
   "registro": "volgare",
-  "senso": "prostituta",
+  "senso": "donna, ma anche una persona in genere, che vende il proprio corpo o la propria dignità in cambio non tanto di danaro (in",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -734,7 +692,7 @@
  {
   "termine": "sborra",
   "registro": "volgare",
-  "senso": "sperma",
+  "senso": "sperma; più precisamente, liquido seminale che fuoriesce con l'eiaculazione",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -790,12 +748,6 @@
   "registro": "tecnico",
   "senso": "capacità di qualcuno o qualcosa di stimolare i sensi, soprattutto il desiderio sessuale e le manifestazioni dell'erotism ~~ la sensualità delle risate e dei bisbigli di una donna",
   "fonte": "wiktionary-sessualita"
- },
- {
-  "termine": "sento un po'",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (135 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
  },
  {
   "termine": "sessismo",
@@ -894,30 +846,6 @@
   "fonte": "wiktionary-volgari"
  },
  {
-  "termine": "spogliati per me",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (142 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "stavo aspettando che tu",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (72 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "succhiamelo sì tesoro",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (8 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "succhiami il cazzo",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (32 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
   "termine": "sveltina",
   "registro": "volgare",
   "senso": "rapporto sessuale di breve durata non preceduto da preliminari",
@@ -930,34 +858,10 @@
   "fonte": "parliamoitaliano"
  },
  {
-  "termine": "ti voglio così",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (27 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "ti voglio sopra",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (20 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
   "termine": "tiramento",
   "registro": "volgare",
   "senso": "stato di eccitazione sessuale",
   "fonte": "wiktionary-volgari"
- },
- {
-  "termine": "toccati e strizzali",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (84 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "togliti i vestiti",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (141 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
  },
  {
   "termine": "toro",
@@ -992,7 +896,7 @@
  {
   "termine": "troia",
   "registro": "volgare",
-  "senso": "prostituta, o donna spregiudicata",
+  "senso": "femmina del maiale destinata alla riproduzione",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -1044,52 +948,10 @@
   "fonte": "wiktionary-sessualita"
  },
  {
-  "termine": "vieni qui e baciami",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (24 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
   "termine": "vizietto",
   "registro": "colloquiale",
   "senso": "omosessualità",
   "fonte": "wiktionary-sessualita"
- },
- {
-  "termine": "voglio così tanto",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (75 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "voglio fare l'amore",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (81 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "voglio fare sesso",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (111 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "voglio scoparti",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (15 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "voglio vederti cavalcare",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (10 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
- },
- {
-  "termine": "voglio vederti cavalcarmi",
-  "registro": "esplicito",
-  "senso": "espressione frequente in chat (15 volte nel corpus)",
-  "fonte": "Raphael172/NSFW_Multilanguage_Chat_Dataset"
  },
  {
   "termine": "voglioso",
@@ -1106,7 +968,7 @@
  {
   "termine": "zoccola",
   "registro": "volgare",
-  "senso": "donna spregiudicata, di facili costumi",
+  "senso": "femmina del topo di fogna",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -1120,5 +982,143 @@
   "registro": "tecnico",
   "senso": "che presenta attrazione sessuale patologica per gli animali",
   "fonte": "wiktionary-sessualita"
+ },
+ {
+  "termine": "spogliati per me",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "togliti i vestiti",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "voglio fare sesso",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "toccati e strizzali",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "voglio fare l'amore",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "voglio così tanto",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "succhiami il cazzo",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "leccami il cazzo",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "ti voglio così",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "vieni qui e baciami",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "ti voglio sopra",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "mi sta entrando",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "fammi un pompino",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "voglio scoparti",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "voglio vederti cavalcarmi",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "voglio vederti cavalcare",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "lo stai succhiando",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "guarda il succo",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "succhiamelo sì tesoro",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "leccalo sì tesoro",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "stavo aspettando che tu",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "sento un po'",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
+ },
+ {
+  "termine": "guarda quanto è",
+  "registro": "esplicito",
+  "senso": "espressione frequente in chat (dal corpus NSFW)",
+  "fonte": "espressioni-corpus"
  }
 ]
