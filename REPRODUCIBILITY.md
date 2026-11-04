@@ -921,3 +921,13 @@ tua destra, "inalato il profumo" → annusato.
   13.083 → **6.958** frammenti, tutti conversazionali. Archivio 82 → 20 MB (grezzi rimossi).
 - Benchmark rifatto con il nuovo corpus, 25 casi: dato giusto 5 → 4, lemmi/parola 0,54 → 0,51,
   parole medie invariante. **Ancora neutro**: `RAG_ESEMPI` resta 0.
+
+## 72) due-chiacchiere importato e terzo benchmark (2026-11-04)
+- Token HF dell'utente in `/root/.hf_token` (600). Dataset gated sbloccato dopo accettazione:
+  import scaricando direttamente il jsonl (l'API datasets-server non lo indicizza), con streaming.
+- Importati 5.360 record; dopo qualifica e pulizia (via codice, elenchi, duplicati) restano **2.547**
+  frammenti conversazionali, i migliori come italiano parlato ("mi rompo i maroni", "uova al forno").
+- Benchmark, 25 casi: dato giusto 4 → 3, lemmi/parola 0,54 → 0,51, parole 14,2 → 13,0.
+  Terzo corpus diverso, terzo peggioramento: `RAG_ESEMPI` resta **0**.
+- Corretto l'ordine delle fasi: `pulisci` va eseguito **dopo** `indice` e non va seguito da un
+  rebuild dagli stessi file, altrimenti la pulizia si perde.

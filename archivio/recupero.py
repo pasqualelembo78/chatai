@@ -80,7 +80,7 @@ def parole_chiave(testo, massimo=6):
     return fuori
 
 
-def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=150, stile_min=0):
+def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=170, stile_min=0):
     """Frammenti pertinenti: lista di dict con utente/risposta."""
     if not os.path.exists(DB):
         return []
@@ -94,8 +94,6 @@ def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=150, 
     if collezione == "erotico" or esplicito:
         filtri.append("f.esplicito = 1")
         filtri.append(f"f.stile >= {max(1, stile_min)}")
-    if lunghezza_max:
-        filtri.append("f.parole <= 30")
     # via i prompt da "compito": sono lunghi e lontani da una chat
     filtri.append("(f.utente NOT LIKE 'Genera%' AND f.utente NOT LIKE 'Scrivi%' "
                   "AND f.utente NOT LIKE 'Traduci%' AND f.utente NOT LIKE 'Riassumi%' "
@@ -138,7 +136,11 @@ def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=150, 
         if impronta in visti:
             continue
         visti.add(impronta)
-        fuori.append({"utente": utente.strip()[:90], "risposta": risposta.strip()[:lunghezza_max],
+        # una frase sola: gli esempi lunghi diventano illeggibili nel prompt
+        _r = risposta.strip()
+        _prima = re.split(r"(?<=[.!?])\s", _r, maxsplit=1)[0]
+        _r = _prima if 6 <= len(_prima.split()) <= 30 else " ".join(_r.split()[:25]).rstrip(",;:") + "…"
+        fuori.append({"utente": utente.strip()[:90], "risposta": _r,
                       "categoria": categoria, "registro": registro})
         if len(fuori) >= quanti:
             break
@@ -147,7 +149,7 @@ def esempi(testo, collezione=None, quanti=2, esplicito=None, lunghezza_max=150, 
 
 def blocco(testo, collezione=None, quanti=2, esplicito=None):
     """Blocco pronto per il prompt, o stringa vuota."""
-    scelti = esempi(testo, collezione, quanti, esplicito, stile_min=2)
+    scelti = esempi(testo, collezione, quanti, esplicito, stile_min=1)
     if not scelti and collezione == "erotico":
         scelti = esempi(testo, collezione, quanti, esplicito, stile_min=1)
     if not scelti:

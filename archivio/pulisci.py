@@ -33,6 +33,7 @@ def main():
     regole = {
         "risposta corta (<6 parole)": "parole < 6",
         "risposta che è un elenco": "risposta LIKE '%- %' OR risposta LIKE '%1. %'",
+        "risposta con codice": "risposta LIKE '%```%'",
     }
     for nome, condizione in regole.items():
         n = conn.execute(f"SELECT COUNT(*) FROM frammenti WHERE {condizione}").fetchone()[0]

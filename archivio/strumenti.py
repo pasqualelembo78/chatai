@@ -28,6 +28,10 @@ UA = {"User-Agent": "chatai-archivio/1.0"}
 
 # Fonti verificate una per una con l'API di Hugging Face.
 FONTI = [
+    {"id": "due-chiacchiere", "dataset": "DeepMount00/due-chiacchiere",
+     "formato": "messages", "licenza": "dataset gated, condizioni accettate",
+     "collezione": "generale", "max": 6000, "gated": True,
+     "file": "ita_conversations_0001.jsonl"},
     {"id": "italian-conversations", "dataset": "DeepMount00/italian_conversations",
      "formato": "conversation", "licenza": "Creative Commons (dichiarata 'cc')",
      "collezione": "generale", "max": 6000},
@@ -98,6 +102,8 @@ def normalizza(fonte, riga, indice):
     messaggi = []
     if fonte["formato"] == "messages":
         for m in riga.get("messages") or []:
+            if m.get("role") == "system":
+                continue
             ruolo = "user" if m.get("role") == "user" else "assistant"
             testo = (m.get("content") or "").strip()
             if testo:
@@ -160,6 +166,27 @@ def normalizza(fonte, riga, indice):
     }
 
 
+def _token():
+    try:
+        return open("/root/.hf_token").read().strip()
+    except Exception:
+        return ""
+
+
+def righe_da_file(dataset, nome_file):
+    """Legge un jsonl direttamente dal repo (serve per i dataset gated)."""
+    url = f"https://huggingface.co/datasets/{dataset}/resolve/main/{nome_file}"
+    req = urllib.request.Request(url, headers={**UA, "Authorization": "Bearer " + _token()})
+    with urllib.request.urlopen(req, timeout=120) as r:
+        for riga in r:
+            riga = riga.decode("utf-8", "replace").strip()
+            if riga:
+                try:
+                    yield json.loads(riga)
+                except Exception:
+                    continue
+
+
 def fase_importa(solo=None, max_totale=None):
     os.makedirs(DATI, exist_ok=True)
     visti = set()
@@ -175,6 +202,28 @@ def fase_importa(solo=None, max_totale=None):
             fatti = sum(1 for _ in open(percorso, encoding="utf-8"))
             offset = fatti
         print(f"→ {fonte['id']} ({fonte['licenza']}), max {fonte['max']}")
+        if fonte.get("file"):
+            with open(percorso, "a" if fatti else "w", encoding="utf-8") as f:
+                for i, riga in enumerate(righe_da_file(fonte["dataset"], fonte["file"])):
+                    if fatti >= fonte["max"]:
+                        break
+                    rec = normalizza(fonte, riga, fatti)
+                    if not rec:
+                        continue
+                    impronta = hashlib.sha1(
+                        (rec["messaggi"][0]["content"] + rec["messaggi"][-1]["content"]).encode()
+                    ).hexdigest()
+                    if impronta in visti:
+                        continue
+                    visti.add(impronta)
+                    f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                    fatti += 1
+                    if fatti % 500 == 0:
+                        print(f"   {fatti} record", flush=True)
+            totale += fatti
+            print(f"   totale {fonte['id']}: {fatti}")
+            continue
+
         with open(percorso, "a" if fatti else "w", encoding="utf-8") as f:
             while fatti < fonte["max"]:
                 blocco = scarica(fonte["dataset"], "default", "train", offset, 100)
@@ -251,7 +300,7 @@ def qualifica_record(rec):
     rec["collezione"] = "erotico" if rec["esplicito"] else "generale"
     # quanto somiglia a una chat e non a un compito
     stile = 0
-    if 8 <= len(risposta.split()) <= 30 and not re.search(r"[•\n*-]\s", risposta):
+    if 8 <= len(risposta.split()) <= 70 and not re.search(r"[•\n*-]\s", risposta):
         stile += 2
     if re.search(r"\b(sono|mi|ti|ho|hai|siamo|stai)\b", risposta.lower()):
         stile += 1

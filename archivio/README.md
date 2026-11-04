@@ -15,13 +15,13 @@ Le righe istruzionali con stile basso sono state eliminate: l'archivio è ora **
 ## Cosa c'è
 | fonte | licenza | record |
 |---|---|---|
-| DeepMount00/italian_conversations | CC | 2.916 |
-| Mattimax/DATA-AI_Conversation_ITA | Apache 2.0 | 2.089 |
-| DeepMount00/OpenItalianData | Apache 2.0 (da WildChat) | 1.439 |
-| MaxForce01/Syntetic_italian_Conversation | Apache 2.0 | 514 |
+| DeepMount00/due-chiacchiere | gated, condizioni accettate | 2.547 |
 
-Totale indicizzato: **6.958** frammenti, tutti con struttura da chat (stile ≥ 1), di cui 2.793
-classificati espliciti. Le espressioni stanno a parte: **164** erotiche e **790** modi di dire
+L'archivio attuale contiene **solo** due-chiacchiere: le altre fonti sono state provate e
+scartate (vedi sotto), e i file grezzi non si tengono.
+
+Totale indicizzato: **2.547** frammenti conversazionali, senza codice, senza elenchi, senza
+risposte duplicate. Le espressioni stanno a parte: **164** erotiche e **790** modi di dire
 in `backend/language/lessico/`, già iniettate nel prompt.
 
 ## Fonti escluse, e perché
@@ -59,7 +59,18 @@ parlano di pasta e di animali invece che di una persona che chatta.
 - La pertinenza misurata a parole chiave penalizza le risposte meno letterali: il numero va letto
   insieme al testo.
 
+## Esito dei tre benchmark (25 casi ciascuno, stesse prove)
+| corpus acceso | dato giusto | lemmi/parola | parole medie |
+|---|---|---|---|
+| istruzionale (Orvieto/OpenItalian/WildChat) | 3 → **2** | 0,54 → 0,55 | 14,2 → 11,8 |
+| conversazionale piccolo (italian_conversations) | 5 → **4** | 0,54 → 0,51 | 14,2 → 14,2 |
+| due-chiacchiere | 4 → **3** | 0,54 → 0,51 | 14,2 → 13,0 |
+
+Tre corpus diversi, tre volte peggio. **Il recupero non aiuta questo modello.** L'ipotesi più
+semplice è che il 3B non riesca a usare due esempi in più senza perdere il filo di quello che sta
+scrivendo: il prompt passa da ~1.500 a ~2.200 caratteri e la qualità scende.
+
 ## Prossimi passi
-1. sbloccare `due-chiacchiere` (300k esempi, i più conversazionali).
+1. provare con 1 solo esempio invece di 2 (il prompt resta più corto).
 2. Aggiungere una sorgente di dialoghi erotici reali (racconti o chat), che oggi manca.
 3. Solo dopo, riaccendere `RAG_ESEMPI` e rigirare il benchmark: se non migliora, resta spento.
