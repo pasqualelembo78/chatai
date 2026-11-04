@@ -89,3 +89,12 @@ stesso numero di righe, stesse battute. Non va importato di nuovo.
 La traduzione esistente è discreta ma sbaglia la persona in circa l'8% dei casi ("fa schifo mentre mi
 sditalino", "*ti mette le braccia al collo*" per "wraps my arms"): si corregge con le regole, non
 ritraducendo.
+
+## Fonti inglesi e traduzione
+- `minas2025/WarmRoleplay` (aggregato roleplay, licenza **per riga** nel campo `license`): importate
+  600 righe, le migliori come struttura (personaggi, scene).
+- `chimbiwide/RolePlay-NPCv2` (Apache 2.0, ma è una combinazione di fonti terze): importate 400.
+- `taozi555/novel-rp`: gated **e** CC BY-NC 4.0, da accettare e valutare.
+- Traduzione: `archivio/traduci.py` con il modello locale. Qualità ~6/10 ("mi stavo solo pensando",
+  "polluzione ambientale", "in parco") e ritmo di ~15 s/riga: va sempre accompagnata da correzioni.
+  Output in `*-it.jsonl` con il testo inglese accanto, così si può rifare.

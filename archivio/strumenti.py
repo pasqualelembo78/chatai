@@ -28,6 +28,12 @@ UA = {"User-Agent": "chatai-archivio/1.0"}
 
 # Fonti verificate una per una con l'API di Hugging Face.
 FONTI = [
+    {"id": "warmroleplay-en", "dataset": "minas2025/WarmRoleplay", "formato": "messages",
+     "licenza": "aggregato, licenza per riga (campo license)", "collezione": "generale",
+     "max": 600, "inglese": True},
+    {"id": "roleplay-npc-en", "dataset": "chimbiwide/RolePlay-NPCv2", "formato": "messages",
+     "licenza": "Apache 2.0 (dichiarata aggregando fonti terze)", "collezione": "generale",
+     "max": 400, "inglese": True},
     {"id": "nsfw-chat-it", "dataset": "Raphael172/NSFW_Multilanguage_Chat_Dataset",
      "formato": "io-it", "licenza": "Apache 2.0", "collezione": "erotico", "max": 6632,
      "locale": os.path.join(QUI, "grezzi", "nsfw-it.json")},

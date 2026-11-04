@@ -952,3 +952,12 @@ tua destra, "inalato il profumo" → annusato.
 - La traduzione italiana esistente sbaglia la persona in ~8% dei casi (audit su 25 righe, 2 casi):
   aggiunte quattro correzioni ("mi sditalino" → "mi ditalino", "*ti mette le braccia*" → "mi avvolge
   il collo", "spara il mio sperma" → "mi sborra dentro").
+
+## 75) Tre dataset roleplay in inglese, traduzione locale (2026-11-04)
+- Verificati: `minas2025/WarmRoleplay` (178k righe, licenza per riga, aggregato di fonti permissive),
+  `chimbiwide/RolePlay-NPCv2` (30k, Apache 2.0 su fonti terze), `taozi555/novel-rp` (gated, CC BY-NC).
+- Importati 600 + 400 righe inglesi; `novel-rp` resta da sbloccare e da valutare per la licenza NC.
+- `archivio/traduci.py`: traduzione con modello locale, salta le righe già italiane, conserva
+  l'inglese accanto, riprende da dove era. Qualità rilevata ~6/10 con errori tipici
+  ("mi stavo solo pensando", "polluzione", "in parco"): serve sempre un passaggio di correzioni.
+  Ritmo ~15 s/riga, quindi non è una strada per decine di migliaia di righe.
