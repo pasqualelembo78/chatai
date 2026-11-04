@@ -271,13 +271,100 @@ def ripetizioni(risposte):
     return doppie
 
 
+
+# ── esportazione per un correttore esterno e reimport delle correzioni ──────────
+INTESTAZIONE = """Sei un correttore di lingua italiana. Ti passo conversazioni reali tra un utente e
+un personaggio virtuale italiano: sono risposte generate da un modello piccolo (3 miliardi di
+parametri) e servono solo per trovarne i difetti.
+
+CONTESTO DEL PROGETTO
+- Sito di chat per adulti con personaggi inventati. Registro: due adulti complici, colloquiale.
+- Le risposte devono stare entro 20 parole, 1-2 frasi, dirette: prima si risponde alla domanda,
+  il gesto viene dopo e non la sostituisce.
+- Lessico erotico ammesso solo quando la scena lo chiede, con parole comuni.
+- Vietati: terza persona narrativa, frasi fatte, verbi inventati, doppioni di parole.
+
+COSA DEVI FARE
+1. Riscrivi SOLO le righe "A", lasciando intatte le domande. Mantieni lunghezza e registro.
+2. Elenca gli errori, uno per riga: `turno N | tipo | sbagliato -> corretto`
+   Tipi: grammatica, verbo, persona, ripetizione, fuori-contesto, non-risponde, frase-fatta,
+   lessico-sbagliato, troppo-lunga.
+3. Proponi le voci da aggiungere al dizionario, in JSON, una per riga:
+   {"sbagliato": "...", "giusto": "...", "nota": "..."}
+
+FORMATO: prima il DIALOGO CORRETTO, poi gli ERRORI, poi le VOCI DIZIONARIO.
+------------------------------------------------------------------
+
+"""
+
+
+def esporta_per_correzione(coppie_per_nome, cartella):
+    """Un file pronto da incollare in un correttore esterno, più le stesse coppie in JSON."""
+    testo, jsonl = [INTESTAZIONE], []
+    for nome, coppie in coppie_per_nome.items():
+        testo.append(f"### CONVERSAZIONE: {nome}\n")
+        for i, (u, a) in enumerate(coppie, 1):
+            testo.append(f"{i}. U: {u}\n   A: {a}\n")
+            jsonl.append(json.dumps({"conversazione": nome, "turno": i, "utente": u,
+                                     "risposta": a}, ensure_ascii=False))
+    percorso = os.path.join(cartella, "per-chatgpt.txt")
+    open(percorso, "w", encoding="utf-8").write("\n".join(testo))
+    open(os.path.join(cartella, "per-chatgpt.jsonl"), "w", encoding="utf-8").write("\n".join(jsonl))
+    return percorso, sum(len(c) for c in coppie_per_nome.values())
+
+
+def importa_correzioni(percorso):
+    """Prende le righe JSON dalla risposta del correttore e le mette nel dizionario + nei test."""
+    base = os.path.dirname(os.path.abspath(__file__))
+    grammatica = os.path.join(base, "backend/language/italian-grammar.json")
+    verifica = os.path.join(base, "verifica_correzioni.py")
+    testo = open(percorso, encoding="utf-8").read()
+    voci = []
+    for riga in testo.splitlines():
+        riga = riga.strip().strip("`, ")
+        if not riga.startswith("{"):
+            continue
+        try:
+            d = json.loads(riga)
+        except Exception:
+            continue
+        sbagliato, giusto = (d.get("sbagliato") or "").strip(), (d.get("giusto") or "").strip()
+        if sbagliato and giusto and len(sbagliato) < 60 and len(giusto) < 60:
+            voci.append({"sbagliato": sbagliato, "giusto": giusto,
+                         "nota": (d.get("nota") or "esterno")[:90]})
+    if not voci:
+        print("nessuna voce JSON valida nel file")
+        return 0
+    gram = json.load(open(grammatica, encoding="utf-8"))
+    esistenti = {c["sbagliato"].lower() for c in gram["correzioni_brevi"]}
+    nuove = [v for v in voci if v["sbagliato"].lower() not in esistenti]
+    for v in nuove:
+        print(f"  {v['sbagliato']} -> {v['giusto']}")
+    if nuove:
+        gram["correzioni_brevi"].extend(nuove)
+        json.dump(gram, open(grammatica, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+        testo_v = open(verifica, encoding="utf-8").read()
+        casi = "\n".join(f'    ("{v["sbagliato"]}", "{v["giusto"]}", "{v["sbagliato"]}", "importata"),'
+                         for v in nuove)
+        testo_v = testo_v.replace("    # regole generali, non singole parole",
+                                  casi + "\n    # regole generali, non singole parole", 1)
+        open(verifica, "w", encoding="utf-8").write(testo_v)
+    print(f"importate {len(nuove)} voci nuove (scartate {len(voci) - len(nuove)} già presenti)")
+    return len(nuove)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--scenario", action="append", help="nome della conversazione (ripetibile)")
     ap.add_argument("--turni", type=int, default=99)
     ap.add_argument("--out", default="/opt/aria/prove")
     ap.add_argument("--pausa", type=float, default=1.5)
+    ap.add_argument("--importa", metavar="FILE", help="importa le correzioni da un file e basta")
     args = ap.parse_args()
+
+    if args.importa:
+        importa_correzioni(args.importa)
+        return
 
     if args.scenario:
         scelte = [c for c in CONVERSAZIONI if c["nome"] in args.scenario]
@@ -290,6 +377,7 @@ def main():
             args.turni = chiedi_turni(max(len(c["turni"]) for c in scelte))
 
     os.makedirs(args.out, exist_ok=True)
+    esportati = {}
     jwt = token()
     riepilogo = []
 
@@ -298,7 +386,9 @@ def main():
         cid, nome = p["id"], p.get("name", "?")
         base = os.path.join(args.out, conv["nome"])
         risposte, tempi = [], []
+        coppie_conv = []
         n_ignote = n_note = n_magre = 0
+        esportati[conv["nome"]] = coppie_conv
         with open(base + ".md", "w", encoding="utf-8") as md, open(base + ".jsonl", "w", encoding="utf-8") as js:
             md.write(f"# {conv['nome']} — {nome} ({conv['categoria']})\n"
                      f"Cosa guarda: {conv['cosa_guarda']}\n\n")
@@ -311,6 +401,7 @@ def main():
                     r = f"[ERRORE: {e}]"
                 dt = round(time.time() - t0, 1)
                 risposte.append(r)
+                coppie_conv.append((msg, r))
                 tempi.append(dt)
                 # analisi automatica: parole che il dizionario non conosce, correzioni
                 # che non sono scattate, risposte magre a una domanda
@@ -375,6 +466,10 @@ def main():
         print(f"  ? {parola} ({len(esempi)}x)  «{esempi[0][:80]}»")
     for forma in list(NON_CORRETTE)[:5]:
         print(f"  ! correzione non scattata: {forma}")
+    if esportati:
+        percorso_exp, turni_exp = esporta_per_correzione(esportati, args.out)
+        print(f"\nDa correggere fuori: {percorso_exp} ({turni_exp} turni) — poi "
+              f"`python3 chat.py --importa <risposta>`")
     print(f"\nFile in {args.out} · elenco in {report}")
 
 

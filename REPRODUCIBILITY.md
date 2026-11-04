@@ -1030,10 +1030,8 @@ tua destra, "inalato il profumo" → annusato.
 - Verificato che alle nuove domande il personaggio risponde davvero ("Sono qui per incontrarti…").
 
 ## 81) Ciclo di correzione con un correttore esterno (2026-11-04)
-- `esporta_per_chatgpt.py`: mette insieme contesto, regole di stile e turni in un unico file
-  pronto da incollare in ChatGPT, con istruzioni precise (riscrivi solo le risposte, elenca gli
-  errori per tipo, proponi voci di dizionario in JSON). Prove spostate in `/opt/aria/prove`
-  (prima `/tmp`, si perdevano al riavvio) e aggiunte a `.gitignore`.
-- `importa_correzioni.py`: legge la risposta incollata, valida le righe JSON, rifiuta i doppioni e
-  aggiunge le voci al dizionario **e** a `verifica_correzioni.py`, così ogni regola esterna nasce
-  già coperta da un test.
+- Tutto dentro `chat.py`, un solo comando: al termine del giro scrive da sé
+  `<out>/per-chatgpt.txt` (+ `.jsonl`) con contesto, regole, turni e istruzioni per il correttore.
+  `python3 chat.py --importa <risposta>` rimette le voci JSON nel dizionario e in
+  `verifica_correzioni.py`. I due script separati sono stati rimossi.
+- Prove spostate in `/opt/aria/prove` (prima `/tmp`, si perdevano al riavvio), aggiunte a `.gitignore`.
