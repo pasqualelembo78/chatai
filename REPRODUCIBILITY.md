@@ -893,3 +893,20 @@ tua destra, "inalato il profumo" → annusato.
 - Esito: il lessico iniettato **si tiene**. Restano deboli i modi di dire comuni e la sintassi
   ("mi butto sulla tua bocca"). Prossimo passo, se si riprende: giro completo da 120 e qualificazione
   a mano del lessico comune (790 voci ancora da rivedere).
+
+## 70) Archivio conversazionale, recupero e benchmark (2026-11-04)
+- Importati 21.000 record da tre dataset HF verificati (Orvieto CC BY 4.0, DATA-AI Apache 2.0,
+  OpenItalianData Apache 2.0), via API datasets-server a blocchi, senza installare `datasets` e
+  senza saturare RAM. Esclusi e documentati: due-chiacchiere (gated), italian-open-sft (NC),
+  RBTL/Erotico (audio), AntonelloS01 (licenza assente), KIParla/PAISÀ/itWaC/CombiNet/Dodiom
+  (diritti da verificare).
+- `archivio/strumenti.py`: importa (con ripresa e retry su 429), qualifica (privacy, markup,
+  risposte che ripetono la domanda, solo-domanda, non-italiano, stile "da chat") e indicizza in
+  SQLite FTS5. Qualificati 19.756 su 21.000, di cui 4.968 espliciti.
+- `archivio/recupero.py`: ricerca a radici (prefisso), filtro espliciti, 2 esempi corti, fallback
+  pesato sul messaggio. `archivio/benchmark.py`: 102 prove su 10 dimensioni, con confronto
+  senza/con.
+- Integrazione in `prompt_builder` dietro `RAG_ESEMPI` (ora **0**): la prova su 25+25 casi non ha
+  mostrato guadagno di pertinenza (3→2 risposte col dato giusto, lemmi/parola 0,54→0,55) e ha
+  accorciato le risposte (14,2→11,8 parole). Tenuto spento finché l'archivio non ha dialoghi veri.
+- Corretto anche il doppio orario residuo (frasi con l'ora dentro il testo, non solo in testa).

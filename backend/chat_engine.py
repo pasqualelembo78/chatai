@@ -686,9 +686,10 @@ def process_message(user_id, character_id, text, username="Utente",
                 # altre frasi che dicono solo l'ora ("Ecco l'ora: 22.15") vanno tolte:
                 # altrimenti il modello contraddice il dato che ho appena messo
                 if _risposta_esatta.startswith("Sono le"):
-                    ai_text = re.sub(
-                        r"(?:^|(?<=[.!?])\s+)(?:ecco l'ora[:\s]*)?(?:sono le |sono alle |le |alle )?"
-                        r"\d{1,2}[:.,]\d{2}[.!]?\s*", "", ai_text)
+                    for _ in range(2):
+                        ai_text = re.sub(
+                            r"(?:^|(?<=[.!?])\s+)(?:ecco l'ora[:\s]*)?(?:sono le |sono alle |le |alle )?"
+                            r"\d{1,2}[:.,]\d{2}[.!]?\s*", "", ai_text)
                 if ai_text:
                     ai_text = ai_text[:1].upper() + ai_text[1:]
                 ai_text = _risposta_esatta + ". " + ai_text.lstrip()

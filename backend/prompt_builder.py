@@ -375,6 +375,23 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                     righe.append("Tu: " + _scelta)
             except Exception:
                 pass
+        # esempi dall'archivio: solo se richiesto, pochi e corti
+        if os.environ.get("RAG_ESEMPI", "0") == "1":
+            try:
+                import sys as _sys
+                if "/opt/aria" not in _sys.path:
+                    _sys.path.insert(0, "/opt/aria")
+                from archivio import recupero as _rec
+                # esempi generali solo sui turni di servizio: sui turni caldi il lessico basta
+                # e gli esempi d'archivio rischiano di portare fuori tema
+                _servizio = re.search(r"(che ore|che ora|che giorno|come stai|che si dice|come va|"
+                                      r"cosa sai fare|chi sei|di dove|che lavoro)", (user_text or "").lower())
+                _blocco = _rec.blocco(user_text, collezione=None, quanti=2) if _servizio else ""
+                if _blocco:
+                    logger.info("RAG ESEMPI: %s", _blocco.replace("\n", " | ")[:200])
+                    righe.append(_blocco[:340])
+            except Exception:
+                pass
         # lessico in fondo: è l'ultima cosa che il modello legge prima di scrivere
         if os.environ.get("LESSICO_INIETTATO", "1") == "1":
             try:
