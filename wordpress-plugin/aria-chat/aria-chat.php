@@ -172,7 +172,7 @@ function aria_grid_signature() {
         $sig[] = basename($f) . ':' . filesize($f) . ':' . filemtime($f);
     }
     sort($sig);
-    return implode('|', $sig);
+    return 'v2|' . implode('|', $sig);   // v2: aggiunto il genere alle card
 }
 
 function aria_grid_cache_file() {
@@ -205,6 +205,7 @@ function aria_grid_build_index() {
                 'id' => $c['id'],
                 'slug' => $c['slug'] ?? '',
                 'name' => isset($c['name']) ? $c['name'] : 'Personaggio',
+                'gender' => isset($c['gender_display']) ? $c['gender_display'] : '',
                 'avatar' => isset($c['avatar']) ? $c['avatar'] : '💬',
                 'desc' => mb_substr($desc, 0, 90)
             );

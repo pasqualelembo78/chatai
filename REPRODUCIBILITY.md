@@ -999,3 +999,17 @@ tua destra, "inalato il profumo" → annusato.
   grezzi e, se una voce è già nel lessico attivo, la conserva. (2) la deduplica fra gruppi funziona
   solo eseguendo entrambi i gruppi: `--gruppo comune` da solo non vede gli erotici.
 - Stato: 187 erotiche (di cui 23 espressioni dal corpus) e 792 comuni, nessuna sovrapposizione.
+
+## 80) Stanze divise per genere e pulsante "?" per la domanda d'apertura (2026-11-04)
+- Griglia stanza: i personaggi non stanno più in un unico alfabetico. L'indice di cache ora porta
+  il genere e la pagina mostra sezioni separate **Femmine / Maschi / Non binari**, ognuna in ordine
+  alfabetico e con il proprio "mostra altri". Il caricamento progressivo riceve il genere e filtra
+  prima di scorrere, altrimenti l'offset salterebbe card. CSS dedicato ai titoli di sezione.
+  Firma della cache portata a `v2` per forzare la ricostruzione dell'indice.
+- Sostituiti i chip di tre parole con un solo pulsante **"?"**: chiede al backend
+  `POST /chat/spunto`, che fa scrivere al personaggio una domanda breve (max 8 parole) coerente con
+  stanza e carattere. Non consuma il limite giornaliero e non entra in cronologia. Se il modello non
+  risponde c'è un elenco di ripiego per stanza. La frase viene inserita nel campo e inviata.
+- Nota sui dati: **3.336 personaggi su 5.072 sono "non binari"** (66%), quindi la sezione "Non
+  binari" è la più affollata. È un problema di dati, non di pagina: da rivedere quando si rigenerano
+  le personalità.

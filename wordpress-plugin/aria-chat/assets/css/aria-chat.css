@@ -614,3 +614,28 @@
 .aria-char-page__tag { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 6px; padding: 0; list-style: none; }
 .aria-char-page__tag li { font-size: 12px; padding: 4px 10px; border-radius: 99px; background: rgba(233,30,140,.14); color: #ff9ad6; }
 .aria-char-page__link { max-width: 860px; margin-top: 26px; }
+
+/* Sezioni per genere nelle stanze: titolo e conteggio, poi la griglia */
+.aria-grid-section { margin: 0 0 28px; }
+.aria-grid-section-title {
+    display: flex; align-items: center; gap: 8px;
+    margin: 18px 0 6px; padding-bottom: 6px;
+    font-size: 1.05rem; letter-spacing: .04em; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.aria-grid-section-title .aria-grid-section-count {
+    font-size: .8rem; font-weight: 400; opacity: .65;
+}
+
+/* Pulsante "?" per farsi proporre una domanda dal personaggio */
+.aria-spunto-row { display: flex; align-items: center; gap: 10px; margin: 8px 0 4px; }
+.aria-spunto {
+    flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.06);
+    color: inherit; font-size: 1.15rem; font-weight: 700; cursor: pointer;
+}
+.aria-spunto:hover { background: rgba(255,255,255,.14); }
+.aria-spunto:disabled { opacity: .5; cursor: wait; }
+.aria-spunto-carica { animation: aria-pulsa 1s infinite; }
+@keyframes aria-pulsa { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.aria-spunto-hint { font-size: .82rem; opacity: .7; }

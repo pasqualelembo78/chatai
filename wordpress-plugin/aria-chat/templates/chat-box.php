@@ -105,43 +105,14 @@ $chat_greeting = $is_dedicated
     </div>
     
     <?php
-    // Chip di regia: comandi rapidi per categoria. Servono a chi non sa cosa scrivere
-    // e tengono la scena nel tema della stanza.
-    $chip_categoria = array(
-        'amanti-segreti' => array('Baciami di nascosto', 'Chiudi la porta', 'Quando ci rivediamo?'),
-        'bdsm' => array('Legami', 'Comanda tu', 'Conta fino a tre'),
-        'bisex' => array('Mi piacete entrambi', 'Scegli tu chi', 'Raccontami di lui'),
-        'camera-privata' => array('Chiudi a chiave', 'Spogliati piano', 'Resta a letto'),
-        'chat-romantica' => array('Abbracciami', 'Raccontami di te', 'Ti penso'),
-        'dirty-talk' => array('Parlami sporco', 'Dimmi cosa vuoi', 'Racconta'),
-        'dominazione' => array('Ordina', 'Chiedo permesso', 'Puniscimi'),
-        'fantasie-erotiche' => array('Realizziamo una fantasia', 'Inventa tu la scena', 'Più dettagli'),
-        'fantasie-proibite' => array('Facciamo i proibiti', 'Non dire niente a nessuno', 'Rischiamo'),
-        'feticismi' => array('Fammi sentire', 'Guardami bene', 'Toccami piano'),
-        'gay' => array('Vieni qui', 'Spogliati', 'Ti voglio'),
-        'incontri-bollenti' => array('Subito', 'Baciami forte', 'Non fermarti'),
-        'lesbo' => array('Avvicinati', 'Baciami piano', 'Guardami'),
-        'masturbazione' => array('Guidami', 'Più lento', 'Adesso'),
-        'mature' => array('Insegnami', 'Prendi l iniziativa', 'Con calma'),
-        'milf' => array('Ti ascolto', 'Vieni qui', 'Fammi sentire piccolo'),
-        'roleplay-erotico' => array('Entra in parte', 'Cambia scena', 'Continua cosi'),
-        'scambio-di-coppia' => array('Parliamo di regole', 'Chi guarda chi?', 'Ci stiamo'),
-        'senza-tabu' => array('Proviamo tutto', 'Nessun limite', 'Sorprendimi'),
-        'sesso-orale' => array('In ginocchio', 'Più piano', 'Guardami'),
-        'sesso-virtuale' => array('Accendo la camera', 'Ti inquadro', 'Cosa vedi?'),
-        'sottomissione' => array('Cosa devo fare?', 'Chiedo permesso', 'Obbedisco'),
-        'threesome' => array('Siamo in tre', 'Uno per lato', 'Dividetemi'),
-        'voyeurismo' => array('Ti guardo', 'Mostrati', 'Non fermarti'),
-    );
-    $chips = isset($chip_categoria[$cat_slug]) ? $chip_categoria[$cat_slug] : array();
+    // Un solo pulsante: chiede al personaggio una domanda d'apertura, per chi non sa
+    // da dove cominciare. La frase la genera il modello, non è un elenco fisso.
     ?>
-    <?php if (!empty($chips)): ?>
-    <div class="aria-chips" id="aria-chips">
-        <?php foreach ($chips as $chip): ?>
-        <button type="button" class="aria-chip"><?php echo esc_html($chip); ?></button>
-        <?php endforeach; ?>
+    <div class="aria-spunto-row">
+        <button type="button" id="aria-spunto" class="aria-spunto"
+                title="Non so cosa dire: fammi una domanda" aria-label="Fammi una domanda">?</button>
+        <span class="aria-spunto-hint" id="aria-spunto-hint">Non sai da dove cominciare? Premi il punto interrogativo.</span>
     </div>
-    <?php endif; ?>
 
     <div class="aria-chat-input-container">
         <textarea 

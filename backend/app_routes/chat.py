@@ -608,6 +608,62 @@ def _presentazione(char, meta, seme):
     return testo
 
 
+@router.post("/chat/spunto")
+@limiter.limit("30/minute")
+def api_chat_spunto(request: Request, body: ChatRequest, user: AuthUser = Depends(jwt_required)):
+    """Uno spunto: una domanda breve che il personaggio fa per rompere il ghiaccio.
+
+    Serve al pulsante "?" per chi entra in chat e non sa da dove cominciare.
+    Non consuma il limite giornaliero e non entra in cronologia: è solo un suggerimento.
+    """
+    from ai_engine.response import get_ai_response
+
+    char = get_character(body.character) if body.character else None
+    if not char:
+        raise HTTPException(404, "character not found")
+    if not _check_character_access(user.user_id, char):
+        raise HTTPException(403, "premium_required")
+
+    nome = char.get("name", "il personaggio")
+    contesto = (char.get("category_context") or "")[:220]
+    sistema = (f"Sei {nome}. {contesto}\n"
+               "Scrivi una domanda naturale, breve, che faresti a voce all'inizio della chat, "
+               "in italiano e coerente col tuo carattere. Come una persona vera, non come un assistente. "
+               "Massimo 8 parole. Deve riguardare lui, lei o il momento. "
+               "Esempi: 'Ti va se chiudo la porta?', 'Perché sei qui a quest'ora?', "
+               "'Da dove vuoi cominciare?'. Solo la domanda, senza virgolette.")
+    messaggi = [{"role": "system", "content": sistema},
+                {"role": "user", "content": "Dammi la domanda."}]
+
+    testo = ""
+    try:
+        testo, _p, _m = get_ai_response(messaggi, user_id=user.user_id)
+    except Exception as e:
+        logger.warning(f"spunto fallito: {e}")
+
+    testo = (testo or "").strip().splitlines()[0] if testo else ""
+    testo = testo.strip('"«» ').rstrip(" .,;:")
+    if testo and not testo.endswith(("?", "!", "…")):
+        testo += "?"
+    if len(testo.split()) > 18:
+        testo = " ".join(testo.split()[:18]).rstrip(",;:") + "?"
+    if not testo:
+        testo = _SPUNTI.get(char.get("category", ""), "Da dove cominciamo?")
+    return {"testo": testo}
+
+
+# ripiego se il modello non risponde: una domanda per stanza
+_SPUNTI = {
+    "bdsm": "Da dove vuoi che cominci?", "dirty-talk": "Quanto ti senti sporca stasera?",
+    "chat-romantica": "Che cosa ti ha fatto sorridere oggi?",
+    "milf": "Ti va di stare un po' con me?", "lesbo": "Posso avvicinarmi?",
+    "gay": "Che cosa cerchi stasera?", "mature": "Di cosa hai voglia di parlare?",
+    "roleplay-erotico": "Che parte vuoi fare tu?",
+    "senza-tabu": "Fin dove ti spingi?", "threesome": "Chi comincia?",
+    "voyeurismo": "Posso guardarti?", "camera-privata": "Da dove iniziamo?",
+}
+
+
 @router.post("/chat/opening")
 @limiter.limit("30/minute")
 async def api_chat_opening(request: Request, body: ChatRequest, user: AuthUser = Depends(jwt_required)):

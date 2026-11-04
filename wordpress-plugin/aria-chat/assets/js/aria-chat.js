@@ -78,9 +78,29 @@
         $('#aria-switch-to-register').on('click', function(e) { e.preventDefault(); hideLoginModal(); showRegisterModal(); });
         $('#aria-switch-to-login').on('click', function(e) { e.preventDefault(); hideLoginModal(); showLoginModal(); });
         $input.on('input', autoResizeInput);
-        $('#aria-chips').on('click', '.aria-chip', function () {
-            $input.val($(this).text()).trigger('input').focus();
-            sendMessage();
+        // Pulsante "?": il personaggio propone lui una domanda d'apertura
+        $('#aria-spunto').on('click', function () {
+            var bottone = $(this);
+            var char = window.ariaLastChar || currentCharacter || (config && config.character) || '';
+            if (!char || bottone.prop('disabled')) return;
+            bottone.prop('disabled', true).addClass('aria-spunto-carica');
+            var corpo = new FormData();
+            corpo.append('action', 'aria_chat_spunto');
+            corpo.append('character', char);
+            fetch((config && config.ajaxUrl) ? config.ajaxUrl : '/wp-admin/admin-ajax.php', {
+                method: 'POST', credentials: 'same-origin', body: corpo
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (d && d.success && d.data && d.data.testo) {
+                        $input.val(d.data.testo).trigger('input').focus();
+                        sendMessage();
+                    }
+                })
+                .catch(function () {})
+                .then(function () {
+                    bottone.prop('disabled', false).removeClass('aria-spunto-carica');
+                });
         });
         $('#aria-export-btn').on('click', function () {
             var char = window.ariaLastChar || currentCharacter || (config && config.character) || '';

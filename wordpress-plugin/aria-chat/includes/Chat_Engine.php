@@ -25,6 +25,8 @@ class Aria_Chat_Engine {
         add_action('wp_ajax_aria_chat_send', array($this, 'ajax_send_message'));
         add_action('wp_ajax_aria_chat_stream', array($this, 'ajax_send_stream'));
         add_action('wp_ajax_aria_chat_opening', array($this, 'ajax_chat_opening'));
+        add_action('wp_ajax_nopriv_aria_chat_spunto', array($this, 'ajax_chat_spunto'));
+        add_action('wp_ajax_aria_chat_spunto', array($this, 'ajax_chat_spunto'));
         add_action('wp_ajax_aria_chat_regenerate', array($this, 'ajax_regenerate'));
         add_action('wp_ajax_aria_chat_export', array($this, 'ajax_export'));
         add_action('wp_ajax_nopriv_aria_chat_guest', array($this, 'ajax_chat_guest'));
@@ -319,6 +321,43 @@ class Aria_Chat_Engine {
     }
 
     /** Apertura automatica della chat da parte del personaggio (ponte SSE). */
+    /** Una domanda d'apertura generata dal modello (pulsante "?"). */
+    public function ajax_chat_spunto() {
+        $character_id = sanitize_text_field($_POST['character'] ?? '');
+        if (!$character_id) {
+            wp_send_json_error(array('message' => 'personaggio mancante'), 400);
+        }
+        if (!$this->auth_manager->ensure_authenticated()) {
+            wp_send_json_error(array('message' => 'autenticazione fallita'), 401);
+        }
+        $token = $this->auth_manager->get_access_token();
+        if (!$token) {
+            wp_send_json_error(array('message' => 'token assente'), 401);
+        }
+        $this->api_client->set_access_token($token);
+        $ch = curl_init(rtrim($this->api_client->get_base_url(), '/') . '/chat/spunto');
+        curl_setopt_array($ch, array(
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => wp_json_encode(array('character' => $character_id, 'username' => 'utente')),
+            CURLOPT_HTTPHEADER => array('Content-Type: application/json',
+                'Authorization: Bearer ' . $token),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 90,
+        ));
+        $risposta = curl_exec($ch);
+        $codice = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if ($codice !== 200 || !$risposta) {
+            wp_send_json_error(array('message' => 'suggerimento non disponibile'), 502);
+        }
+        $dati = json_decode($risposta, true);
+        $testo = isset($dati['testo']) ? sanitize_text_field($dati['testo']) : '';
+        if (!$testo) {
+            wp_send_json_error(array('message' => 'vuoto'), 502);
+        }
+        wp_send_json_success(array('testo' => $testo));
+    }
+
     public function ajax_chat_opening() {
         while (ob_get_level() > 0) {
             @ob_end_flush();
@@ -425,10 +464,19 @@ class Aria_Chat_Engine {
         $cat = sanitize_title($_POST['category'] ?? '');
         $offset = max(0, (int) ($_POST['offset'] ?? 0));
         $passo = min(120, max(12, (int) ($_POST['step'] ?? 60)));
+        $genere = sanitize_key($_POST['gender'] ?? '');
         if (!$cat) {
             wp_die('');
         }
-        $personaggi = array_slice(aria_grid_characters($cat), $offset, $passo);
+        $tutti = aria_grid_characters($cat);
+        if ($genere !== '') {
+            // il filtro si applica prima dello scorrimento, altrimenti l'offset salta card
+            $tutti = array_values(array_filter($tutti, function ($c) use ($genere) {
+                $g = isset($c['gender']) ? $c['gender'] : '';
+                return ($genere === 'altro') ? !in_array($g, array('femminile', 'maschile'), true) : $g === $genere;
+            }));
+        }
+        $personaggi = array_slice($tutti, $offset, $passo);
         $base = trailingslashit(get_post_type_archive_link('stanza'));
         $stanza = get_page_by_path($cat, OBJECT, 'stanza');
         $room_url = $stanza ? get_permalink($stanza) : $base;

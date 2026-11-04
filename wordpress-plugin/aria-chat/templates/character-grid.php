@@ -54,70 +54,85 @@ $room_url = get_permalink();
     </header>
 
     <?php
-    // Con 200+ personaggi per stanza il DOM completo e' pesante su mobile: si mostrano
-    // 60 card per volta e il resto si svela a blocchi con il pulsante.
+    // Maschi e femmine separati: con 200+ personaggi in ordine unico non si capisce chi è chi.
+    // Per sezione si mostrano 60 card per volta (il DOM intero pesa su mobile).
+    $gruppi = array('femminile' => array(), 'maschile' => array(), 'altro' => array());
+    foreach ($chars as $c) {
+        $g = isset($c['gender']) ? $c['gender'] : '';
+        $gruppi[isset($gruppi[$g]) ? $g : 'altro'][] = $c;
+    }
+    $etichette = array('femminile' => 'Femmine', 'maschile' => 'Maschi', 'altro' => 'Non binari');
     $per_blocco = 60;
     ?>
     <?php if ($total_chars === 0): ?>
         <p class="aria-grid-empty">Nessun personaggio trovato per questa categoria<?php echo $cat_slug ? ': ' . esc_html($cat_slug) : ' (shortcode senza category)'; ?>.</p>
     <?php else: ?>
-        <div class="aria-character-grid">
-            <?php foreach (array_slice($chars, 0, $per_blocco) as $i => $c):
-                // La descrizione inizia con il nome: nella card il nome è già sopra
-                $card_desc = trim(preg_replace('/^' . preg_quote($c['name'], '/') . '\s*[—–-]\s*/u', '', $c['desc']));
-                $link_card = !empty($c['slug'])
-                    ? trailingslashit($room_url) . $c['slug'] . '/'
-                    : add_query_arg('char', rawurlencode($c['id']), $room_url);
-            ?>
-            <a class="aria-character-card" href="<?php echo esc_url($link_card); ?>" title="Chatta con <?php echo esc_attr($c['name']); ?>">
-                <div class="aria-character-avatar"><?php echo esc_html($c['avatar']); ?></div>
-                <h3><?php echo esc_html($c['name']); ?></h3>
-                <p><?php echo esc_html($card_desc); ?></p>
-            </a>
-            <?php endforeach; ?>
-        </div>
-        <?php if ($total_chars > $per_blocco): ?>
-            <div class="aria-grid-more">
-                <button type="button" id="aria-show-more" class="aria-show-more" data-step="<?php echo (int) $per_blocco; ?>" data-total="<?php echo (int) $total_chars; ?>" data-categoria="<?php echo esc_attr($cat_slug); ?>">
-                    Mostra altri <?php echo (int) $per_blocco; ?>
-                </button>
-                <span class="aria-grid-shown" id="aria-grid-shown"><?php echo (int) $per_blocco; ?> di <?php echo (int) $total_chars; ?></span>
-            </div>
-        <?php endif; ?>
+        <?php foreach ($gruppi as $g => $lista): ?>
+            <?php if (!$lista) continue; ?>
+            <section class="aria-grid-section" data-gender="<?php echo esc_attr($g); ?>">
+                <h3 class="aria-grid-section-title"><?php echo esc_html($etichette[$g]); ?>
+                    <span class="aria-grid-section-count"><?php echo esc_html(number_format_i18n(count($lista))); ?></span>
+                </h3>
+                <div class="aria-character-grid">
+                    <?php foreach (array_slice($lista, 0, $per_blocco) as $c):
+                        $card_desc = trim(preg_replace('/^' . preg_quote($c['name'], '/') . '\s*[—–-]\s*/u', '', $c['desc']));
+                        $link_card = !empty($c['slug'])
+                            ? trailingslashit($room_url) . $c['slug'] . '/'
+                            : add_query_arg('char', rawurlencode($c['id']), $room_url);
+                    ?>
+                    <a class="aria-character-card" href="<?php echo esc_url($link_card); ?>" title="Chatta con <?php echo esc_attr($c['name']); ?>">
+                        <div class="aria-character-avatar"><?php echo esc_html($c['avatar']); ?></div>
+                        <h3><?php echo esc_html($c['name']); ?></h3>
+                        <p><?php echo esc_html($card_desc); ?></p>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <?php if (count($lista) > $per_blocco): ?>
+                <div class="aria-grid-more">
+                    <button type="button" class="aria-show-more" data-step="<?php echo (int) $per_blocco; ?>" data-total="<?php echo (int) count($lista); ?>" data-categoria="<?php echo esc_attr($cat_slug); ?>" data-gender="<?php echo esc_attr($g); ?>">
+                        Mostra altri <?php echo (int) $per_blocco; ?> <?php echo esc_html(strtolower($etichette[$g])); ?>
+                    </button>
+                    <span class="aria-grid-shown"><?php echo (int) $per_blocco; ?> di <?php echo (int) count($lista); ?></span>
+                </div>
+                <?php endif; ?>
+            </section>
+        <?php endforeach; ?>
     <?php endif; ?>
 </div>
 
 
 <script>
 (function () {
-    // Le card arrivano a blocchi dal server: la stanza non porta 200 link in una volta
-    var piu = document.getElementById('aria-show-more');
-    var mostrate = document.getElementById('aria-grid-shown');
-    if (!piu) return;
-    piu.addEventListener('click', function () {
-        var passo = parseInt(piu.getAttribute('data-step'), 10) || 60;
-        var totale = parseInt(piu.getAttribute('data-total'), 10) || 0;
-        var categoria = piu.getAttribute('data-categoria') || '';
-        var viste = document.querySelectorAll('.aria-character-card').length;
-        piu.disabled = true;
-        var corpo = new FormData();
-        corpo.append('action', 'aria_chat_grid_more');
-        corpo.append('category', categoria);
-        corpo.append('offset', viste);
-        corpo.append('step', passo);
-        fetch((window.ariaChatConfig && ariaChatConfig.ajaxUrl) || '/wp-admin/admin-ajax.php', {
-            method: 'POST', credentials: 'same-origin', body: corpo
-        })
-            .then(function (r) { return r.text(); })
-            .then(function (html) {
-                var griglia = document.querySelector('.aria-character-grid');
-                if (griglia) griglia.insertAdjacentHTML('beforeend', html);
-                var ora = document.querySelectorAll('.aria-character-card').length;
-                if (mostrate) mostrate.textContent = ora + ' di ' + totale;
-                piu.disabled = false;
-                if (ora >= totale && piu.parentNode) piu.parentNode.removeChild(piu);
+    // Un pulsante per sezione (femmine / maschi): il blocco successivo arriva dal server
+    // filtrato per genere, così non si mescolano.
+    document.querySelectorAll('.aria-show-more').forEach(function (piu) {
+        piu.addEventListener('click', function () {
+            var sezione = piu.closest('.aria-grid-section');
+            var griglia = sezione ? sezione.querySelector('.aria-character-grid') : null;
+            var mostrate = sezione ? sezione.querySelector('.aria-grid-shown') : null;
+            if (!griglia) return;
+            var passo = parseInt(piu.getAttribute('data-step'), 10) || 60;
+            var totale = parseInt(piu.getAttribute('data-total'), 10) || 0;
+            var corpo = new FormData();
+            corpo.append('action', 'aria_chat_grid_more');
+            corpo.append('category', piu.getAttribute('data-categoria') || '');
+            corpo.append('gender', piu.getAttribute('data-gender') || '');
+            corpo.append('offset', griglia.querySelectorAll('.aria-character-card').length);
+            corpo.append('step', passo);
+            piu.disabled = true;
+            fetch((window.ariaChatConfig && ariaChatConfig.ajaxUrl) || '/wp-admin/admin-ajax.php', {
+                method: 'POST', credentials: 'same-origin', body: corpo
             })
-            .catch(function () { piu.disabled = false; });
+                .then(function (r) { return r.text(); })
+                .then(function (html) {
+                    griglia.insertAdjacentHTML('beforeend', html);
+                    var ora = griglia.querySelectorAll('.aria-character-card').length;
+                    if (mostrate) mostrate.textContent = ora + ' di ' + totale;
+                    piu.disabled = false;
+                    if (ora >= totale && piu.parentNode) piu.parentNode.remove();
+                })
+                .catch(function () { piu.disabled = false; });
+        });
     });
 })();
 </script>
