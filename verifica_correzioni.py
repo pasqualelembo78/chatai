@@ -46,6 +46,10 @@ CASI = [
     ("ti frego la mano", "ti sfioro", "ti frego", "verbo"),
     ("ti bisogno", "ti bacio", "ti bisogno", "sostantivo usato come verbo"),
     ("ti le poso sulle tette", "te le poso", "ti le poso", "pronome doppio"),
+    ("Mi siedo sul divano sciolgo i legacci", "divano e sciolgo", "divano sciolgo",
+     "due verbi senza congiunzione"),
+    ("Mi alzo tolgo il cappotto", "Mi alzo e tolgo", "alzo tolgo", "verbi incollati"),
+    ("i legacci del ciuccio", "i lacci", "legacci", "termine raro"),
     # regole generali, non singole parole
     ("*ti guarda con affetto* e sorride", "Ti guarda", "*", "asterischi"),
     ("il il cazzo", "il cazzo", "il il", "parola doppia"),

@@ -333,6 +333,13 @@ def correggi(testo):
     # maiuscola dopo il punto ("È novembre. e sono") — piccola pulizia tipografica
     testo = re.sub(r"([.!?]\s+)([a-zàèéìòù])", lambda m: m.group(1) + m.group(2).upper(), testo)
 
+    # due verbi incollati senza congiunzione ("mi siedo sul divano sciolgo i lacci")
+    testo = re.sub(
+        r"\b(mi siedo|siedo|mi alzo|alzo|mi avvicino|prendo|poso|tolgo|scendo|salgo|"
+        r"mi giro|giro|appoggio)\s+"
+        r"(sciolgo|slaccio|sfilo|tolgo|prendo|poso|alzo|scendo|salgo|stringo|spingo|tiro)\b",
+        r"\1 e \2", testo, flags=re.IGNORECASE)
+
     # parole identiche ripetute di fila ("addosso addosso"): tipico del modello piccolo.
     # Restano le ripetizioni che in italiano hanno senso (piano piano, molto molto...).
     testo = re.sub(r"\b(il|lo|la|le|gli|i|un|una|di|da|e|a|o|in|con|su|per|al|dal|del|nel|sul)\s+\1\b",

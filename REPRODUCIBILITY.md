@@ -798,3 +798,11 @@ tua destra, "inalato il profumo" → annusato.
   dopo 240 s. Lo script, dal canto suo, su 429 aspetta 20 s e riprova (fino a 6 volte).
 - Il tetto di lunghezza non tagliava le risposte fatte di **una sola frase lunga** (nessun punto
   intermedio): ora si taglia comunque al limite. Prima: 48 parole medie su "Voglio scoparti".
+
+## 62) Verbi incollati e "legacci" (2026-11-04)
+- "Mi siedo sul divano sciolgo i legacci del mio ciuccio": due difetti. Manca la congiunzione tra
+  i due verbi, e "legacci" è termine raro accanto a un "ciuccio" che qui non è un oggetto ma gergo
+  per fellatio.
+- Aggiunta regola: due verbi di azione consecutivi senza "e" vengono separati ("mi siedo e sciolgo").
+  Vale per una lista chiusa di verbi comuni, per non toccare le costruzioni corrette.
+- "i legacci" → "i lacci". Tre nuovi casi in `verifica_correzioni.py` (36/36).

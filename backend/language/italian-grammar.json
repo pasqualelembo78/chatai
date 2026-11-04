@@ -426,6 +426,16 @@
       "sbagliato": "al libro del letto",
       "giusto": "al bordo del letto",
       "nota": "libro/bordo"
+    },
+    {
+      "sbagliato": "i legacci",
+      "giusto": "i lacci",
+      "nota": "legacci è raro, lacci si capisce"
+    },
+    {
+      "sbagliato": "sul divano sciolgo",
+      "giusto": "sul divano e sciolgo",
+      "nota": "due verbi senza congiunzione"
     }
   ],
   "aggiunte": [
