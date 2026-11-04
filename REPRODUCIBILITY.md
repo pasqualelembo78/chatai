@@ -1086,3 +1086,12 @@ Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 
 - Ricontrollo: **0 link interni rotti** su 3.611.
 - Nota: le pagine chiave non hanno **nessun link esterno**. Non è un errore, ma un'occasione mancata
   (i link in uscita verso fonti incredule aumentano l'affidabilità percepita).
+
+## 86) Grafo dei link: zero orfani, primi link esterni (2026-11-05)
+- `analizza_link.py`: costruisce il grafo dei link interni sulle 111 pagine e conta gli ingressi.
+  Trovata **una sola pagina orfana** (`/checkout/`, che redirige a `/cart/`): collegata da una FAQ
+  in `/come-funziona/`. Ora **0 orfani**.
+- Il sito aveva **zero link esterni**. Aggiunti due riferimenti verificati (200): Wikipedia
+  `Chatterbot` nell'articolo sui difetti delle chat e `Diritto d'autore` in `/personaggi-inventati/`,
+  dentro frasi che spiegano, non come link appesi.
+- Ricontrollo link interni: 0 rotti su 3.612. Esterni: 0 morti.
