@@ -16,6 +16,11 @@
   default in `backend/ai_engine/registry.py` + `ai_engine/providers/ollama.py`
   deve restare Llama-3.2-3B-Instruct-abliterated.
 
+- **AGGIORNAMENTO DEL MODELLO / DELLA LINGUA**: se l'utente chiede di aggiornare il modello o il
+  vocabolario, seguire `PROCEDURA_LINGUA.md` (raccolta da fonti con licenza annotata -> qualificazione
+  -> iniezione nel prompt -> misura -> correzioni). Vale per qualsiasi modello, attuale o futuro.
+  Niente fine-tuning. Niente termini inventati. Fonti in `fonti.md`, misure contro una baseline.
+
 - Non usare mai modelli cloud (Groq/OpenAI/Cerebras/etc.) come default: la chat
   deve girare solo sul modello locale obbligatorio (`CHAT_PROVIDER=ollama`).
 

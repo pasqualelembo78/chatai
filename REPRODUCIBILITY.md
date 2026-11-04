@@ -841,3 +841,16 @@ tua destra, "inalato il profumo" → annusato.
   "pugnalare alla schiena", "fare l'indiano", "in germe".
 - Rumore residuo: locuzioni letterali ("prendere il mare", "fare leva") e qualche sintagma
   nominale non idiomatico ("crema pasticcera"): servirà un passaggio di qualificazione.
+
+## 66) Procedura di aggiornamento lingua + qualificazione avviata (2026-11-04)
+- Nuovo `PROCEDURA_LINGUA.md`: la sequenza completa (raccolta con licenze annotate → qualificazione →
+  iniezione → misura → correzioni → chiusura) e le regole (niente inventato, niente fine-tuning,
+  backup, misure contro baseline). Richiamata da `AGENTS.md`: vale per qualsiasi modello.
+- Nuovo `qualifica_lessico.py`: marca ogni lemma utile o scarto con motivo (fuori contesto,
+  locuzione letterale, etichetta, doppione, markdown residuo). Produce
+  `lessico-qualificato.json` (decisioni), `da_rivedere.txt` (casi dubbi) e i file attivi
+  `backend/language/lessico/{erotico,comune}.json`.
+- `revisione_umana.json`: le decisioni a mano hanno la precedenza su quelle automatiche, così la
+  revisione resta tracciata e ripetibile.
+- Prima passata: 103 utili erotici, poi 102 con 52 decisioni a mano (19 scarti, 33 promozioni);
+  233 casi in `da_rivedere.txt`. Comune: 790 utili da rivedere.
