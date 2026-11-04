@@ -18,6 +18,8 @@ import json
 import os
 import re
 import subprocess
+import time
+import urllib.parse
 import urllib.request
 
 UA = "Mozilla/5.0 (compatibile; raccolta lemmi; +https://pornovirtuale.com)"
@@ -26,6 +28,22 @@ USCITA = os.path.join(QUI, "lessico-grezzo.json")
 SCARTI = os.path.join(QUI, "lessico-scartati.txt")
 
 FONTI = [
+    {
+        "id": "wiktionary-volgari",
+        "url": "https://it.wiktionary.org/wiki/Categoria:Parole_volgari-IT",
+        "licenza": "CC BY-SA 4.0 (it.wiktionary, attribuzione)",
+        "tipo": "wiktionary",
+        "categoria": "Categoria:Parole volgari-IT",
+        "registro": "volgare",
+    },
+    {
+        "id": "wiktionary-sessualita",
+        "url": "https://it.wiktionary.org/wiki/Categoria:Sessualità-IT",
+        "licenza": "CC BY-SA 4.0 (it.wiktionary, attribuzione)",
+        "tipo": "wiktionary",
+        "categoria": "Categoria:Sessualità-IT",
+        "registro": "tecnico",
+    },
     {
         "id": "parliamoitaliano",
         "url": "http://parliamoitaliano.altervista.org/il-linguaggio-volgare-del-sesso/",
@@ -145,6 +163,89 @@ def da_term_title(testo):
     return fuori
 
 
+def api_wiktionary(params):
+    """Una chiamata all'API di it.wiktionary, con pausa per non farsi limitare."""
+    params = dict(params, format="json", formatversion="2")
+    url = "https://it.wiktionary.org/w/api.php?" + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url, headers={"User-Agent": "lessico-chatai/1.0 (raccolta lemmi)"})
+    for tentativo in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=40) as r:
+                time.sleep(0.6)
+                return json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                time.sleep(5 * (tentativo + 1))
+                continue
+            raise
+    return {}
+
+
+def definizione_italiana(wikitext, termine=""):
+    """Prima riga di definizione della sezione italiana, e registro dal template."""
+    wikitext = wikitext.replace("{{Pn}}", termine).replace("{{pn}}", termine)
+    sezione = re.split(r"==\s*[^=]+\s*==", wikitext)
+    italiana = ""
+    for blocco in sezione[1:]:
+        if re.match(r"\s*Italiano", sezione[0] if False else ""):
+            pass
+    # più semplice: cerco la sezione == Italiano == e mi fermo alla successiva
+    m = re.search(r"==\s*(?:\{\{-it-\}\}|Italiano)\s*==(.*?)(?:\n==[^=]|$)", wikitext, re.S)
+    if m:
+        italiana = m.group(1)
+    if not italiana:
+        return "", ""
+    registro = ""
+    if re.search(r"\{\{(volgare|volgarismo)|\{\{Term\|volgare", italiana, re.I):
+        registro = "volgare"
+    elif re.search(r"\{\{(colloquiale|gergale|familiare)|\{\{Term\|(gergale|colloquiale|familiare)", italiana, re.I):
+        registro = "colloquiale"
+    righe = [r for r in italiana.splitlines() if r.startswith("#") and not r.startswith("#:")]
+    if not righe:
+        return "", registro
+    testi_esempio = [r[2:].strip() for r in italiana.splitlines() if r.startswith("#*")]
+    testo = re.sub(r"\{\{[^}]*\}\}", "", righe[0])
+    testo = re.sub(r"\[\[[^\]|]*\|([^\]]*)\]\]", r"\1", testo)
+    testo = re.sub(r"\[\[([^\]]*)\]\]", r"\1", testo)
+    testo = re.sub(r"<[^>]+>", "", testo).strip("# :,")
+    testo = re.sub(r"^[,;]\s*", "", testo)
+    if testi_esempio:
+        esempio = re.sub(r"\[\[[^\]|]*\|([^\]]*)\]\]", r"\1", testi_esempio[0])
+        esempio = re.sub(r"\[\[([^\]]*)\]\]", r"\1", esempio)
+        esempio = re.sub(r"'{2,3}", "", esempio)
+        esempio = re.sub(r"\{\{[^}]*\}\}", "", esempio).strip()
+        return testo[:120] + (" ~~ " + esempio[:160] if esempio else ""), registro
+    return testo[:120], registro
+
+
+def da_wiktionary(categoria):
+    """Lemmi della categoria + prima definizione, via API MediaWiki."""
+    fuori = []
+    continua = None
+    while True:
+        params = {"action": "query", "list": "categorymembers", "cmtitle": categoria,
+                  "cmlimit": "500", "cmnamespace": "0"}
+        if continua:
+            params["cmcontinue"] = continua
+        d = api_wiktionary(params)
+        membri = d.get("query", {}).get("categorymembers", [])
+        titoli = [m["title"] for m in membri]
+        for i in range(0, len(titoli), 40):
+            gruppo = titoli[i:i + 40]
+            dd = api_wiktionary({"action": "query", "prop": "revisions", "rvslots": "main",
+                                 "rvprop": "content", "titles": "|".join(gruppo)})
+            for pagina in dd.get("query", {}).get("pages", []):
+                contenuto = (pagina.get("revisions") or [{}])[0].get("slots", {}).get("main", {}).get("content", "")
+                if not contenuto:
+                    continue
+                senso, registro = definizione_italiana(contenuto, pagina.get("title", ""))
+                fuori.append((pagina.get("title", ""), registro, senso))
+        continua = d.get("continue", {}).get("cmcontinue")
+        if not continua:
+            break
+    return fuori
+
+
 def normalizza(testa):
     """'**Scopare** / **fottere** / **chiavare**' -> ['scopare', 'fottere', 'chiavare']"""
     testa = re.sub(r"\*+", "", testa)
@@ -189,14 +290,23 @@ def main():
         if args.fonte and fonte["id"] not in args.fonte:
             continue
         print(f"→ {fonte['id']}: {fonte['url']}")
-        try:
-            testo = scarica(fonte["url"])
-        except Exception as e:
-            print(f"  non raggiungibile: {e}")
-            continue
-        grezze = {"righe": da_righe, "h2": da_h2, "term-title": da_term_title}[fonte["tipo"]](testo)
+        testo = ""
+        if fonte["tipo"] != "wiktionary":
+            try:
+                testo = scarica(fonte["url"])
+            except Exception as e:
+                print(f"  non raggiungibile: {e}")
+                continue
+        if fonte["tipo"] == "wiktionary":
+            grezze = da_wiktionary(fonte["categoria"])
+        else:
+            grezze = {"righe": da_righe, "h2": da_h2, "term-title": da_term_title}[fonte["tipo"]](testo)
         print(f"  righe utili: {len(grezze)}")
         for testa, registro, senso in grezze:
+            # forme flesse e voci vuote non servono in chat
+            if not senso or re.match(r"^(plurale|femminile|maschile|participio|voce|"
+                                     r"congiuntivo|indicativo|gerundio|comparativo)\b", senso, re.I):
+                continue
             for parola in normalizza(testa):
                 if parola in voci:
                     continue
@@ -216,12 +326,19 @@ def main():
     with open(SCARTI, "w", encoding="utf-8") as f:
         f.write("\n".join(scartati))
 
-    os.makedirs(QUI, exist_ok=True)
-    with open(os.path.join(QUI, "fonti.md"), "a", encoding="utf-8") as f:
+    conteggi = {}
+    for v in voci.values():
+        conteggi[v["fonte"]] = conteggi.get(v["fonte"], 0) + 1
+    percorso_fonti = os.path.join(QUI, "fonti.md")
+    if not os.path.exists(percorso_fonti):
+        with open(percorso_fonti, "w", encoding="utf-8") as f:
+            f.write("# Fonti del lessico\n\n| fonte | url | licenza | lemmi |\n|---|---|---|---|\n")
+    with open(percorso_fonti, "a", encoding="utf-8") as f:
         for fonte in FONTI:
             if args.fonte and fonte["id"] not in args.fonte:
                 continue
-            f.write(f"- {fonte['id']} — {fonte['url']} — licenza: {fonte['licenza']}\n")
+            if fonte["id"] in conteggi:
+                f.write(f"| {fonte['id']} | {fonte['url']} | {fonte['licenza']} | {conteggi[fonte['id']]} |\n")
 
     print(f"\nlemmi tenuti: {len(voci)} · scartati: {len(scartati)}")
     print(f"file: {USCITA}\n")

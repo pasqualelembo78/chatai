@@ -817,3 +817,16 @@ tua destra, "inalato il profumo" → annusato.
   3 colloquiali), 35 scartati.
 - Le voci sono solo termini: definizione ed esempio vanno riscritti a mano, e i termini tecnici
   (parafilie) servono meno di quelli colloquiali.
+
+## 64) Raccolta larga da fonti strutturate (2026-11-04)
+- Aggiunte a `estrai_lessico.py` due fonti **strutturate via API MediaWiki**: categorie
+  `Parole volgari-IT` e `Sessualità-IT` di it.wiktionary, con prima definizione e, quando c'è,
+  un esempio vero d'uso. Espanso `{{Pn}}` (segnaposto del termine) e usato `{{Term|volgare}}`
+  come marcatore di registro.
+- Scartate le forme flesse ("plurale di", "participio di") e le voci senza definizione.
+- `fonti.md` è ora una tabella con fonte, URL, licenza e lemmi ottenuti; le fonti CC BY-SA
+  restano attribuite.
+- Esito: **385 lemmi** (197 volgari, 163 tecnici, 22 colloquiali, 3 vezzeggiativi), 151 scartati.
+  Rispetto ai 69 iniziali, cinque volte tanto e con esempi reali al seguito.
+- Nota: il registro della categoria è più largo del vero (contiene anche parole non volgari,
+  es. "adirarsi"); servirà un passaggio di pulizia a mano.
