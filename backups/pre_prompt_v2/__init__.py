@@ -211,7 +211,7 @@ def _bianca():
     return base
 
 
-def parole_sconosciute(testo, limite=6):
+def parole_sconosciute(testo, limite=6, maiuscole=False):
     """Parole che il dizionario italiano non riconosce (per log e revisione)."""
     if not testo:
         return []
@@ -227,7 +227,10 @@ def parole_sconosciute(testo, limite=6):
     fuori = []
     for riga in esito.stdout.decode("utf-8", "ignore").splitlines():
         parola = riga.strip()
-        if len(parola) < 4 or parola.lower() in bianca or parola[0].isupper():
+        if len(parola) < 4 or parola.lower() in bianca:
+            continue
+        if parola[0].isupper() and not maiuscole:
+            continue
             continue
         fuori.append(parola)
     return fuori[:limite]

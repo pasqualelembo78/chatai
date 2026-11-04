@@ -32,21 +32,30 @@ _LOCK_CODA = threading.Lock()
 
 # Una sola generazione in volo per utente: senza tetto un utente impaziente
 # occupa l'unico slot e mette tutti gli altri in coda.
-_IN_CORSO = set()
+_IN_CORSO = {}   # user_id -> istante di inizio (None = stima scaduta)
+_SCADUTO_DOPO = 240  # secondi: oltre, il lucchetto è considerato perso
 _LOCK_UTENTE = threading.Lock()
 
 
 def _utente_occupato(user_id):
+    """True se c'è già una risposta in corso per questo utente.
+
+    Il lucchetto è un dizionario con l'istante di inizio: se il client chiude a metà,
+    il rilascio può non arrivare e l'utente resterebbe bloccato per sempre. Dopo
+    _SCADUTO_DOPO secondi lo si considera perso e si riparte.
+    """
+    import time as _t
     with _LOCK_UTENTE:
-        if user_id in _IN_CORSO:
+        inizio = _IN_CORSO.get(user_id)
+        if inizio is not None and (_t.time() - inizio) < _SCADUTO_DOPO:
             return True
-        _IN_CORSO.add(user_id)
+        _IN_CORSO[user_id] = _t.time()
         return False
 
 
 def _libera_utente(user_id):
     with _LOCK_UTENTE:
-        _IN_CORSO.discard(user_id)
+        _IN_CORSO.pop(user_id, None)
 
 
 def _entra_coda():

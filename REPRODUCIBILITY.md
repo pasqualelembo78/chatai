@@ -784,3 +784,17 @@ tua destra, "inalato il profumo" → annusato.
 - Limite da ricordare: il caso offline dimostra che la regola scatta, non che il modello non
   produrrà errori nuovi. Per quelli servono `registra_conversazioni.py` e la ricerca dei termini
   sospetti nel testo registrato.
+
+## 61) chat.py: analisi automatica dei difetti invece della caccia a mano (2026-11-04)
+- Lo script è stato rinominato dall'utente in `chat.py`; resta un collegamento
+  `registra_conversazioni.py` per l'uso vecchio.
+- A fine conversazione, e nel riepilogo, ora rileva da solo: **parole che il dizionario non
+  conosce** (hunspell, maiuscole incluse), **correzioni che non sono scattate** (forme sbagliate
+  rimaste nel testo) e **risposte magre a una domanda** (<4 parole). Scrive tutto in
+  `<out>/da_correggere.txt` con la frase di esempio, e stampa le prime 10 parole sospette.
+- `language.parole_sconosciute(..., maiuscole=True)` per non perdere i termini a inizio frase.
+- Difetti trovati usando lo strumento: il lucchetto "risposta in corso" restava appeso se il
+  client chiudeva a metà, bloccando l'utente; ora è un dizionario con istante di inizio e scade
+  dopo 240 s. Lo script, dal canto suo, su 429 aspetta 20 s e riprova (fino a 6 volte).
+- Il tetto di lunghezza non tagliava le risposte fatte di **una sola frase lunga** (nessun punto
+  intermedio): ora si taglia comunque al limite. Prima: 48 parole medie su "Voglio scoparti".

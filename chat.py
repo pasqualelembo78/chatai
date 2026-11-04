@@ -24,6 +24,18 @@ import time
 import urllib.error
 import urllib.request
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend"))
+from language import parole_sconosciute  # noqa: E402
+
+# forme già note come sbagliate: se ricompaiono, una correzione NON è scattata
+FORME_NOTE = [c["sbagliato"] for c in
+              json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                          "backend/language/italian-grammar.json"),
+                             encoding="utf-8")).get("correzioni_brevi", [])
+              if c.get("sbagliato") and c.get("giusto")]
+IGNOTE = {}    # parola sospetta -> esempi
+NON_CORRETTE = {}  # forma nota rimasta -> esempi
+
 BACKEND = "http://127.0.0.1:5000"
 DATI = os.path.join(os.path.dirname(os.path.abspath(__file__)), "backend/characters/data")
 
@@ -217,7 +229,7 @@ def personaggio(categoria, indice):
 
 
 def turno(character_id, testo, jwt):
-    for tentativo in range(3):
+    for tentativo in range(6):
         r = urllib.request.Request(
             BACKEND + "/chat/stream",
             data=json.dumps({"character": character_id, "text": testo, "username": "admin"}).encode(),
@@ -237,6 +249,10 @@ def turno(character_id, testo, jwt):
         except urllib.error.HTTPError as e:
             if e.code == 401 and tentativo < 2:
                 jwt = token()
+                continue
+            if e.code == 429:  # risposta in corso o limite: aspetto e riprovo
+                print(f"     … occupato (429), aspetto 20s", flush=True)
+                time.sleep(20)
                 continue
             raise
     return ""
@@ -282,6 +298,7 @@ def main():
         cid, nome = p["id"], p.get("name", "?")
         base = os.path.join(args.out, conv["nome"])
         risposte, tempi = [], []
+        n_ignote = n_note = n_magre = 0
         with open(base + ".md", "w", encoding="utf-8") as md, open(base + ".jsonl", "w", encoding="utf-8") as js:
             md.write(f"# {conv['nome']} — {nome} ({conv['categoria']})\n"
                      f"Cosa guarda: {conv['cosa_guarda']}\n\n")
@@ -295,6 +312,18 @@ def main():
                 dt = round(time.time() - t0, 1)
                 risposte.append(r)
                 tempi.append(dt)
+                # analisi automatica: parole che il dizionario non conosce, correzioni
+                # che non sono scattate, risposte magre a una domanda
+                for w in parole_sconosciute(r, maiuscole=True):
+                    IGNOTE.setdefault(w.lower(), []).append(r[:140])
+                    n_ignote += 1
+                minuscola = r.lower()
+                for forma in FORME_NOTE:
+                    if forma in minuscola:
+                        NON_CORRETTE.setdefault(forma, []).append(r[:140])
+                        n_note += 1
+                if msg.rstrip().endswith("?") and len(r.split()) < 4:
+                    n_magre += 1
                 md.write(f"**{i}. U:** {msg}\n\n**A ({dt}s):** {r}\n\n")
                 md.flush()
                 js.write(json.dumps({"turno": i, "utente": msg, "risposta": r, "secondi": dt},
@@ -309,15 +338,44 @@ def main():
                 md.write(f"- {d}\n")
             parole = sum(len(r.split()) for r in risposte) / max(1, len(risposte))
             md.write(f"Media parole: {parole:.1f} · Tempo medio: {sum(tempi)/max(1, len(tempi)):.1f}s\n")
+            md.write(f"Parole ignote: {n_ignote} · Correggibili rimaste: {n_note} · Risposte magre: {n_magre}\n")
             riepilogo.append((conv["nome"], len(risposte), parole,
-                              sum(tempi) / max(1, len(tempi)), len(doppie), sum(r == "" for r in risposte)))
+                              sum(tempi) / max(1, len(tempi)), len(doppie), sum(r == "" for r in risposte),
+                              n_ignote, n_note, n_magre))
             print(f"  -> {len(doppie)} ripetizioni, {parole:.1f} parole medie", flush=True)
 
     print("\n=== RIEPILOGO ===")
-    print(f"{'conversazione':16} {'turni':>6} {'parole':>7} {'tempo':>6} {'ripet':>6} {'vuote':>6}")
-    for nome, n, parole, tempo, doppie, vuote in riepilogo:
-        print(f"{nome:16} {n:>6} {parole:>7.1f} {tempo:>5.1f}s {doppie:>6} {vuote:>6}")
-    print(f"\nFile in {args.out}")
+    print(f"{'conversazione':16} {'turni':>6} {'parole':>7} {'tempo':>6} {'ripet':>6} {'vuote':>6} "
+          f"{'ignote':>7} {'rimaste':>8}")
+    for nome, n, parole, tempo, doppie, vuote, ignote, note, magre in riepilogo:
+        print(f"{nome:16} {n:>6} {parole:>7.1f} {tempo:>5.1f}s {doppie:>6} {vuote:>6} {ignote:>7} {note:>8}")
+
+    report = os.path.join(args.out, "da_correggere.txt")
+    with open(report, "w", encoding="utf-8") as f:
+        f.write("# Parole da controllare (non riconosciute dal dizionario)\n\n")
+        if not IGNOTE:
+            f.write("(nessuna)\n")
+        for parola, esempi in sorted(IGNOTE.items(), key=lambda kv: -len(kv[1])):
+            f.write(f"## {parola} ({len(esempi)} volte)\n")
+            for e in dict.fromkeys(esempi) if False else list(dict.fromkeys(esempi)):
+                f.write(f"- {e}\n")
+            f.write("\n")
+        f.write("\n# Correzioni che NON sono scattate (forma sbagliata rimasta nel testo)\n\n")
+        if not NON_CORRETTE:
+            f.write("(nessuna)\n")
+        for forma, esempi in sorted(NON_CORRETTE.items(), key=lambda kv: -len(kv[1])):
+            f.write(f"## {forma} ({len(esempi)} volte)\n")
+            for e in list(dict.fromkeys(esempi)):
+                f.write(f"- {e}\n")
+            f.write("\n")
+
+    print(f"\nParole da controllare: {sum(len(v) for v in IGNOTE.values())} · "
+          f"correzioni non scattate: {sum(len(v) for v in NON_CORRETTE.values())}")
+    for parola, esempi in sorted(IGNOTE.items(), key=lambda kv: -len(kv[1]))[:10]:
+        print(f"  ? {parola} ({len(esempi)}x)  «{esempi[0][:80]}»")
+    for forma in list(NON_CORRETTE)[:5]:
+        print(f"  ! correzione non scattata: {forma}")
+    print(f"\nFile in {args.out} · elenco in {report}")
 
 
 if __name__ == "__main__":

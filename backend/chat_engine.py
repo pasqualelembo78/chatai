@@ -749,7 +749,11 @@ def process_message(user_id, character_id, text, username="Utente",
                     if tenuto and len((tenuto + " " + frase).split()) > margine:
                         break
                     tenuto = (tenuto + " " + frase).strip()
-                ai_text = tenuto or (" ".join(parole[:margine]).rstrip(",;:— ") + ".")
+                # se anche la prima frase sfora il tetto, si taglia a metà parola
+                if not tenuto or len(tenuto.split()) > tetto:
+                    ai_text = " ".join(parole[:margine]).rstrip(",;:— ") + "."
+                else:
+                    ai_text = tenuto
             else:
                 ai_text = pulito
             if ai_text.count('"') % 2:
