@@ -160,7 +160,8 @@ def main():
             continue
         attive = {v["termine"].lower() for v in json.load(open(percorso, encoding="utf-8"))}
         for e in tutti:
-            if e["gruppo"] == gruppo and e["termine"].lower() in attive and e["esito"] != "utile":
+            if (e["gruppo"] == gruppo and e["termine"].lower() in attive
+                    and e["esito"] != "utile" and e["termine"].lower() not in revisione):
                 e["esito"], e["motivo"] = "utile", "presente nel lessico attivo"
 
     utili = [e for e in tutti if e["esito"] == "utile"]

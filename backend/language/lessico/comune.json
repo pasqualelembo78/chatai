@@ -30,64 +30,10 @@
   "fonte": "wikt-locuzioni-aggettivali"
  },
  {
-  "termine": "a fiori",
-  "registro": "comune",
-  "senso": "fioronato",
-  "fonte": "wikt-locuzioni-aggettivali"
- },
- {
   "termine": "a fortiori",
   "registro": "comune",
   "senso": "a maggior ragione",
   "fonte": "wikt-espressioni"
- },
- {
-  "termine": "a non domino",
-  "registro": "comune",
-  "senso": "da chi non è proprietario",
-  "fonte": "wikt-locuzioni-aggettivali"
- },
- {
-  "termine": "a parte",
-  "registro": "comune",
-  "senso": "distinto",
-  "fonte": "wikt-locuzioni-aggettivali"
- },
- {
-  "termine": "a pezzi",
-  "registro": "comune",
-  "senso": "che è molto spossato",
-  "fonte": "wikt-locuzioni-aggettivali"
- },
- {
-  "termine": "a rientrare",
-  "registro": "comune",
-  "senso": "di calcio dato alla palla, che assume  una traiettoria ad arco",
-  "fonte": "wikt-locuzioni-aggettivali"
- },
- {
-  "termine": "a ruota",
-  "registro": "comune",
-  "senso": "a pochissima distanza",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "a termine",
-  "registro": "comune",
-  "senso": "che ha un periodo predefinito",
-  "fonte": "wikt-locuzioni-aggettivali"
- },
- {
-  "termine": "a tratti",
-  "registro": "comune",
-  "senso": "ogni tanto",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "a vuoto",
-  "registro": "comune",
-  "senso": "che non è utile",
-  "fonte": "wikt-locuzioni-aggettivali"
  },
  {
   "termine": "abbassare la cresta",
@@ -108,18 +54,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "abbassare le ali",
-  "registro": "comune",
-  "senso": "cessare di essere arrogante o presuntuoso",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "abbasso",
-  "registro": "comune",
-  "senso": "di sotto ~~ scendete abbasso",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "accipicchia",
   "registro": "colloquiale",
   "senso": "eufemismo per accidenti ~~ accipicchia, ho bevuto tutto il vino",
@@ -132,18 +66,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "ad ancora",
-  "registro": "comune",
-  "senso": "ancorato",
-  "fonte": "wikt-locuzioni-aggettivali"
- },
- {
-  "termine": "addio",
-  "registro": "comune",
-  "senso": "forma di saluto utilizzato per congedarsi da qualcuno, specialmente in maniera definitiva ~~ addio compagno di mille battaglie",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "affondare le radici",
   "registro": "comune",
   "senso": "fare riferimento ai propri principi",
@@ -154,12 +76,6 @@
   "registro": "comune",
   "senso": "comunemente usato per rappresentare una condizione d'animo di dolore, sofferenza o rammarico ~~ ahimè, che peccato, per pochi istanti ho perso il treno",
   "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "ai ferri",
-  "registro": "colloquiale",
-  "senso": "anche per le grigliate, è solitamente una pietanza, sia essa a base di carne, pesce o verdura, cotta in un tegame apposi ~~ un hamburger ai ferri",
-  "fonte": "wikt-espressioni"
  },
  {
   "termine": "al meglio",
@@ -198,27 +114,9 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "allerta",
-  "registro": "colloquiale",
-  "senso": "allarme relativo a possibili alluvioni, frane, terremoti, disastri climatici in genere",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "alzare le spalle",
   "registro": "comune",
   "senso": "manifestare menefreghismo o sopportazione",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "amen",
-  "registro": "comune",
-  "senso": "parola pronunciata alla fine di una preghiera che significa \"così sia\" ~~ in un amen: in un attimo",
-  "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "andare a cavallo",
-  "registro": "comune",
-  "senso": "salire su un cavallo o un altro animale",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -228,27 +126,9 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "andare a letto",
-  "registro": "comune",
-  "senso": "coricarsi per addormentarsi",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "andare a parare",
-  "registro": "comune",
-  "senso": "andare verso una direzione",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "andare a picco",
   "registro": "comune",
   "senso": "andare a fondo",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "andare a rogito",
-  "registro": "comune",
-  "senso": "stipulare un contratto",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -282,21 +162,9 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "andare alle urne",
-  "registro": "comune",
-  "senso": "sottoporre a votazione",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "andare avanti",
   "registro": "comune",
   "senso": "entrare nello spazio nemico per occuparlo",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "andare di corpo",
-  "registro": "comune",
-  "senso": "espellere  le feci",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -336,12 +204,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "andare in giro",
-  "registro": "comune",
-  "senso": "andare a zonzo senza meta",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "andare in tilt",
   "registro": "comune",
   "senso": "andare in confusione",
@@ -360,117 +222,15 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "andare oltre",
-  "registro": "comune",
-  "senso": "avere una prospettiva  più ampia di quello solita",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "andare via",
-  "registro": "colloquiale",
-  "senso": "lasciare un luogo: un'abitazione, una città, un posto qualsiasi ~~ \"Ne ricordo ancora la voce: ormai è andata via dal mio cuore\"",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "anima e corpo",
   "registro": "comune",
   "senso": "del tutto",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "animo",
-  "registro": "comune",
-  "senso": "l'anima di una persona ~~ Morremo. Il velo indegno a terra sparto, rifuggirà l'ignudo animo a Dite (Leopardi)",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "aprire bocca",
   "registro": "comune",
   "senso": "pronunciare parole",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "aprire bottega",
-  "registro": "comune",
-  "senso": "iniziare un lavoro commerciale",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "aprire gli occhi",
-  "registro": "comune",
-  "senso": "smettere di dormire",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "arare il mare",
-  "registro": "comune",
-  "senso": "fare un viaggio per mare",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "aria",
-  "registro": "colloquiale",
-  "senso": "vattene via ~~ aria pura, limpida",
-  "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "arrivederci",
-  "registro": "comune",
-  "senso": "saluto (relativamente formale) utilizzato quando ci si separa da una o più persone che ci si aspetta di incontrare nuova ~~ torneremo presto, arrivederci!",
-  "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "arrivederla",
-  "registro": "comune",
-  "senso": "saluto utilizzato in contesti formali nel momento in cui ci si accomiata",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "attenti",
-  "registro": "comune",
-  "senso": "~~ quegli studenti sono ragazzi attenti",
-  "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "avere da dire",
-  "registro": "comune",
-  "senso": "non essere contento di qualcosa",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere da fare",
-  "registro": "comune",
-  "senso": "essere indaffarato",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere dei problemi",
-  "registro": "comune",
-  "senso": "essere disabile o handicappato",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "avere in animo",
-  "registro": "comune",
-  "senso": "proporsi decisamente",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere in contrario",
-  "registro": "comune",
-  "senso": "avere da contrastare",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere in corpo",
-  "registro": "comune",
-  "senso": "avvertire grandemente su di sé",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere in mano",
-  "registro": "comune",
-  "senso": "avere un'informazione",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -486,61 +246,13 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "avere intenzione",
-  "registro": "comune",
-  "senso": "proporsi decisamente",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere le traveggole",
-  "registro": "comune",
-  "senso": "prendere un abbaglio",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere presente",
-  "registro": "comune",
-  "senso": "avere inteso il motivo o la persona di cui si sta discutendo",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere sul gozzo",
-  "registro": "comune",
-  "senso": "non essere in grado di scordarsi  un’offesa",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "avere torto",
-  "registro": "comune",
-  "senso": "avallare affermazioni  sbagliate o agire male",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "averne abbastanza",
   "registro": "comune",
   "senso": "essere stanco di qualcuno o di qualcosa",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "azione",
-  "registro": "comune",
-  "senso": "~~ donna d'azione, uomo d'azione",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "bagnarsi il becco",
-  "registro": "comune",
-  "senso": "bere vino",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "bagnarsi la bocca",
-  "registro": "comune",
-  "senso": "bere, in modo particolare vino",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "bagnarsi la lingua",
   "registro": "comune",
   "senso": "bere vino",
   "fonte": "wikt-locuzioni-verbali"
@@ -552,39 +264,15 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "banzai",
-  "registro": "comune",
-  "senso": "\"lunga vita all'imperatore!\"",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "basta",
   "registro": "comune",
   "senso": "finiscila lì ~~ basta, non  ne posso più",
   "fonte": "wikt-interiezioni"
  },
  {
-  "termine": "battere a macchina",
-  "registro": "comune",
-  "senso": "digitare su una macchina da scrivere",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "battere cassa",
   "registro": "colloquiale",
   "senso": "richiedere un aiuto economico",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "battere i denti",
-  "registro": "comune",
-  "senso": "avere freddo",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "battere i piedi",
-  "registro": "comune",
-  "senso": "essere privi di pazienza",
   "fonte": "wikt-locuzioni-verbali"
  },
  {
@@ -600,12 +288,6 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "battere le mani",
-  "registro": "comune",
-  "senso": "sbattere una mano sopra l'altra in segno di approvazione",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
   "termine": "ben disposto",
   "registro": "comune",
   "senso": "bendisposto",
@@ -618,81 +300,15 @@
   "fonte": "wikt-locuzioni-aggettivali"
  },
  {
-  "termine": "bene",
-  "registro": "colloquiale",
-  "senso": "buon proseguimento, continuazione, come il procedere in modo buono ~~ mi diede un consiglio adatto perché mi \"vuole bene\"",
-  "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "bravo",
-  "registro": "comune",
-  "senso": "si dice di persona, abile in una qualche attività ~~ \"Cosa dire di Fiorello... È bravo\"",
-  "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "brioche salate",
-  "registro": "comune",
-  "senso": "delicata preparazione appunto simile alla normale brioche (però con sale e dunque salata) e quindi abbastanza anche al p ~~ le brioche salate farcite con prosciutto, lattuga e pomodori sono il massimo...",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "buon compleanno",
-  "registro": "comune",
-  "senso": "augurio di felice compleanno",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "buon pomeriggio",
-  "registro": "comune",
-  "senso": "saluto usato quando si lascia qualcuno o lo si incontra al pomeriggio.",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "buona notte",
-  "registro": "comune",
-  "senso": "vedi buonanotte",
-  "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "buona pasqua",
-  "registro": "comune",
-  "senso": "auguri che si esprimono in occasione della festa cristiana di Pasqua",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "buona volontà",
   "registro": "colloquiale",
   "senso": "disponibilità ad impegnarsi ~~ ha poco talento ma molta buona volontà",
   "fonte": "wikt-espressioni"
  },
  {
-  "termine": "buonanotte",
-  "registro": "comune",
-  "senso": "saluto usato quando si lascia qualcuno alla sera. ~~ augurare la buonanotte a qualcuno",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "buonanotte al secchio",
   "registro": "comune",
   "senso": "Esclamazione che indica la fine dei giochi.",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "buonasera",
-  "registro": "comune",
-  "senso": "saluto usato quando si incontra qualcuno alla sera.",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "buone azioni",
-  "registro": "colloquiale",
-  "senso": "aiutare il prossimo con azioni meritorie per buoni fini ed obiettivi moralmente elevati, con altruismo e talvolta abnega ~~ le migliori buone azioni vengono compiute in modo disinteressato",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "buone feste",
-  "registro": "comune",
-  "senso": "augurio fatto prima di un periodo di vacanza, specialmente natalizie.",
   "fonte": "wikt-espressioni"
  },
  {
@@ -762,18 +378,6 @@
   "fonte": "wikt-interiezioni"
  },
  {
-  "termine": "carne secca",
-  "registro": "comune",
-  "senso": "pezzo scelto di carne, prima conservato e talvolta stagionato in ambienti particolari con temperature specificatamente f ~~ nella storia recente i cowboy mangiavano spesso carne secca, così anche chi andava per mare",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "causa persa",
-  "registro": "colloquiale",
-  "senso": "sebbene abbia una valenza simile ad alcuni \"dibattiti\" nei vari tribunali, ebbene: è una resa per un padre e/o una madre ~~ Con il groppo in gola e le lacrime agli occhi, il padre affranto gemette: \"Figlio mio, ormai sei una causa persa\"",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "cavalcare la tigre",
   "registro": "comune",
   "senso": "tentare di avere sotto controllo e di girare a proprio vantaggio una circostanza sfavorevole",
@@ -786,28 +390,10 @@
   "fonte": "wikt-interiezioni"
  },
  {
-  "termine": "centri sociali",
-  "registro": "colloquiale",
-  "senso": "nell'immaginario comune sono locali malsani e quindi poco curati in cui si fa apertamente uso di alcol e di droghe di va ~~ molti centri sociali sono già stati chiusi",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "che merda",
   "registro": "comune",
   "senso": "esclamazione di disgusto ~~ Quello sarebbe il mare? Che merda!",
   "fonte": "wikt-espressioni"
- },
- {
-  "termine": "chiesa cattolica",
-  "registro": "comune",
-  "senso": "è l'insieme dei religiosi cattolici e della gerarchia clericale, cui fa capo la persona del papa ~~ nella visita al tempio ebraico in Roma, la Chiesa Cattolica ed alcuni rappresentanti della religione ebraica hanno chiarito l'unanime volontà di preservare la n",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "chiudere a chiave",
-  "registro": "comune",
-  "senso": "chiudere qualsiasi ambiente, contenitore, oggetto, dotato di una serratura, tramite l'apposita chiave",
-  "fonte": "wikt-locuzioni-verbali"
  },
  {
   "termine": "chiudere bottega",
@@ -822,22 +408,10 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "ciac",
-  "registro": "comune",
-  "senso": "riproduce  il suono di un oggetto soffice schiacciato",
-  "fonte": "wikt-interiezioni"
- },
- {
   "termine": "ciao",
   "registro": "comune",
   "senso": "formula di saluto amichevole e confidenziale usata sia nell'incontrarsi che nel lasciarsi",
   "fonte": "wikt-interiezioni"
- },
- {
-  "termine": "cinque stelle",
-  "registro": "colloquiale",
-  "senso": "albergo di prima categoria ~~ \"Per lo sfarzo e le prelibatezze, per forza nei cinque stelle si diventa ottimisti!\"",
-  "fonte": "wikt-espressioni"
  },
  {
   "termine": "ciurlare nel manico",
@@ -882,45 +456,15 @@
   "fonte": "wikt-locuzioni-verbali"
  },
  {
-  "termine": "come una farfalla",
-  "registro": "comune",
-  "senso": "Che si muove leggiadramente, con movimenti leggeri. ~~ Balla come una farfalla",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "condoglianze",
   "registro": "comune",
   "senso": "espressione di dolore, compassione e conforto che si rivolge a qualcuno che ha subito la perdita di una persona cara ~~ sono addolorato per la morte di tua nonna, condoglianze sentite",
   "fonte": "wikt-interiezioni"
  },
  {
-  "termine": "congiungersi in matrimonio",
-  "registro": "comune",
-  "senso": "contrarre matrimonio",
-  "fonte": "wikt-locuzioni-verbali"
- },
- {
-  "termine": "contratto di governo",
-  "registro": "colloquiale",
-  "senso": "programma per la realizzazione di una o più leggi effettive, generalmente con interventi immediati",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "così sia",
-  "registro": "comune",
-  "senso": "indica un'accettazione di quanto precedentemente discusso",
-  "fonte": "wikt-espressioni"
- },
- {
   "termine": "credere sulla parola",
   "registro": "comune",
   "senso": "fidarsi ~~ Gli dissi che non sarebbe più successo e mi credette sulla parola.",
-  "fonte": "wikt-espressioni"
- },
- {
-  "termine": "crema pasticcera",
-  "registro": "comune",
-  "senso": "crema a base di uova, latte, zucchero, vaniglia, talvolta farina e/o buccia di limone ~~ ci sono creme pasticcere che potrebbero stupirvi meravigliosamente",
   "fonte": "wikt-espressioni"
  },
  {
