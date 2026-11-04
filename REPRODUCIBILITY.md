@@ -1056,3 +1056,14 @@ Interventi:
 - coda di frase sotto le 3 parole eliminata; punteggiatura iniziale orfana ripulita.
 Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 0 troncamenti,
 0 terza persona, "tocca a te" risolto con azione propria.
+
+## 83) Pubblicazione automatica: cosa si può e cosa no (2026-11-05)
+- `seo_indexnow.py`: segnalazione delle pagine a IndexNow (Bing/Yandex). Chiave in `indexnow.key`,
+  file di verifica alla radice del sito (risponde 200), invio accettato (HTTP 202). Le sitemap
+  hanno 110 URL.
+- `pubblica_directory.py`: invio alle directory che accettano moduli senza account, con lettura del
+  captcha via tesseract e più tentativi. tesseract aggiunto in modo idempotente a `build_app.sh`
+  (passo 0), insieme alla regola che se manca la pubblicazione automatica resta spenta.
+- Esito reale: **golink.it** accetta il modulo ma il captcha non è affidabile, 11 invii rifiutati;
+  **newdir.it** ha il captcha rotto (HTTP 500 su verimage.php). Documentato in `backlink.txt`:
+  il resto va a mano.

@@ -145,3 +145,18 @@ un backlink ma porta le pagine sotto gli occhi di Bing e Yandex in pochi secondi
 
   Nota: IndexNow e' accettato da Bing e Yandex. Google non lo usa, per Google contano la sitemap
   (gia' presente) e i backlink veri.
+
+
+RISULTATO DELLA PROVA AUTOMATICA (5 novembre 2026)
+  Fatto e funzionante:
+    segnalazione IndexNow delle pagine a Bing e Yandex - accettata, chiave attiva.
+
+  Provato e non riuscito:
+    golink.it      modulo senza account ma con CAPTCHA immagine: il codice viene letto con
+                   tesseract, 11 invii tutti rifiutati. Da rifare a mano.
+    newdir.it      modulo senza account ma il suo captcha (verimage.php) risponde 500: sito rotto
+                   lato loro, inutilizzabile sia a mano sia da script.
+
+  Conclusione: le directory italiane "gratis e senza scambio" sono vecchie e quasi tutte con
+  captcha. L'invio automatico resta possibile solo se un sito lo consente davvero; gli script sono
+  pronti (pubblica_directory.py) ma il grosso va fatto a mano, una volta creati gli account.

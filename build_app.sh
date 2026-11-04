@@ -196,6 +196,12 @@ else
     warn 'Dizionario it_IT assente: le parole ignote non verranno segnalate.'
 fi
 
+# tesseract: lettura dei captcha per la pubblicazione nelle directory (script pubblica_directory.py)
+if ! command -v tesseract >/dev/null 2>&1; then
+    info 'Installo tesseract (lettura captcha per i backlink)...'
+    run_root apt-get install -y -qq tesseract-ocr || warn 'tesseract non installato: la pubblicazione automatica resta spenta.'
+fi
+
 if ! id -u chatai >/dev/null 2>&1; then
     run_root useradd -r -s /usr/sbin/nologin -d "$ROOT_DIR" chatai 2>/dev/null || true
 fi
