@@ -28,6 +28,11 @@ UA = {"User-Agent": "chatai-archivio/1.0"}
 
 # Fonti verificate una per una con l'API di Hugging Face.
 FONTI = [
+    {"id": "italian-conversations", "dataset": "DeepMount00/italian_conversations",
+     "formato": "conversation", "licenza": "Creative Commons (dichiarata 'cc')",
+     "collezione": "generale", "max": 6000},
+    {"id": "sintetiche-casuali", "dataset": "MaxForce01/Syntetic_italian_Conversation",
+     "formato": "io", "licenza": "Apache 2.0", "collezione": "generale", "max": 1000},
     {"id": "orvieto-42k", "dataset": "OysterCoreAI/Orvieto-42k", "formato": "messages",
      "licenza": "CC BY 4.0", "collezione": "generale", "max": 7000},
     {"id": "data-ai-conversation-ita", "dataset": "Mattimax/DATA-AI_Conversation_ITA",
@@ -97,6 +102,11 @@ def normalizza(fonte, riga, indice):
             testo = (m.get("content") or "").strip()
             if testo:
                 messaggi.append({"role": ruolo, "content": testo})
+    elif fonte["formato"] == "io":
+        coppia = riga.get("train") or riga
+        for ruolo, chiave in (("user", "Input"), ("assistant", "Output")):
+            if coppia.get(chiave):
+                messaggi.append({"role": ruolo, "content": str(coppia[chiave]).strip()})
     elif fonte["formato"] == "qa":
         p = (riga.get("train") or {}).get("prompt") if "train" in riga else riga.get("prompt")
         r = (riga.get("train") or {}).get("response") if "train" in riga else riga.get("response")

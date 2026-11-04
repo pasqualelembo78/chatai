@@ -910,3 +910,14 @@ tua destra, "inalato il profumo" → annusato.
   mostrato guadagno di pertinenza (3→2 risposte col dato giusto, lemmi/parola 0,54→0,55) e ha
   accorciato le risposte (14,2→11,8 parole). Tenuto spento finché l'archivio non ha dialoghi veri.
 - Corretto anche il doppio orario residuo (frasi con l'ora dentro il testo, non solo in testa).
+
+## 71) Archivio spostato sul materiale conversazionale (2026-11-04)
+- Ricerca di fonti dialogiche: aggiunti `DeepMount00/italian_conversations` (CC, italiano parlato
+  vero: "Ma seriamente, 'ste lucertole…") e `MaxForce01/Syntetic_italian_Conversation` (Apache 2.0).
+  Esclusi `mik3ml/italian-conversations` e `ciaocicciquantum/ItalianConversationalDataset` (gated),
+  `cassanof/italian-conversations` (senza licenza), `due-chiacchiere` (gated, verificato 401 anche
+  sul file diretto).
+- Pulizia decisa da me: eliminate le righe con stile ≤ 0 (istruzioni, elenchi, apertura da compito),
+  13.083 → **6.958** frammenti, tutti conversazionali. Archivio 82 → 20 MB (grezzi rimossi).
+- Benchmark rifatto con il nuovo corpus, 25 casi: dato giusto 5 → 4, lemmi/parola 0,54 → 0,51,
+  parole medie invariante. **Ancora neutro**: `RAG_ESEMPI` resta 0.

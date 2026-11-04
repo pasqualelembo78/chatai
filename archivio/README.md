@@ -3,15 +3,25 @@
 Raccolta di esempi italiani per il recupero in chat. **Non modifica il modello**: i pesi GGUF
 restano quelli, il recupero agisce solo sul prompt.
 
+## Scelta delle fonti (2026-11-04)
+La prima importazione era tutta istruzionale ("Genera un testo su…") e il recupero peggiorava le
+risposte. Sono state cercate fonti **conversazionali** e aggiunte:
+- `DeepMount00/italian_conversations` (CC) — 21.117 righe, italiano parlato, il materiale migliore
+- `MaxForce01/Syntetic_italian_Conversation` (Apache 2.0) — 1.000 dialoghi sintetici su temi comuni
+- scartate per ora: `mik3ml/italian-conversations` e `ciaocicciquantum/ItalianConversationalDataset`
+  (gated), `cassanof/italian-conversations` (licenza assente)
+Le righe istruzionali con stile basso sono state eliminate: l'archivio è ora **conversazionale**.
+
 ## Cosa c'è
 | fonte | licenza | record |
 |---|---|---|
-| OysterCoreAI/Orvieto-42k | CC BY 4.0 | 6.875 |
-| Mattimax/DATA-AI_Conversation_ITA | Apache 2.0 | 5.660 |
-| DeepMount00/OpenItalianData | Apache 2.0 (da WildChat) | 7.221 |
+| DeepMount00/italian_conversations | CC | 2.916 |
+| Mattimax/DATA-AI_Conversation_ITA | Apache 2.0 | 2.089 |
+| DeepMount00/OpenItalianData | Apache 2.0 (da WildChat) | 1.439 |
+| MaxForce01/Syntetic_italian_Conversation | Apache 2.0 | 514 |
 
-Totale indicizzato: **19.756** frammenti, di cui **4.968** classificati espliciti (378 censiti
-come "da chat", stile ≥ 2). Le espressioni stanno a parte: **164** erotiche e **790** modi di dire
+Totale indicizzato: **6.958** frammenti, tutti con struttura da chat (stile ≥ 1), di cui 2.793
+classificati espliciti. Le espressioni stanno a parte: **164** erotiche e **790** modi di dire
 in `backend/language/lessico/`, già iniettate nel prompt.
 
 ## Fonti escluse, e perché
