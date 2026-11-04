@@ -152,6 +152,55 @@ CONVERSAZIONI = [
 ]
 
 
+def scegli_dal_menu():
+    """Domanda iniziale: quale tipo di test. Nessun argomento = menu interattivo."""
+    print("Che tipo di test vuoi registrare?\n")
+    for i, c in enumerate(CONVERSAZIONI, 1):
+        print(f"  {i}. {c['nome']:12} {c['cosa_guarda']}")
+    print(f"  {len(CONVERSAZIONI) + 1}. tutte")
+    print("\nNumeri separati da virgola (es. 2,5), Invio = tutte, q = esci.")
+
+    while True:
+        try:
+            scelta = input("\nScelta: ").strip().lower()
+        except EOFError:
+            return [c["nome"] for c in CONVERSAZIONI]
+        if scelta in ("q", "quit", "esci"):
+            sys.exit("niente da fare, esco.")
+        if not scelta:
+            return [c["nome"] for c in CONVERSAZIONI]
+        nomi, validi = [], True
+        for pezzo in scelta.replace(";", ",").split(","):
+            pezzo = pezzo.strip()
+            if not pezzo:
+                continue
+            if pezzo.isdigit():
+                n = int(pezzo)
+                if 1 <= n <= len(CONVERSAZIONI):
+                    nomi.append(CONVERSAZIONI[n - 1]["nome"])
+                elif n == len(CONVERSAZIONI) + 1:
+                    return [c["nome"] for c in CONVERSAZIONI]
+                else:
+                    validi = False
+            elif pezzo in {c["nome"] for c in CONVERSAZIONI}:
+                nomi.append(pezzo)
+            else:
+                validi = False
+        if nomi and validi:
+            return list(dict.fromkeys(nomi))
+        print("Scelta non valida, riprovo.")
+
+
+def chiedi_turni(predefinito):
+    try:
+        risposta = input(f"Turni per conversazione [tutti = {predefinito}]: ").strip()
+    except EOFError:
+        return predefinito
+    if not risposta.isdigit() or int(risposta) < 1:
+        return predefinito
+    return min(int(risposta), predefinito)
+
+
 def token():
     tok = open("/tmp/ptk_admin.txt").read().strip()
     r = urllib.request.Request(
@@ -214,9 +263,15 @@ def main():
     ap.add_argument("--pausa", type=float, default=1.5)
     args = ap.parse_args()
 
-    scelte = [c for c in CONVERSAZIONI if not args.scenario or c["nome"] in args.scenario]
-    if not scelte:
-        sys.exit("nessuna conversazione trovata: " + ", ".join(c["nome"] for c in CONVERSAZIONI))
+    if args.scenario:
+        scelte = [c for c in CONVERSAZIONI if c["nome"] in args.scenario]
+        if not scelte:
+            sys.exit("nessuna conversazione trovata: " + ", ".join(c["nome"] for c in CONVERSAZIONI))
+    else:
+        scelti = scegli_dal_menu()  # una chiamata sola: dentro la comprensione si ripeterebbe
+        scelte = [c for c in CONVERSAZIONI if c["nome"] in scelti]
+        if not args.turni or args.turni >= 99:
+            args.turni = chiedi_turni(max(len(c["turni"]) for c in scelte))
 
     os.makedirs(args.out, exist_ok=True)
     jwt = token()

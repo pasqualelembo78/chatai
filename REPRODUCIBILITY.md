@@ -760,3 +760,6 @@ punteggiatura orfana e virgolette aperte.
 - Completa `probe_qualita.py`: quello misura risposte singole a caso, questo il filo di una
   conversazione. Uso: `python3 registra_conversazioni.py --scenario scena` oppure senza argomenti
   per tutte.
+- Menu iniziale: se non si passa `--scenario`, lo script chiede quale tipo di test (numeri
+  separati da virgola, Invio = tutti, `q` = esci), poi quanti turni. Con `--scenario` il menu
+  resta spento per l'uso non interattivo.
