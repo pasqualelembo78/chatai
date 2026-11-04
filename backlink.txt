@@ -1,0 +1,125 @@
+PACCHETTO BACKLINK - PORNOVIRTUALE.COM
+Regola generale: solo siti gratuiti e senza link di ritorno. Niente pacchetti, niente scambi.
+Una proposta a settimana per sito, non tutte insieme.
+
+
+DISTRIBUZIONE DEI LINK
+Non mandare tutti i link alla home. Su 10 link ripartisci cosi':
+  4 a /stanze-live/
+  2 a /come-funziona/
+  2 a /personaggi-inventati/
+  1 a una stanza specifica
+  1 alla home
+Dieci link alla home danno un segnale piatto; le pagine interne mostrano un sito con struttura.
+
+
+1. PAGINE DA LINKARE (in ordine di preferenza)
+
+  https://pornovirtuale.com/stanze-live/
+      quando: presentazioni generiche, elenchi, "cos'e' questo sito"
+
+  https://pornovirtuale.com/come-funziona/
+      quando: serve spiegare il meccanismo (prova gratuita, come si chatta)
+
+  https://pornovirtuale.com/personaggi-inventati/
+      quando: si parla di copyright, nomi finti, personaggi originali
+
+  https://pornovirtuale.com/stanza/chat-romantica/
+      quando: contesti romantici, coppie, chat tenere
+
+  https://pornovirtuale.com/stanza/dirty-talk/
+      quando: contesti espliciti, blog per adulti
+
+  https://pornovirtuale.com/
+      solo se il contesto e' "il sito" in generale
+
+Tutte queste pagine sono state verificate: rispondono 200.
+
+
+2. TESTI ANCORA (anchor da variare, altrimenti sembra tutto comprato)
+
+  1. pornovirtuale.com                      (nudo, marca)
+  2. Pornovirtuale                          (marca)
+  3. chat erotiche con personaggi inventati  (descrittivo)
+  4. 24 stanze di chat a tema                (parziale)
+  5. come funziona la chat con la prova gratuita   (informativo)
+  6. personaggi inventati, niente nomi protetti    (di nicchia)
+  7. chat erotiche in italiano               (keyword: usala 2 volte su 10)
+
+
+3. TITOLI E DESCRIZIONI PRONTI
+
+  Versione A - descrittiva
+  Titolo: Chat erotiche in italiano con personaggi inventati
+  Descrizione: 24 stanze a tema, personaggi originali e 4 messaggi di prova senza registrarsi.
+  Chat in italiano, adulti.
+
+  Versione B - informativa
+  Titolo: Come funziona una chat erotica con personaggi virtuali
+  Descrizione: Guida breve: cosa sono le stanze a tema, come si sceglie un personaggio,
+  come funziona la prova gratuita.
+
+  Versione C - di nicchia
+  Titolo: Personaggi inventati nelle chat per adulti: perche' evitano il copyright
+  Descrizione: Nomi e biografie originali, nessun personaggio protetto: come si costruisce
+  un cast senza rischi legali.
+
+
+4. DOVE PROPORRE, GRATIS E SENZA LINK DI RITORNO
+
+  Directory e cataloghi (una tantum, 10 minuti l'una)
+    curlie.org           scheda nella categoria World/Italiano. Ex Dmoz, gratuita, nessuno scambio.
+    wikidata.org         crea l'elemento del sito con l'URL ufficiale. Gratis, nessun ritorno,
+                         da' un riferimento.
+    blogitalia.it        catalogo blog italiani, invio scheda. Verificare che la categoria Adult sia aperta.
+    feedspot.com         submission gratuita (esiste anche a pagamento, non serve).
+
+  Piattaforme dove pubblichi tu (link dentro il contenuto)
+    medium.com           2 articoli-guida con link e canonical al nostro articolo. Account gratuito.
+    tumblr.com           blog di nicchia, 1 post ogni 3 giorni con link. Adult friendly, buono per immagini.
+    pinterest.it         pin delle stanze con descrizione e link. Servono le immagini delle stanze, gia' pronte.
+    wordpress.com o blogger.com    blog gratuito di 3-4 articoli con link alle stanze.
+    substack.com         newsletter, un numero ogni due settimane. Gratis fino a 1.000 iscritti.
+    reddit.com           profilo + un post in r/erotico e uno in r/Italia con taglio non commerciale.
+                         Niente link nei primi commenti, poi si'.
+    quora.com            3 risposte a domande tipo "migliori chat erotiche in italiano". Risposta utile,
+                         link in fondo.
+    linkedin.com         pagina aziendale + 2 post. Poco traffico ma link pulito.
+
+  Forum italiani (link in firma o in risposta pertinente)
+    forumcommunity.net    sezione "siti e segnalazioni", solo dopo 20 messaggi utili.
+    alfemminile.com       community, discussione su chat e coppia.
+    canali Telegram       canali di segnalazione siti: prima si partecipa, poi si manda il link.
+
+  Da verificare prima di perdere tempo (spesso a pagamento o a inserimento graduale)
+    porngeek.com
+    theporndude.com
+    adultsitesurfer.com
+  Sono directory per adulti note, ma le condizioni cambiano: non le metto tra le "senza ritorno",
+  controlla prima di compilare.
+
+
+5. ORDINE DI ESECUZIONE
+  1) Wikidata + Curlie (una volta, e durano)
+  2) profilo Tumblr e Pinterest, riempiti: servono come base
+  3) due articoli su Medium, con link interni e canonical
+  4) Reddit: prima 10 commenti utili, poi un post su r/erotico
+  5) Quora: tre risposte
+  6) blog di appoggio su WordPress.com, 3 articoli
+  7) newsletter Substack, dal quarto articolo in poi
+
+
+6. REGOLE PER NON FARSI BRUCIARE
+  - Mai lo stesso anchor due volte di fila.
+  - Un link per contenuto, non tre.
+  - Su Reddit: se il sub vieta l'autopromozione, il link va in un commento, non nel post.
+  - Sui forum: prima si scrive, poi si linka.
+  - Tieni il conto in BACKLINK.md (data, sito, URL, anchor) mano a mano che pubblichi.
+  - Meglio pochi link buoni e contestuali che molti link nudi in elenchi.
+
+
+CONTESTO (perche' cosi')
+Il sito ha 5.072 pagine personaggio, 24 stanze, articoli programmati e zero link esterni.
+Pagine pensate per essere citate: /stanze-live/ (indice descrittivo delle 24 stanze),
+/come-funziona/ (meccanismo e prova gratuita), /personaggi-inventati/ (nessun nome protetto).
+I backlink servono a far scoprire queste pagine, non a gonfiare la home.
