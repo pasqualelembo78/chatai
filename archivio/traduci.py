@@ -16,6 +16,7 @@ import time
 import urllib.request
 
 OLLAMA = "http://127.0.0.1:11434/api/generate"
+GOOGLE = "https://translate.googleapis.com/translate_a/single"
 MODELLO = "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M"
 ISTRUZIONI = ("Traduci in italiano colloquiale, naturale, mantenendo gli asterischi per le azioni "
               "e la stessa persona verbale. Rispondi SOLO con la traduzione, senza commenti.")
@@ -27,7 +28,18 @@ def gia_italiano(testo):
     return sum(1 for k in ITALIANE if f" {k} " in basso) >= 3
 
 
-def traduci(testo):
+def traduci_google(testo):
+    import urllib.parse
+    parametri = urllib.parse.urlencode({"client": "gtx", "sl": "en", "tl": "it", "dt": "t",
+                                        "q": testo[:4500]})
+    richiesta = urllib.request.Request(GOOGLE + "?" + parametri,
+                                       headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(richiesta, timeout=30) as r:
+        dati = json.load(r)
+    return "".join(parte[0] for parte in dati[0] if parte and parte[0]).strip()
+
+
+def traduci_locale(testo):
     prompt = f"{ISTRUZIONI}\n\nEN: {testo[:600]}\nIT:"
     corpo = {"model": MODELLO, "prompt": prompt, "stream": False,
              "options": {"temperature": 0.2, "num_predict": 220}}
@@ -38,6 +50,17 @@ def traduci(testo):
     # pulizia: il modello a volte ripete "IT:" o mette virgolette
     uscita = re.sub(r"^IT:\s*", "", uscita).strip('"').strip()
     return uscita
+
+
+def traduci(testo):
+    """Prima il traduttore gratuito; se non risponde, il modello locale."""
+    try:
+        esito = traduci_google(testo)
+        if len(esito.split()) >= max(1, len(testo.split()) // 3):
+            return esito, "google"
+    except Exception:
+        pass
+    return traduci_locale(testo), "locale 3B"
 
 
 def main():
@@ -62,15 +85,15 @@ def main():
             else:
                 t0 = time.time()
                 try:
-                    u_it = traduci(utente) if not gia_italiano(utente) else utente
-                    r_it = traduci(risposta) if not gia_italiano(risposta) else risposta
+                    u_it, mu = traduci(utente) if not gia_italiano(utente) else (utente, "")
+                    r_it, mr = traduci(risposta) if not gia_italiano(risposta) else (risposta, "")
                 except Exception as e:
                     print(f"[{i}] errore: {e}", flush=True)
                     continue
                 tradotto = {**r, "messaggi": [{"role": "user", "content": u_it},
                                               {"role": "assistant", "content": r_it}],
                             "inglese": {"utente": utente, "risposta": risposta},
-                            "traduzione": "locale 3B"}
+                            "traduzione": mu or mr or "nessuna"}
                 print(f"[{i}] {time.time()-t0:.1f}s", flush=True)
             tradotto["provenienza"] = r.get("provenienza", "") + " (tradotto it)"
             f.write(json.dumps(tradotto, ensure_ascii=False) + "\n")

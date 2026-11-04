@@ -961,3 +961,16 @@ tua destra, "inalato il profumo" → annusato.
   l'inglese accanto, riprende da dove era. Qualità rilevata ~6/10 con errori tipici
   ("mi stavo solo pensando", "polluzione", "in parco"): serve sempre un passaggio di correzioni.
   Ritmo ~15 s/riga, quindi non è una strada per decine di migliaia di righe.
+
+## 76) Nessun dataset italiano di roleplay adulto: estratti i dialoghi dai racconti (2026-11-04)
+- Ricerca su Hugging Face (filtro `language:it` + nsfw/erotic/roleplay/chat) e su GitHub:
+  nessun corpus pubblico italiano di roleplay adulto. HF restituisce solo il dataset già importato
+  (Raphael172); GitHub solo repository spagnoli.
+- Nuovo `archivio/racconti.py`: preleva i racconti da raccontimilu.com via REST di WordPress e
+  tiene **solo le battute fra virgolette**, accoppiate a passi di due. Entità HTML decodificate.
+- 600 racconti → 7.654 coppie (7.774 frammenti in archivio dopo pulizia). Recupero erotico ora
+  pertinente: "Guarda che cazzo che ti prendi stasera", "in ginocchio schiavo".
+- Dataset di fine-tuning rigenerato con la nuova fonte.
+- Corretto `fase_indice` perché accetti record senza `id`, `categoria`, `registro` (li genera).
+- Diritti: racconti di autori singoli pubblicati sul sito; uso in lettura e per il training, da
+  verificare se un giorno si redistribuisce il dataset.

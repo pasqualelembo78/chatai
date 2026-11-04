@@ -391,9 +391,13 @@ def fase_indice():
         with open(os.path.join(DATI, nome), encoding="utf-8") as f:
             for riga in f:
                 r = json.loads(riga)
+                _id = r.get("id") or hashlib.sha1(
+                    (r["messaggi"][0]["content"] + r["messaggi"][-1]["content"]).encode()
+                ).hexdigest()[:16]
                 conn.execute("INSERT OR IGNORE INTO frammenti VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-                             (r["id"], r["provenienza"], r["licenza"], r["collezione"],
-                              r["categoria"], r["registro"], int(r["esplicito"]),
+                             (_id, r.get("provenienza", ""), r.get("licenza", ""),
+                              r.get("collezione", "erotico"), r.get("categoria", "dialogo"),
+                              r.get("registro", "esplicito"), int(bool(r.get("esplicito"))),
                               r["messaggi"][0]["content"], r["messaggi"][-1]["content"],
                               json.dumps(r["messaggi"][:-1], ensure_ascii=False),
                               len(r["messaggi"][-1]["content"].split()), r.get("stile", 0)))

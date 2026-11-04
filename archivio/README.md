@@ -98,3 +98,14 @@ ritraducendo.
 - Traduzione: `archivio/traduci.py` con il modello locale. Qualità ~6/10 ("mi stavo solo pensando",
   "polluzione ambientale", "in parco") e ritmo di ~15 s/riga: va sempre accompagnata da correzioni.
   Output in `*-it.jsonl` con il testo inglese accanto, così si può rifare.
+
+## Racconti erotici italiani: dialoghi estratti
+Non esiste un dataset pubblico di roleplay adulto in italiano (verificato: su Hugging Face, con
+filtro `language:it` + `nsfw`, esce solo il dataset già importato; su GitHub solo roba spagnola).
+La fonte migliore sono i racconti: `archivio/racconti.py` preleva dalle storie di
+`raccontimilu.com` (25.851 disponibili) solo le battute fra virgolette e le accoppia.
+
+- 600 racconti → 7.654 coppie, ridotte a **7.774 frammenti** in archivio dopo la pulizia
+- italiano nativo, registro adulto, attacchi secchi: *"Guarda che cazzo che ti prendi stasera"*
+- diritti: racconti pubblicati, autori singoli. Uso in lettura e per il fine-tuning; per una
+  redistribuzione commerciale del dataset va chiesto il permesso.
