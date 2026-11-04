@@ -384,9 +384,11 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                 from archivio import recupero as _rec
                 # esempi generali solo sui turni di servizio: sui turni caldi il lessico basta
                 # e gli esempi d'archivio rischiano di portare fuori tema
-                _servizio = re.search(r"(che ore|che ora|che giorno|come stai|che si dice|come va|"
-                                      r"cosa sai fare|chi sei|di dove|che lavoro)", (user_text or "").lower())
-                _blocco = _rec.blocco(user_text, collezione=None, quanti=2) if _servizio else ""
+                # un solo esempio, e solo quando il messaggio è caldo: il prompt resta corto
+                _caldo = re.search(r"(scopare|scoparti|cazzo|figa|culo|tette|nudo|nuda|spogliati|"
+                                   r"toccami|toccarti|baci|leccare|succhi|pompino|incul|orgasmo|"
+                                   r"eccitat|voglia|sesso|seno|cosce)", (user_text or "").lower())
+                _blocco = _rec.blocco(user_text, collezione="erotico", quanti=1) if _caldo else ""
                 if _blocco:
                     logger.info("RAG ESEMPI: %s", _blocco.replace("\n", " | ")[:200])
                     righe.append(_blocco[:340])

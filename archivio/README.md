@@ -118,3 +118,9 @@ turni parlati sono corti.
 - **licenza CC BY-NC-SA 4.0**, consultazione senza fini di lucro, e i responsabili chiedono che i
   dati non entrino in un'altra risorsa senza accordo: va tenuta come collezione separata e marcata
 - adatta al lessico e alla chat normale, rumorosa da iniettare in un 3B (troncamenti, dialetto)
+
+## Esito finale del RAG, con un esempio e solo sui turni caldi
+Quarto giro, 25 casi: dato giusto 4 = 4, lemmi/parola 0,54 → 0,52, parole medie 14,2 → 14,3.
+**Parità, non miglioramento.** `RAG_ESEMPI` resta spento: a parità di resa meglio non pagare
+300 caratteri di prompt. Esperimento chiuso: quattro corpus diversi (istruzioni, dialoghi
+generici, due-chiacchiere, racconti erotici) e il massimo raggiunto è l'indifferenza.

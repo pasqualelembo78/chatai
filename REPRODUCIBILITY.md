@@ -984,3 +984,9 @@ tua destra, "inalato il profumo" → annusato.
   siano inclusi in un'altra risorsa senza accordo → collezione separata, marcata, non commerciale.
 - Recupero: su messaggi non erotici ora si preferisce il parlato alla prosa dei racconti
   ("mh sci nonna dice tante cagate"); sugli erotici restano i racconti.
+
+## 78) RAG chiuso: un esempio, solo su turni caldi, risultato in parità (2026-11-04)
+- Variante definitiva: un solo esempio, iniettato solo se il messaggio contiene termini erotici.
+  Giro su 25 casi: dato giusto 4 vs 4, lemmi/parola 0,54 → 0,52, parole medie invariate.
+- Quattro corpus provati (istruzioni, dialoghi generici, due-chiacchiere, racconti erotici):
+  il massimo è la parità. `RAG_ESEMPI=0` definitivo; l'archivio resta per il fine-tuning.
