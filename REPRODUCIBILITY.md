@@ -706,3 +706,34 @@ backend/chat_engine.py (auto-save compact summary)
 - Le domande "perché / come mai / davvero" hanno una spinta dedicata (spiega in mezza riga, poi
   gesto) e, se la risposta resta nuda e corta, si aggiunge una battuta della categoria.
 - Niente spazio prima della punteggiatura, puntini multipli ridotti.
+
+## 56) Riscrittura del prompt per la pertinenza + difetti trovati (2026-11-04)
+Analisi chiesta dall'utente: il modello rispondeva fuori contesto (a "perché non possiamo
+continuare" rispondeva "Mi tocco il culo"). Cause individuate nel codice, non nel modello:
+
+- **La risposta era l'ultima cosa**: "scrivi cosa fai e cosa senti", "CHI AGISCE: fai la tua",
+  "almeno una parola sessuale in ogni risposta" (in conflitto con REGISTRO che diceva "ogni due"):
+  così anche a una domanda di servizio il modello attaccava con un gesto.
+- **Memoria utente assente dal prompt adulto**: `PROMPT_LIGHT_ADULT` (attivo per tutte le 24
+  categorie) usciva prima del blocco che leggeva la memoria, quindi i dati personali non
+  arrivavano mai. Inoltre `user_memory_items.user_id` era `bigint` con id UUID: memoria granulare
+  morta dall'inizio (tabella vuota, scritture fallite in silenzio) e nessun file SQL di creazione.
+- **Prompt lungo 2.706 caratteri** con regole duplicate (due volte il limite di 20 parole) e
+  ripetizioni; `num_ctx` 2048 con cronologia 10 messaggi: rischio di troncamento.
+- `repeat_penalty` 1.02 (default Ollama 1.1): causa delle ripetizioni "il tuo petto, il tuo petto".
+- `_adulto` usato in `_build_pretend_prompt` prima di essere definito (NameError nella modalità
+  impersonificazione).
+- Due sistemi di memoria paralleli (blob `user_memory` e tabella `user_memory_items`), ora il
+  prompt e i fatti usano il primo; l'estrazione automatica scrive solo lì.
+
+Interventi: prompt riscritto a 1.574 caratteri con scala di priorità esplicita (1 rispondi, 2
+reagisci, 3 iniziativa) e regola d'oro finale; sesso condizionato alla scena; esempi in-contesto
+solo sugli intenti in cui servono; memoria nel prompt con valori slegati dai dict; nomi/età/lavoro/
+città/ora/giorno/mese calcolati e anteposti dal server; `MAX_HISTORY_MESSAGES` 8 con messaggi
+troncati a 280 caratteri; parametri Ollama 0.6 / 0.9 / top_k 50 / repeat_penalty 1.1 /
+`num_ctx` 1536 / `num_predict` 200; 57 correzioni linguistiche; guardie contro risposte vuote,
+punteggiatura orfana e virgolette aperte.
+- `sql_user_memory_items.sql` creato (PostgreSQL, `user_id TEXT`) e aggiunto al ripristino.
+- Test: 17 situazioni (servizio, perché, memoria, amicizia, sentimentale, roleplay, erotico,
+  limite, spiegazione, cronologia lunga, grammatica). Pertinenza e memoria ora funzionano;
+  restano sintassi zoppa su richieste articolate e qualche verbo inventato.

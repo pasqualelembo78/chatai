@@ -246,6 +246,61 @@
       "sbagliato": "mi fiono",
       "giusto": "mi fiondo",
       "nota": "da fiondarsi"
+    },
+    {
+      "sbagliato": "mi sono accennato",
+      "giusto": "mi sono fatto avanti",
+      "nota": "accennarsi non si usa"
+    },
+    {
+      "sbagliato": "accolando",
+      "giusto": "accogliendo",
+      "nota": "gerundio inventato"
+    },
+    {
+      "sbagliato": "mi ciuccio un paio",
+      "giusto": "indosso un paio",
+      "nota": "ciucciare = succhiare"
+    },
+    {
+      "sbagliato": "esplicazione",
+      "giusto": "spiegazione",
+      "nota": "forma rara, meglio spiegazione"
+    },
+    {
+      "sbagliato": "cosa ci fa qui noi",
+      "giusto": "cosa ci facciamo qui",
+      "nota": "soggetto doppio"
+    },
+    {
+      "sbagliato": "la notte precedente",
+      "giusto": "la notte scorsa",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "mi tomo un momento",
+      "giusto": "mi prendo un momento",
+      "nota": "'tomare' non esiste"
+    },
+    {
+      "sbagliato": "una foto della mia parte",
+      "giusto": "una mia foto",
+      "nota": "giro largo"
+    },
+    {
+      "sbagliato": "mi si avvicina il tuo tavolo",
+      "giusto": "mi avvicino al tuo tavolo",
+      "nota": "soggetto sbagliato"
+    },
+    {
+      "sbagliato": "mi strozzo le mutande",
+      "giusto": "mi sfilo le mutande",
+      "nota": "altro verbo inventato"
+    },
+    {
+      "sbagliato": "mi scarto le mutande",
+      "giusto": "mi sfilo le mutande",
+      "nota": "scartare non regge qui"
     }
   ],
   "aggiunte": [

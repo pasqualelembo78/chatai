@@ -268,7 +268,9 @@ def correggi(testo):
     # frasi fatte da buttare. Le prime tre per regex: il modello le varia
     # ("questa conversazione", "Mi scuso, ma…") e la lista secca non le prendeva.
     testo = re.sub(r"(?i)\b(?:mi scuso|mi dispiace)?[,\s]*(?:ma\s+)?non posso continuare "
-                   r"(?:la|questa) conversazione(?: in questo modo)?\s*[.!]?\s*", "", testo)
+                   r"(?:con )?(?:la|questa) conversazione(?: in questo modo)?\s*[.!]?\s*", "", testo)
+    testo = re.sub(r"(?i)c'?[eè] qualcos'?altro in cui posso aiutarti\??\s*", "", testo)
+    testo = re.sub(r"(?i)cosa posso fare per te\??\s*", "", testo)
     testo = re.sub(r"(?i)posso aiutarti a iniziare una nuova conversazione\s*[.!]?\s*", "", testo)
     testo = re.sub(r"(?i)\b(?:inizia di nuovo|ricominciamo(?: da capo)?)\s*[.!]?\s*", "", testo)
 
@@ -305,9 +307,21 @@ def correggi(testo):
     # orario con la virgola al posto dei due punti ("14,30")
     testo = re.sub(r"\b([01]?\d|2[0-3]),(\d{2})\b", r"\1:\2", testo)
 
+    # punteggiatura doppia o orfana ("!.", "?.", " .")
+    testo = re.sub(r"([!?])\s*\.", r"\1", testo)
+    testo = re.sub(r"([\wàèéìòù])\.\s*([!?])", r"\1\2", testo)
+    testo = re.sub(r"\.\s*\.", ".", testo)
+    testo = re.sub(r"\s+([,.;:!?])", r"\1", testo)
+    testo = re.sub(r"(?<=[.!?])\s+(?!$)", " ", testo).strip()
+    testo = re.sub(r"^(\s*[!?.,;:])", "", testo).strip()
     # niente spazio prima della punteggiatura ("faccia , ")
     testo = re.sub(r"\s+([,.;:!?])", r"\1", testo)
     testo = re.sub(r"\.{2,}", ".", testo)
+
+    # se il taglio ha lasciato un attacco orfano ("o a risolvere...") o minuscolo
+    testo = re.sub(r"^(?:o|e|ma|quindi)\s+", "", testo)
+    if testo[:1].islower():
+        testo = testo[:1].upper() + testo[1:]
 
     # maiuscola dopo il punto ("È novembre. e sono") — piccola pulizia tipografica
     testo = re.sub(r"([.!?]\s+)([a-zàèéìòù])", lambda m: m.group(1) + m.group(2).upper(), testo)

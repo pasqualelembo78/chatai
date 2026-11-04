@@ -51,6 +51,7 @@ cat <<'FINE'
 1. Database, due motori distinti:
    a) PostgreSQL del backend (riassunti):
         psql "$DATABASE_URL" -f sql_chat_summaries.sql
+        psql "$DATABASE_URL" -f sql_user_memory_items.sql
    b) MySQL di WordPress (tempi di risposta), con le credenziali di wp-config.php:
         mysql -u <utente wp> -p <db wp> < sql_chat_response_stats.sql
    Le altre tabelle del backend le crea da solo all'avvio.

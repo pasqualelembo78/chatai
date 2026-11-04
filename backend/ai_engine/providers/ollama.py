@@ -11,10 +11,14 @@ logger = logging.getLogger(__name__)
 OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://localhost:11434")
 OLLAMA_URL = f"{OLLAMA_BASE}/api/chat"
 
+# Parametri: temperatura bassa e repeat_penalty alto perché il 3B tende a ripetere
+# ("sento... sento", "il tuo petto, il tuo petto"). top_k limita le uscite assurde.
 OLLAMA_OPTIONS = {
-    "temperature": 0.65,
-    "top_p": 0.8,
-    "repeat_penalty": 1.02,
+    "temperature": float(os.environ.get("OLLAMA_TEMPERATURE", 0.6)),
+    "top_p": float(os.environ.get("OLLAMA_TOP_P", 0.9)),
+    "top_k": int(os.environ.get("OLLAMA_TOP_K", 50)),
+    "repeat_penalty": float(os.environ.get("OLLAMA_REPEAT_PENALTY", 1.1)),
+    "repeat_last_n": 128,
     "num_ctx": int(os.environ.get("OLLAMA_NUM_CTX", 4096)),
     "num_predict": int(os.environ.get("OLLAMA_NUM_PREDICT", 512)),
     "num_thread": int(os.environ.get("OLLAMA_NUM_THREAD", 6)),

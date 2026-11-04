@@ -533,6 +533,31 @@ def process_message(user_id, character_id, text, username="Utente",
         except Exception as e:
             logger.warning(f"Memory context failed: {e}")
 
+    # Fatti semplici che l'utente dichiara su di sé: li salvo da solo, così alla domanda
+    # successiva ("come mi chiamo?") il modello li ha sotto gli occhi invece di inventare.
+    if not client_storage and text:
+        try:
+            from storage.memories import update_user_memory as _aggiorna_mem
+            _fatti = (
+                ("nome", r"\bmi chiamo\s+([A-Za-zÀ-ù]{2,20})"),
+                ("anni", r"\bho\s+(\d{1,2})\s+anni\b"),
+                ("lavoro", r"\blavoro\s+(in|come|presso)\s+([\wÀ-ù ]{2,30})"),
+                ("citta", r"\bsono di\s+([A-ZÀ-Ù][\wÀ-ù]{2,20})"),
+            )
+            for _chiave, _rx in _fatti:
+                _m = re.search(_rx, text, flags=re.IGNORECASE)
+                if _m:
+                    _val = " ".join(g for g in _m.groups() if g)
+                    if _val and not (user_memory or {}).get(_chiave):
+                        _val = _val.strip()
+                        _aggiorna_mem(user_id, {
+                            _chiave: {"value": _val, "source_name": character.get("name", ""),
+                                      "mentions": 1, "importance": 0.8}})
+                        user_memory = dict(user_memory or {})
+                        user_memory[_chiave] = {"value": _val}
+        except Exception as e:
+            logger.warning(f"Estrazione fatti utente fallita: {e}")
+
     messages = build_messages(
         character, {"emotion": emotion, "intensity": intensity},
         relationship, personality, world_state, text, user_id, history,
@@ -578,6 +603,13 @@ def process_message(user_id, character_id, text, username="Utente",
             _limite = 6 if _chiede_azione else 12
             _nudo = not re.search(r"(bocca|culo|figa|cazzo|seno|tette|scop|lecc|baci|nud|vieni|"
                                   r"gambe|cosce|lingua|addosso)", ai_text.lower())
+            _secca = re.search(r"(che ore|che ora|che giorno|che mese|quanti anni|dove siamo|conosci un|"
+                               r"sai chi|che lavoro|di dove sei|come mi chiamo|come sto)", (text or "").lower())
+            if (_chiede_azione or _chiede_perche) and len(ai_text.split()) <= _limite and _nudo:
+                pass
+            if _secca and _nudo and len(ai_text.split()) <= 8:
+                _chiede_azione = True
+                _limite = 8
             if (_chiede_azione or _chiede_perche) and len(ai_text.split()) <= _limite and _nudo:
                 import language as _lingua
                 _es = _lingua.esempi_stile(character.get("category", ""),
@@ -586,6 +618,36 @@ def process_message(user_id, character_id, text, username="Utente",
                     ai_text = ai_text.rstrip(" .") + ". " + _es[0]
         except Exception:
             pass
+        # dati personali già noti: nome, età, lavoro. Li so io, quindi li metto davanti
+        # e tolgo la prima frase del modello se ci ha provato e ha sbagliato.
+        _fatto = re.search(r"(come mi chiamo|quanti anni ho|che lavoro faccio|dove abito|di dove sono)",
+                           (text or "").lower())
+        if _fatto:
+            _chiave = {"come mi chiamo": "nome", "quanti anni ho": "anni",
+                       "che lavoro faccio": "lavoro", "dove abito": "citta",
+                       "di dove sono": "citta"}[_fatto.group(1)]
+            # la memoria granulare è un altro archivio rispetto a quella "a blocchi"
+            # usata dal resto del motore: qui serve la prima, la stessa che legge il prompt
+            _val = (user_memory or {}).get(_chiave, "")
+            logger.debug(f"FATTO: chiave={_chiave} valore={_val!r}")
+            if isinstance(_val, dict):
+                _val = _val.get("value", "")
+            if _val:
+                _prima, _, _resto = ai_text.partition(".")
+                _prima_min = _prima.lower()
+                _sbagliata = (("chiam" in _prima_min) if _chiave == "nome" else
+                              bool(re.search(r"\d", _prima)) if _chiave == "anni" else
+                              ("lavor" in _prima_min or "citta" == _chiave and "torino" in _prima_min))
+                if _sbagliata:
+                    ai_text = _resto.strip()
+                # il testo che resta riparte in maiuscolo dopo l'inserimento
+                if ai_text:
+                    ai_text = ai_text[:1].upper() + ai_text[1:]
+                _frase = {"nome": f"Ti chiami {_val}.",
+                          "anni": f"Hai {_val} anni.",
+                          "lavoro": f"Lavori {_val}.",
+                          "citta": f"Sei di {_val}."}[_chiave]
+                ai_text = _frase + ((" " + ai_text) if ai_text else "")
         # domanda fuori tema: se risponde nudo ("Sono le 12.") il gesto lo aggiungo io,
         # perché il modello lo salta quasi sempre
         _fuori_tema = re.search(r"(che ore|che ora|che giorno|che mese|che tempo|quanti anni|dove siamo|"
@@ -603,7 +665,7 @@ def process_message(user_id, character_id, text, username="Utente",
                 _risposta_esatta = f"È {_giorni[_ora.weekday()]}"
             elif "mese" in _tipo:
                 _risposta_esatta = f"È {_mesi[_ora.month - 1]}"
-            elif "or" in _tipo:  # "che ore", "che ora"
+            elif re.search(r"che or[ae]|ore sono", _tipo):  # solo l'ora, non "lavoro"
                 _risposta_esatta = f"Sono le {_ora:%H:%M}"
             if _risposta_esatta:
                 # il modello inventa spesso l'ora o il giorno: se apre con la sua versione, la sostituisco
@@ -614,6 +676,8 @@ def process_message(user_id, character_id, text, username="Utente",
                                   ai_text, flags=re.IGNORECASE)
                 if inizio:
                     ai_text = ai_text[inizio.end():]
+                if ai_text:
+                    ai_text = ai_text[:1].upper() + ai_text[1:]
                 ai_text = _risposta_esatta + ". " + ai_text.lstrip()
             _esplicito = re.search(r"(bocca|culo|figa|cazzo|seno|tette|scop|lecc|baci|nud|vieni|"
                                    r"gambe|cosce|lingua|addosso)", ai_text.lower())
@@ -675,6 +739,10 @@ def process_message(user_id, character_id, text, username="Utente",
                 ai_text = tenuto or (" ".join(parole[:margine]).rstrip(",;:— ") + ".")
             else:
                 ai_text = pulito
+            if ai_text.count('"') % 2:
+                ai_text += '"'
+            if not ai_text.strip():
+                ai_text = "Ti arrivo vicino e ti bacio, senza dire niente."
             # se la generazione si è fermata a metà (limite token) chiudi all'ultima frase
             if ai_text and ai_text[-1] not in '.!?…"»':
                 taglio = max(ai_text.rfind('.'), ai_text.rfind('?'), ai_text.rfind('!'))

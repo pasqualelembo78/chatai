@@ -1,7 +1,7 @@
 import os
 import re
 import hashlib
-MAX_HISTORY_MESSAGES = 10
+MAX_HISTORY_MESSAGES = int(os.environ.get("MAX_HISTORY_MESSAGES", 8))
 
 REGISTRO_ADULTO = (
     "REGISTRO: due adulti complici che si piacciono. Alterna confidenza, presa in giro, "
@@ -91,6 +91,7 @@ RETURNING_GREETING = (
 
 
 def _build_pretend_prompt(target, interlocutor):
+    _adulto = target.get("category") in _CATEGORIE_ADULTE
     """
     Build a system prompt for impersonification mode.
     The character adopts the full identity of the target.
@@ -229,6 +230,38 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     name = character["name"]
     mode = classify_character(character)
 
+    # Identità e memoria servono a entrambi i rami di prompt.
+    # La memoria granulare ha priorità sullo username del plugin (l'utente può aver
+    # detto di chiamarsi diversamente) e user_id può essere 0 nei test.
+    _cid = character.get("id") if isinstance(character, dict) else None
+    try:
+        from storage.memories import get_user_memory as _mem_blob
+        _memoria = _mem_blob(user_id).get("memory", {}) if user_id else {}
+    except Exception:
+        _memoria = {}
+    _uname = ""
+    for _k in ("nome", "nickname", "name", "username"):
+        if _k in _memoria:
+            _v = _memoria[_k]
+            if isinstance(_v, dict):
+                _v = _v.get("value", "")
+            if str(_v).strip():
+                _uname = str(_v).strip()
+                break
+    if not _uname:
+        _u = str(username or "").strip()
+        _uname = _u if _u and _u.lower() not in ("ospite", "utente", "user") else "Utente"
+    _memo_riga = ""
+    if _memoria:
+        _pezzi = []
+        for _k, _v in list(_memoria.items())[:6]:
+            if isinstance(_v, dict):
+                _v = _v.get("value", "")
+            if str(_v).strip():
+                _pezzi.append(f"{_k}: {_v}")
+        if _pezzi:
+            _memo_riga = "[SA DI TE] " + "; ".join(_pezzi) + ". Usali se servono, senza elencarli."
+
     # ── Impersonification mode: override entire identity ──
     if impersonate_override:
         prompt = _build_pretend_prompt(impersonate_override, username or "l'interlocutore")
@@ -253,23 +286,36 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
     # Il costo di ogni risposta è la lettura del prompt: qui si tiene solo ciò che
     # il modello deve sapere per restare nel personaggio e nella stanza.
     if os.environ.get("PROMPT_LIGHT_ADULT", "1") == "1" and character.get("category") in _CATEGORIE_ADULTE:
-        _gen = {"femminile": "una donna", "maschile": "un uomo"}.get(character.get("gender_display", ""), "una persona non binaria")
-        _chi = str(character.get("essence") or "").split("Stanza tematica:")[0].strip()[:160]
+        _gen = {"femminile": "una donna", "maschile": "un uomo"}.get(
+            character.get("gender_display", ""), "una persona non binaria")
+        _chi = str(character.get("essence") or "").split("Stanza tematica:")[0].strip()[:220]
+        _contesto = str(character.get("category_context") or "")
+        if len(_contesto) > 340:
+            _contesto = _contesto[:340].rsplit(" ", 1)[0] + "."
         righe = [f"Sei {name}, {_gen}" + (f", {character['age']} anni." if character.get("age") else ".")]
         if _chi:
             righe.append(_chi)
         if character.get("job"):
             righe.append(f"Di mestiere: {character['job']}.")
-        if character.get("category_context"):
-            righe.append(character["category_context"])
-        righe.append(f"Parli con '{username or 'Utente'}': tu sei {name}, lui/lei è l'utente, non confonderti.")
-        righe.append("Rispondi in italiano, 1-2 frasi brevi (max 20 parole), mai fuori dal personaggio.")
-        righe.append("Non annunciare la stanza, non descrivere te stesso e non ripetere frasi già dette: agisci.")
+        if _contesto:
+            righe.append(_contesto)
+        righe.append(f"Parli con '{_uname}': tu sei {name}, lui/lei è l'utente, non confonderti.")
+        # L'ordine qui è deliberato: prima rispondere, poi eventualmente toccare.
+        righe.append("COME RISPONDI, in quest'ordine:\n"
+                     "1. Se c'è una domanda, la prima frase risponde. Il gesto viene dopo e non sostituisce mai la risposta.\n"
+                     "2. Se l'utente fa qualcosa, reagisci con una tua azione: non riscriverla, non descriverlo.\n"
+                     "3. Se non chiede né fa niente di preciso, prendi tu l'iniziativa.\n"
+                     "4. 1-2 frasi, max 20 parole. Niente elenchi, niente annunci, niente terza persona.\n"
+                     "5. Italiano colloquiale e corretto, parole comuni: mai inventarne.\n"
+                     "6. Sesso quando la scena lo chiede, con parole vere (bocca, culo, figa, cazzo, sborra): "
+                     "se la domanda è neutra o di servizio, non infilarlo a forza.\n"
+                     "7. Non ripetere frasi già dette.")
+        righe.append(_catprof.intimacy_hint(intimacy))
+        if _memo_riga:
+            righe.append(_memo_riga)
         _ultime = [m.get("content", "") for m in (history or [])[-2:] if m.get("role") == "assistant"]
         if _ultime:
             righe.append("Hai già scritto: " + " / ".join(u[:70] for u in _ultime))
-        righe.append(_catprof.intimacy_hint(intimacy))
-        righe.append(REGISTRO_ADULTO)
         try:
             _b = _supporto_lingua(
                 character.get("category", ""), user_text, history,
@@ -279,77 +325,55 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                 righe.append(_b)
         except Exception:
             pass
-        righe.append("MASSIMO 20 parole. Niente spiegazioni e niente annunci: scrivi cosa fai e cosa senti. "
-                     "Una azione principale per risposta: se aggiungi un verbo, deve essere la conseguenza, non un elenco. "
-                     "Non aprire ogni frase con 'sento'. "
-                     "La risposta DEVE contenere almeno una di queste parole: bocca, lingua, culo, figa, cazzo, seno, "
-                     "tette, sborra. Se la tua frase non ne ha nessuna, aggiungi un gesto che la usi. "
-                     "Ascelle, orecchie, viso o caviglie da soli non bastano.")
-        # spinta deterministica sui messaggi poveri: il modello tende al convenevole
+        # spinta deterministica: una sola, sull'intento riconosciuto del messaggio
         _breve = (user_text or "").strip().lower()
+        _intento = "generico"
         if re.match(r"^(ciao|ehi|hei|salve|buonasera|buongiorno|hola)\b", _breve) and len(_breve.split()) <= 3:
-            righe.append("ORA: non ricambiare il saluto e basta, fai un gesto sessuale (mano, bocca, morso) e nomina una parte del corpo.")
+            _intento = "saluto"
+            righe.append("ORA: non ricambiare il saluto e fermarti. Fai un gesto breve e nomina una parte del corpo.")
         elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
-            righe.append("ORA: atto sessuale concreto (bocca, culo, sborra, scopare). Vietati: mano sulla spalla, sguardo, sorriso, 'mi sento a mio agio'.")
-        elif re.match(r"^(perch\w*|come mai|davvero|sul serio|ma davvero)\b", _breve):
-            righe.append("ORA: spiega in mezza riga il perché, poi chiudi con un gesto sessuale.")
+            _intento = "azione"
+            righe.append("ORA: atto concreto con una parte del corpo e un verbo di sesso. Niente sguardi o sorrisi.")
+        elif re.search(r"\b(perch\w*|come mai)\b", _breve) or re.match(r"^(davvero|sul serio|ma davvero)\b", _breve) or \
+                re.search(r"(cosa (vuol|significa) dire|in pratica|spiegami)", _breve):
+            _intento = "spiegazione"
+            righe.append("ORA: la prima frase spiega il perché in modo chiaro e completo, almeno 8 parole; "
+                         "il gesto, se ci sta, dopo.")
         elif re.search(r"(che ore|che ora|che giorno|che mese|che tempo|quanti anni|dove siamo|"
-                        r"conosci un|hai visto|sai chi|che lavoro|di dove sei|come ti chiami)", _breve):
-            righe.append("ORA: due parti obbligatorie. 1) rispondi secco alla domanda in mezza riga. "
-                         "2) poi un gesto sessuale o un invito, non un commento generico. "
-                         "Esempio: 'Le 12:30. Ho venti minuti, vieni qui.'")
+                        r"conosci un|hai visto|sai chi|che lavoro|di dove sei|come ti chiami|come mi chiamo)", _breve):
+            _intento = "dato"
+            righe.append("ORA: la prima parte risponde al dato richiesto, secca. Solo dopo, se serve, un gesto breve.")
+        elif "?" in _breve and len(_breve.split()) <= 12:
+            _intento = "domanda"
+            righe.append("ORA: rispondi alla domanda in una frase piena (almeno 8 parole), con quello che "
+                         "sai già; poi al massimo un gesto breve.")
         elif len(_breve.split()) <= 2:
+            _intento = "corto"
             righe.append("ORA: azione fisica concreta, non parole.")
-
-        # esempi in-contesto in forma di scambio: il modello piccolo imita un turno vero
-        # molto meglio di una riga di istruzioni. Uno solo, a rotazione.
-        if os.environ.get("STILE_ESEMPI", "1") == "1":
+        # esempi in-contesto solo quando il rischio è la piattezza, non quando serve un dato:
+        # su domande di servizio l'esempio tira verso il gesto e allontana dalla risposta.
+        if os.environ.get("STILE_ESEMPI", "1") == "1" and _intento in ("saluto", "azione", "corto", "generico"):
             try:
                 _seed = int(hashlib.md5(
                     f"{user_id}:{character.get('id', '')}:{total_messages}".encode()).hexdigest()[:6], 16)
                 _es = _lingua.esempi_stile(character.get("category", ""), _seed, 2)
                 if _es:
-                    if re.match(r"^(ciao|ehi|hei|salve|buonasera|buongiorno|hola)\b", _breve):
-                        _domanda = "Ciao"
-                    elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
-                        _domanda = "Che mi fai?"
-                    else:
-                        _domanda = "Dimmi."
-                    # saluto e richiesta diretta: uso la battuta esplicita (seconda), non quella asciutta
-                    _scelta = _es[1] if (len(_es) > 1 and _domanda != "Dimmi.") else _es[0]
-                    righe.append("ESEMPIO DI SCAMBIO (imita ritmo e registro, non copiare le parole):")
+                    _domanda = {"saluto": "Ciao", "azione": "Che mi fai?"}.get(_intento, "Dimmi.")
+                    _scelta = _es[1] if (len(_es) > 1 and _intento in ("saluto", "azione")) else _es[0]
+                    righe.append("ESEMPIO DI SCAMBIO (imita il ritmo, non copiare le parole):")
                     righe.append(f"Utente: {_domanda}")
                     righe.append("Tu: " + _scelta)
             except Exception:
                 pass
-        # chi agisce: il difetto più frequente del 3B è rimandare indietro la mossa
-        # dell'utente ("mi guardi con desiderio") invece di fare la propria.
-        righe.append("CHI AGISCE: sei tu. L'utente ha già fatto la sua mossa: non riscriverla, non "
-                     "descriverlo, fai la tua. Vietati i riempitivi: 'mi sento a mio agio', "
-                     "'con desiderio', 'negli occhi'.")
+        righe.append("REGOLA D'ORO: se c'è una domanda, senza la risposta nella prima frase la risposta è sbagliata.")
         return "\n".join(righe)
 
     # Ensure Italian language for all characters
     prompt += "\n\nIMPORTANTE: Rispondi SEMPRE in italiano. Non usare mai altre lingue."
     prompt += "\n\nSe l'utente commette errori di battitura evidenti, interpreta l'intento dal contesto e rispondi di conseguenza, senza far notare l'errore."
     # Forte separazione identità: AI = personaggio, UTENTE = interlocutore. Mai confondersi.
-    # La memoria granulare ha priorità sul username passato dal plugin (es. se l'utente WP si chiama 'Barbara'
-    # ma nella memoria ha salvato 'nome: meva', si usa 'meva').
-    _cid = character.get("id") if isinstance(character, dict) else None
-    user_memory_dict = get_user_memory(user_id, _cid) if user_id else {}
-    mem_name = ""
-    if user_memory_dict:
-        for _k in ("nome", "nickname", "name", "username"):
-            if _k in user_memory_dict and str(user_memory_dict[_k]).strip():
-                mem_name = str(user_memory_dict[_k]).strip()
-                break
-
-    if mem_name:
-        uname = mem_name
-    elif username and str(username).strip() and str(username).strip().lower() not in ['ospite', 'utente', 'user']:
-        uname = str(username).strip()
-    else:
-        uname = "Utente"
+    uname = _uname
+    user_memory_dict = _memoria
 
     cname = str(character.get("name", "Personaggio"))
     cgender = str(character.get("gender_display", "personaggio"))
@@ -376,8 +400,15 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
 
     # Inserisci memoria personale (memoria granulare) nel prompt — permette correzioni precise
     if user_memory_dict:
-        mem_items = "; ".join([f"{k}: {v}" for k, v in list(user_memory_dict.items())[:10]])
-        prompt += f"\n\n[INFORMAZIONI SU DI TE] {mem_items}. Usa queste informazioni per personalizzare la risposta."
+        _voci = []
+        for _k, _v in list(user_memory_dict.items())[:10]:
+            if isinstance(_v, dict):
+                _v = _v.get("value", "")
+            if str(_v).strip():
+                _voci.append(f"{_k}: {_v}")
+        if _voci:
+            prompt += ("\n\n[INFORMAZIONI SU DI TE] " + "; ".join(_voci) +
+                       ". Usa queste informazioni per personalizzare la risposta.")
 
     # Tono emotivo adattivo
     if isinstance(emotion, dict):
@@ -811,7 +842,8 @@ def build_messages(character, emotion, relationship, personality, world_state, u
             continue
         role = msg.get("role")
         if role in ("user", "assistant"):
-            messages.append(msg)
+            testo_msg = str(msg.get("content") or "")[:280]
+            messages.append({"role": role, "content": testo_msg})
 
     messages.append({"role": "user", "content": user_text})
     return messages

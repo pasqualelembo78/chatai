@@ -1,0 +1,176 @@
+import os
+import time
+import subprocess
+import logging
+import requests
+
+from ai_engine.registry import register_provider
+
+logger = logging.getLogger(__name__)
+
+OLLAMA_BASE = os.environ.get("OLLAMA_BASE", "http://localhost:11434")
+OLLAMA_URL = f"{OLLAMA_BASE}/api/chat"
+
+# Parametri: temperatura bassa e repeat_penalty alto perché il 3B tende a ripetere
+# ("sento... sento", "il tuo petto, il tuo petto"). top_k limita le uscite assurde.
+OLLAMA_OPTIONS = {
+    "temperature": float(os.environ.get("OLLAMA_TEMPERATURE", 0.6)),
+    "top_p": float(os.environ.get("OLLAMA_TOP_P", 0.9)),
+    "top_k": int(os.environ.get("OLLAMA_TOP_K", 50)),
+    "repeat_penalty": float(os.environ.get("OLLAMA_REPEAT_PENALTY", 1.1)),
+    "repeat_last_n": 128,
+    "num_ctx": int(os.environ.get("OLLAMA_NUM_CTX", 4096)),
+    "num_predict": int(os.environ.get("OLLAMA_NUM_PREDICT", 512)),
+    "num_thread": int(os.environ.get("OLLAMA_NUM_THREAD", 6)),
+}
+
+OLLAMA_STARTED = False
+OLLAMA_START_LOCK = False
+
+
+def _ensure_ollama():
+    global OLLAMA_STARTED, OLLAMA_START_LOCK
+    if OLLAMA_STARTED:
+        logger.debug("OLLAMA: Already started")
+        return True
+    if OLLAMA_START_LOCK:
+        logger.debug("OLLAMA: Start in progress")
+        return False
+
+    try:
+        resp = requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2)
+        logger.debug(f"OLLAMA: Health check - status={resp.status_code}")
+        if resp.status_code == 200:
+            OLLAMA_STARTED = True
+            logger.info("OLLAMA: Service is running")
+            return True
+    except Exception as e:
+        logger.debug(f"OLLAMA: Health check failed - {type(e).__name__}: {e}")
+        pass
+
+    OLLAMA_START_LOCK = True
+    logger.info(f"OLLAMA: Service not running, starting at {OLLAMA_BASE}...")
+    try:
+        subprocess.Popen(
+            ["ollama", "serve"],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            start_new_session=True
+        )
+        logger.info("OLLAMA: ollama serve process started")
+        for i in range(20):
+            time.sleep(2)
+            try:
+                resp = requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2)
+                if resp.status_code == 200:
+                    OLLAMA_STARTED = True
+                    logger.info(f"OLLAMA: Service started successfully after {(i+1)*2}s")
+                    return True
+            except Exception as e:
+                logger.debug(f"OLLAMA: Waiting for service... attempt {i+1}/20 - {e}")
+                continue
+        logger.error(f"OLLAMA: Service did not start after 40 seconds")
+        return False
+    except Exception as e:
+        logger.error(f"OLLAMA: Failed to start service - {type(e).__name__}: {e}")
+        return False
+    finally:
+        OLLAMA_START_LOCK = False
+
+
+OLLAMA_MODELS = [
+    {"id": "stheno-abliterated-2k:latest", "name": "Stheno v3.2 Abliterated 8B 2K ★ (leggero, uncensored)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "stheno-abliterated:8b", "name": "Stheno v3.2 Abliterated 8B (uncensored, roleplay)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "fluffy/l3-8b-stheno-v3.2:latest", "name": "Stheno v3.2 8B (uncensored, permissiva)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "hf.co/mradermacher/L3.1-8B-Lunaris-v1-abliterated-GGUF:Q4_K_M", "name": "Lunaris v1 Abliterated 8B (uncensored, roleplay)", "quality": "molto alta", "size": "4.9GB"},
+    {"id": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-RP_SLERP-GGUF:Q4_K_M", "name": "Qwen 2.5 3B Abliterated RP ★ (uncensored, roleplay)", "quality": "molto alta", "size": "2.1GB"},
+    {"id": "hf.co/mradermacher/Qwen2.5-3B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Qwen 2.5 3B Abliterated (uncensored)", "quality": "alta", "size": "2.0GB"},
+    {"id": "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Llama 3.2 3B Abliterated (uncensored, fallback)", "quality": "media", "size": "2.0GB"},
+    {"id": "hf.co/mradermacher/Qwen2.5-7B-Instruct-abliterated-GGUF:Q4_K_M", "name": "Qwen 2.5 7B Abliterated (uncensored)", "quality": "molto alta", "size": "4.7GB"},
+]
+
+
+KEEP_ALIVE = os.environ.get("OLLAMA_KEEP_ALIVE", "30m")
+
+
+def _ollama_available():
+    logger.debug(f"OLLAMA: Checking availability at {OLLAMA_BASE}")
+    try:
+        resp = requests.get(f"{OLLAMA_BASE}/api/tags", timeout=2)
+        if resp.status_code == 200:
+            logger.info("OLLAMA: Service is available")
+            return True
+    except Exception as e:
+        logger.debug(f"OLLAMA: Availability check failed - {type(e).__name__}: {e}")
+        pass
+    result = _ensure_ollama()
+    logger.info(f"OLLAMA: Availability check result: {result}")
+    return result
+
+
+def _ollama_local_models():
+    logger.info(f"OLLAMA: Checking local models at {OLLAMA_BASE}/api/tags")
+    if not _ensure_ollama():
+        logger.error("OLLAMA: Service not available")
+        return []
+    try:
+        resp = requests.get(f"{OLLAMA_BASE}/api/tags", timeout=5)
+        logger.debug(f"OLLAMA: GET /api/tags response code: {resp.status_code}")
+        if resp.status_code == 200:
+            data = resp.json()
+            models = [m["name"] for m in data.get("models", [])]
+            logger.info(f"OLLAMA: Found {len(models)} local models: {models}")
+            return models
+    except Exception as e:
+        logger.error(f"OLLAMA: Error fetching models: {e}")
+    return []
+
+
+def _ollama_generate(messages, model, user_id=None):
+    logger.info(f"OLLAMA: Generate request - model={model}, messages={len(messages)}, user_id={user_id}")
+    if not _ensure_ollama():
+        logger.error("OLLAMA: Service not available for generate")
+        return None
+    try:
+        payload = {"model": model, "messages": messages, "options": OLLAMA_OPTIONS, "stream": False, "keep_alive": KEEP_ALIVE}
+        logger.debug(f"OLLAMA: POST {OLLAMA_URL} payload: model={model}, options={OLLAMA_OPTIONS}")
+        resp = requests.post(
+            OLLAMA_URL,
+            json=payload,
+            timeout=300
+        )
+        resp.encoding = "utf-8"
+        logger.debug(f"OLLAMA: Response status={resp.status_code}, content-length={len(resp.text)}")
+        if resp.status_code == 200:
+            content = resp.json().get("message", {}).get("content", "")
+            if content:
+                logger.info(f"OLLAMA: Success - model={model}, response_length={len(content)} chars")
+                return content
+            else:
+                logger.warning(f"OLLAMA: Empty response from {model}")
+                return None
+        logger.error(f"OLLAMA: HTTP error {resp.status_code} - response: {resp.text[:300]}")
+        return None
+    except Exception as e:
+        logger.error(f"OLLAMA: Request failed - model={model}, error={type(e).__name__}: {e}")
+        return None
+
+
+register_provider({
+    "id": "ollama",
+    "name": "Ollama (Locale)",
+    "description": "Modelli AI gratuiti eseguiti localmente. Nessun dato inviato a server esterni. Richiede GPU per modelli grandi.",
+    "models": OLLAMA_MODELS,
+    "needs_key": False,
+    "has_key": lambda: True,
+    "free": True,
+    "website": "https://ollama.ai",
+    "available": _ollama_available,
+    "generate": _ollama_generate,
+    "generate_stream": lambda msgs, model, user_id=None: _generate_stream_impl(msgs, model, user_id),
+    "default_model": "hf.co/QuantFactory/Llama-3.2-3B-Instruct-abliterated-GGUF:Q4_K_M",
+})
+
+
+def _generate_stream_impl(messages, model, user_id=None):
+    from ai_engine.streaming import _ollama_generate_stream
+    return _ollama_generate_stream(messages, model, user_id=user_id)
