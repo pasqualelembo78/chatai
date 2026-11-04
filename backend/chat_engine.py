@@ -674,8 +674,21 @@ def process_message(user_id, character_id, text, username="Utente",
                                   r"sabato|domenica|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|"
                                   r"agosto|settembre|ottobre|novembre|dicembre)[.,]?\s*",
                                   ai_text, flags=re.IGNORECASE)
-                if inizio:
-                    ai_text = ai_text[inizio.end():]
+                for _ in range(2):
+                    _m = re.match(r"^(sono le |sono alle |le |alle |oggi è |è )?"
+                                  r"(\d{1,2}[:.,]\d{2}|luned\w|marted\w|mercoled\w|gioved\w|venerd\w|"
+                                  r"sabato|domenica|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|"
+                                  r"agosto|settembre|ottobre|novembre|dicembre)[.,]?\s*",
+                                  ai_text, flags=re.IGNORECASE)
+                    if not _m:
+                        break
+                    ai_text = ai_text[_m.end():]
+                # altre frasi che dicono solo l'ora ("Ecco l'ora: 22.15") vanno tolte:
+                # altrimenti il modello contraddice il dato che ho appena messo
+                if _risposta_esatta.startswith("Sono le"):
+                    ai_text = re.sub(
+                        r"(?:^|(?<=[.!?])\s+)(?:ecco l'ora[:\s]*)?(?:sono le |sono alle |le |alle )?"
+                        r"\d{1,2}[:.,]\d{2}[.!]?\s*", "", ai_text)
                 if ai_text:
                     ai_text = ai_text[:1].upper() + ai_text[1:]
                 ai_text = _risposta_esatta + ". " + ai_text.lstrip()

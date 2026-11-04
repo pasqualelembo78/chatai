@@ -305,7 +305,11 @@ def correggi(testo):
     testo = re.sub(r"\b((?:[\wàèéìòù']+\s+){2,7}[\wàèéìòù']+),\s*\1\b", r"\1", testo, flags=re.IGNORECASE)
 
     # orario con la virgola al posto dei due punti ("14,30")
-    testo = re.sub(r"\b([01]?\d|2[0-3]),(\d{2})\b", r"\1:\2", testo)
+    testo = re.sub(r"\b([01]?\d|2[0-3])[,.](\d{2})\b(?![\d])", r"\1:\2", testo)
+
+    # asterischi di enfasi (*ti guarda*): il modello li alterna al parlato
+    testo = re.sub(r"\*([^*]+)\*", r"\1", testo)
+    testo = testo.replace("*", "")
 
     # punteggiatura doppia o orfana ("!.", "?.", " .")
     testo = re.sub(r"([!?])\s*\.", r"\1", testo)

@@ -306,6 +306,126 @@
       "sbagliato": "la lenzuola",
       "giusto": "le lenzuola",
       "nota": "lenzuola è plurale"
+    },
+    {
+      "sbagliato": "veni,",
+      "giusto": "vieni,",
+      "nota": "veneto/refuso"
+    },
+    {
+      "sbagliato": "ho leggito",
+      "giusto": "ho letto",
+      "nota": "participio sbagliato"
+    },
+    {
+      "sbagliato": "metti le mani su mine",
+      "giusto": "metti le mani sulle mie",
+      "nota": "pronome possessivo"
+    },
+    {
+      "sbagliato": "mi ricordava te",
+      "giusto": "mi ha ricordato te",
+      "nota": "tempo verbale"
+    },
+    {
+      "sbagliato": "lo tirerò su",
+      "giusto": "lo tiro su",
+      "nota": "futuro fuori posto"
+    },
+    {
+      "sbagliato": "ti sto tenendo dritto",
+      "giusto": "ti tengo dritto",
+      "nota": "perifrasi inutile"
+    },
+    {
+      "sbagliato": "mi sei apparito",
+      "giusto": "mi sei apparso",
+      "nota": "participio"
+    },
+    {
+      "sbagliato": "uno strappacapelli",
+      "giusto": "un cerotto",
+      "nota": "oggetto inventato"
+    },
+    {
+      "sbagliato": "sul libro del letto",
+      "giusto": "al bordo del letto",
+      "nota": "libro/bordo"
+    },
+    {
+      "sbagliato": "le lenze di cuoio",
+      "giusto": "le cinghie di cuoio",
+      "nota": "lenza è da pesca"
+    },
+    {
+      "sbagliato": "i nostri bocchi",
+      "giusto": "le nostre bocche",
+      "nota": "bocchi non esiste"
+    },
+    {
+      "sbagliato": "le mie ciate",
+      "giusto": "le mie chiappe",
+      "nota": "ciate non esiste"
+    },
+    {
+      "sbagliato": "la termoadegliata",
+      "giusto": "il termometro",
+      "nota": "parola inventata"
+    },
+    {
+      "sbagliato": "il termoscopio",
+      "giusto": "il termometro",
+      "nota": "termometro basta"
+    },
+    {
+      "sbagliato": "una bella bar quartiere",
+      "giusto": "un bel bar di quartiere",
+      "nota": "accordo e preposizione"
+    },
+    {
+      "sbagliato": "attorno l'angolo",
+      "giusto": "dietro l'angolo",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "appena attorno l'angolo",
+      "giusto": "appena dietro l'angolo",
+      "nota": "idem"
+    },
+    {
+      "sbagliato": "mi fa sensibile",
+      "giusto": "mi intenerisce",
+      "nota": "calco"
+    },
+    {
+      "sbagliato": "far sentire a suo agio",
+      "giusto": "mettere a suo agio",
+      "nota": "collocazione"
+    },
+    {
+      "sbagliato": "sulla tua destra",
+      "giusto": "alla tua destra",
+      "nota": "preposizione"
+    },
+    {
+      "sbagliato": "abbiamo inalato il tuo profumo",
+      "giusto": "abbiamo annusato il tuo profumo",
+      "nota": "inalare/annusare"
+    },
+    {
+      "sbagliato": "non ho seguito lo scontro",
+      "giusto": "non l'ho seguita",
+      "nota": "scontro/partita"
+    },
+    {
+      "sbagliato": "signor.?",
+      "giusto": "signore,",
+      "nota": "puntatura"
+    },
+    {
+      "sbagliato": "al libro del letto",
+      "giusto": "al bordo del letto",
+      "nota": "libro/bordo"
     }
   ],
   "aggiunte": [

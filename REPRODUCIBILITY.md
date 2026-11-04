@@ -763,3 +763,14 @@ punteggiatura orfana e virgolette aperte.
 - Menu iniziale: se non si passa `--scenario`, lo script chiede quale tipo di test (numeri
   separati da virgola, Invio = tutti, `q` = esci), poi quanti turni. Con `--scenario` il menu
   resta spento per l'uso non interattivo.
+
+## 59) Correzioni dai test reali dell'utente (2026-11-04)
+Dalla trascrizione dei test: 23 forme sbagliate o inventate, tutte aggiunte al dizionario
+(81 voci totali). Esempi: "veni" → vieni, "ho leggito" → ho letto, "su mine" → sulle mie,
+"mi sei apparito" → mi sei apparso, "uno strappacapelli" → un cerotto, "libro del letto" → bordo,
+"lenze di cuoio" → cinghie, "bocchi" → bocche, "ciate" → chiappe, "termoadegliata" → termometro,
+"attorno l'angolo" → dietro l'angolo, "mi fa sensibile" → mi intenerisce, "sulla tua destra" → alla
+tua destra, "inalato il profumo" → annusato.
+- Asterischi di enfasi (`*ti guarda*`) tolti anche a monte: prima restavano nel testo.
+- Orari: il modello a volte ne incastra due ("Sono le 10:23. Sono alle 20.30") e scrive "22.15";
+  ora scarto tutte le frasi che dicono solo l'ora e normalizzo il separatore a due punti.
