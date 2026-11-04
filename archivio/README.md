@@ -81,3 +81,11 @@ scrivendo: il prompt passa da ~1.500 a ~2.200 caratteri e la qualità scende.
 1. provare con 1 solo esempio invece di 2 (il prompt resta più corto).
 2. Aggiungere una sorgente di dialoghi erotici reali (racconti o chat), che oggi manca.
 3. Solo dopo, riaccendere `RAG_ESEMPI` e rigirare il benchmark: se non migliora, resta spento.
+
+## Nota: NSFW_Chat_Dataset inglese è il duplicato del nostro
+`utsavm/NSFW_Chat_Dataset` (Apache 2.0, 6.632 righe, in inglese) è **la versione originale** di
+`Raphael172/NSFW_Multilanguage_Chat_Dataset`, di cui abbiamo già importato la traduzione italiana:
+stesso numero di righe, stesse battute. Non va importato di nuovo.
+La traduzione esistente è discreta ma sbaglia la persona in circa l'8% dei casi ("fa schifo mentre mi
+sditalino", "*ti mette le braccia al collo*" per "wraps my arms"): si corregge con le regole, non
+ritraducendo.

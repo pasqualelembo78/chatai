@@ -945,3 +945,10 @@ tua destra, "inalato il profumo" → annusato.
   contaminazione, provenienza e licenza su ogni record. Attuale: 6.623 train / 394 valid / 374 test.
 - `AGENTS.md`: regola nuova — ogni raccolta deve produrre **contestualmente** anche il dataset di
   fine-tuning, che va rigenerato a ogni aggiornamento.
+
+## 74) Verificato: il dataset inglese è il duplicato di quello già importato (2026-11-04)
+- `utsavm/NSFW_Chat_Dataset` ha 6.632 righe e le stesse battute del file italiano già in archivio:
+  è l'originale inglese. Nessuna nuova importazione, nessuna traduzione da fare.
+- La traduzione italiana esistente sbaglia la persona in ~8% dei casi (audit su 25 righe, 2 casi):
+  aggiunte quattro correzioni ("mi sditalino" → "mi ditalino", "*ti mette le braccia*" → "mi avvolge
+  il collo", "spara il mio sperma" → "mi sborra dentro").
