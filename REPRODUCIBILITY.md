@@ -1105,3 +1105,15 @@ Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 
 - Regola scritta in `backlink.txt`: ogni articolo porta uno o due link esterni utili, dentro frasi
   che spiegano; il nofollow è automatico, non a mano.
 - mu-plugin salvato nel repo (`wordpress-plugin/mu-plugins/`) e nello zip sotto il percorso reale.
+
+## 88) Articoli programmati: stanze collegate e fonti esterne (2026-11-05)
+- Stato trovato: 53 articoli, di cui 51 sotto le 250 parole (media 113), **52 senza alcun link
+  esterno** e 19 senza link alle stanze. Erano pubblicabili ma isolati.
+- `migliora_articoli.py`: aggiunge due link a stanze pertinenti dove mancano e un riferimento
+  esterno per argomento (Chatterbot, diritto d'autore, BDSM, gioco di ruolo, privacy, erotismo, con
+  ripieghi alternati) dentro una frase "Per approfondire".
+- Risultato: **0 articoli senza link a stanze, 0 senza fonte esterna**. Media parole 113 → 119:
+  la lunghezza resta il punto debole e va alzata con un esempio pratico per articolo.
+- Difetto trovato: `wp post update` non faceva passare il contenuto dal filtro di salvataggio, quindi
+  il rel non veniva scritto. Normalizzati i contenuti con una passata diretta (52 articoli) e
+  verificato che le pagine pubbliche servano `rel="nofollow noopener"`.
