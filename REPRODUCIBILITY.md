@@ -1035,3 +1035,24 @@ tua destra, "inalato il profumo" → annusato.
   `python3 chat.py --importa <risposta>` rimette le voci JSON nel dizionario e in
   `verifica_correzioni.py`. I due script separati sono stati rimossi.
 - Prove spostate in `/opt/aria/prove` (prima `/tmp`, si perdevano al riavvio), aggiunte a `.gitignore`.
+
+## 82) Coerenza grammaticale e narrativa: cause e correzioni (2026-11-04)
+Backup in `backups/pre_coerenza/` (prompt_builder, chat_engine, grammar, language).
+Cause trovate nel codice, non nel modello:
+- "tocca a te / adesso tocca a te" non aveva un intento: cadeva sul generico e il modello rispondeva
+  dando ordini all'utente (ruoli invertiti).
+- "continua" finiva nel ramo dei messaggi corti ("azione fisica, non parole"), senza sapere cosa
+  fosse già stato detto: da qui la ripetizione dell'azione.
+- Il taglio di lunghezza poteva lasciare in coda un pezzo di frase ("... e con", "di") → frasi
+  incomplete. Il punto iniziale orfano non veniva ripulito.
+- Passato remoto e futuro non erano intercettati (solo tre forme a mano).
+Interventi:
+- blocco **PROSPETTIVA** nel prompt: prima persona, utente al "tu", tempo presente, "se l'utente
+  agisce tu reagisci", "se dice continua aggiungi un passaggio nuovo".
+- intenti nuovi: `turno` (agisci tu, non dare ordini) e `continua` (con la citazione dell'ultima
+  frase da non ripetere).
+- 8 correzioni di tempo verbale (guardò→guarda, baciò→bacia, prese→prende…), 4 lessicali
+  (delicatesse→delicatezza, mi lano→mi lancio, cuscino di testa→cuscino, piuma del materasso→materasso).
+- coda di frase sotto le 3 parole eliminata; punteggiatura iniziale orfana ripulita.
+Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 0 troncamenti,
+0 terza persona, "tocca a te" risolto con azione propria.

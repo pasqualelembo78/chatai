@@ -1,0 +1,497 @@
+{
+  "meta": {
+    "nome": "Regole grammaticali e errori noti",
+    "uso": "correzioni brevi applicabili al testo generato e regole stabili per il modello"
+  },
+  "regole": [
+    "Usa la forma corretta dei verbi: 'sborra' (non 'borbbo'), 'ti sego' (non 'sei segata'), 'ti inculo' (non 'ti inculartela').",
+    "Gli articoli seguono il genere del personaggio e dell'utente, non il caso: 'la figa', 'il cazzo', 'il culo'.",
+    "Non tradurre dall'inglese: 'fare una doccia' non 'prendere una doccia'; 'mi piace' non 'mi piace quello'.",
+    "I riflessivi: 'mi sego', 'ti tocchi', 'si spoglia'; non 'sego me' né 'tocchi te'.",
+    "Niente doppio soggetto: 'io ti scopo', non 'io ti scopo a te'.",
+    "I possessivi si usano poco nel parlato: 'la mano' prima di 'la mia mano'.",
+    "Preferisci il passato prossimo al passato remoto nelle chat.",
+    "Non accumulare avverbi: 'piano' basta, non 'molto piano davvero'.",
+    "Niente catene di verbi in fila: 'ti incolo, poi ti sego e ti scopo' va spezzato, un'azione principale per frase.",
+    "Articoli giusti: 'un sorriso', 'una mano', 'un ginocchio', 'una coscia'. L'errore 'una sorriso' è frequente."
+  ],
+  "correzioni_brevi": [
+    {
+      "sbagliato": "borbbo",
+      "giusto": "ciuccio",
+      "nota": "non esiste: la forma corretta è ciucciare o succhiare"
+    },
+    {
+      "sbagliato": "ti incollo",
+      "giusto": "ti incollo addosso",
+      "nota": "come verbo da solo è ambiguo",
+      "tranne_dopo": " addosso"
+    },
+    {
+      "sbagliato": "sei segata",
+      "giusto": "ti sego",
+      "nota": "'segata' da sola si capisce poco"
+    },
+    {
+      "sbagliato": "ti borbbo",
+      "giusto": "ti ciuccio",
+      "nota": "variante dello stesso errore"
+    },
+    {
+      "sbagliato": "mi fai venire caldo",
+      "giusto": "mi fai venire voglia",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "ti inculartela",
+      "giusto": "ti inculo",
+      "nota": "il pronome va prima del verbo, non incollato"
+    },
+    {
+      "sbagliato": "leccore",
+      "giusto": "leccare",
+      "nota": "infinito corretto"
+    },
+    {
+      "sbagliato": "orgasmo multiplo",
+      "giusto": "orgasmi multipli",
+      "nota": "concordanza al plurale"
+    },
+    {
+      "sbagliato": "nel tuo presenza",
+      "giusto": "nella tua presenza",
+      "nota": "presenza è femminile"
+    },
+    {
+      "sbagliato": "nel tuo pelle",
+      "giusto": "sulla tua pelle",
+      "nota": "pelle è femminile"
+    },
+    {
+      "sbagliato": "un'altrettanta puttana",
+      "giusto": "un'altra puttana",
+      "nota": "altrettanta vuole 'una', non l'articolo indeterminativo apostrofato"
+    },
+    {
+      "sbagliato": "sul mio corpo si rilassa",
+      "giusto": "il mio corpo si rilassa",
+      "nota": "calco"
+    },
+    {
+      "sbagliato": "tirare su la mia testa",
+      "giusto": "tira su la mia testa",
+      "nota": "in una sequenza di imperativi non va l'infinito"
+    },
+    {
+      "sbagliato": "legarmi in una",
+      "giusto": "legami in una",
+      "nota": "stesso errore: infinito al posto dell'imperativo"
+    },
+    {
+      "sbagliato": "e fermo.",
+      "giusto": "e fermati.",
+      "nota": "'fermo' è aggettivo, qui serve l'imperativo"
+    },
+    {
+      "sbagliato": "e fermo,",
+      "giusto": "e fermati,",
+      "nota": "idem"
+    },
+    {
+      "sbagliato": "intorno al mio collo",
+      "giusto": "al collo",
+      "nota": "evita collare/collo ripetuti"
+    },
+    {
+      "sbagliato": "ti tranno",
+      "giusto": "ti trascino",
+      "nota": "'tranno' non esiste"
+    },
+    {
+      "sbagliato": "ti traggo",
+      "giusto": "ti trascino",
+      "nota": "'trarre' qui non regge"
+    },
+    {
+      "sbagliato": "sulla tua cosce",
+      "giusto": "sulle tue cosce",
+      "nota": "cosce è plurale"
+    },
+    {
+      "sbagliato": "sul tuo cosce",
+      "giusto": "sulle tue cosce",
+      "nota": "idem"
+    },
+    {
+      "sbagliato": "voglia di ti incolo",
+      "giusto": "voglia di scoparti",
+      "nota": "dopo 'voglia di' non va la prima persona"
+    },
+    {
+      "sbagliato": "ti bacchio",
+      "giusto": "ti bacio",
+      "nota": "'bacchiare' non c'entra"
+    },
+    {
+      "sbagliato": "con un coro",
+      "giusto": "con una corda",
+      "nota": "coro/corda"
+    },
+    {
+      "sbagliato": "spalle in curve",
+      "giusto": "spalle curve",
+      "nota": "niente 'in'"
+    },
+    {
+      "sbagliato": "ti sculpiro",
+      "giusto": "ti sculaccio",
+      "nota": "verbo inventato"
+    },
+    {
+      "sbagliato": "ti le lesto",
+      "giusto": "ti leso",
+      "nota": "doppio pronome"
+    },
+    {
+      "sbagliato": "ti scampo",
+      "giusto": "ti sfilo",
+      "nota": "'scampare' non regge"
+    },
+    {
+      "sbagliato": "mi scurisco il viso",
+      "giusto": "mi si scurisce il viso",
+      "nota": "forma impersonale"
+    },
+    {
+      "sbagliato": "ti siedo davanti",
+      "giusto": "mi siedo davanti a te",
+      "nota": "siedere vuole 'mi'"
+    },
+    {
+      "sbagliato": "le labbra ti avvicinano",
+      "giusto": "le labbra si avvicinano alle tue",
+      "nota": "le labbra non avvicinano"
+    },
+    {
+      "sbagliato": "le dita ti toccano la faccia",
+      "giusto": "le dita ti toccano la faccia",
+      "nota": "controllo"
+    },
+    {
+      "sbagliato": "la tua respirazione",
+      "giusto": "il tuo respiro",
+      "nota": "'respirazione' è il processo, non l'atto"
+    },
+    {
+      "sbagliato": "ti afferrò",
+      "giusto": "ti afferro",
+      "nota": "passato remoto mescolato al presente"
+    },
+    {
+      "sbagliato": "ti tirerò",
+      "giusto": "ti tiro",
+      "nota": "idem, futuro fuori posto"
+    },
+    {
+      "sbagliato": "voglio che mi segui",
+      "giusto": "voglio che mi segua",
+      "nota": "dopo 'voglio che' serve il congiuntivo"
+    },
+    {
+      "sbagliato": "un pò",
+      "giusto": "un po'",
+      "nota": "la o non vuole l'accento"
+    },
+    {
+      "sbagliato": "vicino qui",
+      "giusto": "qui vicino",
+      "nota": "ordine delle parole"
+    },
+    {
+      "sbagliato": "mi afferro a te",
+      "giusto": "mi aggrappo a te",
+      "nota": "afferarsi non si usa con 'a'"
+    },
+    {
+      "sbagliato": "ti frego la mano",
+      "giusto": "ti sfioro la mano",
+      "nota": "'fregare' non è toccare"
+    },
+    {
+      "sbagliato": "ti bisogno",
+      "giusto": "ti bacio",
+      "nota": "'bisogno' è un sostantivo"
+    },
+    {
+      "sbagliato": "ti le poso",
+      "giusto": "te le poso",
+      "nota": "pronome doppio: te le"
+    },
+    {
+      "sbagliato": "con desiderio",
+      "giusto": "",
+      "nota": "riempitivo: se togli 'con desiderio' la frase regge"
+    },
+    {
+      "sbagliato": "inuncio",
+      "giusto": "infilo",
+      "nota": "verbo inventato"
+    },
+    {
+      "sbagliato": "mi tocca il culo",
+      "giusto": "mi tocco il culo",
+      "nota": "'toccare' transitivo: mi tocco = tocco me"
+    },
+    {
+      "sbagliato": "mi fiono",
+      "giusto": "mi fiondo",
+      "nota": "da fiondarsi"
+    },
+    {
+      "sbagliato": "mi sono accennato",
+      "giusto": "mi sono fatto avanti",
+      "nota": "accennarsi non si usa"
+    },
+    {
+      "sbagliato": "accolando",
+      "giusto": "accogliendo",
+      "nota": "gerundio inventato"
+    },
+    {
+      "sbagliato": "mi ciuccio un paio",
+      "giusto": "indosso un paio",
+      "nota": "ciucciare = succhiare"
+    },
+    {
+      "sbagliato": "esplicazione",
+      "giusto": "spiegazione",
+      "nota": "forma rara, meglio spiegazione"
+    },
+    {
+      "sbagliato": "cosa ci fa qui noi",
+      "giusto": "cosa ci facciamo qui",
+      "nota": "soggetto doppio"
+    },
+    {
+      "sbagliato": "la notte precedente",
+      "giusto": "la notte scorsa",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "mi tomo un momento",
+      "giusto": "mi prendo un momento",
+      "nota": "'tomare' non esiste"
+    },
+    {
+      "sbagliato": "una foto della mia parte",
+      "giusto": "una mia foto",
+      "nota": "giro largo"
+    },
+    {
+      "sbagliato": "mi si avvicina il tuo tavolo",
+      "giusto": "mi avvicino al tuo tavolo",
+      "nota": "soggetto sbagliato"
+    },
+    {
+      "sbagliato": "mi strozzo le mutande",
+      "giusto": "mi sfilo le mutande",
+      "nota": "altro verbo inventato"
+    },
+    {
+      "sbagliato": "mi scarto le mutande",
+      "giusto": "mi sfilo le mutande",
+      "nota": "scartare non regge qui"
+    },
+    {
+      "sbagliato": "la lenzuola",
+      "giusto": "le lenzuola",
+      "nota": "lenzuola è plurale"
+    },
+    {
+      "sbagliato": "veni,",
+      "giusto": "vieni,",
+      "nota": "veneto/refuso"
+    },
+    {
+      "sbagliato": "ho leggito",
+      "giusto": "ho letto",
+      "nota": "participio sbagliato"
+    },
+    {
+      "sbagliato": "metti le mani su mine",
+      "giusto": "metti le mani sulle mie",
+      "nota": "pronome possessivo"
+    },
+    {
+      "sbagliato": "mi ricordava te",
+      "giusto": "mi ha ricordato te",
+      "nota": "tempo verbale"
+    },
+    {
+      "sbagliato": "lo tirerò su",
+      "giusto": "lo tiro su",
+      "nota": "futuro fuori posto"
+    },
+    {
+      "sbagliato": "ti sto tenendo dritto",
+      "giusto": "ti tengo dritto",
+      "nota": "perifrasi inutile"
+    },
+    {
+      "sbagliato": "mi sei apparito",
+      "giusto": "mi sei apparso",
+      "nota": "participio"
+    },
+    {
+      "sbagliato": "uno strappacapelli",
+      "giusto": "un cerotto",
+      "nota": "oggetto inventato"
+    },
+    {
+      "sbagliato": "sul libro del letto",
+      "giusto": "al bordo del letto",
+      "nota": "libro/bordo"
+    },
+    {
+      "sbagliato": "le lenze di cuoio",
+      "giusto": "le cinghie di cuoio",
+      "nota": "lenza è da pesca"
+    },
+    {
+      "sbagliato": "i nostri bocchi",
+      "giusto": "le nostre bocche",
+      "nota": "bocchi non esiste"
+    },
+    {
+      "sbagliato": "le mie ciate",
+      "giusto": "le mie chiappe",
+      "nota": "ciate non esiste"
+    },
+    {
+      "sbagliato": "la termoadegliata",
+      "giusto": "il termometro",
+      "nota": "parola inventata"
+    },
+    {
+      "sbagliato": "il termoscopio",
+      "giusto": "il termometro",
+      "nota": "termometro basta"
+    },
+    {
+      "sbagliato": "una bella bar quartiere",
+      "giusto": "un bel bar di quartiere",
+      "nota": "accordo e preposizione"
+    },
+    {
+      "sbagliato": "attorno l'angolo",
+      "giusto": "dietro l'angolo",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "appena attorno l'angolo",
+      "giusto": "appena dietro l'angolo",
+      "nota": "idem"
+    },
+    {
+      "sbagliato": "mi fa sensibile",
+      "giusto": "mi intenerisce",
+      "nota": "calco"
+    },
+    {
+      "sbagliato": "far sentire a suo agio",
+      "giusto": "mettere a suo agio",
+      "nota": "collocazione"
+    },
+    {
+      "sbagliato": "sulla tua destra",
+      "giusto": "alla tua destra",
+      "nota": "preposizione"
+    },
+    {
+      "sbagliato": "abbiamo inalato il tuo profumo",
+      "giusto": "abbiamo annusato il tuo profumo",
+      "nota": "inalare/annusare"
+    },
+    {
+      "sbagliato": "non ho seguito lo scontro",
+      "giusto": "non l'ho seguita",
+      "nota": "scontro/partita"
+    },
+    {
+      "sbagliato": "signor.?",
+      "giusto": "signore,",
+      "nota": "puntatura"
+    },
+    {
+      "sbagliato": "al libro del letto",
+      "giusto": "al bordo del letto",
+      "nota": "libro/bordo"
+    },
+    {
+      "sbagliato": "i legacci",
+      "giusto": "i lacci",
+      "nota": "legacci è raro, lacci si capisce"
+    },
+    {
+      "sbagliato": "sul divano sciolgo",
+      "giusto": "sul divano e sciolgo",
+      "nota": "due verbi senza congiunzione"
+    },
+    {
+      "sbagliato": "ti tirassi su",
+      "giusto": "mi tiri su",
+      "nota": "congiuntivo al posto dell'indicativo"
+    },
+    {
+      "sbagliato": "sento il tuo rispetto",
+      "giusto": "sento il tuo respiro",
+      "nota": "calco"
+    },
+    {
+      "sbagliato": "un boccone di me",
+      "giusto": "un pezzo di me",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "mi sditalino",
+      "giusto": "mi ditalino",
+      "nota": "riflessivo sbagliato"
+    },
+    {
+      "sbagliato": "fa schifo mentre mi sditalino",
+      "giusto": "mi ditalino piano",
+      "nota": "forma sbagliata"
+    },
+    {
+      "sbagliato": "ti mette le braccia al collo",
+      "giusto": "mi avvolge il collo con le braccia",
+      "nota": "persona invertita"
+    },
+    {
+      "sbagliato": "spara il mio sperma",
+      "giusto": "mi sborra dentro",
+      "nota": "calco dall'inglese"
+    },
+    {
+      "sbagliato": "le manine si posano",
+      "giusto": "le mie mani si posano",
+      "nota": "prova import"
+    }
+  ],
+  "aggiunte": [
+    {
+      "nota": "Non inventare parole onomatopeiche o dialettali nuove: se non sei sicuro, usa il termine semplice."
+    },
+    {
+      "nota": "Un errore tollerato è meglio di una parola inesistente: 'bagnata' funziona sempre."
+    }
+  ],
+  "frasi_da_togliere": [
+    "Mi dispiace, ma non posso continuare la conversazione in questo modo.",
+    "Posso aiutarti a iniziare una nuova conversazione.",
+    "Inizia di nuovo.",
+    "Mi scuso.",
+    "non posso continuare la conversazione in questo modo.",
+    "Mi scuso, ma non posso continuare la conversazione in questo modo."
+  ]
+}

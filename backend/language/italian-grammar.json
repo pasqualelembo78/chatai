@@ -476,6 +476,91 @@
       "sbagliato": "le manine si posano",
       "giusto": "le mie mani si posano",
       "nota": "prova import"
+    },
+    {
+      "sbagliato": "con delicatesse",
+      "giusto": "con delicatezza",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "delicatesse",
+      "giusto": "delicatezza",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "prese la mano",
+      "giusto": "prende la mano",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "mi guardò",
+      "giusto": "mi guarda",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "guardò",
+      "giusto": "guarda",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "baciò",
+      "giusto": "bacia",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "toccò",
+      "giusto": "tocca",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "sussurrò",
+      "giusto": "sussurra",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "afferrò",
+      "giusto": "afferra",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "spinse",
+      "giusto": "spinge",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "gemette",
+      "giusto": "geme",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "disse:",
+      "giusto": "dice:",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "mi prese",
+      "giusto": "mi prende",
+      "nota": "passato remoto nel presente"
+    },
+    {
+      "sbagliato": "mi lano via",
+      "giusto": "mi lancio via",
+      "nota": "verbo inventato"
+    },
+    {
+      "sbagliato": "fermo a guardarti",
+      "giusto": "mi fermo a guardarti",
+      "nota": "manca il pronome"
+    },
+    {
+      "sbagliato": "il cuscino di testa",
+      "giusto": "il cuscino",
+      "nota": "ridondanza"
+    },
+    {
+      "sbagliato": "sulla piuma del materasso",
+      "giusto": "sul materasso",
+      "nota": "calco"
     }
   ],
   "aggiunte": [

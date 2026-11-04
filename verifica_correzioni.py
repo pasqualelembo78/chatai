@@ -51,6 +51,9 @@ CASI = [
     ("Mi alzo tolgo il cappotto", "Mi alzo e tolgo", "alzo tolgo", "verbi incollati"),
     ("i legacci del ciuccio", "i lacci", "legacci", "termine raro"),
     ("le manine si posano", "le mie mani si posano", "le manine si posano", "importata"),
+    (".le tue braccia intorno al collo", "Le tue braccia", ".le", "punto iniziale orfano"),
+    ("mi lano via", "mi lancio via", "lano", "verbo inventato"),
+    ("fermo a guardarti", "Mi fermo a guardarti", "", "pronome mancante"),
     # regole generali, non singole parole
     ("*ti guarda con affetto* e sorride", "Ti guarda", "*", "asterischi"),
     ("il il cazzo", "il cazzo", "il il", "parola doppia"),

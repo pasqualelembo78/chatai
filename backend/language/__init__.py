@@ -320,7 +320,7 @@ def correggi(testo):
     testo = re.sub(r"\.\s*\.", ".", testo)
     testo = re.sub(r"\s+([,.;:!?])", r"\1", testo)
     testo = re.sub(r"(?<=[.!?])\s+(?!$)", " ", testo).strip()
-    testo = re.sub(r"^(\s*[!?.,;:])", "", testo).strip()
+    testo = re.sub(r"^[.!?,;:\s]+", "", testo).strip()
     # niente spazio prima della punteggiatura ("faccia , ")
     testo = re.sub(r"\s+([,.;:!?])", r"\1", testo)
     testo = re.sub(r"\.{2,}", ".", testo)

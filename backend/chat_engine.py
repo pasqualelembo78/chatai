@@ -759,6 +759,12 @@ def process_message(user_id, character_id, text, username="Utente",
                 ai_text = pulito
             if ai_text.count('"') % 2:
                 ai_text += '"'
+            # un pezzo di frase in coda ("... e con", "di") è illeggibile: si toglie
+            _frasi = [x.strip() for x in re.split(r"(?<=[.!?])\s+", ai_text) if x.strip()]
+            while len(_frasi) > 1 and len(_frasi[-1].split()) < 3:
+                _frasi.pop()
+            if _frasi:
+                ai_text = " ".join(_frasi)
             if not ai_text.strip():
                 ai_text = "Ti arrivo vicino e ti bacio, senza dire niente."
             # se la generazione si è fermata a metà (limite token) chiudi all'ultima frase

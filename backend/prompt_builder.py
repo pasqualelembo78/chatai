@@ -339,6 +339,18 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
             _intento = "azione"
             righe.append("ORA: atto concreto con una parte del corpo e un verbo di sesso. Niente sguardi o sorrisi.")
+        elif re.search(r"(tocca a te|adesso tocca|sta a te|il turno è tuo|a te)", _breve):
+            _intento = "turno"
+            righe.append("ORA: il turno è tuo. Fai tu, una azione concreta: non dare ordini all'utente.")
+        elif re.search(r"^(continua|continua\b|ancora|vai avanti|prosegui|e poi|poi|avanti)", _breve):
+            _intento = "continua"
+            _ultima = ""
+            for _m in reversed(history or []):
+                if _m.get("role") == "assistant":
+                    _ultima = (_m.get("content") or "").strip()[:90]
+                    break
+            righe.append("ORA: prosegui la scena DA DOVE SEI, con un passaggio nuovo: "
+                         + (f'non ripetere "{_ultima}".' if _ultima else "non ricominciare da capo."))
         elif re.search(r"(dove eravamo|riprendi|a che punto|cosa stavamo|riassumi|dove siamo rimasti)", _breve):
             _intento = "riepilogo"
             righe.append("ORA: riassumi in mezza riga dove siete (il posto che ha detto l'utente, se l'ha detto) "
@@ -405,6 +417,11 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                                  + " · ".join(_voci))
             except Exception:
                 pass
+        righe.append("PROSPETTIVA: chi parla sei tu, sempre in prima persona (mi, mi sento, ti prendo). "
+                     "L'utente è 'tu'. Tempo presente: niente passato remoto né futuro. "
+                     "Se l'utente agisce, tu reagisci: non raccontare cosa fa lui. "
+                     "Se dice 'continua' o 'tocca a te', agisci tu e aggiungi un passaggio nuovo, "
+                     "senza ripetere l'azione appena descritta.")
         righe.append("REGOLA D'ORO: se c'è una domanda, senza la risposta nella prima frase la risposta è sbagliata.")
         return "\n".join(righe)
 
