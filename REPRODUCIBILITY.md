@@ -875,3 +875,21 @@ tua destra, "inalato il profumo" → annusato.
   baseline; ripetizioni 0. I termini iniettati compaiono (cazzo, figa, bocca).
 - Aggiunte tre correzioni viste nei test: "ti tirassi su" -> "mi tiri su", "sento il tuo rispetto"
   -> "sento il tuo respiro", "un boccone di me" -> "un pezzo di me".
+
+## 69) Misura dopo l'iniezione del lessico (2026-11-04) — giro interrotto a 42/120
+- Giro standard da 120 richieste avviato e fermato per decisione dell'utente a **42 risposte**
+  (`/tmp/opencode/misura.jsonl`): campione sufficiente per una direzione, non per una sentenza.
+- Confronto con la baseline di 120 (stesse metriche, stesso conteggio):
+  | difetto | baseline | dopo |
+  |---|---|---|
+  | apertura fissa "mi avvicino a te" | 13% | **0%** |
+  | verbi inventati | 6% | **0%** |
+  | catenelle "che/quindi" | 8% | **2%** |
+  | frasi fatte | 3% | 5% (2 casi su 42, entrambi "Mi scuso! Cercherò di spiegarti meglio": accettabili) |
+  | lemmi distinti per 100 parole | 48,9 | **76,7** |
+  | parole medie | 15,7 | 14,1 |
+- Parole più usate dopo: sono 7, mani 5, guardo 5, sulla 4 — le prime tre della baseline erano
+  tutte nella stessa posizione alta e ora sono più distribuite.
+- Esito: il lessico iniettato **si tiene**. Restano deboli i modi di dire comuni e la sintassi
+  ("mi butto sulla tua bocca"). Prossimo passo, se si riprende: giro completo da 120 e qualificazione
+  a mano del lessico comune (790 voci ancora da rivedere).
