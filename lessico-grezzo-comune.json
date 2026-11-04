@@ -1,0 +1,5744 @@
+[
+  {
+    "termine": "a buon mercato",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che ha un prezzo basso"
+  },
+  {
+    "termine": "a campana",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di gonna o pantalone)'' che si amplia  verso il basso"
+  },
+  {
+    "termine": "a colpo sicuro",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "senza possibilità d'errore"
+  },
+  {
+    "termine": "a corona",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "detto di figura posta in cerchio, talora intorno a un'altra figura; non dovrebbe essere impiegato per indicare più figur"
+  },
+  {
+    "termine": "a dentelli",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "contradoppiomerlato"
+  },
+  {
+    "termine": "a dio piacendo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "simile all'espressione \"''se Dio vorrà.../se Dio vuole...''\" indica la fiducia che qualcosa possa realizzarsi al meglio ~~ \"Qualora vi siano pagamenti, in questo caso, a Dio piacendo, deciderai tu ogni volta però in regola... mi raccomando\""
+  },
+  {
+    "termine": "a dir tanto",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "al massimo, presuppone una certa dose di disprezzo in chi parla ~~ Avrà a dir tanto un paio di figurine vecchie e brutte."
+  },
+  {
+    "termine": "a faccia vista",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di parete)'' senza rivestimento"
+  },
+  {
+    "termine": "a fiocchi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "sfioccato"
+  },
+  {
+    "termine": "a fiori",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "fioronato"
+  },
+  {
+    "termine": "a fortiori",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "a maggior ragione"
+  },
+  {
+    "termine": "a non domino",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "da chi non è proprietario"
+  },
+  {
+    "termine": "a parte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "distinto"
+  },
+  {
+    "termine": "a pezzi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che è molto spossato"
+  },
+  {
+    "termine": "a posteriori",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di prova)'' parere espresso e/o dedotto dopo aver fatto esperienza"
+  },
+  {
+    "termine": "a priori",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di prova)'' che si dimostra partendo da un concetto generale, prescindendo  dalla conoscenza del singolo caso ~~ è necessario raggiungere una verità a priori prima di poter dedurne altre simili"
+  },
+  {
+    "termine": "a rientrare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di calcio dato alla palla, che assume  una traiettoria ad arco"
+  },
+  {
+    "termine": "a ruota",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "a pochissima distanza"
+  },
+  {
+    "termine": "a senso unico",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di via)'' che permette la circolazione in un a sola direzione"
+  },
+  {
+    "termine": "a stato solido",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di dispositivo o circuito elettronico il cui funzionamento deriva dallo sfruttamento delle proprietà elettriche, meccani"
+  },
+  {
+    "termine": "a tau",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "ramponato: detto di una pezza in cui uno dei lati presenta delle piccole figure a forma di T rivolte verso l'alto"
+  },
+  {
+    "termine": "a termine",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che ha un periodo predefinito"
+  },
+  {
+    "termine": "a tratti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ogni tanto"
+  },
+  {
+    "termine": "a vuoto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che non è utile"
+  },
+  {
+    "termine": "abbassare la cresta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "cessare di essere arrogante o presuntuoso ~~ Ohi, cioè, abbassa la cresta, oh!"
+  },
+  {
+    "termine": "abbassare la guardia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scoprirsi ai colpi dell' avversario"
+  },
+  {
+    "termine": "abbassare la testa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "obbedire ad una volontà superiore"
+  },
+  {
+    "termine": "abbassare le ali",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "cessare di essere arrogante o presuntuoso"
+  },
+  {
+    "termine": "abbasso",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "di sotto ~~ scendete abbasso"
+  },
+  {
+    "termine": "accidenti",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "interiezione stizzosa, rabbiosa, causata da evento negativo non atteso ~~ la morte è una forma reputata quale uno tra gli accidenti che potrebbero intercorrere durante l'esistenza"
+  },
+  {
+    "termine": "accipicchia",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "eufemismo per accidenti ~~ accipicchia, ho bevuto tutto il vino"
+  },
+  {
+    "termine": "accusare il colpo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "soffrire degli effetti di una botta"
+  },
+  {
+    "termine": "acqua-aria",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di missile adibito ad essere scagliato da un sommergibile sott'acqua contro un aeroplano che sta volando"
+  },
+  {
+    "termine": "acqua-terra",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di missile che può partire da un sommergibile in immersione contro un bersaglio terrestre"
+  },
+  {
+    "termine": "ad ancora",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "ancorato"
+  },
+  {
+    "termine": "ad ora",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "tutt'oggi; sino a questo momento ~~ La Bibbia, ad ora il libro più studiato, è di origine divina"
+  },
+  {
+    "termine": "addio",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "forma di saluto utilizzato per congedarsi da qualcuno, specialmente in maniera definitiva ~~ addio compagno di mille battaglie"
+  },
+  {
+    "termine": "affondare le radici",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare riferimento ai propri principi"
+  },
+  {
+    "termine": "ahimè",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "comunemente usato per rappresentare una condizione d'animo di dolore, sofferenza o rammarico ~~ ahimè, che peccato, per pochi istanti ho perso il treno"
+  },
+  {
+    "termine": "ai ferri",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "anche per le grigliate, è solitamente una pietanza, sia essa a base di carne, pesce o verdura, cotta in un tegame apposi ~~ un hamburger ai ferri"
+  },
+  {
+    "termine": "al dente",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di riso))'' un po' crudo"
+  },
+  {
+    "termine": "al meglio",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "nel miglior modo possibile ~~ ha realizzato al meglio molti obiettivi compiendolì come desiderato"
+  },
+  {
+    "termine": "al risparmio",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "evitare spese alte e/o medio-alte anche quando è possibile effettuarle ~~ \"Questo le guerre! ...anche chi può permetterselo va al risparmio per non sfigurare: ma capite il controsenso?\""
+  },
+  {
+    "termine": "al secolo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "espressione utilizzata per indicare l'identità anagrafica di soggetti noti con pseudonimi"
+  },
+  {
+    "termine": "al verde",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "privo di denaro"
+  },
+  {
+    "termine": "alla mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di qualcosa)'' che è a disposizione immediata di chi deve utilizzarla"
+  },
+  {
+    "termine": "alla pari",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che fa un lavoro contraccambiato non in denaro, ma con  vitto e alloggio"
+  },
+  {
+    "termine": "allentare il freno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "concedere  più libertà"
+  },
+  {
+    "termine": "allerta",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "allarme relativo a possibili alluvioni, frane, terremoti, disastri climatici in genere"
+  },
+  {
+    "termine": "allo stato libero",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di atomo, gruppo atomico o particella subatomica che esiste in forma non unita con altre strutture microscopiche"
+  },
+  {
+    "termine": "altolà",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "lt"
+  },
+  {
+    "termine": "alzare le spalle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "manifestare menefreghismo o sopportazione"
+  },
+  {
+    "termine": "alzarsi in volo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di aereo)'' staccarsi da terra"
+  },
+  {
+    "termine": "amen",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "parola pronunciata alla fine di una preghiera che significa \"così sia\" ~~ in un amen: in un attimo"
+  },
+  {
+    "termine": "andare a bottega",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di giovane)'' andare ad imparare un lavoro presso un artigiano"
+  },
+  {
+    "termine": "andare a cavallo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "salire su un cavallo o un altro animale"
+  },
+  {
+    "termine": "andare a fondo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di imbarcazione)'' sprofondare nel mare"
+  },
+  {
+    "termine": "andare a genio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dilettare molto"
+  },
+  {
+    "termine": "andare a letto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "coricarsi per addormentarsi"
+  },
+  {
+    "termine": "andare a monte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di piano)''non avere successo"
+  },
+  {
+    "termine": "andare a parare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare verso una direzione"
+  },
+  {
+    "termine": "andare a picco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare a fondo"
+  },
+  {
+    "termine": "andare a rogito",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stipulare un contratto"
+  },
+  {
+    "termine": "andare a ruota",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "conseguire un successo di poco inferiore a quello di un altro"
+  },
+  {
+    "termine": "andare a trovare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare  a fare quattro chiacchiere da qualcuno"
+  },
+  {
+    "termine": "andare a zonzo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare in giro senza una meta precisa"
+  },
+  {
+    "termine": "andare addosso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "attaccare con violenza"
+  },
+  {
+    "termine": "andare al diavolo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "offesa ingiuriosa  pronunciata contro chi ci assilla"
+  },
+  {
+    "termine": "andare alla deriva",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di natante)''  essere essere in balia della corrente marina"
+  },
+  {
+    "termine": "andare alle urne",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sottoporre a votazione"
+  },
+  {
+    "termine": "andare avanti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "entrare nello spazio nemico per occuparlo"
+  },
+  {
+    "termine": "andare bene",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di  azienda)'' essere molto produttiva"
+  },
+  {
+    "termine": "andare di corpo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "espellere  le feci"
+  },
+  {
+    "termine": "andare di lusso",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere un risultato superiore alle previsioni"
+  },
+  {
+    "termine": "andare di moda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere soprattutto benvisto e fatto circolare in uno specifico periodo"
+  },
+  {
+    "termine": "andare in bestia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "infuriarsi violentemente"
+  },
+  {
+    "termine": "andare in briciole",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "spezzarsi in piccolissimi frammenti"
+  },
+  {
+    "termine": "andare in cenere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di edificio)'' essere demolito dalle fiamme"
+  },
+  {
+    "termine": "andare in collera",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "adirarsi violentemente"
+  },
+  {
+    "termine": "andare in estasi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di persona)'' essere estasiato"
+  },
+  {
+    "termine": "andare in fumo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare in disfacimento"
+  },
+  {
+    "termine": "andare in giro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare a zonzo senza meta"
+  },
+  {
+    "termine": "andare in rovina",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di qualcuno)'' affrontare tracollo finanziario"
+  },
+  {
+    "termine": "andare in tilt",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare in confusione"
+  },
+  {
+    "termine": "andare liscio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare avanti senza trovare intralci"
+  },
+  {
+    "termine": "andare nel pallone",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sentirsi a disagio"
+  },
+  {
+    "termine": "andare oltre",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere una prospettiva  più ampia di quello solita"
+  },
+  {
+    "termine": "andare sotto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di individuo)'' gettarsi sott’acqua"
+  },
+  {
+    "termine": "andare via",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "lasciare un luogo: un'abitazione, una città, un posto qualsiasi ~~ \"Ne ricordo ancora la voce: ormai è andata via dal mio cuore\""
+  },
+  {
+    "termine": "anima e corpo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "del tutto"
+  },
+  {
+    "termine": "animo",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "l'anima di una persona ~~ Morremo. Il velo indegno a terra sparto, rifuggirà l'ignudo animo a Dite (Leopardi)"
+  },
+  {
+    "termine": "aprire bocca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "pronunciare parole"
+  },
+  {
+    "termine": "aprire bottega",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "iniziare un lavoro commerciale"
+  },
+  {
+    "termine": "aprire gli occhi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "smettere di dormire"
+  },
+  {
+    "termine": "arare il mare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare un viaggio per mare"
+  },
+  {
+    "termine": "archetti del vino",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "''(enologia)'' la formazione tipica che si ha sulle pareti del bicchiere dopo aver fatto ruotare il vino all'interno. La"
+  },
+  {
+    "termine": "aria",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "vattene via ~~ aria pura, limpida"
+  },
+  {
+    "termine": "arrivederci",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "saluto (relativamente formale) utilizzato quando ci si separa da una o più persone che ci si aspetta di incontrare nuova ~~ torneremo presto, arrivederci!"
+  },
+  {
+    "termine": "arrivederla",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "saluto utilizzato in contesti formali nel momento in cui ci si accomiata"
+  },
+  {
+    "termine": "attenti",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": " ~~ quegli studenti sono ragazzi attenti"
+  },
+  {
+    "termine": "autonomia patrimoniale",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "grado di separazione del patrimonio di una persona giuridica dal patrimonio dei suoi soci o membri"
+  },
+  {
+    "termine": "avere da dire",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non essere contento di qualcosa"
+  },
+  {
+    "termine": "avere da fare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere indaffarato"
+  },
+  {
+    "termine": "avere dei problemi",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "essere disabile o handicappato"
+  },
+  {
+    "termine": "avere in animo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "proporsi decisamente"
+  },
+  {
+    "termine": "avere in contrario",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere da contrastare"
+  },
+  {
+    "termine": "avere in corpo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avvertire grandemente su di sé"
+  },
+  {
+    "termine": "avere in mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere un'informazione"
+  },
+  {
+    "termine": "avere in orrore",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "odiare, provare disgusto"
+  },
+  {
+    "termine": "avere in serbo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "porre da parte"
+  },
+  {
+    "termine": "avere intenzione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "proporsi decisamente"
+  },
+  {
+    "termine": "avere le traveggole",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "prendere un abbaglio"
+  },
+  {
+    "termine": "avere luogo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di avvenimenti)'' succedere in modo particolare  casualmente  o in modo inaspettato"
+  },
+  {
+    "termine": "avere presente",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere inteso il motivo o la persona di cui si sta discutendo"
+  },
+  {
+    "termine": "avere sul gozzo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non essere in grado di scordarsi  un’offesa"
+  },
+  {
+    "termine": "avere torto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avallare affermazioni  sbagliate o agire male"
+  },
+  {
+    "termine": "averne abbastanza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere stanco di qualcuno o di qualcosa"
+  },
+  {
+    "termine": "azione",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": " ~~ donna d'azione, uomo d'azione"
+  },
+  {
+    "termine": "bagnarsi il becco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "bere vino"
+  },
+  {
+    "termine": "bagnarsi la bocca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "bere, in modo particolare vino"
+  },
+  {
+    "termine": "bagnarsi la lingua",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "bere vino"
+  },
+  {
+    "termine": "balzare agli occhi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mostrarsi palese"
+  },
+  {
+    "termine": "banzai",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "\"lunga vita all'imperatore!\""
+  },
+  {
+    "termine": "basta",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "finiscila lì ~~ basta, non  ne posso più"
+  },
+  {
+    "termine": "battere a macchina",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "digitare su una macchina da scrivere"
+  },
+  {
+    "termine": "battere bandiera",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "issare la bandiera dello stato a cui fa parte un'imbarcazione sulla quale vige l'ordinamento giuridico"
+  },
+  {
+    "termine": "battere cassa",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "richiedere un aiuto economico"
+  },
+  {
+    "termine": "battere i denti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere freddo"
+  },
+  {
+    "termine": "battere i piedi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere privi di pazienza"
+  },
+  {
+    "termine": "battere in ritirata",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scappare velocemente"
+  },
+  {
+    "termine": "battere la fiacca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "lavorare malvolentieri"
+  },
+  {
+    "termine": "battere le mani",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sbattere una mano sopra l'altra in segno di approvazione"
+  },
+  {
+    "termine": "belino",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "cazzo ~~ Belín, è bravo!"
+  },
+  {
+    "termine": "ben disposto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "bendisposto"
+  },
+  {
+    "termine": "ben piantato",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che ha un fisico possente"
+  },
+  {
+    "termine": "bene",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "buon proseguimento, continuazione, come il procedere in modo buono ~~ mi diede un consiglio adatto perché mi \"vuole bene\""
+  },
+  {
+    "termine": "bonanotte",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "vedi buonanotte"
+  },
+  {
+    "termine": "bravo",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "si dice di persona, abile in una qualche attività ~~ \"Cosa dire di Fiorello... È bravo\""
+  },
+  {
+    "termine": "brioche salate",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "delicata preparazione appunto simile alla normale brioche (però con sale e dunque salata) e quindi abbastanza anche al p ~~ le brioche salate farcite con prosciutto, lattuga e pomodori sono il massimo..."
+  },
+  {
+    "termine": "buon compleanno",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "augurio di felice compleanno"
+  },
+  {
+    "termine": "buon pomeriggio",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "saluto usato quando si lascia qualcuno o lo si incontra al pomeriggio."
+  },
+  {
+    "termine": "buona notte",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "vedi buonanotte"
+  },
+  {
+    "termine": "buona pasqua",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "auguri che si esprimono in occasione della festa cristiana di Pasqua"
+  },
+  {
+    "termine": "buona volontà",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "disponibilità ad impegnarsi ~~ ha poco talento ma molta buona volontà"
+  },
+  {
+    "termine": "buonanotte",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "saluto usato quando si lascia qualcuno alla sera. ~~ augurare la buonanotte a qualcuno"
+  },
+  {
+    "termine": "buonanotte al secchio",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "Esclamazione che indica la fine dei giochi."
+  },
+  {
+    "termine": "buonasera",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "saluto usato quando si incontra qualcuno alla sera."
+  },
+  {
+    "termine": "buone azioni",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "aiutare il prossimo con azioni meritorie per buoni fini ed obiettivi moralmente elevati, con altruismo e talvolta abnega ~~ le migliori buone azioni vengono compiute in modo disinteressato"
+  },
+  {
+    "termine": "buone feste",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "augurio fatto prima di un periodo di vacanza, specialmente natalizie."
+  },
+  {
+    "termine": "buttare a mare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sbarazzarsi di qualcosa o  qualcuno"
+  },
+  {
+    "termine": "buttare giù",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far cadere ciò che è in posizione verticale"
+  },
+  {
+    "termine": "buttare in faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "criticare in modo radicale qualcosa o a qualcuno"
+  },
+  {
+    "termine": "buttarsi a pesce",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "intraprendere un'iniziativa con molta euforia"
+  },
+  {
+    "termine": "c'è mancato poco",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "indica sollievo per la mancata riuscita di qualcosa quando sembrava inevitabile ~~ Stava per premere il grilletto quando Mark lo colpì sulla nuca, \"Pfiu, c'è mancato poco!\""
+  },
+  {
+    "termine": "calcare la mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "esorbitare in qualcosa"
+  },
+  {
+    "termine": "cambiare aria",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "spalancare le finestre per dare aria alla casa"
+  },
+  {
+    "termine": "cambiare faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mutare espressione per un inatteso batticuore"
+  },
+  {
+    "termine": "cambiare registro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mutare condotta"
+  },
+  {
+    "termine": "cambio della guardia",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "subentro di nuove  sentinelle ad  orari prestabiliti"
+  },
+  {
+    "termine": "capperi",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "espressione di meraviglia ~~ capperi! Che bel vestito!"
+  },
+  {
+    "termine": "carne secca",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "pezzo scelto di carne, prima conservato e talvolta stagionato in ambienti particolari con temperature specificatamente f ~~ nella storia recente i cowboy mangiavano spesso carne secca, così anche chi andava per mare"
+  },
+  {
+    "termine": "caspita",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "eufemismo per cazzo ~~ caspita, ho bevuto tutto il vino\""
+  },
+  {
+    "termine": "causa persa",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "sebbene abbia una valenza simile ad alcuni \"dibattiti\" nei vari tribunali, ebbene: è una resa per un padre e/o una madre ~~ Con il groppo in gola e le lacrime agli occhi, il padre affranto gemette: \"Figlio mio, ormai sei una causa persa\""
+  },
+  {
+    "termine": "cavalcare la tigre",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tentare di avere sotto controllo e di girare a proprio vantaggio una circostanza sfavorevole"
+  },
+  {
+    "termine": "cavolo",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "usato per esprimere stupore o disappunto, in sostituzione della parola cazzo. ~~ ho perso l'autobus. Cavolo!"
+  },
+  {
+    "termine": "cazzo",
+    "registro": "volgare",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "interiezione usata per esprimere sorpresa o rabbia ~~ cazzo, ho mancato il bersaglio!"
+  },
+  {
+    "termine": "centri sociali",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "nell'immaginario comune sono locali malsani e quindi poco curati in cui si fa apertamente uso di alcol e di droghe di va ~~ molti centri sociali sono già stati chiusi"
+  },
+  {
+    "termine": "che merda",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "esclamazione di disgusto ~~ Quello sarebbe il mare? Che merda!"
+  },
+  {
+    "termine": "che palle",
+    "registro": "volgare",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "esprime forte noia o frustrazione"
+  },
+  {
+    "termine": "chiesa cattolica",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "è l'insieme dei religiosi cattolici e della gerarchia clericale, cui fa capo la persona del papa ~~ nella visita al tempio ebraico in Roma, la Chiesa Cattolica ed alcuni rappresentanti della religione ebraica hanno chiarito l'unanime volontà di preservare la n"
+  },
+  {
+    "termine": "chiudere a chiave",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "chiudere qualsiasi ambiente, contenitore, oggetto, dotato di una serratura, tramite l'apposita chiave"
+  },
+  {
+    "termine": "chiudere bottega",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "chiudere un esercizio commerciale"
+  },
+  {
+    "termine": "chiudere gli occhi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "cessare di vivere  tranquillamente"
+  },
+  {
+    "termine": "ciac",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "riproduce  il suono di un oggetto soffice schiacciato"
+  },
+  {
+    "termine": "ciao",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "formula di saluto amichevole e confidenziale usata sia nell'incontrarsi che nel lasciarsi"
+  },
+  {
+    "termine": "cinque stelle",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "albergo di prima categoria ~~ \"Per lo sfarzo e le prelibatezze, per forza nei cinque stelle si diventa ottimisti!\""
+  },
+  {
+    "termine": "ciurlare nel manico",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sottrarsi a un impegno o a una promessa mediante rinvii, pretesti oppure indecisioni"
+  },
+  {
+    "termine": "coi fiocchi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di grande valore"
+  },
+  {
+    "termine": "colare a picco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare a fondo velocemente"
+  },
+  {
+    "termine": "collo di bottiglia",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "espressione metaforica per indicare la restrizione, reale o virtuale, di un qualcosa che genera un rallentamento ~~ quell'incrocio è come un collo di bottiglia per la viabilità dell'intera zona: quell'incrocio genera un rallentamento dell'intera viabilità"
+  },
+  {
+    "termine": "colpo basso",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "(''pugilato'') colpo scorretto portato sotto la cintola"
+  },
+  {
+    "termine": "colpo di mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "manovra effettuata improvvisamente con reparti e mezzi appositi"
+  },
+  {
+    "termine": "come niente",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "molto facilmente, senza alcuno sforzo, senza esitazione"
+  },
+  {
+    "termine": "come no",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "senza alcun dubbio"
+  },
+  {
+    "termine": "come si deve",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di persona)'' che si comporta secondo le regole convenzionali della società"
+  },
+  {
+    "termine": "come una farfalla",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "Che si muove leggiadramente, con movimenti leggeri. ~~ Balla come una farfalla"
+  },
+  {
+    "termine": "condoglianze",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "espressione di dolore, compassione e conforto che si rivolge a qualcuno che ha subito la perdita di una persona cara ~~ sono addolorato per la morte di tua nonna, condoglianze sentite"
+  },
+  {
+    "termine": "congiungersi in matrimonio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "contrarre matrimonio"
+  },
+  {
+    "termine": "consultorio familiare",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "I consultori familiari sono stati costituiti dalla Legge 405 del 29/7/1975 per l'assistenza alla famiglia e alla materni"
+  },
+  {
+    "termine": "contrarre matrimonio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "congiungersi in matrimonio"
+  },
+  {
+    "termine": "contratto di governo",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "programma per la realizzazione di una o più leggi effettive, generalmente con interventi immediati"
+  },
+  {
+    "termine": "corpo a corpo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "con le mani o con un'arma da taglio ~~ Hanno combattuto corpo a corpo"
+  },
+  {
+    "termine": "così sia",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "indica un'accettazione di quanto precedentemente discusso"
+  },
+  {
+    "termine": "credere sulla parola",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "fidarsi ~~ Gli dissi che non sarebbe più successo e mi credette sulla parola."
+  },
+  {
+    "termine": "crema pasticcera",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "crema a base di uova, latte, zucchero, vaniglia, talvolta farina e/o buccia di limone ~~ ci sono creme pasticcere che potrebbero stupirvi meravigliosamente"
+  },
+  {
+    "termine": "cribbio",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "espressione di meraviglia, disgusto o rabbia"
+  },
+  {
+    "termine": "cristo",
+    "registro": "volgare",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "usato per imprecare"
+  },
+  {
+    "termine": "cucina a vista",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "in alcuni ristoranti molto moderni è l'uso di cucinare dinanzi alla clientela, ovviamente con la cucina appositamente co"
+  },
+  {
+    "termine": "d'immediato",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "in men che non si dica ~~ comparve d'immediato innanzi a me"
+  },
+  {
+    "termine": "da cavallo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di medicinale preso in grande quantità"
+  },
+  {
+    "termine": "da poco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che è di scarso valore"
+  },
+  {
+    "termine": "dagli",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "contrazione formata da da e gli"
+  },
+  {
+    "termine": "darci dentro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "assumersi il compito di fare qualcosa con  molta tenacia"
+  },
+  {
+    "termine": "darci sotto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "assumersi il compito di fare qualcosa con  molta tenacia"
+  },
+  {
+    "termine": "dare a bere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare ritenere assodata una menzogna"
+  },
+  {
+    "termine": "dare a credere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far ritenere vera una menzogna"
+  },
+  {
+    "termine": "dare a intendere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far ritenere vera una menzogna"
+  },
+  {
+    "termine": "dare a vedere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far pensare  agli altri qualcosa di differente dal vero"
+  },
+  {
+    "termine": "dare addosso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "criticare violentemente"
+  },
+  {
+    "termine": "dare adito",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far nascere"
+  },
+  {
+    "termine": "dare aiuto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "intervenire  tempestivamente in una circostanza imprevista"
+  },
+  {
+    "termine": "dare alla luce",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere al mondo"
+  },
+  {
+    "termine": "dare alla testa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di vino)''  pensare da ubriaco"
+  },
+  {
+    "termine": "dare alle stampe",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendere conosciuto tramite la stampa"
+  },
+  {
+    "termine": "dare aria",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far pervenire aria da fuori, particolarmente schiudendo le finestre"
+  },
+  {
+    "termine": "dare ascolto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stare a sentire con molta concentrazione"
+  },
+  {
+    "termine": "dare atto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far sapere formalmente"
+  },
+  {
+    "termine": "dare carta bianca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare il permesso di comportarsi come si vuole"
+  },
+  {
+    "termine": "dare causa vinta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "riconoscere di essere stato sconfitto"
+  },
+  {
+    "termine": "dare conto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere tenuto a discolparsi"
+  },
+  {
+    "termine": "dare corda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dimostrarsi gentile"
+  },
+  {
+    "termine": "dare corpo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tradurre in  realtà"
+  },
+  {
+    "termine": "dare corso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare inizio"
+  },
+  {
+    "termine": "dare credito",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare affidamento"
+  },
+  {
+    "termine": "dare inizio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far iniziare"
+  },
+  {
+    "termine": "dare la birra",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "in una competizione di rapidità, battere chiaramente"
+  },
+  {
+    "termine": "dare la carica",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "infondere forza a chi è spossato"
+  },
+  {
+    "termine": "dare la disdetta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "porre fine ad  un contratto di locazione"
+  },
+  {
+    "termine": "dare la stura",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "lasciar andare la propria mente e le proprie passioni senza inibizioni"
+  },
+  {
+    "termine": "dare la vita",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "immolare se stessi per gli altri"
+  },
+  {
+    "termine": "dare le dimissioni",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "licenziarsi dal lavoro"
+  },
+  {
+    "termine": "dare le mosse",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare inizio"
+  },
+  {
+    "termine": "dare le spalle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mostrare la schiena a qualcuno"
+  },
+  {
+    "termine": "dare man forte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "appoggiare qualcuno, particolarmente  in una disputa, in un battibecco con altri"
+  },
+  {
+    "termine": "dare nel segno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "colpire un  bersaglio"
+  },
+  {
+    "termine": "dare orecchio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stare molto attento"
+  },
+  {
+    "termine": "dare origine",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare inizio a qualcosa"
+  },
+  {
+    "termine": "dare per buono",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "approvare, particolarmente con acquiescenza, come accettabile"
+  },
+  {
+    "termine": "dare quartiere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "consentire un armistizio"
+  },
+  {
+    "termine": "dare ragione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "accettare come veritieri i discorsi di qualcuno"
+  },
+  {
+    "termine": "dare retta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far propri i suggerimenti di qualcuno"
+  },
+  {
+    "termine": "dare sepoltura",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere un morto in una fossa mettendoci sopra della terra"
+  },
+  {
+    "termine": "dare spago",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dimostrarsi gentile"
+  },
+  {
+    "termine": "dare spettacolo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "richiamare su di sé l’attenzione, dimostrando una eccezionale abilità"
+  },
+  {
+    "termine": "dare torto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "disapprovare quello che afferma o compie qualcuno"
+  },
+  {
+    "termine": "dare un calcio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "lasciarsi sfuggire per  inettitudine"
+  },
+  {
+    "termine": "dare un occhio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "verificare in modo veloce"
+  },
+  {
+    "termine": "dare un'occhiata",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di sguardo)'' fermarsi di sfuggita"
+  },
+  {
+    "termine": "dare una lezione",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "quando non precedente al superamento del limite estremo di vera e propria violenza fisica, presagisce comunque un modo e ~~ il vecchio ma prepotente intervenne per dare una lezione al ragazzino ritenuto colpevole di un piccolo incidente"
+  },
+  {
+    "termine": "dare una mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "soccorrere qualcuno"
+  },
+  {
+    "termine": "dare vita",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "generare qualcosa  di totalmente nuovo"
+  },
+  {
+    "termine": "dare voce",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "*"
+  },
+  {
+    "termine": "darla a bere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far reputare come veritiera una  menzogna"
+  },
+  {
+    "termine": "darsi alla macchia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendersi introvabile"
+  },
+  {
+    "termine": "darsi da fare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "impegnarsi per conseguire qualcosa"
+  },
+  {
+    "termine": "darsi importanza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "menare vanto della propria eccellenza"
+  },
+  {
+    "termine": "decreto dignità",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "provvedimento per tutelare i contratti di alcuni lavoratori, con considerazione per le relative tasse dei contributi"
+  },
+  {
+    "termine": "dello stesso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "del medesimo"
+  },
+  {
+    "termine": "detto tra noi",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "indica che quanto sta per essere detto è confidenziale ~~ Detto tra noi io penso che tua sorella sia carina"
+  },
+  {
+    "termine": "di bocca buona",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di persona)'' che mangia qualunque cosa,  senza distinzione"
+  },
+  {
+    "termine": "di buona famiglia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di ottimo status sociale"
+  },
+  {
+    "termine": "di cattivo gusto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "non  elegante"
+  },
+  {
+    "termine": "di famiglia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di individuo)'' che è ritenuto come un componente della famiglia, pur non avendo legami di parentela"
+  },
+  {
+    "termine": "di fortuna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di vela, pennone, albero, timone ecc., di riserva, surrogatorio della  strumentazione danneggiata o smarrita  durante un"
+  },
+  {
+    "termine": "di maniera",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che si basa sulla scimmiottatura  e sulla reiterazione di regole predefinite"
+  },
+  {
+    "termine": "di moda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che è consono al senso estetico di oggi"
+  },
+  {
+    "termine": "di parola",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di individuo)'' che tiene fede alla parola data"
+  },
+  {
+    "termine": "di passaggio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di luogo)'' attraverso cui abitualmente ci si ferma brevemente"
+  },
+  {
+    "termine": "di piedi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di tuffo)'' fatto in modo  in modo da entrare in acqua con le gambe"
+  },
+  {
+    "termine": "di poche parole",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di persona)'' che è taciturno"
+  },
+  {
+    "termine": "di pregio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di specifica rilevanza"
+  },
+  {
+    "termine": "di qualità",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "più che idoneo"
+  },
+  {
+    "termine": "di sasso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "sbalordito per la meraviglia"
+  },
+  {
+    "termine": "di successo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che ottengono l'assenso e il favore  del pubblico"
+  },
+  {
+    "termine": "di tutto rispetto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "molto pregiato"
+  },
+  {
+    "termine": "di vaglia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di individuo)'' di specifica esperienza e abilità"
+  },
+  {
+    "termine": "di vecchio stampo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "vincolato al tempo andato"
+  },
+  {
+    "termine": "dietro pagamento",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che si realizza con un versamento di denaro"
+  },
+  {
+    "termine": "diluvio universale",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "espressione un po' estrema che comunque allude ad una pioggia molto forte, anche con bombe d'acqua e tendente a creare a ~~ \"Ma c'è il diluvio universale? Che giornata!\""
+  },
+  {
+    "termine": "dire di no",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dichiarare falso  quanto asserito da altri"
+  },
+  {
+    "termine": "dire in faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "affermare in modo  esplicito"
+  },
+  {
+    "termine": "direttamente proporzionale",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di grandezza che aumenta all'aumentare di un'altra"
+  },
+  {
+    "termine": "diritti uguali",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": " ~~ <<Quanto all'espressione \"diritti uguali\", io preferirei \"diritti applicabili\">>"
+  },
+  {
+    "termine": "dolce-salato",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "differentemente dall'agrodolce, che richiede una preparazione più meticolosa, fa riferimento a pietanze composte da elem"
+  },
+  {
+    "termine": "domanda retorica",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "Appartenente al gruppo delle figure retoriche, la domanda retorica è posta non per risolvere un dilemma, ma per suscitar"
+  },
+  {
+    "termine": "dovere",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "in genere dopo un favore importante, fatto anche a persone sconosciute ~~ \"Non si preoccupi! Dovere!!\""
+  },
+  {
+    "termine": "droghe leggere",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "droghe quali ascis, marijuana e simili (non incluse cocaina, eroina, ecc che sono sostanze conosciute comunemente come \" ~~ l'uso di droghe leggere rende difficoltosa la pronuncia chiara delle parole"
+  },
+  {
+    "termine": "e dire che",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "esprime delusione per quanto segue ~~ E dire che era così intelligente"
+  },
+  {
+    "termine": "e pensare che",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "esprime delusione ~~ E pensare che da piccolo era molto promettente!"
+  },
+  {
+    "termine": "ecco",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "accompagna una cosa che viene portata all'attenzione dell'interlocutore ~~ ecco il libro che mi hanno prestato"
+  },
+  {
+    "termine": "eccocela",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a noi una cosa nominata in precedenza"
+  },
+  {
+    "termine": "eccoci",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco noi, ecco la persona che sta parlando o scrivendo insieme con altri o qualcun altro ~~ Eccoci separati, eccoci lontani l'uno dall'altra. <small>(Iginio Ugo Tarchetti: Fosca, Capitolo VIII)</small>"
+  },
+  {
+    "termine": "eccogliela",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco, a una persona nominata in precedenza, una cosa nominata in precedenza ~~ E a chi volesse una testimonianza esplicita del fatto, eccogliela di mano del Ciacconio. <small>(Giovanni Battista de Rossi: Bullettino di archeologia cristiana"
+  },
+  {
+    "termine": "eccogliele",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco, ad una persona nominata in precedenza, alcune cose nominate in precedenza ~~ Se l'Imperatore vuole le cose mie, eccogliele al piacer suo. <small>(attribuita a Sant'Ambrogio)</small>"
+  },
+  {
+    "termine": "eccoglieli",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco, ad una persona nominata in precedenza, alcune cose nominate in precedenza ~~ E Dio le scrisse sette figliuoli, / eccoglieli, sorella, alle mammelle. <small>(Tradotto da Niccolò Tommaseo: Canto serbico)</small>"
+  },
+  {
+    "termine": "eccoglielo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco, ad una persona nominata in precedenza, una cosa nominata in precedenza ~~ Sabato scorso non potei spedirle il breve, ma eccoglielo qui acchiuso. <small>(Vittorio Alfieri, Lettere inedite, Alla madre, 4.)</small>"
+  },
+  {
+    "termine": "eccogliene",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco, ad una persona nominata in precedenza, una parte o un aspetto di qualcosa nominata in precedenza"
+  },
+  {
+    "termine": "eccola",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco ciò, ecco questa o quella cosa ~~ Eccola, viene che la manda Iddio. <small>(Edmondo De Amicis: Grandinata in Poesie)</small>"
+  },
+  {
+    "termine": "eccole",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco ciò, ecco queste o quelle cose ~~ Eccole qui, le vostre cambiali. <small>(Anton Giulio Barrili: I rossi e i neri, Secondo volume, XXIV)</small>"
+  },
+  {
+    "termine": "eccoli",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco ciò, ecco queste o quelle cose ~~ — Andare a cercare i danari ora! — Eccoli qui. <small>(Alessandro Manzoni: I promessi sposi, Capitolo XV)</small>"
+  },
+  {
+    "termine": "eccolo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco ciò, ecco questa o quella cosa ~~ Se sbaglio, pago un soldo; eccolo qui! <small>(Luigi Capuana: Pappafichi in Si conta e si racconta...)</small>"
+  },
+  {
+    "termine": "eccomela",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a me ciò; vedi eccomi e eccola ~~ Appena giunto qui, cerco la di Lei lettera; ed eccomela in mano. <small>(Giovanni Berchet: Lettere alla Marchesa Costanza Arconati, Coira, domenica sera 5 ottob"
+  },
+  {
+    "termine": "eccomele",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a me ciò; vedi eccomi e eccole ~~ Eccomele vicina e tento di racchetarla. <small>(Georgiana Craik, traduzione di Luigi Alfonso Girardi: Perduto e vinto, Capitolo VIII)</small>"
+  },
+  {
+    "termine": "eccomeli",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a me ciò; vedi eccomi e eccoli ~~ Credevo di essermi liberato per sempre da certi sentimenti che chiamavo debolezze, e invece eccomeli qui più vivi. <small>(Giuseppe Dessì: Diari, 1926-1931)</sm"
+  },
+  {
+    "termine": "eccomelo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a me ciò; vedi eccomi e eccolo ~~ Eccomelo venire sott'occhio non in uno ma in due codici insieme appena appena ritrovati. <small>(Francesco Guicciardini: Ricordi)</small>"
+  },
+  {
+    "termine": "eccomene",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco me di ciò, di questa o quella cosa; vedi eccomi e eccone ~~ Lodando Antonio feci onta a Cesare. [...] Eccomene ora punita. <small>(William Shakespeare, traduzione di Carlo Rusconi: Antonio e Cleopatra, Atto Secondo, Scen"
+  },
+  {
+    "termine": "eccomi",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco me, ecco la persona che sta parlando o scrivendo ~~ Eccomi signore. <small>(Giovan Battista Andreini: Lo schiavetto, Atto terzo, Scena V)</small>"
+  },
+  {
+    "termine": "eccone",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco una parte di ciò, di queste o quelle cose ~~ Cita poi il Verri alcune loro proposizioni. [...] Eccone, per esempio, una importantissima. <small>(Alessandro Manzoni: Storia della colonna infame, Capitolo II"
+  },
+  {
+    "termine": "eccotela",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a te ciò; vedi eccoti e eccola ~~ Eccotela. Una lira e cinquanta! <small>(Ida Baccini: Lezioni e racconti per i bambini)</small>"
+  },
+  {
+    "termine": "eccotele",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a te ciò; vedi eccoti e eccole ~~ Eccotele bell'e tagliate. <small>(Ida Baccini: Lezioni e racconti per i bambini)</small>"
+  },
+  {
+    "termine": "eccoteli",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a te ciò; vedi eccoti e eccoli ~~ E i repubblicani, eccoteli padroni di scendere a lor agio a divorarsi le Langhe. <small>(Giuseppe Cesare Abba: Le rive della Bormida nel 1794, Capitolo VI)</sma"
+  },
+  {
+    "termine": "eccotelo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a te ciò; vedi eccoti e eccolo ~~ In questo, eccotelo venir via a passi lunghi. <small>(Pietro Aretino: Ragionamento della Nanna e della Antonia, Giornata seconda in Ragionamenti)</small>"
+  },
+  {
+    "termine": "eccotene",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco a te parte di ciò; vedi eccoti e eccone ~~ Ma poiché siamo in sulle favole, eccotene un'altra. <small>(Giacomo Leopardi: Dialogo di un fisico e di un metafisico in Operette morali)</small>"
+  },
+  {
+    "termine": "eccoti",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco te, ecco la persona o la cosa personalizzata a cui ci si rivolge ~~ Eccoti o mar, solenne ed infinito. <small>(Olindo Guerrini: Rime di Argia Sbolenfi, In mare, v. 1)</small>"
+  },
+  {
+    "termine": "eccovi",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ecco voi, ecco le persone o le cose personalizzate a cui ci si rivolge ~~ Eccovi al fine, / Miei disperati affetti, / Eccovi in libertà. <small>(Pietro Metastasio: Artaserse, Atto terzo, Scena VII)</small>"
+  },
+  {
+    "termine": "ehilà",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "interiezione che indica sorpresa o richiama l'attenzione di qualcuno"
+  },
+  {
+    "termine": "entrare in argomento",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "portare all'attenzione  di qualcosa nel corso di una discussione"
+  },
+  {
+    "termine": "entrare in ballo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di qualcosa)'' avere importanza in una circostanza"
+  },
+  {
+    "termine": "entrare in carica",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "iniziare ad esercitare le proprie funzioni"
+  },
+  {
+    "termine": "entrare in confidenza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "divenire amico strettissimo di qualcuno"
+  },
+  {
+    "termine": "entrare in gioco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di qualcosa)'' avere importanza in una circostanza"
+  },
+  {
+    "termine": "entrare in testa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere ricordato"
+  },
+  {
+    "termine": "entrare in vigore",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "divenire valido"
+  },
+  {
+    "termine": "esatto",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "di cosa fatta con cura e precisione, e il più possibile corrispondente al vero o alla realtà dei fatti ~~ stima esatta, misura esatta, ora esatta"
+  },
+  {
+    "termine": "essere a conoscenza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sapere che"
+  },
+  {
+    "termine": "essere a posto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di individuo)''  avere un aspetto dignitoso"
+  },
+  {
+    "termine": "essere al mondo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "esistere ~~ Perché le zanzare sono al mondo? Non servono a niente!"
+  },
+  {
+    "termine": "essere al verde",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "'''essere al verde''' significa: ''essere senza soldi'' ~~ O dio, sono al verde"
+  },
+  {
+    "termine": "essere capace di",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "riferito a un contenitore: avere la capacità di, avere un'ampiezza sufficiente per contenere ~~ questa damigiana è capace di venticinque litri;"
+  },
+  {
+    "termine": "essere di casa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere amico di qualcuno, e conseguentemente  bazzicare a casa sua"
+  },
+  {
+    "termine": "essere in grado",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere l'abilità di operare"
+  },
+  {
+    "termine": "essere in rosso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere con le uscite maggiori delle entrate"
+  },
+  {
+    "termine": "essere in vena",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere molto favorevole a fare qualcosa"
+  },
+  {
+    "termine": "essere la fine",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "indica forte sconforto ~~ \"Oh no, i mafiosi!\" \"È la fine!\""
+  },
+  {
+    "termine": "essere stanchi di",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere annoiati o infastiditi da qualcosa ~~ Sono stanco del tuo comportamento viscido!"
+  },
+  {
+    "termine": "estremo oriente",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "parte della Terra che corrisponde al lembo orientale estremo dell'Asia, principale sede appunto degli orientali"
+  },
+  {
+    "termine": "extra-lusso",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "oltre i normali comfort o le pur rare comodità, anche di bellezza e preziosità estetiche uniche... difficilmente ripetib ~~ l'hotel cinque stelle Principe di Savoia è certamente extra-lusso"
+  },
+  {
+    "termine": "faccia a faccia",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "nella Bibbia esprime il dialogo in preghiera con Dio ~~ quel faccia a faccia con mio padre fu rivelatore di condivisione"
+  },
+  {
+    "termine": "faccia tosta",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "atteggiamento sfrontato e presuntuoso"
+  },
+  {
+    "termine": "fallire il colpo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "mancare il bersaglio"
+  },
+  {
+    "termine": "far colpo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "fare buona impressione a qualcuno"
+  },
+  {
+    "termine": "far conto di",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "conta che ci sia"
+  },
+  {
+    "termine": "far di conto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "svolgere operazioni matematiche semplici"
+  },
+  {
+    "termine": "far flanella",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "oziare mentre gli altri lavorano"
+  },
+  {
+    "termine": "fare a botte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "darsele a vicenda"
+  },
+  {
+    "termine": "fare a brandelli",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "biasimare aspramente"
+  },
+  {
+    "termine": "fare a cambio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "permutare una cosa per un'altra"
+  },
+  {
+    "termine": "fare a cazzotti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di colori, abiti)'' non essere adatto"
+  },
+  {
+    "termine": "fare a fette",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tagliare a fette"
+  },
+  {
+    "termine": "fare a gara",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rivaleggiare con qualcuno per conseguire qualcosa"
+  },
+  {
+    "termine": "fare a metà",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dividere in due parti uguali"
+  },
+  {
+    "termine": "fare a pezzi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sgominare totalmente"
+  },
+  {
+    "termine": "fare a pugni",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "prendersi a cazzotti"
+  },
+  {
+    "termine": "fare a scaricabarile",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "darsi reciprocamente  la colpa"
+  },
+  {
+    "termine": "fare acqua",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "approvvigionarsi di acqua"
+  },
+  {
+    "termine": "fare affidamento",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare conto"
+  },
+  {
+    "termine": "fare aggio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere un prezzo superiore  di quello nominale"
+  },
+  {
+    "termine": "fare al bisogno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere conforme a quanto serve"
+  },
+  {
+    "termine": "fare al caso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere conforme a quanto serve"
+  },
+  {
+    "termine": "fare ala",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di folla)'' muoversi di lato  per far passare qualcuno"
+  },
+  {
+    "termine": "fare ambiente",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di mobili, quadri)'' realizzare in un  interno un ambiente piacevole e raffinato"
+  },
+  {
+    "termine": "fare amicizia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "riuscire a farsi amico"
+  },
+  {
+    "termine": "fare angolo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere posizionato all’angolo di una via"
+  },
+  {
+    "termine": "fare animo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "infondere forza d'animo"
+  },
+  {
+    "termine": "fare anticamera",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "attendere per lungo tempo prima di essere accolti, in modo particolare da vip"
+  },
+  {
+    "termine": "fare appello",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "chiedere aiuto"
+  },
+  {
+    "termine": "fare aria",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "spostare  l’aria di fronte alla faccia di qualcuno per refrigerarlo o aiutarlo a respirare"
+  },
+  {
+    "termine": "fare assegnamento",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "affidarsi a qualcuno o qualcosa"
+  },
+  {
+    "termine": "fare astrazione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non ritenere"
+  },
+  {
+    "termine": "fare attenzione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stare accorto"
+  },
+  {
+    "termine": "fare atto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "abbozzare un'azione"
+  },
+  {
+    "termine": "fare babau",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "impaurire qualcuno manifestandosi  improvvisamente"
+  },
+  {
+    "termine": "fare baldoria",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare un incontro chiassoso e allegro in compagnia"
+  },
+  {
+    "termine": "fare bancarotta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere insolvente"
+  },
+  {
+    "termine": "fare bella figura",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "farsi  giudicare favorevolmente"
+  },
+  {
+    "termine": "fare bene",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere vantaggioso"
+  },
+  {
+    "termine": "fare bisboccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare un incontro chiassoso e allegro in compagnia"
+  },
+  {
+    "termine": "fare boccuccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "contrarre  le labbra  per  ripugnanza"
+  },
+  {
+    "termine": "fare breccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere capace di persuadere come minimo parzialmente"
+  },
+  {
+    "termine": "fare brutta figura",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "provocare disapprovazione"
+  },
+  {
+    "termine": "fare buio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare notte"
+  },
+  {
+    "termine": "fare buon pro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "augurare felicità"
+  },
+  {
+    "termine": "fare buon sangue",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendere più vigoroso"
+  },
+  {
+    "termine": "fare cambio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scambiare un oggetto con un altro"
+  },
+  {
+    "termine": "fare capo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere come responsabile"
+  },
+  {
+    "termine": "fare capolino",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere fuori la testa di nascosto per osservare senza essere visti"
+  },
+  {
+    "termine": "fare cappotto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sconfiggere l’avversario senza fargli fare dei punti"
+  },
+  {
+    "termine": "fare carico",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "caricare di responsabilità"
+  },
+  {
+    "termine": "fare carriera",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "progredire di grado nella propria occupazione"
+  },
+  {
+    "termine": "fare carte false",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "utilizzare  ogni mezzo per conseguire qualcosa"
+  },
+  {
+    "termine": "fare caso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "porgere attenzione"
+  },
+  {
+    "termine": "fare cassetta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di film)'' conseguire un eccezionale successo e conseguentemente guadagnare molto"
+  },
+  {
+    "termine": "fare causa comune",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "accordarsi per ottenere un risultato"
+  },
+  {
+    "termine": "fare centro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "colpire il centro di un bersaglio"
+  },
+  {
+    "termine": "fare cerchio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stare attorno a qualcuno o a qualcosa"
+  },
+  {
+    "termine": "fare chiarezza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dirimere  una questione"
+  },
+  {
+    "termine": "fare chiaro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "albeggiare"
+  },
+  {
+    "termine": "fare cifra tonda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "approssimare un importo di denaro"
+  },
+  {
+    "termine": "fare cilecca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non farcela ~~ la pistola ha fatto cilecca, il colpo non è partito"
+  },
+  {
+    "termine": "fare civetta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "chinare la testa per evitare un oggetto scaraventato"
+  },
+  {
+    "termine": "fare colonna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere utilizzato come sostegno"
+  },
+  {
+    "termine": "fare colpo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "provocare una piacevole stupore"
+  },
+  {
+    "termine": "fare combutta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "complottare con qualcuno per fini illegali"
+  },
+  {
+    "termine": "fare comodo",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere vantaggioso"
+  },
+  {
+    "termine": "fare compagnia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stare accanto a qualcuno che é solo"
+  },
+  {
+    "termine": "fare complimenti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere oltremisura titubanti nel prendere ciò che viene dato, per riserbo o per"
+  },
+  {
+    "termine": "fare confusione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "causare  disordine"
+  },
+  {
+    "termine": "fare conoscenza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare inizio ad una  conoscenza"
+  },
+  {
+    "termine": "fare conto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare affidamento"
+  },
+  {
+    "termine": "fare coraggio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "instillare coraggio"
+  },
+  {
+    "termine": "fare da mangiare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "cuocere i cibi"
+  },
+  {
+    "termine": "fare del bene",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "aiutare i bisognosi"
+  },
+  {
+    "termine": "fare dello spirito",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "punzecchiare qualcuno su una questione"
+  },
+  {
+    "termine": "fare di no",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "girare la testa  o il dito indice numerose volte da sinistra a destra e al contrario per dire di no"
+  },
+  {
+    "termine": "fare di sì",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "spostare la testa dall’alto in basso e al contrario per dire di sì"
+  },
+  {
+    "termine": "fare dietro front",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mutare totalmente la propria opinione"
+  },
+  {
+    "termine": "fare difficoltà",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "accampare scuse per contrastare qualcuno"
+  },
+  {
+    "termine": "fare eccezione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "distinguersi  decisamente"
+  },
+  {
+    "termine": "fare eco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "riportare pedissequamente il pensiero altrui"
+  },
+  {
+    "termine": "fare economia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "utilizzare con oculatezza qualcosa"
+  },
+  {
+    "termine": "fare epoca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere una tale fama da divenire simbolo di un preciso momento storico"
+  },
+  {
+    "termine": "fare esperienza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "conseguire nuove conoscenze in un determinato settore"
+  },
+  {
+    "termine": "fare fagotto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare via"
+  },
+  {
+    "termine": "fare fallimento",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere insolvente"
+  },
+  {
+    "termine": "fare faville",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mostrare brillantemente ciò che si sa fare"
+  },
+  {
+    "termine": "fare fede",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rappresentare  il punto di riferimento essenziale"
+  },
+  {
+    "termine": "fare fesso",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "raggirare qualcuno"
+  },
+  {
+    "termine": "fare festa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ricevere qualcuno esprimendo allegria e benevolenza"
+  },
+  {
+    "termine": "fare fiasco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di spettacolo)'' non  avere fortuna"
+  },
+  {
+    "termine": "fare figura",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere  un look  talmente piacevole da suscitare stupore"
+  },
+  {
+    "termine": "fare finta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far credere ciò che non  é vero"
+  },
+  {
+    "termine": "fare follie",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "concedersi  eccessivi divertimenti non rapportati alla propria situazione economica"
+  },
+  {
+    "termine": "fare fondamento",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere basato su qualcosa"
+  },
+  {
+    "termine": "fare forca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "disertare la scuola"
+  },
+  {
+    "termine": "fare fortuna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "farsi ricco"
+  },
+  {
+    "termine": "fare fronte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "affrontare una situazione disagevole"
+  },
+  {
+    "termine": "fare fuori",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "uccidere un individuo"
+  },
+  {
+    "termine": "fare furore",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere molto famoso"
+  },
+  {
+    "termine": "fare ginnastica",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "fare esercizio fisico ~~ Se facessi più ginnastica saresti pieno di muscoli"
+  },
+  {
+    "termine": "fare giorno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "albeggiare"
+  },
+  {
+    "termine": "fare gli occhiacci",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "manifestare rimprovero con una faccia scura, in particolar modo nei confronti di un bambino per spaventarlo"
+  },
+  {
+    "termine": "fare gola",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendere  goloso"
+  },
+  {
+    "termine": "fare i bagagli",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare via"
+  },
+  {
+    "termine": "fare i botti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "effettuare un azione insigne"
+  },
+  {
+    "termine": "fare i complimenti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "congratularsi"
+  },
+  {
+    "termine": "fare i conti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scontrarsi per dirimere  discutere faccende non ancora definite"
+  },
+  {
+    "termine": "fare i fatti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "operare bene"
+  },
+  {
+    "termine": "fare il bis",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "cantare, su invito degli spettatori, una canzone un'altra volta"
+  },
+  {
+    "termine": "fare il bravo",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere ubbidiente"
+  },
+  {
+    "termine": "fare il broncio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere incazzato"
+  },
+  {
+    "termine": "fare il callo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "assuefarsi a qualcosa, in particolar modo  dannoso"
+  },
+  {
+    "termine": "fare il cavallino",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare oscillare un bambino sulle ginocchia"
+  },
+  {
+    "termine": "fare il culo",
+    "registro": "volgare",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "redarguire bruscamente"
+  },
+  {
+    "termine": "fare il deserto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare il vuoto"
+  },
+  {
+    "termine": "fare il gallo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "mostrarsi molto baldanzoso"
+  },
+  {
+    "termine": "fare il gesto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare finta di far qualcosa per fare bella figura"
+  },
+  {
+    "termine": "fare il mazzo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sgridare bruscamente"
+  },
+  {
+    "termine": "fare il mestiere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "praticare la prostituzione"
+  },
+  {
+    "termine": "fare il militare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere  sotto le armi"
+  },
+  {
+    "termine": "fare il morto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stare a galla sul dorso rimanendo  immobile con le braccia larghe"
+  },
+  {
+    "termine": "fare il nido",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "Est  risiedere  per sempre in un luogo"
+  },
+  {
+    "termine": "fare il nome",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "comunicare  il nome di qualcuno"
+  },
+  {
+    "termine": "fare il paio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere somigliante a qualcuno  reputato  in modo negativo"
+  },
+  {
+    "termine": "fare il pappagallo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "chiacchierare a vanvera"
+  },
+  {
+    "termine": "fare il pieno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "colmare del tutto di benzina  il  serbatoio di veicolo a motore"
+  },
+  {
+    "termine": "fare il punto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "trovare le coordinate geografiche di un natante  in un preciso istante"
+  },
+  {
+    "termine": "fare il solletico",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rimanere completamente imperturbabile"
+  },
+  {
+    "termine": "fare il tifo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sostenere con intenso ardore  una squadra  o uno sportivo"
+  },
+  {
+    "termine": "fare il trenino",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "disporsi in fila con le braccia sui fianchi o sulle spalle di chi ci precede percorrendo al ritmo della musica la pista "
+  },
+  {
+    "termine": "fare il verso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere in ridicolo qualcuno"
+  },
+  {
+    "termine": "fare il vuoto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tenere lontano gli altri a causa del proprio modo di fare"
+  },
+  {
+    "termine": "fare in fretta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare presto"
+  },
+  {
+    "termine": "fare in modo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "impegnarsi per risolvere qualche problema"
+  },
+  {
+    "termine": "fare incetta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "procurarsi qualcosa in maniera eccessiva"
+  },
+  {
+    "termine": "fare l'amore",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere un rapporto sessuale"
+  },
+  {
+    "termine": "fare l'andatura",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stare davanti stabilendo la velocità"
+  },
+  {
+    "termine": "fare l'indiano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "atteggiamento di chi, per proprio comodo, finge di non sentire quello che viene detto, o di non capire, non sapere o non"
+  },
+  {
+    "termine": "fare l'occhietto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "comprimere  un occhio in segno di accordo"
+  },
+  {
+    "termine": "fare l'occhio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "diventare esperto nel giudicare con avvedutezza"
+  },
+  {
+    "termine": "fare l'occhiolino",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "torcere un occhio come segnale di complicità"
+  },
+  {
+    "termine": "fare l'orecchio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "assuefarsi a un suono"
+  },
+  {
+    "termine": "fare la barba",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "radere la barba"
+  },
+  {
+    "termine": "fare la bocca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "assuefarsi a un sapore"
+  },
+  {
+    "termine": "fare la calza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "occuparsi solamente di lavori domestici di solito ritenute  prettamente femminili"
+  },
+  {
+    "termine": "fare la coda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "aspettare ordinatamente in fila"
+  },
+  {
+    "termine": "fare la commedia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far credere ciò che non è vero"
+  },
+  {
+    "termine": "fare la contravvenzione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare la multa"
+  },
+  {
+    "termine": "fare la cornice",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "inserire dettagli superflui"
+  },
+  {
+    "termine": "fare la corte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rivolgere complimenti a qualcuno per sedurlo"
+  },
+  {
+    "termine": "fare la cresta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dire, comprando per qualcuno, di aver  pagato  più di quanto effettuato, per lucrare sulla  differenza"
+  },
+  {
+    "termine": "fare la fame",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere estremamente poveri"
+  },
+  {
+    "termine": "fare la festa",
+    "registro": "volgare",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ammazzare qualcuno"
+  },
+  {
+    "termine": "fare la fica",
+    "registro": "volgare",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "detto di una donna: tirarsela"
+  },
+  {
+    "termine": "fare la figa",
+    "registro": "volgare",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "settentrionale"
+  },
+  {
+    "termine": "fare la fila",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "attendere il proprio turno"
+  },
+  {
+    "termine": "fare la guardia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tenere d'occhio qualcuno accuratamente"
+  },
+  {
+    "termine": "fare la mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "assuefarsi ad utilizzare qualcosa"
+  },
+  {
+    "termine": "fare la morale",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "biasimare la condotta di qualcuno"
+  },
+  {
+    "termine": "fare la mossa",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare finta di far qualcosa per fare bella figura"
+  },
+  {
+    "termine": "fare la muffa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare  lavori ripetitivi"
+  },
+  {
+    "termine": "fare la nanna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere in uno stato di sonno"
+  },
+  {
+    "termine": "fare la notte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere al lavoro dalla sera alla mattina"
+  },
+  {
+    "termine": "fare la pappa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mangiare"
+  },
+  {
+    "termine": "fare la pelle",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ammazzare una persona"
+  },
+  {
+    "termine": "fare la posta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "controllare qualcosa a qualcuno attendendo la circostanza favorevole per conseguire quanto prefissato"
+  },
+  {
+    "termine": "fare la ronda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare un giro di ispezione effettuato  da due o più soldati capitanati  da un caporale o da un sottufficiale, con funzion"
+  },
+  {
+    "termine": "fare la ruota",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere un comportamento presuntuoso e altezzoso"
+  },
+  {
+    "termine": "fare la scarpetta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "variante di fare scarpetta"
+  },
+  {
+    "termine": "fare la spesa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "comperare cibo da consumare nella propria abitazione"
+  },
+  {
+    "termine": "fare la spia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dire a tutti"
+  },
+  {
+    "termine": "fare la spola",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "muoversi incessantemente da un posto ad un altro"
+  },
+  {
+    "termine": "fare la tara",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ridurre  le dichiarazioni di qualcuno togliendo ciò che pare incredibile"
+  },
+  {
+    "termine": "fare la vita",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "praticare  la prostituzione"
+  },
+  {
+    "termine": "fare largo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "concedere spazio"
+  },
+  {
+    "termine": "fare le barricate",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare un’insurrezione"
+  },
+  {
+    "termine": "fare le carte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "vaticinare il futuro con la cartomanzia"
+  },
+  {
+    "termine": "fare le corna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare all'amore con un partner diverso da quello abituale"
+  },
+  {
+    "termine": "fare le feste",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di cane)'' muovere la coda per contentezza"
+  },
+  {
+    "termine": "fare le fusa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rumoreggiare di un gatto prodotto dalla respirazione, in circostanze particolari, evidenziando in questo modo il suo sta"
+  },
+  {
+    "termine": "fare le lastre",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fotografare una parte interna del corpo"
+  },
+  {
+    "termine": "fare le pulizie",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "togliere lo sporco da un ambiente"
+  },
+  {
+    "termine": "fare le scarpe",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "agire in modo sleale o ingannevole nei confronti di qualcuno  di cui  si fa credere di essere amico al fine di ottenere "
+  },
+  {
+    "termine": "fare le spese",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "subire le ripercussioni di qualcosa fatto in precedenza"
+  },
+  {
+    "termine": "fare le valigie",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "partire"
+  },
+  {
+    "termine": "fare leva",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere una leva a qualcosa per tirarla su  o smuoverla"
+  },
+  {
+    "termine": "fare lezione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendere comprensibile in teoria o in pratica un insegnamento"
+  },
+  {
+    "termine": "fare lo gnorri",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far finta di non capire"
+  },
+  {
+    "termine": "fare lo struzzo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fingere di non vedere questioni spinose per non  tentare di risolverle"
+  },
+  {
+    "termine": "fare luce",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendere spendente"
+  },
+  {
+    "termine": "fare male",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "percepire un  dolore fisico o morale"
+  },
+  {
+    "termine": "fare man bassa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "procurarsi di qualcosa in maniera eccessiva"
+  },
+  {
+    "termine": "fare manichetto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "curvare  un braccio sovrapponendo l’altra mano sulla cavità  del gomito, come comportamento ingiurioso"
+  },
+  {
+    "termine": "fare marchette",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "praticare  la prostituzione"
+  },
+  {
+    "termine": "fare marcia indietro",
+    "registro": "volgare",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rinunciare ad un progetto"
+  },
+  {
+    "termine": "fare mattina",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rimanere desti  fino all’alba"
+  },
+  {
+    "termine": "fare mente locale",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "focalizzare l'attenzione per tentare di tenere a mente o di di rimettere in ordine  le idee concernenti  un tema  ben de"
+  },
+  {
+    "termine": "fare miracoli",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "conseguire effetti strepitosi"
+  },
+  {
+    "termine": "fare monte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "raccogliere in gran quantità"
+  },
+  {
+    "termine": "fare mostra",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "esporre bene"
+  },
+  {
+    "termine": "fare moto",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "esercizio fisico, fare una passeggiata o fare ginnastica ~~ Devi fare' un po' di moto se vuoi dimagrire"
+  },
+  {
+    "termine": "fare naufragio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non avere successo"
+  },
+  {
+    "termine": "fare nero",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "percuotere qualcuno in modo selvaggio"
+  },
+  {
+    "termine": "fare notizia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "provocare impressione"
+  },
+  {
+    "termine": "fare notte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "farsi buio per la notte"
+  },
+  {
+    "termine": "fare numero",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "concorrere ad accrescere il numero"
+  },
+  {
+    "termine": "fare opera di",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "agire  per uno scopo ben preciso"
+  },
+  {
+    "termine": "fare scacco",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "muovere un pezzo o una pedina in modo da poter, al turno seguente, mangiare il Re avversario"
+  },
+  {
+    "termine": "farsi forte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "utilizzare a proprio vantaggio"
+  },
+  {
+    "termine": "farsi largo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "venire avanti allargandosi con i gomiti tra la folla"
+  },
+  {
+    "termine": "farsi scudo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "utilizzare come  difesa"
+  },
+  {
+    "termine": "farsi sentire",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avvalorare con vigore le proprie argomentazioni"
+  },
+  {
+    "termine": "farsi sotto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "candidarsi, in modo particolare per un lavoro"
+  },
+  {
+    "termine": "farsi strada",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "procedere  aprendosi un varco"
+  },
+  {
+    "termine": "farsi suora",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di religiosa)''  pronunciare i voti ed entrare in una congregazione"
+  },
+  {
+    "termine": "farsi uomo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "acquisire essenza umana, in modo particolare  in relazione a Cristo"
+  },
+  {
+    "termine": "farsi vedere",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mostrarsi agli altri"
+  },
+  {
+    "termine": "farsi vivo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di individuo)'' dare informazioni su di sé, in modo particolare  dopo tanto tempo."
+  },
+  {
+    "termine": "fasciato dentato",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "si tratta di un fasciato in cui le fasce sono dentate"
+  },
+  {
+    "termine": "fica",
+    "registro": "volgare",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "frutto del fico"
+  },
+  {
+    "termine": "filare diritto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "compiere tassativamente le proprie incombenze"
+  },
+  {
+    "termine": "forza di volontà",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "decisione e impegno nell'agire ~~ Ha una grande forza di volontà"
+  },
+  {
+    "termine": "forze di polizia",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "apparati e/o reparti militari di stato oppure monarchico-istituzionali"
+  },
+  {
+    "termine": "fosse pure",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "anche solo ~~ Non puoi andartene, fosse pure per un sol giorno"
+  },
+  {
+    "termine": "fulmine di guerra",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "persona rapidissima nel compiere delle azioni."
+  },
+  {
+    "termine": "fuoco",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ordine di sparare ~~ i neandertalaini utilizzavano il fuoco duecentoventottomila anni fa ma non sappiamo se erano anche  in grado di produrlo"
+  },
+  {
+    "termine": "fuori",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "all'esterno ~~ la chiesa era gremita, dovettero restare fuori"
+  },
+  {
+    "termine": "fuori di sé",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che non è in grado di riflettere e di contenersi per una forte arrabbiatura"
+  },
+  {
+    "termine": "fuori fuoco",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "dicesi quando in una fotografia o in un video una o più immagini non sono a fuoco rispetto ad altre invece appunto nitid"
+  },
+  {
+    "termine": "fuori luogo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di affermazione o comportamento inadatti a determinati contesti"
+  },
+  {
+    "termine": "fuori mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "lontano"
+  },
+  {
+    "termine": "fuori moda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "distante dal modo di agire o di vestirsi della parte preponderante di una popolazione"
+  },
+  {
+    "termine": "fuori posto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "avulso dal gruppo in cui si è"
+  },
+  {
+    "termine": "fuori uso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "inutilizzabile perché rovinato"
+  },
+  {
+    "termine": "gergo della strada",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "nella criminalità o per piccoli illeciti, per esempio nello spaccio delle droghe, si tratta di un vero e proprio \"sistem ~~ oggigiorno anche molti ragazzini minorenni sono completamente in balia del gergo della strada quasi fosse una sorta di schiavitù esistenziale"
+  },
+  {
+    "termine": "gettare la spugna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rinunciare a perseguire qualcosa"
+  },
+  {
+    "termine": "gettarsi a pesce",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "intraprendere un'iniziativa con molta euforia"
+  },
+  {
+    "termine": "gioiellino",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "soprattutto nel mondo degli appassionati di motori, soprattutto di automobili, è un'espressione particolarmente riservat ~~ talvolta le case automobilistiche producono dei gioiellini che non sarebbe assolutamente bello non vedere più \"girare\" in città"
+  },
+  {
+    "termine": "grafica d'arte",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "già presso l'Accademia di belle arti anche in Italia, concerne una preparazione specifica con predilezione per lo stesso ~~ <<Un esperto di grafica d'arte è in grado di progettare l'inimmaginabile... ma possibile>>"
+  },
+  {
+    "termine": "grandi opere",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "tutte le infrastrutture in progetto o per cui si sta effettuando il completamento, in genere grazie all'opera per conces ~~ la TAV fa parte delle grandi opere in compimento con processi coordinati, pare adeguati"
+  },
+  {
+    "termine": "grazie",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "come esatto ~~ le proporzioni del sistema solare sono note grazie a Keplero"
+  },
+  {
+    "termine": "grazie mille",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "variante di grazie, utilizzata quando si vuole esprimere particolare gratitudine per la quale il semplice grazie sarebbe"
+  },
+  {
+    "termine": "guadagnarsi il pane",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "procurarsi i mezzi di sostentamento"
+  },
+  {
+    "termine": "guai",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "molti problemi e difficoltà ~~ \"Questa è mia e la sposo io e guai a chi voglia diversamente... ed i guai son guai!\""
+  },
+  {
+    "termine": "guardare a vista",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sorvegliare intensamente"
+  },
+  {
+    "termine": "guardare al microscopio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "prendere in esame qualcosa in modo molto accurato"
+  },
+  {
+    "termine": "guardare di sbieco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "guardare in modo ostile"
+  },
+  {
+    "termine": "guardare di sfuggita",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "guardare in modo da passare inosservato"
+  },
+  {
+    "termine": "guardare di traverso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "guardare con animosità"
+  },
+  {
+    "termine": "guardare in cagnesco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far vedere la propria avversione"
+  },
+  {
+    "termine": "guardare in faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fronteggiare qualcuno  con ardimento"
+  },
+  {
+    "termine": "guida turistica",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "libro con descrizioni di luoghi"
+  },
+  {
+    "termine": "hallo",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "formula di saluto amichevole e familiare usato quando ci si incontra"
+  },
+  {
+    "termine": "in basso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "ch è collocato sotto"
+  },
+  {
+    "termine": "in bolletta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "privo di denaro"
+  },
+  {
+    "termine": "in buona fede",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "senza cattive intenzioni, con innocenza ~~ Io lo facevo in buona fede"
+  },
+  {
+    "termine": "in cantiere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che non è stato a tutt'oggi finito"
+  },
+  {
+    "termine": "in costruzione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che deve essere costruito, che ne è prevista la costruzione"
+  },
+  {
+    "termine": "in disordine",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che appare  in modo poco curato"
+  },
+  {
+    "termine": "in disuso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che è obsoleto"
+  },
+  {
+    "termine": "in fuori",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che viene in avanti"
+  },
+  {
+    "termine": "in genere",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "in generale; generalmente ~~ questa opinione in genere viene accettata da tutti"
+  },
+  {
+    "termine": "in germe",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "appena delineato"
+  },
+  {
+    "termine": "in ghingheri",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "vestito  con eleganza"
+  },
+  {
+    "termine": "in miniatura",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di piccole dimensioni"
+  },
+  {
+    "termine": "in panciolle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sdraiato confortevolmente"
+  },
+  {
+    "termine": "in più",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "che si possiede in aggiunta a quanto già si ha ~~ Ho una lampada in più."
+  },
+  {
+    "termine": "in regola",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "per qualsiasi lavoro legale, non illecito, indica appunto essere a posto con le tasse, quindi con il fisco, ecc ~~ dovrebbero essere tutti in regola... dal principale all'amministratore sino ai dipendenti"
+  },
+  {
+    "termine": "in rilievo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "separato da un contorno"
+  },
+  {
+    "termine": "in riposo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "coricato"
+  },
+  {
+    "termine": "in rovina",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "fatiscente"
+  },
+  {
+    "termine": "in seconda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di secondo grado"
+  },
+  {
+    "termine": "in sé",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "qualcosa per cui la natura della cosa stessa è conosciuta ~~ i maggiori filosofi hanno già rinunciato ad altre definizioni della \"cosa in sé\" infatti non è qualsiasi oggetto conosciuto, percepito, per così dire immaginato"
+  },
+  {
+    "termine": "in uso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che è utilizzato tuttora"
+  },
+  {
+    "termine": "in voga",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di personaggio)''che consegue un buon risultato"
+  },
+  {
+    "termine": "ingannare il tempo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "passare il tempo nel tentativo di non provare noia"
+  },
+  {
+    "termine": "ingoiare il rospo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tollerare un'ingiuria  senza replicare"
+  },
+  {
+    "termine": "innocenza rubata",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "è espressione che suole sottolineare il grave dolore interiore e non soltanto provato nel corso dell'infanzia e talvolta"
+  },
+  {
+    "termine": "insomma",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "in breve ~~ insomma si cambia"
+  },
+  {
+    "termine": "inversamente proporzionale",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di grandezza che aumenta  al diminuire di un'altra"
+  },
+  {
+    "termine": "lasciar andare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non arrestare una persona"
+  },
+  {
+    "termine": "lasciar correre",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dissimulare la vista di qualcosa   di increscioso"
+  },
+  {
+    "termine": "lasciar fare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non interessarsi  del comportamento altrui"
+  },
+  {
+    "termine": "lasciar perdere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non ritenere rilevante"
+  },
+  {
+    "termine": "lasciar stare",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non infastidire"
+  },
+  {
+    "termine": "lasciar vivere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere benevolo"
+  },
+  {
+    "termine": "lasciarsi andare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "diventare meno teso sia dal punto di vista fisico sia da quello mentale"
+  },
+  {
+    "termine": "lavare il capo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "biasimare  duramente"
+  },
+  {
+    "termine": "lavarsene le mani",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "disinteressarsi  completamente"
+  },
+  {
+    "termine": "leccarsi le ferite",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tentare di lenire un insuccesso"
+  },
+  {
+    "termine": "legge di bilancio",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": " ~~ con la legge di bilancio viene valutata anche la condizione del tesoretto"
+  },
+  {
+    "termine": "levare le tende",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare via  affrettatamente"
+  },
+  {
+    "termine": "limite etico-professionale",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "il suo superamento è, senza la necessaria cautela per la sofferenza di uno o più pazienti, la completa distruzione di un ~~ la circoncisione non rientra nella categoria del superamento del limite etico-professionale come lo è invece l'infibulazione"
+  },
+  {
+    "termine": "livello di vita",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "possibilità economico-finanziaria di una o più persone, di una regione, di una città, ecc. generalmente in base al reddi ~~ un buon livello di vita è comunemente associato a serenità nonché a concordia e ciò in parte è vero"
+  },
+  {
+    "termine": "macché",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "Esprime una forte negazione o disapprovazione rispetto a quello che ci viene detto. Si può usare da solo o seguito da un"
+  },
+  {
+    "termine": "magari",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "piuttosto ~~ acquisterò una bella automobile, magari ricorrendo a un prestito"
+  },
+  {
+    "termine": "maledizione",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "forma di imprecazione contro qualcosa o qualcuno con significato di detestare ~~ maledizione, ho lo stomaco vuoto!"
+  },
+  {
+    "termine": "mamma mia",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "in genere spontanea, è esclamazione di stupore e meraviglia... o per spavento o per piacevolezza"
+  },
+  {
+    "termine": "mandare a spasso",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "licenziare qualcuno"
+  },
+  {
+    "termine": "mandare al diavolo",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "liberarsi di qualcuno in modo spiccio, senza rispetto"
+  },
+  {
+    "termine": "mandare fuori",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare uscire"
+  },
+  {
+    "termine": "mandare giù",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "introdurre cibo tramite la bocca nello stomaco"
+  },
+  {
+    "termine": "mandare in fumo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non riuscire in un proposito"
+  },
+  {
+    "termine": "mandare in onda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "diffondere  per radio o per televisione"
+  },
+  {
+    "termine": "mandare in rovina",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far diventare estremamente povero"
+  },
+  {
+    "termine": "mannaggia",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "imprecazione che esprime disappunto, rabbia, contrarietà e simili ~~ mannaggia, ho lasciato a casa le chiavi della macchina..."
+  },
+  {
+    "termine": "masticare amaro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere incazzato, ma non darlo a vedere  reprimendo la propria reazione"
+  },
+  {
+    "termine": "menare le mani",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere brutale"
+  },
+  {
+    "termine": "menare vanto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mostrare compiacimento per se stessi"
+  },
+  {
+    "termine": "merda",
+    "registro": "volgare",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "''(disappunto)'' oh no ~~ Sei una merda!"
+  },
+  {
+    "termine": "mettere a frutto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far rendere"
+  },
+  {
+    "termine": "mettere a fuoco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere a punto una macchina fotografica in modo da conseguire un'immagine chiara"
+  },
+  {
+    "termine": "mettere a morte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "giudicare colpevole di morte"
+  },
+  {
+    "termine": "mettere a nudo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rivelare senza remore o inganni"
+  },
+  {
+    "termine": "mettere a parte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendere esotto"
+  },
+  {
+    "termine": "mettere a posto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rimettere in ordine"
+  },
+  {
+    "termine": "mettere a sacco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "devastare una città conquistata"
+  },
+  {
+    "termine": "mettere a soqquadro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "porre in grandissimo disordine"
+  },
+  {
+    "termine": "mettere al corrente",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare informazioni"
+  },
+  {
+    "termine": "mettere al mondo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far nascere"
+  },
+  {
+    "termine": "mettere al muro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ammazzare tramite fucilazione"
+  },
+  {
+    "termine": "mettere alla porta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "allontanare con risolutezza"
+  },
+  {
+    "termine": "mettere alle corde",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non permettere facoltà di decisione"
+  },
+  {
+    "termine": "mettere alle strette",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "obbligare  a fare qualcosa che preferirebbe scongiurare"
+  },
+  {
+    "termine": "mettere bocca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "immischiarsi senza essere sollecitati"
+  },
+  {
+    "termine": "mettere da parte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non preoccuparsi"
+  },
+  {
+    "termine": "mettere giudizio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "acquisire una determinata serietà"
+  },
+  {
+    "termine": "mettere il bavaglio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "vietare di parlare e di agire volontariamente"
+  },
+  {
+    "termine": "mettere il becco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "immischiatsi in azioni o discorsi di altri"
+  },
+  {
+    "termine": "mettere in atto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere in esecuzione"
+  },
+  {
+    "termine": "mettere in campo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "spiegare in ordine di battaglia o allineare i giocatori in una competizione sportiva"
+  },
+  {
+    "termine": "mettere in condizione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "concedere un'occasione"
+  },
+  {
+    "termine": "mettere in croce",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "affliggere spiritualmente"
+  },
+  {
+    "termine": "mettere in difficoltà",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere qualcuno in imbarazzo"
+  },
+  {
+    "termine": "mettere in disordine",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scompigliare qualcosa"
+  },
+  {
+    "termine": "mettere in disparte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "obbligare qualcuno a stare lontano"
+  },
+  {
+    "termine": "mettere in dubbio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "esaminare con una condotta diffidente"
+  },
+  {
+    "termine": "mettere in guardia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avvisare di un circostanza sfavorevole"
+  },
+  {
+    "termine": "mettere in mostra",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far vedere  in una fiera"
+  },
+  {
+    "termine": "mettere in moto",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "accendere, di solito riferito a mezzi di trasporto ~~ Metti in moto l'auto."
+  },
+  {
+    "termine": "mettere in piazza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far conoscere  a tutti"
+  },
+  {
+    "termine": "mettere in piedi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mettere a punto qualcosa"
+  },
+  {
+    "termine": "mettere in scena",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "allestire una rappresentazione teatrale"
+  },
+  {
+    "termine": "mettere in serbo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "porre da parte"
+  },
+  {
+    "termine": "mettere insieme",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "concentrare in un unico luogo"
+  },
+  {
+    "termine": "mettere le corna",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tradire il proprio marito o la propria moglie"
+  },
+  {
+    "termine": "mettere mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "prendere qualcosa  per adoperarla  per un preciso  motivo"
+  },
+  {
+    "termine": "mettere sotto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di veicolo)'' travolgere una persona"
+  },
+  {
+    "termine": "mettere su",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "preparare quanto è utile per il successo di qualcosa"
+  },
+  {
+    "termine": "mettere su casa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare ad abitare fuori dalla famiglia da cui  si proviene"
+  },
+  {
+    "termine": "mettere su famiglia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "unirsi in matrimonio"
+  },
+  {
+    "termine": "mettersi a letto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "coricarsi particolarmente perché si ha la febbre"
+  },
+  {
+    "termine": "mettersi a posto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ottenere una condizione economica, professionale o  sentimentale discreta"
+  },
+  {
+    "termine": "mettersi in mostra",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "cercare di farsi vedere"
+  },
+  {
+    "termine": "mettersi nei panni",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "identificarsi nella situazione di altri"
+  },
+  {
+    "termine": "mettersi sulla scia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ispirarsi a  qualcuno, prendendolo a modello  o portandone avanti l'opera"
+  },
+  {
+    "termine": "miao",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "termine onomatopeico per indicare il caratteristico verso del gatto, o il suono che esso produce ~~ miao! fece il gatto"
+  },
+  {
+    "termine": "modo di fare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "modo in cui agisce un individuo nei confronti di altri e della cerchia di persone che frequenta"
+  },
+  {
+    "termine": "mordere il freno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere impaziente"
+  },
+  {
+    "termine": "mordere la polvere",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere battuto"
+  },
+  {
+    "termine": "mordersi le mani",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "pentirsi per non aver colto un'occasione"
+  },
+  {
+    "termine": "mordi e fuggi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "fatto con molta fretta"
+  },
+  {
+    "termine": "morire dal ridere",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "divertirsi molto ~~ Morivo dal ridere nel vederli discutere."
+  },
+  {
+    "termine": "morto di fame",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che è indigente"
+  },
+  {
+    "termine": "moto elettrica",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": " ~~ le case nelle gare con moto elettriche utilizzano anche piloti della moto GP"
+  },
+  {
+    "termine": "mucca pazza",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "per un motivo apparentemente inspiegabile, in tutto il globo si è diffuso un “disturbo per la salute” di molte mandrie d ~~ mai vi furono casi di mucca pazza prima di allora"
+  },
+  {
+    "termine": "muro del pianto",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "parte costruita da Re David, è il muro rimasto sin dalla distruzione del Tempio di Gerusalemme, luogo che conteneva il s ~~ la terminologia che descrive il muro del pianto come tale esprime il sentimento del popolo ebraico per la bontà di Dio promessa"
+  },
+  {
+    "termine": "mutare gabbana",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "modificare parere o partito particolarmente per basso interesse"
+  },
+  {
+    "termine": "nevvero",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "forma concentrata di \"non è vero\", utilizzato solitamente nelle frasi interrogative retoriche"
+  },
+  {
+    "termine": "non battere chiodo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non raggiungere i risultati sperati"
+  },
+  {
+    "termine": "non battere ciglio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rimanere imperturbabile"
+  },
+  {
+    "termine": "non numerabile",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "cosa non può essere numerato"
+  },
+  {
+    "termine": "non poterne più",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "non riuscire più a sopportare qualcosa ~~ Non ne posso più delle vostre stupide proteste! Se siete così bravi dipingetevela da voi. la stanza!"
+  },
+  {
+    "termine": "non senza",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "con ~~ Ho svolto il problema non senza difficoltà"
+  },
+  {
+    "termine": "non-vedente",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "cieco. ~~ i non-vedenti imparano soprattutto tramite il tatto"
+  },
+  {
+    "termine": "numero uno",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "il migliore, eccellente, ineguagliabile, anche tra simili; con qualità rare, preziose, talvolta al di là della normalità ~~ \"Si è detto che Eminem è il numero uno... Beh, qualcuno l'ha detto\""
+  },
+  {
+    "termine": "nuvola digitale",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "variante italiana del nome della tecnologia informatica conosciuta come cloud computing"
+  },
+  {
+    "termine": "occhio",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "attenzione ~~ occhio al tram"
+  },
+  {
+    "termine": "oggi come oggi",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "oggigiorno ~~ oggi come oggi c'è una gran corsa agli acquisti migliori"
+  },
+  {
+    "termine": "oibò",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "indica disapprovazione, talvolta anche negazione ~~ io tradire un amico? ohibò me ne guarderei bene"
+  },
+  {
+    "termine": "okay",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "a posto"
+  },
+  {
+    "termine": "open-space",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "spazio unico con più vani o stanze, tra cucina ed una sala o un salotto, talvolta comprendente anche uno studio ~~ cuocendo all'istante, un open-space è ottimo per mangiare assieme ad amici"
+  },
+  {
+    "termine": "or sono",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "Indica a quanto tempo prima risale l'azione. ~~ Ci siamo incontrati due anni or sono."
+  },
+  {
+    "termine": "parlare ai banchi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "insegnare a degli studenti disattenti e disinteressati"
+  },
+  {
+    "termine": "parlare al muro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dare suggerimenti a chi li vuole mettere in pratica"
+  },
+  {
+    "termine": "parlare al vento",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "parlare inutilmente"
+  },
+  {
+    "termine": "parlare bene",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "pronunciarsi in modo favorevole su qualcosa o qualcuno"
+  },
+  {
+    "termine": "parlare chiaro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "parlare in modo intuibile"
+  },
+  {
+    "termine": "parlare italiano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "parlare in modo intuibile"
+  },
+  {
+    "termine": "parlare male",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "raccontare di qualcuno brutti fatti, diffamarlo"
+  },
+  {
+    "termine": "parte intima",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "parte del corpo umano intima rispetto agli indumenti indossati, cioè è di fatto quella più protetta e coperta (non neces"
+  },
+  {
+    "termine": "passare a guado",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "passare da una riva all'altra di un corso d'acqua dove c'è poca profondità"
+  },
+  {
+    "termine": "passare ai posteri",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "di avvenimento o individuo la cui notorietà continuerà per tanto tempo"
+  },
+  {
+    "termine": "passare alla storia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "di avvenimento o individuo la cui notorietà continuerà per tanto tempo"
+  },
+  {
+    "termine": "passare di cottura",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "cuocere per un tempo eccessivo"
+  },
+  {
+    "termine": "passare di mente",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di qualcosa)'' uscire di mente"
+  },
+  {
+    "termine": "passare di moda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non seguire i canoni estetici del momento"
+  },
+  {
+    "termine": "passare il segno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendere eccessivo"
+  },
+  {
+    "termine": "passare in cavalleria",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di qualcosa di stabilito)''  essere scordato"
+  },
+  {
+    "termine": "passare in esame",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "vagliare  con cura"
+  },
+  {
+    "termine": "passare in giudicato",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "acquisire  efficacia finale"
+  },
+  {
+    "termine": "passare in rassegna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "incedere  di fianco   a soldati schierati"
+  },
+  {
+    "termine": "passare in razza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "impiegare un cane o un cavallo per la procreazione quando ha finito di gareggiare"
+  },
+  {
+    "termine": "passare in rivista",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "vagliare con cura"
+  },
+  {
+    "termine": "passare inosservato",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere sfuggito all'attenzione dei presenti"
+  },
+  {
+    "termine": "passare la mano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "particolarmente nel poker scegliere di saltare il giro di carte"
+  },
+  {
+    "termine": "passare la misura",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rendere eccessivo"
+  },
+  {
+    "termine": "passare la notte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "trascorrere la notte, particolarmente in un posto  imprevisto"
+  },
+  {
+    "termine": "passare la stecca",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "finire il servizio militare"
+  },
+  {
+    "termine": "passare la visita",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere soggetto alla visita medica per vedere se si è abili o no per l'esercito"
+  },
+  {
+    "termine": "passare la voce",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far conoscere parlandone un fatto accaduto"
+  },
+  {
+    "termine": "passare le consegne",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "comunicare le istruzioni indispensabili per proseguire  un lavoro"
+  },
+  {
+    "termine": "passare parola",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far conoscere parlandone un fatto accaduto"
+  },
+  {
+    "termine": "passare sopra",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dissimulare  di non vedere qualcosa  di increscioso"
+  },
+  {
+    "termine": "passare sotto silenzio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "evitare di parlare"
+  },
+  {
+    "termine": "passare voce",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far conoscere parlandone un fatto accaduto"
+  },
+  {
+    "termine": "passarla liscia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere capace di sottarsi a  una punizione"
+  },
+  {
+    "termine": "patata dolce",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "patate originarie dell’America Latina, di vari tipi sono appunto particolarmente dolci ~~ sebbene possano essere utilizzate in vari modi, come per una vellutata o come dessert preparate con il cioccolato, “l’insuperabile crema di patata dolce”<ref>[h"
+  },
+  {
+    "termine": "pelle e ossa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che è molto magro"
+  },
+  {
+    "termine": "pensar male",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "anche quando non esternati o resi noti né espressi o manifestati, sono pensieri confusi ed ingiusti, di accusa o critica ~~ dalle fisime al pensar male il passo è breve... senza parlare della conseguente maldicenza"
+  },
+  {
+    "termine": "per di più",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "indica che quanto si sta per dire è l'ultimo elemento di una lunga lista (solitamente di elementi negativi) ~~ Ho passato la giornata a studiare, non ho neanche mangiato e per di più tu arrivi qui e mi dici che l'affitto è raddoppiato."
+  },
+  {
+    "termine": "per estensione",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "se l'espressione non è usata assolutamente, vedi per e estensione ~~ La Norvegia è la prima nazione europea per estensione costiera."
+  },
+  {
+    "termine": "per favore",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "espressione di cortesia ~~ puoi accendere la luce per favore?"
+  },
+  {
+    "termine": "per sé",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "riferimento alla possibilità affinché qualcosa possa \"esprimersi\" e/o compiersi, per modalità ovvero anche attraverso un"
+  },
+  {
+    "termine": "perbacco",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "espressione che indica stupore"
+  },
+  {
+    "termine": "perdere di vista",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sfuggire allo sguardo"
+  },
+  {
+    "termine": "perdere i sensi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "perdere momentaneamente conoscenza per stanchezza"
+  },
+  {
+    "termine": "perdere la bussola",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere infuriato da non contenersi"
+  },
+  {
+    "termine": "perdere la faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere la disistima"
+  },
+  {
+    "termine": "perdere la lingua",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "non essere in grado di pronunciare una parola"
+  },
+  {
+    "termine": "perdere le staffe",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "arrabbiarsi, particolarmente senza essere in grado di dominare le proprie reazioni"
+  },
+  {
+    "termine": "perdiana",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "espressione che indica stupore"
+  },
+  {
+    "termine": "pescare nel torbido",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tentare di approfittare da circostanze biasimevoli"
+  },
+  {
+    "termine": "pestare i piedi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "frapporsi alle iniziativa di qualcuno, intralciandolo"
+  },
+  {
+    "termine": "piantare le tende",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "prendere dimora abusando della generosità di qualcuno"
+  },
+  {
+    "termine": "piegare il capo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ottemperare passivamente ad un comando"
+  },
+  {
+    "termine": "pieno di sé",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "persona parecchio arrogante, sfacciata e ribelle che è pronta a sfidare chiunque prevaricando e cercando di incutere tim ~~ è meschino e pieno di sé"
+  },
+  {
+    "termine": "piovere sul bagnato",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere fortunato nonostante non se ne abbia bisogno"
+  },
+  {
+    "termine": "play",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "nel  tennis, avviso del battitore prima di cominciare il gioco ~~ schiacciare il play per sentire una canzone"
+  },
+  {
+    "termine": "poffarbacco",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "esprime meraviglia ~~ poffarbacco, quanto piove!"
+  },
+  {
+    "termine": "poffare",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "esprime meraviglia e significa: è mai possibile? può mai essere? ~~ poffare il mondo!"
+  },
+  {
+    "termine": "politica-politicante",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "quando si suole parlare senza obiettivi né motivi significativi e poco influenti, anzi spesso in modo dannoso ~~ cinismo e politica-politicante..."
+  },
+  {
+    "termine": "politicamente corretto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "(''riferito al linguaggio'')  giusto dal punto di vista politico, che tiene conto delle libertà di gruppi sociali meno f"
+  },
+  {
+    "termine": "politicamente scorretto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che non si attiene a principi di correttezza dal punto di vista politico, e che non tiene conto delle libertà di gruppi "
+  },
+  {
+    "termine": "portale",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "porta alcune cose o persone nominate in precedenza ~~ Aiutami con queste borse pesanti: portale tu in auto"
+  },
+  {
+    "termine": "portali",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "porta alcune cose o persone nominate in precedenza"
+  },
+  {
+    "termine": "portare a casa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ottenere lavorando"
+  },
+  {
+    "termine": "portare aiuto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "intervenire  tempestivamente in una circostanza imprevista"
+  },
+  {
+    "termine": "portare alle stelle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "osannare con lodi sperticate"
+  },
+  {
+    "termine": "portare sugli scudi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "osannare con lodi sperticate"
+  },
+  {
+    "termine": "portare via",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "allontanare da un locale"
+  },
+  {
+    "termine": "portoghese brasiliano",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "variante del portoghese parlato in Brasile"
+  },
+  {
+    "termine": "povero in canna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "senza denaro"
+  },
+  {
+    "termine": "prego",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "usato per rispondere gentilmente ad un ringraziamento ~~ affermazione: «Grazie per il suo aiuto»"
+  },
+  {
+    "termine": "prendere a calci",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "comportarsi male con qualcuno, in modo particolare indirizzandoglisi con ingiurie"
+  },
+  {
+    "termine": "prendere a cuore",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "occuparsi di un problema altrui"
+  },
+  {
+    "termine": "prendere corpo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "diventare consistente ~~ sta per prendere corpo l'ipotesi di un trasferimento all'esterno"
+  },
+  {
+    "termine": "prendere di petto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "trattare subito con risolutezza"
+  },
+  {
+    "termine": "prendere fuoco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "attecchire fuoco"
+  },
+  {
+    "termine": "prendere il largo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di natante)''  andare lontano dal litorale"
+  },
+  {
+    "termine": "prendere il mare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di natante)'' staccarsi   dalla  costa e andare verso il mare aperto"
+  },
+  {
+    "termine": "prendere il velo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di religiosa)''  pronunciare i voti ed entrare in una congregazione"
+  },
+  {
+    "termine": "prendere il volo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di uccello, aereo)''  staccarsi da terra"
+  },
+  {
+    "termine": "prendere in castagna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "cogliere in errore"
+  },
+  {
+    "termine": "prendere in considerazione",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "considerare qualcosa ~~ -Attenzione, lui conosce i tuoi punti deboli!- -Lo prenderò in considerazione"
+  },
+  {
+    "termine": "prendere in giro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare oggetto di satira"
+  },
+  {
+    "termine": "prendere l'abito",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "diventare prete o suora"
+  },
+  {
+    "termine": "prendere la parola",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "partecipare pubblicamente ad un confronto dialettico"
+  },
+  {
+    "termine": "prendere marito",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "unirsi in matrimonio"
+  },
+  {
+    "termine": "prendere moglie",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "unirsi in matrimonio"
+  },
+  {
+    "termine": "prendere nota",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scrivere come annotazione"
+  },
+  {
+    "termine": "prendere piede",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "imporsi o circolare  in modo rilevante"
+  },
+  {
+    "termine": "prendere quota",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di aereo)'' staccarsi da terra"
+  },
+  {
+    "termine": "prendere sonno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "iniziare a dormire"
+  },
+  {
+    "termine": "prendere un granchio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ingannarsi nel vagliare o nell'esprimere giudizio"
+  },
+  {
+    "termine": "prendersi la rivincita",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "in genere viene detto quando si ha un successo, soprattutto dopo molte difficoltà; risulta però espressione ambigua quan ~~ col nuovo lavoro ha detto di essersi preso la rivincita sui suoi vecchi colleghi"
+  },
+  {
+    "termine": "presidente della repubblica",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "capo dello Stato e riferimento politico sia per i rappresentanti di governo sia per i cittadini ~~ il Presidente della Repubblica italiana è Sergio Mattarella"
+  },
+  {
+    "termine": "presidente emerito",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "chi è stato Presidente della Repubblica, quindi dopo non più in carica ~~ Napolitano è Presidente emerito della repubblica italiana"
+  },
+  {
+    "termine": "prestare attenzione",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "ascoltare con attenzione"
+  },
+  {
+    "termine": "prezzo pieno",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "seppur onestamente, significa vendere al prezzo massimo qualcosa secondo il suo valore reale ~~ \"Se tu vorrai, potrei venderti la mia auto al prezzo pieno di 14.000,00 euro: è una cabrio. Altrimenti... vediamo un po'. Ok?\""
+  },
+  {
+    "termine": "pronto",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "di persona o cosa che verifichi le precondizioni per fare qualcosa, o il cui transitorio si sia esaurito ~~ la cena è pronta, sono pronto per andare al cinema"
+  },
+  {
+    "termine": "proprio",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "che ha valore reale, veridico ~~ il movimento rappresenta un vero e proprio farmaco per il paziente iperteso e per questo deve essere fatto possibilmente tutti i giorni della settimana"
+  },
+  {
+    "termine": "prosit",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "augurio fatto prima di un brindisi  ai commensali; augurio rivolto al celebrante dopo la celebrazione della messa"
+  },
+  {
+    "termine": "pugilatori",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "'''frattura dei pugilatori''': ovvero, dei metacarpi"
+  },
+  {
+    "termine": "pugnalare alla schiena",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tradire le fiducia di qualcuno"
+  },
+  {
+    "termine": "pugnalare alle spalle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tradire le fiducia di qualcuno"
+  },
+  {
+    "termine": "punto debole",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "parte più sensibile o più o meno maggiormente soggetta a pericolo ~~ il suo punto debole è nelle scapole della schiena"
+  },
+  {
+    "termine": "questioni di cuore",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "che riguarda innamoramenti tra giovani ragazzi e ragazze o, detto con affetto e senza troppa malizia, tra ragazzini e ra ~~ Con un sorriso consapevole, il padre disse al vecchio amico incuriosito e proprio durante l'inizio della serata: \"Questioni di cuore...\" Poi con tono di voce al"
+  },
+  {
+    "termine": "quinta essenza",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "oltre i 4 elementi, la cui sapienza è comunemente nota in taluni testi cosiddetti alchemici, di metafisica o di \"approfo"
+  },
+  {
+    "termine": "reddito di inclusione",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "alla luce dei finanziamenti statali e non, secondo le varie amministrazioni politiche, è l'opportunità offerta per agevo ~~ il reddito di inclusione introdotto dal governo italiano ha sostituito il sostegno per l'inclusione attiva e l'assegno di disoccupazione"
+  },
+  {
+    "termine": "reggere il moccolo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere il terzo incomodo tra due amanti"
+  },
+  {
+    "termine": "rendere onore",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "approvare  l'azione degna di lode  di qualcuno"
+  },
+  {
+    "termine": "rientrare in sé",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "calmarsi dopo un'incazzatura"
+  },
+  {
+    "termine": "rigare diritto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "agire  in modo impeccabile"
+  },
+  {
+    "termine": "rigare dritto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "agire  in modo impeccabile"
+  },
+  {
+    "termine": "rincarare la dose",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "esasperare un rimbrotto"
+  },
+  {
+    "termine": "riprendere conoscenza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rinvenire prendendo nuovamente la consapevolezza di se stessi"
+  },
+  {
+    "termine": "ripresa economica",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "massima espressione di macroeconomia e di ogni piccolo o grande sistema dei mercati per stimolare ottimisticamente ancor ~~ con il cessare delle ostilità belliche, la ripresa economica è un'ovvia naturale conseguenza"
+  },
+  {
+    "termine": "rompere i timpani",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stordire  con un suono  fortissimo  e irritante"
+  },
+  {
+    "termine": "rompere il ghiaccio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "iniziare una relazione sociale tra persone od organizzazioni, rompendo la timidezza iniziale"
+  },
+  {
+    "termine": "rompere l'anima",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "infastidire qualcuno"
+  },
+  {
+    "termine": "rompere la faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "picchiare duramente"
+  },
+  {
+    "termine": "rompere la testa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "malmenare duramente"
+  },
+  {
+    "termine": "rompersi i denti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "finire per essere molto avvilito"
+  },
+  {
+    "termine": "rompersi il collo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "farsi parecchio male, in modo particolare piombando a terra"
+  },
+  {
+    "termine": "rompersi le corna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "finire per essere molto avvilito"
+  },
+  {
+    "termine": "rovinare la piazza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "nuocere al buon nome di qualcuno"
+  },
+  {
+    "termine": "salsa rosa",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "crema costituita da un composto a base di panna, ketchup, talvolta aceto e/o persino un liquore; alcuni vi aggiungono un ~~ molto apprezzati anche i condimenti per insalata con salsa rosa"
+  },
+  {
+    "termine": "saltare addosso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "assalire una persona, particolarmente per motivi sessuali"
+  },
+  {
+    "termine": "saltare agli occhi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scagliarsi, anche a parole, contro qualcuno"
+  },
+  {
+    "termine": "saltare fuori",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di qualcosa)'' manifestarsi improvvisamente"
+  },
+  {
+    "termine": "saltare il fosso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare una scelta decisa e improvvisa"
+  },
+  {
+    "termine": "salute",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "stato psicofisico di un essere vivente ~~ per la salute del cuore è importante anche la dieta"
+  },
+  {
+    "termine": "salvare la faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere capace, nell'eventualità di uno smacco a mantenere intatto l'apprezzamento che gli altri hanno di noi stessi"
+  },
+  {
+    "termine": "salvare le apparenze",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "far sembrare meno deplorevole di quanto lo sia, l'esito negativo di qualcosa per non  restare privo  dell'apprezzamento "
+  },
+  {
+    "termine": "saperci fare",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere preparato"
+  },
+  {
+    "termine": "sarà",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "accettazione dubbiosa ~~ Lui è posseduto dal Demonio! Sarà, ma è meglio che resti a letto..."
+  },
+  {
+    "termine": "sbattere in faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "affermare palesemente qualcosa di molto spiacevole per offendere  o lamentarsi"
+  },
+  {
+    "termine": "scacco doppio",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "scacco compiuto contemporaneamente da due pezzi diversi."
+  },
+  {
+    "termine": "scaldare il posto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere al lavoro o scuola, senza essere coinvolto e senza alcuna curiosità"
+  },
+  {
+    "termine": "scaldare la sedia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere al lavoro o scuola, senza essere coinvolto e senza alcuna curiosità"
+  },
+  {
+    "termine": "scherzetto",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "espressione scherzosa ed un poco irriverente rivolta a chi è comunque colpevole, simile a: \"chi la fa l'aspetti\" ~~ scherzetto! ...paurina, eh!"
+  },
+  {
+    "termine": "scoprire gli altarini",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "svelare pubblicamente le notizie riservate di qualcuno"
+  },
+  {
+    "termine": "scritto in faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di caratteristica della propria personalità)'' che è subito tangibile guardando in faccia l'interlocutore"
+  },
+  {
+    "termine": "semi-militare",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "relativo ad abbigliamento alla moda attuale, per esempio con capi, calzature e talvolta accessori appunto di uso comune  ~~ i pantaloni semi-militari della Helikon Tex sono parecchio belli"
+  },
+  {
+    "termine": "seminare nella sabbia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare qualcosa di inefficace"
+  },
+  {
+    "termine": "senza che",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "in modo che non ~~ Se ne andò senza che lo vedessi"
+  },
+  {
+    "termine": "senza confronto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che non si può paragonare"
+  },
+  {
+    "termine": "senza precedenti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "mai accaduto prima"
+  },
+  {
+    "termine": "senza pretese",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di ristorante)'' di qualità medio bassa"
+  },
+  {
+    "termine": "sesto senso",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "benché poi, a cose fatte, si debba ripetere quanto segue, è la prima percezione che si ha di qualcuno non affidabile, an ~~ \"Alcune dicono che tutte le donne lo hanno ma, io dico... e senza equivoci o malintesi: non sono donna ed ho il sesto senso e come me molti altri uomini\""
+  },
+  {
+    "termine": "sia pure",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ammettiamo pure ~~ Vuoi smettere di lavorare, sia pure, ma con che soldi vivrai?"
+  },
+  {
+    "termine": "snowboard cross",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "sport invernale olimpico, maschile o femminile, è una gara sportiva con snowboard effettuata da più atleti assieme lungo"
+  },
+  {
+    "termine": "soffiare sul fuoco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "riaccendere una fiamma emettendo aria dai polmoni"
+  },
+  {
+    "termine": "sopra il tutto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "sul tutto"
+  },
+  {
+    "termine": "sotto pressione",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che si prova a pressione superiore a quella atmosferica ~~ inconsapevolmente alcuni sotto pressione potrebbero dire cose indirizzandole in modo erroneo, cioè quasi scambiando una persona per un'altra"
+  },
+  {
+    "termine": "sotto stress",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "essere quasi esausti per fatica, stanchezza o sonnolenza e, malgrado ciò, dover continuare, dover resistere in modo pres"
+  },
+  {
+    "termine": "spaccare il minuto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere molto tempestivo"
+  },
+  {
+    "termine": "spaccare la faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "malmenare con violenza"
+  },
+  {
+    "termine": "sparare alla cieca",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "indica il momento più critico per un militare, ovvero il \"termine forzato\" di un conflitto a fuoco, quando cioè vengono  ~~ quando si decide di sparare alla cieca ci si ritrova come soli \"faccia a faccia\" con sé stesso"
+  },
+  {
+    "termine": "spinato allargato",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "scanalato"
+  },
+  {
+    "termine": "sputare sentenze",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fornire  pareri anche quando non cercati"
+  },
+  {
+    "termine": "stampato in fronte",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "''(di caratteristica della propria personalità)'' che è subito tangibile guardando in faccia l'interlocutore"
+  },
+  {
+    "termine": "stanco morto",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che è spossato dalla fatica ~~ Sono stanco morto!"
+  },
+  {
+    "termine": "star per",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "indica l'imminenza dell'azione ~~ Quello che sto per dirti, non ti piacerà."
+  },
+  {
+    "termine": "stare alle calcagna",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare dietro a qualcuno di soppiatto per cercare di scoprirne i movimenti"
+  },
+  {
+    "termine": "stare attento",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scrutare, stare a sentire con molta concentrazione"
+  },
+  {
+    "termine": "stare dietro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "rivolgere cortesie a qualcuno  per ottenerne benefici amorosi"
+  },
+  {
+    "termine": "stare in guardia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere un comportamento difensivo"
+  },
+  {
+    "termine": "stare in piedi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di argomentazione)'' essere logica"
+  },
+  {
+    "termine": "stare per",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "indica l'imminenza dell'azione ~~ quello che sto per dirti, non ti piacerà"
+  },
+  {
+    "termine": "stare sulle sue",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "comportarsi in modo asociale"
+  },
+  {
+    "termine": "stati membri",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "con riferimento all'UE, essi sono: Austria, Belgio, Bulgaria, Cipro, Croazia, Danimarca, Estonia, Finlandia, Francia, Ge"
+  },
+  {
+    "termine": "stato di calamità",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "condizione con gravi danni pubblici e privati per effetto di fenomeni quali frane, forti nevicate, alluvioni, ecc in par ~~ \"Le mareggiate sono riconosciute nello stato di calamità?\""
+  },
+  {
+    "termine": "stop",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "alt"
+  },
+  {
+    "termine": "strabuzzare gli occhi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "aprire gli occhi in modo tale che sembrano uscire dalle orbite, per terrore o meraviglia"
+  },
+  {
+    "termine": "stralunare gli occhi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "aprire gli occhi per la meraviglia, per un inaspettata indisposizione o per una intensa emozione"
+  },
+  {
+    "termine": "strano",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "di persona, fatto o cosa che si manifesta in atteggiamenti o forme non abituali ~~ lo strano è quella volta in cui non ho ricordato il percorso che avevo sempre fatto"
+  },
+  {
+    "termine": "stringere i denti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sopportare una fatica o perseverare in una prova"
+  },
+  {
+    "termine": "stringere i tempi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "affrettare la fine  di qualcosa"
+  },
+  {
+    "termine": "stringersi nelle spalle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "manifestare indifferenza"
+  },
+  {
+    "termine": "succhiare la ruota",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "stare a ruota per andare più veloce utilizzando la minore  resistenza dell’aria"
+  },
+  {
+    "termine": "suvvia",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "sollecito che denota nervosismo"
+  },
+  {
+    "termine": "sveglia",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "esortazione a capire o darsi da fare"
+  },
+  {
+    "termine": "tagliare la corda",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "andare via anzitempo, in modo particolare per evitare un'incombenza spiacevole"
+  },
+  {
+    "termine": "tagliare la faccia",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di vento)'' essere così forte e penetrante da far sentire il viso come se fosse tagliato"
+  },
+  {
+    "termine": "talmud-torah",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "Talmud-Torah o '''Talmud Torah''', è lo studio biblico ebraico insegnato ai giovani ed ai giovanissimi ebrei presso le s ~~ \"Figlio mio, vai al Talmud-Torah ogni tanto\""
+  },
+  {
+    "termine": "tenere a distanza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "precludere a qualcuno la possibilità di iniziare una relazione personale o cordiale"
+  },
+  {
+    "termine": "tenere a freno",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "proporsi di tenere dentro di  sé il proprio pensiero"
+  },
+  {
+    "termine": "tenere banco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "spiccare per facilità di parola in uno scambio di idee"
+  },
+  {
+    "termine": "tenere duro",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "sopportare circostanze avverse"
+  },
+  {
+    "termine": "tenere in serbo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "porre da parte"
+  },
+  {
+    "termine": "tenere testa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fronteggiare e reagire in modo valido a qualcuno o anche a qualcosa senza  lasciarsi soggiogare"
+  },
+  {
+    "termine": "termine di paragone",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "individuo con cui suole avvenire un confronto ~~ talvolta ci sono prove perché si dia il buon esempio attraverso un pessimo termine di paragone"
+  },
+  {
+    "termine": "terra cotta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "variante di terracotta"
+  },
+  {
+    "termine": "terra santa",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "data “l’importanza particolare” di Gerusalemme, è tutto il territorio che comprende i luoghi descritti nella bibbia; que"
+  },
+  {
+    "termine": "terzo settore",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "principalmente con attività di volontariato, in assistenza ma anche \"svago\", il cosiddetto terzo settore è comunque impe"
+  },
+  {
+    "termine": "timorato di dio",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che venera Dio e ha paura di ingiuriarlo e pertanto si sottomette al suo volere"
+  },
+  {
+    "termine": "tirare avanti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "condurre una vita povera e piena di stenti"
+  },
+  {
+    "termine": "tirare fuori",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "levare fuori"
+  },
+  {
+    "termine": "tirare il collo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "accoppare, in modo particolare, il pollame,  attorcigliando il collo"
+  },
+  {
+    "termine": "tirare in ballo",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "coinvolgere qualcuno in qualcosa"
+  },
+  {
+    "termine": "tirare le fila",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tentare di porre fine a una controversia"
+  },
+  {
+    "termine": "tirare le somme",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare il punto su un dibattitto"
+  },
+  {
+    "termine": "tirare su",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "tirare qualcosa verso l'alto"
+  },
+  {
+    "termine": "tiro ad effetto",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "nello sport del calcio è un colpo dato al pallone in modo che questo assuma una traiettoria non proprio lineare, anzi ap ~~ Del Piero è conosciuto soprattutto per i suoi tiri ad effetto su punizione"
+  },
+  {
+    "termine": "top gamma",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "o anche '''top di gamma''', dicesi di prodotto migliore della sua categoria, per esempio modelli speciali quindi più pre ~~ le auto top di gamma sono più potenti ed hanno una carrozzeria e rifiniture più sportive"
+  },
+  {
+    "termine": "tra due fuochi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "di fronte ad ostacoli opposti"
+  },
+  {
+    "termine": "tra i piedi",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "*"
+  },
+  {
+    "termine": "tutto dire",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "(''ironico'') e con questo tutto è chiaro (sappiamo cosa ne consegue) ~~ Sta facendo i compiti, il che è tutto dire"
+  },
+  {
+    "termine": "uffa",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "esprime forte noia, frustrazione o qualsiasi altro sentimento negativo"
+  },
+  {
+    "termine": "un cazzo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "detto per esprimere un netto rifiuto ~~ \"Dammi 50 euro e ti ridò la tua macchina\" \"un cazzo! Facciamo così, tu mi ridai la macchina ed io non ti uccido!\""
+  },
+  {
+    "termine": "un mondo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "In modo assoluto ~~ Mi sono divertito un mondo."
+  },
+  {
+    "termine": "un tempo",
+    "registro": "comune",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "anticamente, in/nel passato ~~ un tempo non esistevano tutte le comodità di oggi"
+  },
+  {
+    "termine": "una tantum",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "che avviene una sola volta"
+  },
+  {
+    "termine": "uomo d'onore",
+    "registro": "colloquiale",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "chi è affiliato alla mafia"
+  },
+  {
+    "termine": "urca",
+    "registro": "colloquiale",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "espressione con riferimento a qualcosa di inaspettato, talvolta esagerato oltre il normale sentire, al di là di quanto s ~~ \"urca, che macchina!\""
+  },
+  {
+    "termine": "usa e getta",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-aggettivali",
+    "senso_fonte": "detto di qualcosa che può essere utilizzato una sola volta prima di essere buttato ~~ ogni relazione usa e getta cancella definitivamente l'interezza delle famiglie"
+  },
+  {
+    "termine": "uscire dai binari",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "scostarsi da un comportamento concordato o generalmente ammesso"
+  },
+  {
+    "termine": "uscire di mente",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "''(di qualcosa)''  essersi  scordato"
+  },
+  {
+    "termine": "vaffanculo",
+    "registro": "volgare",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "insulto duro, come dire \"vattene\", esortazione a smettere e andarsene ~~ ma vaffanculo, va!"
+  },
+  {
+    "termine": "vale",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "saluto di commiato; ~~ «Attenderò chi dicami | \"Vale\" passando» Giuseppe Parini: Per l'inclita Nice, v.119-120 in Odi."
+  },
+  {
+    "termine": "vedere le stelle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere un dolore lancinante"
+  },
+  {
+    "termine": "vedere rosa",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere  speranzoso"
+  },
+  {
+    "termine": "vedere rosso",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "essere parecchio adirato"
+  },
+  {
+    "termine": "veloce",
+    "registro": "colloquiale",
+    "fonte": "wikt-espressioni",
+    "senso_fonte": "ratto e presto nel moto; cosa o persona in cui il rapporto ''spazio percorso'' fratto ''tempo impiegato'' (cioè la formu ~~ la Ferrari è l'auto più veloce"
+  },
+  {
+    "termine": "venire a conoscenza",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "avere informazioni"
+  },
+  {
+    "termine": "venire a patti",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "fare un compromesso"
+  },
+  {
+    "termine": "venire su",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "spingersi in alto dove si trova o  sta andando qualcuno"
+  },
+  {
+    "termine": "vivaddio",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "rafforzativo per una frase (ad uso piuttosto aulico)"
+  },
+  {
+    "termine": "vivere alle spalle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "farsi sostentare"
+  },
+  {
+    "termine": "voler bene",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "provare affetto per ~~ Marco vuole bene alla sua mamma"
+  },
+  {
+    "termine": "voler dire",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "significare ~~ Cosa vuol dire to mean in inglese?"
+  },
+  {
+    "termine": "volgere le spalle",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "correre via"
+  },
+  {
+    "termine": "voltare casacca",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "mutare parere o partito particolarmente  per basso interesse"
+  },
+  {
+    "termine": "voltare gabbana",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "modificare parere o partito particolarmente per basso interesse"
+  },
+  {
+    "termine": "vuotare il sacco",
+    "registro": "comune",
+    "fonte": "wikt-locuzioni-verbali",
+    "senso_fonte": "dire ciò che si conosce senza riluttanza"
+  },
+  {
+    "termine": "zitto",
+    "registro": "comune",
+    "fonte": "wikt-interiezioni",
+    "senso_fonte": "che non parla"
+  }
+]

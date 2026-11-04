@@ -24,8 +24,6 @@ import urllib.request
 
 UA = "Mozilla/5.0 (compatibile; raccolta lemmi; +https://pornovirtuale.com)"
 QUI = os.path.dirname(os.path.abspath(__file__))
-USCITA = os.path.join(QUI, "lessico-grezzo.json")
-SCARTI = os.path.join(QUI, "lessico-scartati.txt")
 
 FONTI = [
     {
@@ -72,6 +70,22 @@ FONTI = [
         "tipo": "h2",          # "## Termine" seguito dal paragrafo
         "registro": "tecnico",
     },
+]
+
+# Italiano comune: espressioni, interiezioni, locuzioni. Niente volgarità.
+FONTI_COMUNE = [
+    {"id": "wikt-espressioni", "url": "https://it.wiktionary.org/wiki/Categoria:Espressioni_in_italiano",
+     "licenza": "CC BY-SA 4.0 (it.wiktionary, attribuzione)", "tipo": "wiktionary",
+     "categoria": "Categoria:Espressioni in italiano", "registro": "comune"},
+    {"id": "wikt-interiezioni", "url": "https://it.wiktionary.org/wiki/Categoria:Interiezioni_in_italiano",
+     "licenza": "CC BY-SA 4.0 (it.wiktionary, attribuzione)", "tipo": "wiktionary",
+     "categoria": "Categoria:Interiezioni in italiano", "registro": "comune"},
+    {"id": "wikt-locuzioni-verbali", "url": "https://it.wiktionary.org/wiki/Categoria:Locuzioni_verbali_in_italiano",
+     "licenza": "CC BY-SA 4.0 (it.wiktionary, attribuzione)", "tipo": "wiktionary",
+     "categoria": "Categoria:Locuzioni verbali in italiano", "registro": "comune"},
+    {"id": "wikt-locuzioni-aggettivali", "url": "https://it.wiktionary.org/wiki/Categoria:Locuzioni_aggettivali_in_italiano",
+     "licenza": "CC BY-SA 4.0 (it.wiktionary, attribuzione)", "tipo": "wiktionary",
+     "categoria": "Categoria:Locuzioni aggettivali in italiano", "registro": "comune"},
 ]
 
 # termini che hunspell non conosce ma che sono italiani e vivi
@@ -263,6 +277,8 @@ def normalizza(testa):
             continue
         if len(p.split()) > 3:
             continue
+        if re.search(r"\d", p) or len(re.sub(r"[^a-zàèéìòù]", "", p)) < 4:
+            continue
         buoni.append(p)
     return buoni
 
@@ -282,11 +298,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fonte", action="append")
     ap.add_argument("--mostra", type=int, default=20)
+    ap.add_argument("--gruppo", choices=["erotico", "comune"], default="erotico",
+                    help="erotico (volgare/sessuale) oppure comune (italiano normale)")
     args = ap.parse_args()
+
+    fonti = FONTI if args.gruppo == "erotico" else FONTI_COMUNE
+    suffisso = "" if args.gruppo == "erotico" else "-comune"
+    USCITA = os.path.join(QUI, f"lessico-grezzo{suffisso}.json")
+    SCARTI = os.path.join(QUI, f"lessico-scartati{suffisso}.txt")
 
     voci = {}
     scartati = []
-    for fonte in FONTI:
+    for fonte in fonti:
         if args.fonte and fonte["id"] not in args.fonte:
             continue
         print(f"→ {fonte['id']}: {fonte['url']}")
@@ -306,6 +329,9 @@ def main():
             # forme flesse e voci vuote non servono in chat
             if not senso or re.match(r"^(plurale|femminile|maschile|participio|voce|"
                                      r"congiuntivo|indicativo|gerundio|comparativo)\b", senso, re.I):
+                continue
+            # roba da manuale, non da chat
+            if re.search(r"(araldic|blason|attributo araldico|stemma|merlatur)", senso, re.I):
                 continue
             for parola in normalizza(testa):
                 if parola in voci:
@@ -334,7 +360,7 @@ def main():
         with open(percorso_fonti, "w", encoding="utf-8") as f:
             f.write("# Fonti del lessico\n\n| fonte | url | licenza | lemmi |\n|---|---|---|---|\n")
     with open(percorso_fonti, "a", encoding="utf-8") as f:
-        for fonte in FONTI:
+        for fonte in fonti:
             if args.fonte and fonte["id"] not in args.fonte:
                 continue
             if fonte["id"] in conteggi:

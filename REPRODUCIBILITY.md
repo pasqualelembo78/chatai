@@ -830,3 +830,14 @@ tua destra, "inalato il profumo" → annusato.
   Rispetto ai 69 iniziali, cinque volte tanto e con esempi reali al seguito.
 - Nota: il registro della categoria è più largo del vero (contiene anche parole non volgari,
   es. "adirarsi"); servirà un passaggio di pulizia a mano.
+
+## 65) Stessa raccolta per l'italiano comune (2026-11-04)
+- `estrai_lessico.py --gruppo comune`: quattro categorie it.wiktionary (espressioni, interiezioni,
+  locuzioni verbali e aggettivali in italiano). Output separato `lessico-grezzo-comune.json`, così
+  non si mescola col lessico erotico.
+- Filtri aggiunti: via araldica (attributo araldico, blasone, stemma), via voci con numeri o sigle.
+- Esito: **957 lemmi** (610 locuzioni verbali, 180 espressioni, 100 locuzioni aggettivali,
+  67 interiezioni), 77 scartati. Esempi utili: "fare il pappagallo", "venire a patti",
+  "pugnalare alla schiena", "fare l'indiano", "in germe".
+- Rumore residuo: locuzioni letterali ("prendere il mare", "fare leva") e qualche sintagma
+  nominale non idiomatico ("crema pasticcera"): servirà un passaggio di qualificazione.
