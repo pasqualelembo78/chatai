@@ -1095,3 +1095,13 @@ Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 
   `Chatterbot` nell'articolo sui difetti delle chat e `Diritto d'autore` in `/personaggi-inventati/`,
   dentro frasi che spiegano, non come link appesi.
 - Ricontrollo link interni: 0 rotti su 3.612. Esterni: 0 morti.
+
+## 87) Link esterni in nofollow automatico (2026-11-05)
+- mu-plugin `pv-nofollow.php`: aggiunge `rel="nofollow noopener"` a ogni link esterno nei contenuti
+  e negli excerpt, sia al salvataggio (`wp_insert_post_data`) sia in uscita (`the_content`). I link
+  interni non vengono toccati; un rel già presente viene completato, non sostituito.
+- Applicato anche ai contenuti esistenti (articolo 3246 e pagina 3219): verificato che le pagine
+  servano il rel.
+- Regola scritta in `backlink.txt`: ogni articolo porta uno o due link esterni utili, dentro frasi
+  che spiegano; il nofollow è automatico, non a mano.
+- mu-plugin salvato nel repo (`wordpress-plugin/mu-plugins/`) e nello zip sotto il percorso reale.

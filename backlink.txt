@@ -160,3 +160,11 @@ RISULTATO DELLA PROVA AUTOMATICA (5 novembre 2026)
   Conclusione: le directory italiane "gratis e senza scambio" sono vecchie e quasi tutte con
   captcha. L'invio automatico resta possibile solo se un sito lo consente davvero; gli script sono
   pronti (pubblica_directory.py) ma il grosso va fatto a mano, una volta creati gli account.
+
+
+LINK ESTERNI NEGLI ARTICOLI (regola)
+  Ogni articolo pubblicato mette uno o due link esterni utili (fonti verificabili: Wikipedia,
+  Treccani, documentazione), dentro una frase che spiega qualcosa.
+  Il rel="nofollow noopener" viene messo in automatico dal mu-plugin pv-nofollow.php:
+  sia al salvataggio sia in uscita, quindi vale anche per gli articoli programmati.
+  I link interni restano normali.
