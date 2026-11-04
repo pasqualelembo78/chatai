@@ -31,6 +31,16 @@ SEGNALI_EROTICO = (
     "seno", "sedere", "natica", "coscia", "capezzol", "erezione", "fellatio", "cunnilingus",
     "parafili", "fetic", "bdsm", "bondage", "dominazione", "sottomission", "voyeur", "porn",
 )
+# non dicono "sesso" ma si usano in un discorso erotico o ammiccante
+SEGNALI_USO = ("volgare", "colloquiale", "gergale", "familiare", "popolare", "scherzoso",
+               "ironico", "dispregiativo", "figurato", "traslato", "sessuale")
+# nucleo di parole che restano comunque: sono il cuore del registro
+NUCLEO = {
+    "figo", "figa", "bombare", "rompicoglioni", "pippe mentali", "celibato", "effeminato",
+    "buggerare", "cazzata", "cazzone", "puttanata", "troiaio", "sveltina", "pompino",
+    "bocchino", "sega", "pippa", "ditalino", "sborra", "sborrare", "scopare", "inculare",
+    "cazzo", "culo", "tette", "palle", "coglioni", "mignotta", "zoccola", "puttana",
+}
 # roba vera ma che in chat non entra
 FUORI_CONTESTO = (
     "araldic", "blason", "stemma", "merlatur", "nautic", "marinar", "natante", "vela",
@@ -71,7 +81,7 @@ def qualifica(gruppo, voci, revisione=None):
 
         if not termine or not senso:
             utile, motivo = False, "senza termine o senza definizione"
-        elif len(senso) < 12:
+        elif len(senso) < 8:
             utile, motivo = False, "definizione troppo corta"
         elif re.search(r"^(plurale|femminile|maschile|participio|voce|variante|sinonimo)\b", senso, re.I):
             utile, motivo = False, "forma flessa o rimando"
@@ -89,7 +99,10 @@ def qualifica(gruppo, voci, revisione=None):
             basso = senso.lower()
             if any(k in basso for k in FUORI_CONTESTO):
                 utile, motivo = False, "fuori contesto"
-            elif gruppo == "erotico" and not any(k in basso for k in SEGNALI_EROTICO):
+            elif (gruppo == "erotico" and not any(k in basso for k in SEGNALI_EROTICO)
+                  and not any(k in basso for k in SEGNALI_USO)
+                  and termine.lower() not in NUCLEO
+                  and len(termine.split()) == 1):
                 utile, motivo = False, "definizione non sessuale"
             elif gruppo == "comune" and basso.startswith(LETTERALI):
                 utile, motivo = False, "locuzione letterale"

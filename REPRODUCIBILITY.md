@@ -854,3 +854,10 @@ tua destra, "inalato il profumo" → annusato.
   revisione resta tracciata e ripetibile.
 - Prima passata: 103 utili erotici, poi 102 con 52 decisioni a mano (19 scarti, 33 promozioni);
   233 casi in `da_rivedere.txt`. Comune: 790 utili da rivedere.
+
+## 67) Criterio di qualificazione corretto (2026-11-04)
+- La regola "la definizione deve parlare di sesso" bocciava parole vive ma spiegate altrimenti
+  (rompicoglioni, bombare, figo, pippe mentali, effeminato, celibato). Aggiunti i segnali d'uso
+  (volgare, colloquiale, gergale, figurato...) e un nucleo di termini intoccabili.
+- Soglia minima della definizione abbassata da 12 a 8 caratteri (tagliava "buggerare —
+  ingannare"). Effetto: erotici utili da 102 a 130, senza riaprire la porta alla monnezza.

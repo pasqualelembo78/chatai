@@ -1,5 +1,11 @@
 [
  {
+  "termine": "accidenti",
+  "registro": "volgare",
+  "senso": "che cosa. Poco volgare. Es: che cavolo ha detto? Oppure: che caspita hai fatto ieri?",
+  "fonte": "parliamoitaliano-espressioni"
+ },
+ {
   "termine": "afrodisiaco",
   "registro": "tecnico",
   "senso": "che fa risvegliare o fa aumentare il desiderio sessuale",
@@ -36,15 +42,75 @@
   "fonte": "wiktionary-volgari"
  },
  {
+  "termine": "bombare",
+  "registro": "volgare",
+  "senso": "bere vino o alcolici in maniera smodata ed eccessiva ~~ quando ti prende di bombar la voglia",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "buggerare",
+  "registro": "volgare",
+  "senso": "ingannare",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "caspita",
+  "registro": "volgare",
+  "senso": "che cosa. Poco volgare. Es: che cavolo ha detto? Oppure: che caspita hai fatto ieri?",
+  "fonte": "parliamoitaliano-espressioni"
+ },
+ {
   "termine": "casto",
   "registro": "tecnico",
   "senso": "che non fa sesso",
   "fonte": "wiktionary-sessualita"
  },
  {
+  "termine": "cazzata",
+  "registro": "volgare",
+  "senso": "azione o discorso stupido ~~ ha fatto una cazzata",
+  "fonte": "wiktionary-volgari"
+ },
+ {
   "termine": "cazzo",
   "registro": "volgare",
   "senso": "interiezione usata per esprimere sorpresa o rabbia ~~ cazzo, ho mancato il bersaglio!",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "cazzone",
+  "registro": "volgare",
+  "senso": "fannullone, perditempo ~~ quanto fai il cazzone!",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "celibato",
+  "registro": "tecnico",
+  "senso": "condizione propria di un uomo non sposato",
+  "fonte": "wiktionary-sessualita"
+ },
+ {
+  "termine": "che cavolo",
+  "registro": "volgare",
+  "senso": "che cosa. Poco volgare. Es: che cavolo ha detto? Oppure: che caspita hai fatto ieri?",
+  "fonte": "parliamoitaliano-espressioni"
+ },
+ {
+  "termine": "che merda",
+  "registro": "volgare",
+  "senso": "esclamazione di disgusto ~~ Quello sarebbe il mare? Che merda!",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "che palle",
+  "registro": "volgare",
+  "senso": "esprime forte noia o frustrazione",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "checca",
+  "registro": "volgare",
+  "senso": "omosessuale",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -96,6 +162,12 @@
   "fonte": "wiktionary-volgari"
  },
  {
+  "termine": "effeminato",
+  "registro": "tecnico",
+  "senso": "di uomo il cui comportamento somiglia molto vagamente a quello di una donna ~~ \"Canta in modo effeminato ed è pure stonato questo!\"",
+  "fonte": "wiktionary-sessualita"
+ },
+ {
   "termine": "eros",
   "registro": "tecnico",
   "senso": "pulsione sessuale",
@@ -114,10 +186,28 @@
   "fonte": "wiktionary-sessualita"
  },
  {
+  "termine": "essere inculati",
+  "registro": "volgare",
+  "senso": "rimanere ingannati. Volgare. Es: credevo che mi volesse dare una mano e invece sono rimasto inculato!",
+  "fonte": "parliamoitaliano-espressioni"
+ },
+ {
   "termine": "eterosessuale",
   "registro": "tecnico",
   "senso": "relativo all'eterosessualità ~~ una rapporto eterosessuale può generare figli",
   "fonte": "wiktionary-sessualita"
+ },
+ {
+  "termine": "fare cagare",
+  "registro": "volgare",
+  "senso": "fare schifo. Abbastanza volgare.",
+  "fonte": "parliamoitaliano-espressioni"
+ },
+ {
+  "termine": "fare il culo",
+  "registro": "volgare",
+  "senso": "redarguire bruscamente",
+  "fonte": "wiktionary-volgari"
  },
  {
   "termine": "fare l'amore",
@@ -126,10 +216,40 @@
   "fonte": "wiktionary-sessualita"
  },
  {
+  "termine": "fare la festa",
+  "registro": "volgare",
+  "senso": "ammazzare qualcuno",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "fare la fica",
+  "registro": "volgare",
+  "senso": "detto di una donna: tirarsela",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "fare la figa",
+  "registro": "volgare",
+  "senso": "settentrionale",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "fare marcia indietro",
+  "registro": "volgare",
+  "senso": "rinunciare ad un progetto",
+  "fonte": "wiktionary-volgari"
+ },
+ {
   "termine": "farfallina",
   "registro": "vezzeggiativo",
   "senso": "vagina. Si dice ai bambini.",
   "fonte": "parliamoitaliano"
+ },
+ {
+  "termine": "farsi le seghe",
+  "registro": "colloquiale",
+  "senso": "preoccuparsi per problemi inutili. Es: smettila di farti le seghe mentali, vedrai che andrà tutto bene!",
+  "fonte": "parliamoitaliano-espressioni"
  },
  {
   "termine": "farsi un ditalino",
@@ -159,6 +279,18 @@
   "termine": "fica",
   "registro": "volgare",
   "senso": "frutto del fico",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "figlio di puttana",
+  "registro": "volgare",
+  "senso": "un tipo meschino e vile",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "figo",
+  "registro": "volgare",
+  "senso": "settentrionale: ;",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -214,6 +346,12 @@
   "registro": "tecnico",
   "senso": "donna dal seno prosperoso",
   "fonte": "wiktionary-sessualita"
+ },
+ {
+  "termine": "mannaggia",
+  "registro": "volgare",
+  "senso": "che cosa. Poco volgare. Es: che cavolo ha detto? Oppure: che caspita hai fatto ieri?",
+  "fonte": "parliamoitaliano-espressioni"
  },
  {
   "termine": "maschio",
@@ -312,6 +450,18 @@
   "fonte": "wiktionary-volgari"
  },
  {
+  "termine": "pippe mentali",
+  "registro": "colloquiale",
+  "senso": "preoccuparsi per problemi inutili. Es: smettila di farti le seghe mentali, vedrai che andrà tutto bene!",
+  "fonte": "parliamoitaliano-espressioni"
+ },
+ {
+  "termine": "piscio",
+  "registro": "volgare",
+  "senso": "termine informale e volgare per urina",
+  "fonte": "wiktionary-volgari"
+ },
+ {
   "termine": "pisellino",
   "registro": "vezzeggiativo",
   "senso": "pene. Si dice ai bambini.",
@@ -369,6 +519,24 @@
   "termine": "puttana",
   "registro": "volgare",
   "senso": "donna che offre prestazioni sessuali a pagamento",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "puttanata",
+  "registro": "volgare",
+  "senso": "affermazione oppure azione sconsiderata, sciocca, pericolosa o priva di senso ~~ guidare ubriachi è proprio una puttanata;",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "rimanere inculati",
+  "registro": "volgare",
+  "senso": "rimanere ingannati. Volgare. Es: credevo che mi volesse dare una mano e invece sono rimasto inculato!",
+  "fonte": "parliamoitaliano-espressioni"
+ },
+ {
+  "termine": "rompicoglioni",
+  "registro": "volgare",
+  "senso": "persona che risulta fastidiosa",
   "fonte": "wiktionary-volgari"
  },
  {
@@ -555,6 +723,18 @@
   "termine": "troia",
   "registro": "volgare",
   "senso": "femmina del maiale destinata alla riproduzione",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "troiaio",
+  "registro": "volgare",
+  "senso": "porcile dove si trovano raccolte molte scrofe",
+  "fonte": "wiktionary-volgari"
+ },
+ {
+  "termine": "trombare",
+  "registro": "volgare",
+  "senso": "fare sesso",
   "fonte": "wiktionary-volgari"
  },
  {
