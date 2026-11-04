@@ -1023,3 +1023,8 @@ tua destra, "inalato il profumo" → annusato.
   d'errore se fallisce: prima i fallimenti erano muti.
 - Colore: il punto interrogativo era invisibile. Ora cerchio bianco con testo nero (#111), bordo
   grigio, 1.2rem.
+- Formulazione delle domande corretta: "Cosa mi hai fatto venire qui?" → "Perché mi hai fatto
+  venire qui?" (il modello sbagliava perché "venire" da solo fa pensare all'orgasmo, e la risposta
+  andava fuori strada). Rete deterministica sulle forme sbagliate, una sola domanda per suggerimento,
+  tetto a 10 parole, "ti fa sentirti" → "ti fa sentire".
+- Verificato che alle nuove domande il personaggio risponde davvero ("Sono qui per incontrarti…").

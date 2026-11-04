@@ -629,9 +629,12 @@ def api_chat_spunto(request: Request, body: ChatRequest, user: AuthUser = Depend
     sistema = (f"Sei {nome}. {contesto}\n"
                "Scrivi una domanda naturale, breve, che faresti a voce all'inizio della chat, "
                "in italiano e coerente col tuo carattere. Come una persona vera, non come un assistente. "
-               "Massimo 8 parole. Deve riguardare lui, lei o il momento. "
+               "Massimo 8 parole. Deve riguardare lui, lei o il momento, e deve avere senso "
+               "anche da sola: chi la legge deve poter rispondere. "
                "Esempi: 'Ti va se chiudo la porta?', 'Perché sei qui a quest'ora?', "
-               "'Da dove vuoi cominciare?'. Solo la domanda, senza virgolette.")
+               "'Da dove vuoi cominciare?'. "
+               "Attenzione a 'venire': si dice 'Perché mi hai fatto venire qui?', non "
+               "'Cosa mi hai fatto venire qui?'. Solo la domanda, senza virgolette.")
     messaggi = [{"role": "system", "content": sistema},
                 {"role": "user", "content": "Dammi la domanda."}]
 
@@ -642,11 +645,17 @@ def api_chat_spunto(request: Request, body: ChatRequest, user: AuthUser = Depend
         logger.warning(f"spunto fallito: {e}")
 
     testo = (testo or "").strip().splitlines()[0] if testo else ""
+    # una sola domanda: se ne incastra due, tengo la prima
+    if testo.count("?") > 1:
+        testo = testo.split("?")[0] + "?"
     testo = testo.strip('"«» ').rstrip(" .,;:")
+    testo = re.sub(r"(?i)^cosa mi (hai|fai) (fatto )?venire\b", "perché mi hai fatto venire", testo)
+    testo = re.sub(r"(?i)^cosa (ti|le) (ha|fa) (fatto )?venire\b", "perché ti ha fatto venire", testo)
+    testo = re.sub(r"(?i)\b(mi|ti|si) fa sentirti\b", lambda m: m.group(1) + " fa sentire", testo)
     if testo and not testo.endswith(("?", "!", "…")):
         testo += "?"
-    if len(testo.split()) > 18:
-        testo = " ".join(testo.split()[:18]).rstrip(",;:") + "?"
+    if len(testo.split()) > 10:
+        testo = " ".join(testo.split()[:10]).rstrip(",;:") + "?"
     if not testo:
         testo = _SPUNTI.get(char.get("category", ""), "Da dove cominciamo?")
     return {"testo": testo}
