@@ -275,7 +275,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--scenario", action="append", help="nome della conversazione (ripetibile)")
     ap.add_argument("--turni", type=int, default=99)
-    ap.add_argument("--out", default="/tmp/opencode/conversazioni")
+    ap.add_argument("--out", default="/opt/aria/prove")
     ap.add_argument("--pausa", type=float, default=1.5)
     args = ap.parse_args()
 

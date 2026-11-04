@@ -115,7 +115,7 @@ def chiama(character, testo, jwt):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--quante", type=int, default=100)
-    ap.add_argument("--out", default="/tmp/opencode/risposte.jsonl")
+    ap.add_argument("--out", default="/opt/aria/prove/risposte.jsonl")
     ap.add_argument("--pausa", type=float, default=0.5)
     ap.add_argument("--seed", type=int, default=7)
     args = ap.parse_args()

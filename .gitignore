@@ -23,3 +23,4 @@ backend/.env
 *.hf_token
 =3.5.0
 backup/.env.bak
+prove/
