@@ -751,3 +751,12 @@ punteggiatura orfana e virgolette aperte.
   mi avevi passato la farina sul naso") e continua da lì.
 - Residuo: il luogo resta attratto dal tema della stanza se l'utente lo ha solo accennato
   ("sto cucinando" → tende a dire "stanza privata"). Aggiunta correzione "la lenzuola" → "le lenzuola".
+
+## 58) Strumento per registrare conversazioni (2026-11-04)
+- `registra_conversazioni.py`: 9 conversazioni scritte a mano (calma, scena, memoria, erotico,
+  roleplay, servizio, correzioni, lunga, fuori tema), ognuna su un personaggio diverso per non
+  sporcare la memoria; registra turno per turno in .md leggibile e .jsonl, con tempi, ripetizioni
+  e conteggio delle risposte vuote, più riepilogo finale.
+- Completa `probe_qualita.py`: quello misura risposte singole a caso, questo il filo di una
+  conversazione. Uso: `python3 registra_conversazioni.py --scenario scena` oppure senza argomenti
+  per tutte.
