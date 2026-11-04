@@ -102,3 +102,9 @@ Perché funziona: cita un punto preciso, non chiede niente, il link è contestua
 
 3 mesi: **6-10 link** in tema + 3 thread Reddit + 2 articoli citati.
 Non ordina posizioni da solo. Serve a dare al sito una base di fiducia mentre gli articoli lavorano sulla coda lunga.
+
+---
+
+## Pacchetto operativo (2026-11-04)
+Pagine da linkare, testi ancora, titoli e descrizioni pronti, elenco di siti gratuiti senza link di
+ritorno e ordine di esecuzione: vedi **`BACKLINK_OPERATIVO.md`**.
