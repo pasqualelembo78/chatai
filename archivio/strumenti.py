@@ -28,6 +28,9 @@ UA = {"User-Agent": "chatai-archivio/1.0"}
 
 # Fonti verificate una per una con l'API di Hugging Face.
 FONTI = [
+    {"id": "nsfw-chat-it", "dataset": "Raphael172/NSFW_Multilanguage_Chat_Dataset",
+     "formato": "io-it", "licenza": "Apache 2.0", "collezione": "erotico", "max": 6632,
+     "locale": os.path.join(QUI, "grezzi", "nsfw-it.json")},
     {"id": "due-chiacchiere", "dataset": "DeepMount00/due-chiacchiere",
      "formato": "messages", "licenza": "dataset gated, condizioni accettate",
      "collezione": "generale", "max": 6000, "gated": True,
@@ -108,6 +111,10 @@ def normalizza(fonte, riga, indice):
             testo = (m.get("content") or "").strip()
             if testo:
                 messaggi.append({"role": ruolo, "content": testo})
+    elif fonte["formato"] == "io-it":
+        for ruolo, chiave in (("user", "input"), ("assistant", "output")):
+            if riga.get(chiave):
+                messaggi.append({"role": ruolo, "content": str(riga[chiave]).strip()})
     elif fonte["formato"] == "io":
         coppia = riga.get("train") or riga
         for ruolo, chiave in (("user", "Input"), ("assistant", "Output")):
@@ -202,6 +209,18 @@ def fase_importa(solo=None, max_totale=None):
             fatti = sum(1 for _ in open(percorso, encoding="utf-8"))
             offset = fatti
         print(f"→ {fonte['id']} ({fonte['licenza']}), max {fonte['max']}")
+        if fonte.get("locale"):
+            with open(percorso, "a" if fatti else "w", encoding="utf-8") as f:
+                for riga in json.load(open(fonte["locale"], encoding="utf-8")):
+                    rec = normalizza(fonte, riga, fatti)
+                    if not rec:
+                        continue
+                    f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                    fatti += 1
+            totale += fatti
+            print(f"   totale {fonte['id']}: {fatti}")
+            continue
+
         if fonte.get("file"):
             with open(percorso, "a" if fatti else "w", encoding="utf-8") as f:
                 for i, riga in enumerate(righe_da_file(fonte["dataset"], fonte["file"])):

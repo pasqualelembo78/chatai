@@ -1,0 +1,26 @@
+{
+ "creato": "2026-11-04T17:42:37+01:00",
+ "formato": "ChatML (messages)",
+ "system": "Sei un personaggio italiano che chatta in modo naturale, breve e colloquiale.",
+ "conteggi": {
+  "train": 6623,
+  "valid": 394,
+  "test": 374
+ },
+ "per_fonte": {
+  "DeepMount00/due-chiacchiere": 2588,
+  "Raphael172/NSFW_Multilanguage_Chat_Dataset": 3768,
+  "parliamoitaliano-espressioni": 9,
+  "wiktionary-sessualita": 73,
+  "raccontivietati": 2,
+  "wiktionary-volgari": 66,
+  "parliamoitaliano": 14,
+  "wikt-locuzioni-aggettivali": 60,
+  "wikt-espressioni": 143,
+  "wikt-locuzioni-verbali": 526,
+  "wikt-interiezioni": 56,
+  "correzioni": 86
+ },
+ "divisione": "90/5/5 deciso da sha1(utente+risposta): nessuna contaminazione",
+ "licenze": "vedi fonti.md e archivio/README.md"
+}

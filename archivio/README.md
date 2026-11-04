@@ -12,13 +12,20 @@ risposte. Sono state cercate fonti **conversazionali** e aggiunte:
   (gated), `cassanof/italian-conversations` (licenza assente)
 Le righe istruzionali con stile basso sono state eliminate: l'archivio è ora **conversazionale**.
 
+## Dataset per il fine-tuning
+`python3 archivio/dataset_ft.py` costruisce `archivio/dataset_ft/` in ChatML con divisione 90/5/5
+decisa dall'impronta del contenuto (nessuna contaminazione). **Va rilanciato a ogni nuova raccolta**,
+come da regola in `AGENTS.md`. Attuale: 6.623 train / 394 valid / 374 test.
+
 ## Cosa c'è
 | fonte | licenza | record |
 |---|---|---|
-| DeepMount00/due-chiacchiere | gated, condizioni accettate | 2.547 |
+| DeepMount00/due-chiacchiere | gated, condizioni accettate | 2.588 |
+| Raphael172/NSFW_Multilanguage_Chat_Dataset | Apache 2.0 | 3.768 |
 
-L'archivio attuale contiene **solo** due-chiacchiere: le altre fonti sono state provate e
-scartate (vedi sotto), e i file grezzi non si tengono.
+Il dataset NSFW è la prima fonte erotica utile: battute adulte in italiano, Apache 2.0. Da lì sono
+state estratte (con frequenza) 23 espressioni messe nel lessico, verificandole a mano; gli esempi con
+asterischi e versi si sono rivelati meno adatti al prompt rispetto al lessico.
 
 Totale indicizzato: **2.547** frammenti conversazionali, senza codice, senza elenchi, senza
 risposte duplicate. Le espressioni stanno a parte: **164** erotiche e **790** modi di dire

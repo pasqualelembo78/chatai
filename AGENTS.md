@@ -16,6 +16,12 @@
   default in `backend/ai_engine/registry.py` + `ai_engine/providers/ollama.py`
   deve restare Llama-3.2-3B-Instruct-abliterated.
 
+- **DATASET PER IL FINE-TUNING, SEMPRE**: ogni materiale raccolto (dizionari, modi di dire,
+  lemmi, espressioni, dialoghi, correzioni) va **contestualmente** preparato anche come dataset per
+  il fine-tuning previsto, in JSONL ChatML, con `train/validation/test` separati, senza
+  contaminazione fra gli insiemi e con la provenienza su ogni record. Non si raccoglie niente che
+  non finisca anche lì. Script: `archivio/dataset_ft.py`.
+
 - **AGGIORNAMENTO DEL MODELLO / DELLA LINGUA**: se l'utente chiede di aggiornare il modello o il
   vocabolario, seguire `PROCEDURA_LINGUA.md` (raccolta da fonti con licenza annotata -> qualificazione
   -> iniezione nel prompt -> misura -> correzioni). Vale per qualsiasi modello, attuale o futuro.

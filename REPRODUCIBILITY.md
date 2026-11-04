@@ -931,3 +931,17 @@ tua destra, "inalato il profumo" → annusato.
   Terzo corpus diverso, terzo peggioramento: `RAG_ESEMPI` resta **0**.
 - Corretto l'ordine delle fasi: `pulisci` va eseguito **dopo** `indice` e non va seguito da un
   rebuild dagli stessi file, altrimenti la pulizia si perde.
+
+## 73) Dataset NSFW italiano, espressioni e dataset per il fine-tuning (2026-11-04)
+- Importato `Raphael172/NSFW_Multilanguage_Chat_Dataset` (Apache 2.0, file italiano, 6.632 coppie):
+  5.520 accettate dal normalizzatore, 3.768 dopo la qualifica.
+- `archivio/estrai_espressioni.py`: n-grammi 3-5 parole con frequenza ≥8, filtrati per verbi
+  d'azione, via i riempitivi, doppioni esclusi. 58 candidate, **23 approvate a mano** e messe nel
+  lessico (`spogliati per me`, `succhiami il cazzo`, `fammi un pompino`, `voglio vederti cavalcare`…).
+- Corrette sei voci del lessico che portavano il senso zoologico (`zoccola` = topo di fogna,
+  `troia` = femmina del maiale) o l'interiezione (`cazzo` = "ho mancato il bersaglio").
+- `archivio/dataset_ft.py`: costruisce il dataset ChatML dai dialoghi qualificati, dal lessico
+  (micro-risposte d'uso) e dalle correzioni. Divisione 90/5/5 da sha1 del contenuto, nessuna
+  contaminazione, provenienza e licenza su ogni record. Attuale: 6.623 train / 394 valid / 374 test.
+- `AGENTS.md`: regola nuova — ogni raccolta deve produrre **contestualmente** anche il dataset di
+  fine-tuning, che va rigenerato a ogni aggiornamento.
