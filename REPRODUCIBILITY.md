@@ -774,3 +774,13 @@ tua destra, "inalato il profumo" → annusato.
 - Asterischi di enfasi (`*ti guarda*`) tolti anche a monte: prima restavano nel testo.
 - Orari: il modello a volte ne incastra due ("Sono le 10:23. Sono alle 20.30") e scrive "22.15";
   ora scarto tutte le frasi che dicono solo l'ora e normalizzo il separatore a due punti.
+
+## 60) Verifica automatica delle correzioni (2026-11-04)
+- `verifica_correzioni.py`: 33 casi presi dalle trascrizioni reali. Ogni caso dichiara cosa deve
+  comparire e cosa non deve restare; se una regola non scatta il caso fallisce ed esce con codice 1.
+  Serve a impedire che una correzione si perda in una modifica futura.
+- Uso: `python3 verifica_correzioni.py` (tutti) · `--dettagli` mostra anche i testi corretti.
+  Verificato: 33/33.
+- Limite da ricordare: il caso offline dimostra che la regola scatta, non che il modello non
+  produrrà errori nuovi. Per quelli servono `registra_conversazioni.py` e la ricerca dei termini
+  sospetti nel testo registrato.
