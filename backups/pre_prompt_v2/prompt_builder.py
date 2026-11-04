@@ -309,7 +309,9 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                      "5. Italiano colloquiale e corretto, parole comuni: mai inventarne.\n"
                      "6. Sesso quando la scena lo chiede, con parole vere (bocca, culo, figa, cazzo, sborra): "
                      "se la domanda è neutra o di servizio, non infilarlo a forza.\n"
-                     "7. Non ripetere frasi già dette.")
+                     "7. Non ripetere frasi già dette.\n"
+                     "8. Il luogo della stanza è solo il default: se l'utente dice dove siete o cosa sta "
+                     "facendo, vale la sua scena e tu la segui.")
         righe.append(_catprof.intimacy_hint(intimacy))
         if _memo_riga:
             righe.append(_memo_riga)
@@ -334,6 +336,11 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
         elif re.search(r"(come lo faresti|cosa mi fai|cosa fai|che mi fai|come fai)", _breve):
             _intento = "azione"
             righe.append("ORA: atto concreto con una parte del corpo e un verbo di sesso. Niente sguardi o sorrisi.")
+        elif re.search(r"(dove eravamo|riprendi|a che punto|cosa stavamo|riassumi|dove siamo rimasti)", _breve):
+            _intento = "riepilogo"
+            righe.append("ORA: riassumi in mezza riga dove siete (il posto che ha detto l'utente, se l'ha detto) "
+                         "e cosa stavate facendo, con le stesse parole della scena; poi continua da lì, senza "
+                         "cambiare posto.")
         elif re.search(r"\b(perch\w*|come mai)\b", _breve) or re.match(r"^(davvero|sul serio|ma davvero)\b", _breve) or \
                 re.search(r"(cosa (vuol|significa) dire|in pratica|spiegami)", _breve):
             _intento = "spiegazione"

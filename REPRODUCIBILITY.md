@@ -737,3 +737,17 @@ punteggiatura orfana e virgolette aperte.
 - Test: 17 situazioni (servizio, perché, memoria, amicizia, sentimentale, roleplay, erotico,
   limite, spiegazione, cronologia lunga, grammatica). Pertinenza e memoria ora funzionano;
   restano sintassi zoppa su richieste articolate e qualche verbo inventato.
+
+## 57) Filo logico della conversazione: scena dell'utente > stanza (2026-11-04)
+- Verificato che la cronologia arriva: il plugin non usa `client_storage`, quindi la storia viene
+  dal DB (8 messaggi); in un test di 6 turni il modello ha ricordato "farina", "olio e sapone" e
+  la cucina, e ha risposto bene a "cosa avevo sulle mani prima?".
+- Difetto vero trovato: il blocco della stanza ("sei in una stanza chiusa a chiave…") scavalcava la
+  scena raccontata dall'utente, che finiva in secondo piano. Aggiunta regola 8: la stanza è solo il
+  default, se l'utente dice dove siete vale la sua scena.
+- "Dove eravamo rimasti / riprendi" non aveva spinta dedicata: aggiunto l'intento "riepilogo"
+  (riassumi luogo e gesto in corso con le stesse parole, poi continua senza cambiare posto).
+  Prima rispondeva "Nella mia camera."; ora ricostruisce la scena ("avevi slacciato il grembiule,
+  mi avevi passato la farina sul naso") e continua da lì.
+- Residuo: il luogo resta attratto dal tema della stanza se l'utente lo ha solo accennato
+  ("sto cucinando" → tende a dire "stanza privata"). Aggiunta correzione "la lenzuola" → "le lenzuola".

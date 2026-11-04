@@ -301,6 +301,11 @@
       "sbagliato": "mi scarto le mutande",
       "giusto": "mi sfilo le mutande",
       "nota": "scartare non regge qui"
+    },
+    {
+      "sbagliato": "la lenzuola",
+      "giusto": "le lenzuola",
+      "nota": "lenzuola è plurale"
     }
   ],
   "aggiunte": [
