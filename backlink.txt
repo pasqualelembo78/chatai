@@ -123,3 +123,25 @@ Il sito ha 5.072 pagine personaggio, 24 stanze, articoli programmati e zero link
 Pagine pensate per essere citate: /stanze-live/ (indice descrittivo delle 24 stanze),
 /come-funziona/ (meccanismo e prova gratuita), /personaggi-inventati/ (nessun nome protetto).
 I backlink servono a far scoprire queste pagine, non a gonfiare la home.
+
+
+COSA SI PUO' AUTOMATIZZARE E COSA NO
+I backlink veri richiedono un account e spesso un CAPTCHA: quelli bisogna farli a mano, una volta
+creati gli account. Quello che si automatizza e' la SEGNALAZIONE delle pagine ai motori, che non e'
+un backlink ma porta le pagine sotto gli occhi di Bing e Yandex in pochi secondi.
+
+  Automatico (script seo_indexnow.py):
+    python3 seo_indexnow.py --tutte
+      segnala tutte le 110 pagine presenti nelle sitemap
+    python3 seo_indexnow.py --url <indirizzo>
+      segnala una pagina appena pubblicata
+    Chiave IndexNow in /opt/aria/indexnow.key; il file di verifica sta alla radice del sito
+    (es. https://pornovirtuale.com/<chiave>.txt) e risponde 200.
+
+  Da fare a mano (servono account):
+    Wikidata, Curlie, BlogItalia, Feedspot (directory)
+    Medium, Tumblr, Pinterest, WordPress.com, Substack, Reddit, Quora, LinkedIn
+    ForumCommunity, Alfemminile, canali Telegram
+
+  Nota: IndexNow e' accettato da Bing e Yandex. Google non lo usa, per Google contano la sitemap
+  (gia' presente) e i backlink veri.
