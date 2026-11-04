@@ -1067,3 +1067,12 @@ Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 
 - Esito reale: **golink.it** accetta il modulo ma il captcha non è affidabile, 11 invii rifiutati;
   **newdir.it** ha il captcha rotto (HTTP 500 su verimage.php). Documentato in `backlink.txt`:
   il resto va a mano.
+
+## 84) Vecchi indirizzi: da 404 a 301 (2026-11-05)
+- Dai log: Googlebot ha fatto 419 richieste in un giorno ma su 265 URL e **191 erano 404**, quasi
+  tutte dei vecchi percorsi (/tx/, /block/, /video/, numeri .shtml). Metà della scansione sprecata
+  su pagine morte, mentre delle 5.072 schede ne ha viste poche.
+- Aggiunte regole `RedirectMatch 301` nel vhost SSL per quei prefissi verso la home. Verificato: le
+  quattro famiglie ora rispondono 301.
+- Vhost salvato nel backup come `etc/apache2/sites-available/pornovirtuale-le-ssl.conf` (build_app
+  non lo gestisce: senza il file nel zip, un ripristino perderebbe le regole).
