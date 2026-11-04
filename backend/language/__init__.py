@@ -348,3 +348,62 @@ def correggi(testo):
                    lambda m: m.group(0) if m.group(1).lower() in {"che", "piano", "molto", "poco", "tanto", "solo", "via", "oltre", "prima", "dopo", "mai", "già"} else m.group(1),
                    testo, flags=re.IGNORECASE)
     return testo
+
+# ── Lessico qualificato: poche voci per messaggio, mai ripetute ──────────────
+_LESSICO_CACHE = {}
+
+
+def _lessico(gruppo):
+    if gruppo not in _LESSICO_CACHE:
+        try:
+            import json as _json
+            with open(os.path.join(_DIR, "lessico", f"{gruppo}.json"), encoding="utf-8") as f:
+                voci = _json.load(f)
+        except Exception:
+            voci = []
+        _LESSICO_CACHE[gruppo] = [v for v in voci if v.get("termine") and len(v.get("senso", "")) <= 70]
+    return _LESSICO_CACHE[gruppo]
+
+
+# parole che un utente si aspetta di leggere: hanno la precedenza sulle altre
+_CORE = {"fica", "figa", "cazzo", "culo", "tette", "palle", "sborra", "scopare", "inculare",
+         "pompino", "bocchino", "sega", "ditalino", "puttana", "troia", "mignotta", "zoccola",
+         "arrapato", "fregola", "sveltina", "orgasmo", "nudo", "spogliare", "leccare", "succhiare"}
+
+
+def lessico_pertinente(testo, storia=None, user_id=0, character_id="", turno=0, quanti=2):
+    """2 voci da iniettare: una erotica e, a turni alterni, un modo di dire comune.
+
+    Non elenca: restituisce solo "termine — senso breve". Salta le voci già uscite
+    nelle ultime risposte e in questa sessione, così non si ripete.
+    """
+    gia = " ".join(m.get("content", "") for m in (storia or [])[-6:]).lower()
+    gia += " " + " ".join(_usati(user_id, character_id)).lower()
+    seme = int(hashlib.md5(f"{user_id}:{character_id}:{turno}:{(testo or '')[:40]}".encode()).hexdigest()[:8], 16)
+
+    scelte = []
+    _t = (testo or "").lower()
+    _servizio = re.search(r"(che ore|che ora|che giorno|come stai|che si dice|come va|cosa fai di solito|"
+                          r"che lavoro|di dove|ciao|salve|ehi)", _t)
+    gruppi = ["erotico", "comune"] if _servizio else ["erotico"]
+    for gruppo in gruppi:
+        voci = [v for v in _lessico(gruppo) if v["termine"].lower() not in gia]
+        if not voci:
+            continue
+        # prima le voci con esempio e con senso breve: sono quelle che stanno in una frase
+        if gruppo == "comune":
+            voci = [v for v in voci if len(v["termine"].split()) > 1 and len(v.get("senso", "")) <= 45]
+            voci.sort(key=lambda v: (0 if " ~~ " in v.get("senso", "") else 1,
+                                     len(v.get("senso", ""))))
+        else:
+            voci.sort(key=lambda v: (0 if v["termine"] in _CORE else 1,
+                                     0 if " ~~ " in v.get("senso", "") else 1,
+                                     0 if v.get("registro") != "tecnico" else 1,
+                                     len(v.get("senso", ""))))
+        v = voci[seme % min(len(voci), 35)]
+        scelte.append(f"{v['termine']} — {v['senso'].split(' ~~ ')[0][:48]}")
+        # _usati() prende già _LOCK: qui fuori si creerebbe un blocco (Lock, non RLock)
+        _usati(user_id, character_id).append(v["termine"])
+        if len(scelte) >= quanti:
+            break
+    return scelte

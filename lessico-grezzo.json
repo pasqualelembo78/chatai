@@ -9,7 +9,7 @@
     "termine": "accoppiamento",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "unione in coppia di oggetti o di individui"
+    "senso_fonte": "incontro tra due organismi di sesso opposto o ermafroditi a fine riproduttivo"
   },
   {
     "termine": "adirarsi",
@@ -39,13 +39,13 @@
     "termine": "adulterio",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "tradimento del coniuge"
+    "senso_fonte": "relazione extraconiugale"
   },
   {
     "termine": "adultero",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "relativo all'adulterio"
+    "senso_fonte": "che ha commesso adulterio"
   },
   {
     "termine": "affascinante",
@@ -63,13 +63,19 @@
     "termine": "amante",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che ama qualcosa o qualcuno ~~ se mio marito sapesse che ho un amante..."
+    "senso_fonte": "chi è coinvolto in una relazione affettiva extraconiugale ~~ se mio marito sapesse che ho un amante..."
+  },
+  {
+    "termine": "amare",
+    "registro": "tecnico",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "provare forte attrazione emotiva e fisica nei confronti di qualcuno ~~ si amano tanto l'un con l'altra con il loro timore anche per abbandonarsi più tempo"
   },
   {
     "termine": "amazzone",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "ciascuna delle abitanti di un favoloso regno del Mar Nero meridionale, dominato dalle donne, e dal quale gli uomini eran"
+    "senso_fonte": "smorzacandela"
   },
   {
     "termine": "ambiguità",
@@ -84,6 +90,12 @@
     "senso_fonte": "che talvolta presenta significati passibili di dubbio e/o sospetto per apparente neutralità e/o \"provocatoria doppiezza\" ~~ un comportamento ambiguo finisce col rivelarsi dannoso"
   },
   {
+    "termine": "ammucchiata",
+    "registro": "tecnico",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "rapporto sessuale di gruppo"
+  },
+  {
     "termine": "amore",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
@@ -93,7 +105,7 @@
     "termine": "amplesso",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "abbraccio"
+    "senso_fonte": "accoppiamento sessuale"
   },
   {
     "termine": "anale",
@@ -105,7 +117,7 @@
     "termine": "androgino",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che è provvisto di organi di entrambi i sessi"
+    "senso_fonte": "che presenta tratti somatici e comportamentali di entrambi i sessi"
   },
   {
     "termine": "anilingus",
@@ -138,6 +150,12 @@
     "senso_fonte": "atto dell'arrabbiarsi ~~ io posso anche tollerare le tue arrabbiature però sarebbe meglio se ti contenessi un po' di più"
   },
   {
+    "termine": "arrapante",
+    "registro": "volgare",
+    "fonte": "wiktionary-volgari",
+    "senso_fonte": "cosa eccitante, che stimola sessualmente"
+  },
+  {
     "termine": "arrapare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
@@ -150,10 +168,16 @@
     "senso_fonte": "che è eccitato sessualmente"
   },
   {
+    "termine": "asessuale",
+    "registro": "tecnico",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "privo di qualsiasi richiamo alla sessualità"
+  },
+  {
     "termine": "attrazione",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "forza in grado di unire due corpi"
+    "senso_fonte": "desiderio emotivo e fisico di un essere umano nei confronti di un altro"
   },
   {
     "termine": "autoerotismo",
@@ -177,7 +201,7 @@
     "termine": "bastardo",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "spurio, impuro, degenerato, illegittimo, illegale"
+    "senso_fonte": "riferito a persona, odioso, mulatto"
   },
   {
     "termine": "battona",
@@ -189,7 +213,7 @@
     "termine": "bazzotto",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "attributo di un uovo cotto col guscio a metà tra l'uovo sodo e alla coque, né tenero né sodo ~~ asparagi bazzotti"
+    "senso_fonte": "del pene: parzialmente eretto ~~ asparagi bazzotti"
   },
   {
     "termine": "bellezza",
@@ -201,25 +225,25 @@
     "termine": "bischero",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "chiavetta, piccola asta che regola la tensione delle corde per mezzo di rotazioni"
+    "senso_fonte": "pene"
   },
   {
     "termine": "bisessualità",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "compresenza in un fiore di organi maschili e femminili"
+    "senso_fonte": "condizione propria di chi prova attrazione emotiva e fisica nei confronti di persone sia dell'altro sesso che del propri"
   },
   {
     "termine": "bocchino",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "diminutivo e  vezzeggiativo di bocca"
+    "senso_fonte": "sesso orale"
   },
   {
     "termine": "bombare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "bere vino o alcolici in maniera smodata ed eccessiva ~~ quando ti prende di bombar la voglia"
+    "senso_fonte": "fare sesso ~~ quando ti prende di bombar la voglia"
   },
   {
     "termine": "bondage",
@@ -243,13 +267,13 @@
     "termine": "buggerare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "ingannare"
+    "senso_fonte": "sottoporre qualcuno a rapporto sessuale rettale"
   },
   {
     "termine": "cacca",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "escremento di una persona ~~ Ha fatto la cacca!"
+    "senso_fonte": "* ''Ha fatto la '''cacca'''!'' ~~ Ha fatto la cacca!"
   },
   {
     "termine": "cagare",
@@ -267,13 +291,13 @@
     "termine": "cagna",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "femmina del cane"
+    "senso_fonte": "sciarrano, capopiatto"
   },
   {
     "termine": "camionista",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "chi trasporta merci per conto di terzi con un autocarro ~~ ti stai comportando come un camionista"
+    "senso_fonte": "donna omosessuale con aspetto e modi di fare associati a quelli maschili ~~ ti stai comportando come un camionista"
   },
   {
     "termine": "cappella",
@@ -291,7 +315,7 @@
     "termine": "carriola",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "piccolo carro munito di una ruota che viene, di solito spinto, con le  due mani"
+    "senso_fonte": "posizione sessuale caratteristica nella specie umana, dove il maschio viene avvolto dalla femmina con gli arti inferiori"
   },
   {
     "termine": "caspita",
@@ -303,7 +327,7 @@
     "termine": "castagna",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "frutto del castagno, prettamente autunnale, possibile cottura tramite lessatura e arrostitura, cresce su alberi che poss ~~ castagna d'India: frutto dell'ippocastano"
+    "senso_fonte": "meccanismo atto ad impedire il movimento all'indietro di un argano ~~ castagna d'India: frutto dell'ippocastano"
   },
   {
     "termine": "casto",
@@ -315,13 +339,13 @@
     "termine": "cazzata",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "azione o discorso stupido ~~ ha fatto una cazzata"
+    "senso_fonte": "* ''ha fatto una cazzata'' ~~ ha fatto una cazzata"
   },
   {
     "termine": "cazzo",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "interiezione usata per esprimere sorpresa o rabbia ~~ cazzo, ho mancato il bersaglio!"
+    "senso_fonte": "pene ~~ cazzo, ho mancato il bersaglio!"
   },
   {
     "termine": "cazzone",
@@ -333,19 +357,19 @@
     "termine": "celibato",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "condizione propria di un uomo non sposato"
+    "senso_fonte": "condizione propria di chi non ha contratto matrimonio"
   },
   {
     "termine": "celibe",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "di uomo non sposato ~~ stato celibe, di un uomo non sposato"
+    "senso_fonte": "di persona di sesso femminile che non è maritata; nubile ~~ stato celibe, di un uomo non sposato"
   },
   {
     "termine": "censura",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "controllo compiuto da un'autorità su opere da pubblicare o da rappresentare o su altre espressioni sotto diverse forme d ~~ la censura fatta al loro quotidiano ebbe come conseguenza uno sciopero"
+    "senso_fonte": "divieto di oscenità ~~ la censura fatta al loro quotidiano ebbe come conseguenza uno sciopero"
   },
   {
     "termine": "cesso",
@@ -363,7 +387,7 @@
     "termine": "che merda",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "esclamazione di disgusto ~~ Quello sarebbe il mare? Che merda!"
+    "senso_fonte": "* ''L'hai fatto davvero? '''Che merda'''!'' ~~ Quello sarebbe il mare? Che merda!"
   },
   {
     "termine": "che palle",
@@ -387,7 +411,7 @@
     "termine": "chiavare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "inchiodare, trafiggere con chiodi"
+    "senso_fonte": "fare sesso"
   },
   {
     "termine": "chiavata",
@@ -411,7 +435,13 @@
     "termine": "confusione",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "raduno o suddivisione di elementi senza un principio razionale ~~ hanno fatto una confusione nei documenti..."
+    "senso_fonte": "* ''hanno fatto una confusione nei documenti...'' ~~ hanno fatto una confusione nei documenti..."
+  },
+  {
+    "termine": "coniglietta",
+    "registro": "colloquiale",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "ragazza vestita di un succinto costume che richiama l'aspetto del coniglio, generalmente addetta a incarichi di servizio"
   },
   {
     "termine": "coniugale",
@@ -423,13 +453,13 @@
     "termine": "convivenza",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "vita in comune"
+    "senso_fonte": "coabitazione di due persone unite affettivamente l'una con l'altra, non legittimata dal matrimonio"
   },
   {
     "termine": "convivere",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "vivere con qualcuno"
+    "senso_fonte": "coabitare affettivamente con un'altra persona senza matrimonio"
   },
   {
     "termine": "coprofagia",
@@ -441,13 +471,13 @@
     "termine": "copula",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "verbo che fa identificare un soggetto con una parte nominale"
+    "senso_fonte": "rapporto sessuale"
   },
   {
     "termine": "copulare",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "unire, mettere insieme a coppie ~~ movea l'accorta e diligente mano per copular sotto ingegnoso innesto a virgulto gentil germe villano"
+    "senso_fonte": "* ''son venuto (...) con auspici di '''copular''' un mio figlio in matrimonio'' ~~ movea l'accorta e diligente mano per copular sotto ingegnoso innesto a virgulto gentil germe villano"
   },
   {
     "termine": "corbello",
@@ -462,10 +492,16 @@
     "senso_fonte": "che è munito di corna"
   },
   {
+    "termine": "corte",
+    "registro": "tecnico",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "insieme di edifici e ville che caratterizzavano il medioevo, dove il signore soggiornava e metteva in atto funzioni di c ~~ il teatro di corte; poeta di corte"
+  },
+  {
     "termine": "corteggiare",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": " ~~ vidi il duca che era  intento a corteggiare una nobildonna"
+    "senso_fonte": "cercare di attirare l'interesse di una persona, con complimenti o attenzioni, allo scopo di avere una relazione sentimen ~~ vidi il duca che era  intento a corteggiare una nobildonna"
   },
   {
     "termine": "cortigiana",
@@ -495,7 +531,7 @@
     "termine": "culo",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "fondoschiena ~~ culo di bottiglia"
+    "senso_fonte": "omosessuale ~~ culo di bottiglia"
   },
   {
     "termine": "cunnilingio",
@@ -507,7 +543,7 @@
     "termine": "dare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "quello che si deve consegnare ~~ bisogna dare una mano di bianco a questi muri"
+    "senso_fonte": "nella forma ''darla'' (femmina) o ''darlo'' (maschio): acconsentire a un rapporto sessuale ~~ bisogna dare una mano di bianco a questi muri"
   },
   {
     "termine": "deflorare",
@@ -531,7 +567,7 @@
     "termine": "discinto",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "vestito senza cintura, in particolare presso i latini la tunica senza cintura indicava trascuratezza"
+    "senso_fonte": "se riferito ad una persona, poco vestito"
   },
   {
     "termine": "ditalino",
@@ -561,13 +597,13 @@
     "termine": "eccitante",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che eccita"
+    "senso_fonte": "che attira così fortemente da procurare turbamento"
   },
   {
     "termine": "eccitare",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "mettere in eccitazione"
+    "senso_fonte": "rendere un animale in grado di avere desiderio di contatto sessuale"
   },
   {
     "termine": "effeminatezza",
@@ -597,7 +633,7 @@
     "termine": "equilibrato",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che è bilanciato"
+    "senso_fonte": "in grado di gestire in modo corretto una propria famiglia legalmente riconosciuta, talvolta figliolanza"
   },
   {
     "termine": "eros",
@@ -639,7 +675,7 @@
     "termine": "esibizionismo",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "atteggiamento di chi vuol apparire"
+    "senso_fonte": "impulso patologico a mostrare i propri caratteri sessuali"
   },
   {
     "termine": "espressione di genere",
@@ -675,7 +711,7 @@
     "termine": "fare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "l'operare per realizzare qualcosa ~~ il fare è più importante del dire"
+    "senso_fonte": "* '''''ho fatto''' una casa con il Lego'' ~~ il fare è più importante del dire"
   },
   {
     "termine": "fare cagare",
@@ -717,7 +753,7 @@
     "termine": "fare marcia indietro",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "rinunciare ad un progetto"
+    "senso_fonte": "estrarre il pene dalla vagina prima dell'eiaculazione"
   },
   {
     "termine": "farfallina",
@@ -747,19 +783,19 @@
     "termine": "fascino",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "malia, maleficio"
+    "senso_fonte": "esercizio consapevole o meno del proprio potere di attrazione affettiva e sessuale"
   },
   {
     "termine": "fatale",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che é frutto del destino ~~ s'incrociarono sul treno, fu un incontro fatale"
+    "senso_fonte": "(di) persona, specie donna, che col suo fascino può destare passioni improvvise e violente ~~ s'incrociarono sul treno, fu un incontro fatale"
   },
   {
     "termine": "fava",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "pianta erbacea appartenente alla famiglia delle leguminose papiglionacee, con fusto eretto, foglie pennate, fiori bianch"
+    "senso_fonte": "pene"
   },
   {
     "termine": "feci",
@@ -777,7 +813,7 @@
     "termine": "femmina",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "congegno forato nel quale se ne innesta un altro ~~ dammi  per favore la spina femmina"
+    "senso_fonte": "di sesso femminile ~~ dammi  per favore la spina femmina"
   },
   {
     "termine": "femminilità",
@@ -813,19 +849,19 @@
     "termine": "feticismo",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "in alcune religioni primitive, attribuzione di natura divina ad oggetti materiali ~~ feticismo di travestimento: ricerca di soddisfazione affettiva e sessuale con l'uso di indumenti associati al sesso opposto"
+    "senso_fonte": "interesse affettivo e sessuale anomalo, riguardante solo parti del corpo, vestiti o figure inanimate ~~ feticismo di travestimento: ricerca di soddisfazione affettiva e sessuale con l'uso di indumenti associati al sesso opposto"
   },
   {
     "termine": "fica",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "frutto del fico"
+    "senso_fonte": "organo genitale femminile, vulva"
   },
   {
     "termine": "fico",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "molto bello, alla moda, di successo ~~ che zaino fico!"
+    "senso_fonte": "* ''con maggiore sollecitudine rispetto alle altre coltivazioni, i '''fichi''' devono assolutamente essere colti al mome ~~ che zaino fico!"
   },
   {
     "termine": "fidanzamento",
@@ -844,6 +880,12 @@
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
     "senso_fonte": "impegnarsi in un'unione affettiva stabile ~~ lui attese un po' prima di fidanzarsi con colei che poi sposò"
+  },
+  {
+    "termine": "figa",
+    "registro": "volgare",
+    "fonte": "wiktionary-volgari",
+    "senso_fonte": "vagina"
   },
   {
     "termine": "figlio di puttana",
@@ -867,7 +909,7 @@
     "termine": "finocchio",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "pianta mediterranea dela famiglia delle Ombrellifere, del genere Finocchio (''Foeniculum vulgare'')"
+    "senso_fonte": "omosessuale"
   },
   {
     "termine": "flatulenza",
@@ -939,25 +981,31 @@
     "termine": "genere",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "gruppo di oggetti o persone con caratteristiche affini ~~ genere alimentare, generi di largo consumo"
+    "senso_fonte": "insieme di prerogative tipicamente collegate con la rappresentazione sociale dell'identità maschile e femminile, in cont ~~ genere alimentare, generi di largo consumo"
   },
   {
     "termine": "gigolò",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "uomo che si fa mantenere da una donna anziana"
+    "senso_fonte": "uomo che offre prestazioni sessuali in cambio di denaro"
   },
   {
     "termine": "giravolta",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "rotazione di un corpo intorno al proprio asse"
+    "senso_fonte": "posizione sessuale caratteristica nella specie umana, dove il maschio si pone in piedi e viene frontalmente avvolto dall"
+  },
+  {
+    "termine": "gnocca",
+    "registro": "volgare",
+    "fonte": "wiktionary-volgari",
+    "senso_fonte": "vagina"
   },
   {
     "termine": "granchio",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "animale acquatico appartenente ai crostacei dotato di chele e guscio a forma di trapezio"
+    "senso_fonte": "posizione sessuale caratteristica nella specie umana, dove la femmina si pone sopra il maschio supino, ma col torace riv"
   },
   {
     "termine": "gretto",
@@ -981,13 +1029,13 @@
     "termine": "impalare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "sottoporre all'impalamento"
+    "senso_fonte": "sottoporre a rapporto sessuale anale"
   },
   {
     "termine": "impotenza",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "mancanza di capacità"
+    "senso_fonte": "incapacità di un organo di svolgere le proprie funzioni"
   },
   {
     "termine": "incacare",
@@ -1065,7 +1113,7 @@
     "termine": "lesbico",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "di Lesbo"
+    "senso_fonte": "inerente al lesbismo"
   },
   {
     "termine": "lesbismo",
@@ -1077,7 +1125,7 @@
     "termine": "liaison",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "legame"
+    "senso_fonte": "unione sentimentale che va oltre il concetto stesso di amore"
   },
   {
     "termine": "libidine",
@@ -1095,13 +1143,13 @@
     "termine": "libido",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "insieme di pulsioni fondamentali di un individuo"
+    "senso_fonte": "desiderio sessuale tra uomo e donna"
   },
   {
     "termine": "loto",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "nome generico dato a varie specie di piante terrestri, alcune delle quali coltivate a scopo ornamentale"
+    "senso_fonte": "il frutto di tale pianta, di color giallo-arancione e dalla polpa molto dolce, di stagione attorno a novembre"
   },
   {
     "termine": "lussuria",
@@ -1144,6 +1192,12 @@
     "registro": "volgare",
     "fonte": "parliamoitaliano-espressioni",
     "senso_fonte": "che cosa. Poco volgare. Es: che cavolo ha detto? Oppure: che caspita hai fatto ieri?"
+  },
+  {
+    "termine": "marcia",
+    "registro": "volgare",
+    "fonte": "wiktionary-volgari",
+    "senso_fonte": "specialità atletica olimpica caratterizzata da un contatto continuo dei piedi sul terreno ~~ la marcia, la bicicletta e il nuoto sono sport adatti a prevenire l'infaro"
   },
   {
     "termine": "marrone",
@@ -1197,7 +1251,7 @@
     "termine": "matrimonio",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "legittimazione, da parte di una donna, dell'unione affettiva con un uomo e della futura condizione di madre ~~ matrimonio eterosessuale, tra un uomo e una donna"
+    "senso_fonte": "istituto giuridico o religioso con cui si conferisce forma legale o sacra all'unione fisica e spirituale di una persona  ~~ matrimonio eterosessuale, tra un uomo e una donna"
   },
   {
     "termine": "mazzo",
@@ -1227,7 +1281,7 @@
     "termine": "missionario",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": " ~~ missionario al contrario, dove la femmina si pone prona sul maschio supino, molto spesso faccia a faccia"
+    "senso_fonte": "posizione sessuale caratteristica nella specie umana, dove il maschio si pone prono sulla femmina supina ~~ missionario al contrario, dove la femmina si pone prona sul maschio supino, molto spesso faccia a faccia"
   },
   {
     "termine": "mulo",
@@ -1239,7 +1293,7 @@
     "termine": "nero",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "scuro, spesso per correlazione qualitativa ~~ caffè nero, senza latte"
+    "senso_fonte": "* ''un gatto nero'' ~~ caffè nero, senza latte"
   },
   {
     "termine": "ninfomane",
@@ -1257,7 +1311,7 @@
     "termine": "nubile",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "di donna non sposata"
+    "senso_fonte": "donna non sposata"
   },
   {
     "termine": "omofilia",
@@ -1293,7 +1347,7 @@
     "termine": "orgia",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "antica festa in onore del dio Dioniso o Bacco, nota per la particolare licenziosità e sfrenatezza; baccanale"
+    "senso_fonte": "tipologia di rapporto sessuale che si può definire \"di gruppo\", ossia che si contraddistingue per la presenza di più di "
   },
   {
     "termine": "orientamento sessuale",
@@ -1341,7 +1395,7 @@
     "termine": "palo",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "grosso bastone di legno dritto e verticale sul quale ci si può arrampicare"
+    "senso_fonte": "posizione sessuale caratteristica nella specie umana, dove il maschio si pone seduto su una sedia o su un oggetto simile"
   },
   {
     "termine": "pansessualismo",
@@ -1395,7 +1449,7 @@
     "termine": "penetrazione",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "azione di entrare con forza"
+    "senso_fonte": "introduzione dell'organo sessuale maschile in quello femminile o in uno sbocco dell'apparato digerente"
   },
   {
     "termine": "pere",
@@ -1404,16 +1458,22 @@
     "senso_fonte": "seno femminile. Volgare."
   },
   {
+    "termine": "peripatetica",
+    "registro": "volgare",
+    "fonte": "wiktionary-volgari",
+    "senso_fonte": "donna che offre prestazioni sessuali a pagamento"
+  },
+  {
     "termine": "perversione",
     "registro": "colloquiale",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "ideazione e perseguimento di comportamenti distorti rispetto al senso comune ~~ perversione sessuale: ricerca del piacere sessuale da oggetti inanimati o viventi lontani da quelli ordinari"
+    "senso_fonte": "* '''perversione sessuale''': ricerca del piacere sessuale da oggetti inanimati o viventi lontani da quelli ordinari ~~ perversione sessuale: ricerca del piacere sessuale da oggetti inanimati o viventi lontani da quelli ordinari"
   },
   {
     "termine": "perverso",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che è propenso a gesti malvagi"
+    "senso_fonte": "chi compie azioni riprovevoli ed eticamente nonché moralmente non condivise dalla maggioranza delle persone"
   },
   {
     "termine": "pervertito",
@@ -1431,7 +1491,7 @@
     "termine": "piantagrane",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "che per smodata scrupolosità, provoca difficoltà di ogni genere"
+    "senso_fonte": "che non è mai soddisfatto, oltremodo negativo"
   },
   {
     "termine": "piccione",
@@ -1485,7 +1545,7 @@
     "termine": "pisello",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "di colore verde pallido"
+    "senso_fonte": "organo sessuale maschile"
   },
   {
     "termine": "playboy",
@@ -1503,7 +1563,7 @@
     "termine": "pompino",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "diminutivo di pompa"
+    "senso_fonte": "l'atto del succhiare il pene ad un uomo"
   },
   {
     "termine": "porno",
@@ -1560,16 +1620,22 @@
     "senso_fonte": "immobile, spesso di basso o infimo livello, adibito a luogo di prostituzione"
   },
   {
+    "termine": "preliminari",
+    "registro": "tecnico",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "atti sessuali preparativi al coito"
+  },
+  {
     "termine": "profilattico",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "concernente la profilassi, eseguito con un intento cautelativo"
+    "senso_fonte": "contraccettivo di uso maschile, solitamente in lattice, costituito da un involucro da applicare al pene prima dell'atto "
   },
   {
     "termine": "promiscuità",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "concomitanza di elementi diversi"
+    "senso_fonte": "consumazione di rapporti sessuali occasionali con partner diversi"
   },
   {
     "termine": "prostituto",
@@ -1623,7 +1689,7 @@
     "termine": "puttanata",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "affermazione oppure azione sconsiderata, sciocca, pericolosa o priva di senso ~~ guidare ubriachi è proprio una puttanata;"
+    "senso_fonte": "* ''ti credevo un amico, e invece m'hai fatto una '''puttanata'''''; ~~ guidare ubriachi è proprio una puttanata;"
   },
   {
     "termine": "puttaniere",
@@ -1635,13 +1701,13 @@
     "termine": "quadrupede",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "di vertebrato con  quattro zampe"
+    "senso_fonte": "posizione sessuale caratteristica in tutti gli esseri viventi superiori, dove il partecipante passivo si pone in avanti "
   },
   {
     "termine": "raspa",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "Utensile a mano, rastremato verso la punta e munito di denti, più grossi e rialzati che nelle lime (al cui gruppo appart"
+    "senso_fonte": "atto di masturbazione maschile"
   },
   {
     "termine": "rimanere inculati",
@@ -1755,13 +1821,13 @@
     "termine": "scopare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "pulire con una scopa"
+    "senso_fonte": "fare sesso con qualcuno"
   },
   {
     "termine": "scopata",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "l'azione di scopare, ovvero spazzare il pavimento con la scopa ~~ fare/farsi una scopata"
+    "senso_fonte": "atto sessuale ~~ fare/farsi una scopata"
   },
   {
     "termine": "scopatore",
@@ -1815,13 +1881,19 @@
     "termine": "seduttore",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che seduce ~~ fu incantata da un affascinante seduttore"
+    "senso_fonte": "chi seduce ~~ fu incantata da un affascinante seduttore"
+  },
+  {
+    "termine": "seduttrice",
+    "registro": "tecnico",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "donna in grado di sedurre"
   },
   {
     "termine": "sega",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "attrezzo a lama dentata utilizzato per il taglio (segare) di legno, metalli o altri materiali; sega a nastro, sega circo ~~ Si è fatto una sega guardando un film porno."
+    "senso_fonte": "* ''Si è fatto una sega guardando un film porno.'' ~~ Si è fatto una sega guardando un film porno."
   },
   {
     "termine": "segarsi",
@@ -1839,7 +1911,7 @@
     "termine": "sensuale",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che riguarda i sensi"
+    "senso_fonte": "che si riferisce alla sessualità come appagamento del desiderio sessuale"
   },
   {
     "termine": "sensualità",
@@ -1920,6 +1992,12 @@
     "senso_fonte": "di chi non ha vita affettiva e sessuale ~~ TinTon ha proprio un’aura da “povero sfigato”, lo vedi distante un miglio… che non lo vuole nessuno"
   },
   {
+    "termine": "sforbiciata",
+    "registro": "tecnico",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "strofinamento reciproco dei genitali esterni, tipico dell'omosessualità femminile"
+  },
+  {
     "termine": "sfortunato",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
@@ -1944,6 +2022,12 @@
     "senso_fonte": "chi pratica rapporti sessuali anali"
   },
   {
+    "termine": "sodomitico",
+    "registro": "tecnico",
+    "fonte": "wiktionary-sessualita",
+    "senso_fonte": "che riguarda un rapporto sessuale anale"
+  },
+  {
     "termine": "sodomizzare",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
@@ -1960,6 +2044,12 @@
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
     "senso_fonte": "vulva"
+  },
+  {
+    "termine": "spagnola",
+    "registro": "volgare",
+    "fonte": "wiktionary-volgari",
+    "senso_fonte": "rapporto sessuale che consiste nello strofinamento del pene col seno ~~ esattamente un secolo fa l'influenza spagnola uccideva circa cinquanta milioni di persone"
   },
   {
     "termine": "spompinare",
@@ -1995,7 +2085,7 @@
     "termine": "stronzata",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "affermazione o azione insensata, falsa o scorretta ~~ Smettila di sparare stronzate."
+    "senso_fonte": "* ''Ho proprio fatto una stronzata'' ~~ Smettila di sparare stronzate."
   },
   {
     "termine": "stronzo",
@@ -2055,13 +2145,13 @@
     "termine": "topa",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "la femmina del topo"
+    "senso_fonte": "vagina"
   },
   {
     "termine": "toro",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "maschio fecondo dei bovini ~~ il toro è un ruminante"
+    "senso_fonte": "posizione sessuale caratteristica nella specie umana, dove la femmina si pone sopra il maschio supino, appoggiando però  ~~ il toro è un ruminante"
   },
   {
     "termine": "trans",
@@ -2073,13 +2163,13 @@
     "termine": "transizione",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "periodo di cambiamenti  storici e culturali"
+    "senso_fonte": "percorso che porta un individuo a smettere di vivere il ruolo di genere relativo al sesso biologico di appartenenza per "
   },
   {
     "termine": "trapanare",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "bucare con il trapano"
+    "senso_fonte": "possedere sessualmente"
   },
   {
     "termine": "trasgredire",
@@ -2091,7 +2181,7 @@
     "termine": "travestito",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "vestito in modo tale da non essere riconosciuto ~~ quel gelataio era un poliziotto  travestito"
+    "senso_fonte": "chi fa uso a volte di abiti, acconciature e modi di fare tipici del sesso opposto ~~ quel gelataio era un poliziotto  travestito"
   },
   {
     "termine": "tribade",
@@ -2139,7 +2229,7 @@
     "termine": "uccello",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "nome comune della classe Uccelli dei Vertebrati. In genere sono coperti di piume, camminano sui due arti posteriori e ha"
+    "senso_fonte": "pene"
   },
   {
     "termine": "unicorni",
@@ -2193,7 +2283,7 @@
     "termine": "venereo",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "inerente a Venere"
+    "senso_fonte": "che riguarda l'amore fisico"
   },
   {
     "termine": "venereologia",
@@ -2223,7 +2313,7 @@
     "termine": "vibratore",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "apparecchiatura in grado di generare vibrazioni, solitamente composto da un motore elettrico ed una massa eccentrica, la"
+    "senso_fonte": "stimolatore erotico solitamente di forma fallica, le cui vibrazioni, prodotte mediante un piccolo motore, vengono usate "
   },
   {
     "termine": "virago",
@@ -2247,7 +2337,7 @@
     "termine": "vite",
     "registro": "volgare",
     "fonte": "wiktionary-volgari",
-    "senso_fonte": "arbusto coltivato per le sue bacche succose a grappolo, l'uva, e quindi per il vino"
+    "senso_fonte": "'''''vite''' senza fine'': elemento meccanico di movimento funzionante mediante l'accoppiamento con un organo a filettat"
   },
   {
     "termine": "vizietto",
@@ -2259,7 +2349,7 @@
     "termine": "voglioso",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che ha voglia di qualcosa"
+    "senso_fonte": "sessualmente incontenibile"
   },
   {
     "termine": "voyeurismo",
@@ -2301,12 +2391,12 @@
     "termine": "zoofilia",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "attrazione per gli animali"
+    "senso_fonte": "attrazione sessuale patologica per gli animali"
   },
   {
     "termine": "zoofilo",
     "registro": "tecnico",
     "fonte": "wiktionary-sessualita",
-    "senso_fonte": "che prova attrazione per gli animali"
+    "senso_fonte": "che presenta attrazione sessuale patologica per gli animali"
   }
 ]

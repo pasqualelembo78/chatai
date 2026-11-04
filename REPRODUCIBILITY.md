@@ -861,3 +861,17 @@ tua destra, "inalato il profumo" → annusato.
   (volgare, colloquiale, gergale, figurato...) e un nucleo di termini intoccabili.
 - Soglia minima della definizione abbassata da 12 a 8 caratteri (tagliava "buggerare —
   ingannare"). Effetto: erotici utili da 102 a 130, senza riaprire la porta alla monnezza.
+
+## 68) Iniezione del lessico qualificato nel prompt (2026-11-04)
+- `language.lessico_pertinente()`: una voce erotica per messaggio, più una modo di dire comune solo
+  sui messaggi di servizio/saluto. Scelta fra le voci con esempio e senso breve, priorità al nucleo
+  (figa, cazzo, culo, scopare...), antiripetizione su ultime 6 risposte e sessione. Blocco in fondo
+  al prompt, dopo le spinte: `LESSICO (se ci sta, usa una di queste parole, senza elencarle)`.
+- Estrazione corretta: fra i sensi di una voce si sceglie quello **sessuale**, non il primo
+  (prima "pompino" era definito "diminutivo di pompa", ora "l'atto del succhiare il pene").
+- Corretti tre difetti visti in prova: doppio lock (`_usati` chiamato dentro `_LOCK`), sensi
+  sbagliati presi dall'etimologia, modi di dire troppo lunghi o fuori tema.
+- Misura su 4 turni (campione piccolo): lemmi distinti per 100 parole **0,88** contro **0,59** di
+  baseline; ripetizioni 0. I termini iniettati compaiono (cazzo, figa, bocca).
+- Aggiunte tre correzioni viste nei test: "ti tirassi su" -> "mi tiri su", "sento il tuo rispetto"
+  -> "sento il tuo respiro", "un boccone di me" -> "un pezzo di me".

@@ -217,6 +217,11 @@ def definizione_italiana(wikitext, termine=""):
     righe = [r for r in italiana.splitlines() if r.startswith("#") and not r.startswith("#:")]
     if not righe:
         return "", registro
+    # fra più sensi scegli quello che parla di sesso: il primo è spesso etimologico
+    sessuali = [r for r in righe if any(k in r.lower() for k in ("sesso", "sessual", "pene",
+                 "vagina", "organo", "rapporto", "erotico", "atto"))]
+    if sessuali:
+        righe = sessuali[:1] + righe
     testi_esempio = [r[2:].strip() for r in italiana.splitlines() if r.startswith("#*")]
     testo = re.sub(r"\{\{[^}]*\}\}", "", righe[0])
     testo = re.sub(r"\[\[[^\]|]*\|([^\]]*)\]\]", r"\1", testo)

@@ -1,6 +1,9 @@
+import logging
 import os
 import re
 import hashlib
+logger = logging.getLogger(__name__)
+
 MAX_HISTORY_MESSAGES = int(os.environ.get("MAX_HISTORY_MESSAGES", 8))
 
 REGISTRO_ADULTO = (
@@ -370,6 +373,17 @@ def build_system_prompt(character, emotion, relationship, personality, world_sta
                     righe.append("ESEMPIO DI SCAMBIO (imita il ritmo, non copiare le parole):")
                     righe.append(f"Utente: {_domanda}")
                     righe.append("Tu: " + _scelta)
+            except Exception:
+                pass
+        # lessico in fondo: è l'ultima cosa che il modello legge prima di scrivere
+        if os.environ.get("LESSICO_INIETTATO", "1") == "1":
+            try:
+                _voci = _lingua.lessico_pertinente(
+                    user_text, history, user_id or 0, character.get("id", ""), total_messages or 0, 2)
+                if _voci:
+                    logger.info("LESSICO INIETTATO: %s", _voci)
+                    righe.append("LESSICO (se ci sta, usa una di queste parole, senza elencarle): "
+                                 + " · ".join(_voci))
             except Exception:
                 pass
         righe.append("REGOLA D'ORO: se c'è una domanda, senza la risposta nella prima frase la risposta è sbagliata.")

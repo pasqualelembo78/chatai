@@ -12,10 +12,10 @@
   "termine": "accoppiamento",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "unione in coppia di oggetti o di individui",
+  "senso": "incontro tra due organismi di sesso opposto o ermafroditi a fine riproduttivo",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "adirarsi",
@@ -57,7 +57,7 @@
   "termine": "adulterio",
   "gruppo": "erotico",
   "registro": "colloquiale",
-  "senso": "tradimento del coniuge",
+  "senso": "relazione extraconiugale",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -66,7 +66,7 @@
   "termine": "adultero",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "relativo all'adulterio",
+  "senso": "che ha commesso adulterio",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -93,7 +93,16 @@
   "termine": "amante",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che ama qualcosa o qualcuno ~~ se mio marito sapesse che ho un amante...",
+  "senso": "chi è coinvolto in una relazione affettiva extraconiugale ~~ se mio marito sapesse che ho un amante...",
+  "fonte": "wiktionary-sessualita",
+  "esito": "scarto",
+  "motivo": "definizione non sessuale"
+ },
+ {
+  "termine": "amare",
+  "gruppo": "erotico",
+  "registro": "tecnico",
+  "senso": "provare forte attrazione emotiva e fisica nei confronti di qualcuno ~~ si amano tanto l'un con l'altra con il loro timore anche per abbandonarsi più tempo",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -102,7 +111,7 @@
   "termine": "amazzone",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "ciascuna delle abitanti di un favoloso regno del Mar Nero meridionale, dominato dalle donne, e dal quale gli uomini eran",
+  "senso": "smorzacandela",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -126,6 +135,15 @@
   "motivo": "fuori contesto"
  },
  {
+  "termine": "ammucchiata",
+  "gruppo": "erotico",
+  "registro": "tecnico",
+  "senso": "rapporto sessuale di gruppo",
+  "fonte": "wiktionary-sessualita",
+  "esito": "utile",
+  "motivo": ""
+ },
+ {
   "termine": "amore",
   "gruppo": "erotico",
   "registro": "colloquiale",
@@ -138,10 +156,10 @@
   "termine": "amplesso",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "abbraccio",
+  "senso": "accoppiamento sessuale",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "anale",
@@ -156,7 +174,7 @@
   "termine": "androgino",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che è provvisto di organi di entrambi i sessi",
+  "senso": "che presenta tratti somatici e comportamentali di entrambi i sessi",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -207,6 +225,15 @@
   "motivo": "definizione non sessuale"
  },
  {
+  "termine": "arrapante",
+  "gruppo": "erotico",
+  "registro": "volgare",
+  "senso": "cosa eccitante, che stimola sessualmente",
+  "fonte": "wiktionary-volgari",
+  "esito": "utile",
+  "motivo": ""
+ },
+ {
   "termine": "arrapare",
   "gruppo": "erotico",
   "registro": "volgare",
@@ -225,10 +252,19 @@
   "motivo": "scelta a mano"
  },
  {
+  "termine": "asessuale",
+  "gruppo": "erotico",
+  "registro": "tecnico",
+  "senso": "privo di qualsiasi richiamo alla sessualità",
+  "fonte": "wiktionary-sessualita",
+  "esito": "utile",
+  "motivo": ""
+ },
+ {
   "termine": "attrazione",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "forza in grado di unire due corpi",
+  "senso": "desiderio emotivo e fisico di un essere umano nei confronti di un altro",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -264,7 +300,7 @@
   "termine": "bastardo",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "spurio, impuro, degenerato, illegittimo, illegale",
+  "senso": "riferito a persona, odioso, mulatto",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -282,10 +318,10 @@
   "termine": "bazzotto",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "attributo di un uovo cotto col guscio a metà tra l'uovo sodo e alla coque, né tenero né sodo ~~ asparagi bazzotti",
+  "senso": "del pene: parzialmente eretto ~~ asparagi bazzotti",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "bellezza",
@@ -300,25 +336,25 @@
   "termine": "bischero",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "chiavetta, piccola asta che regola la tensione delle corde per mezzo di rotazioni",
+  "senso": "pene",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione troppo corta"
  },
  {
   "termine": "bisessualità",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "compresenza in un fiore di organi maschili e femminili",
+  "senso": "condizione propria di chi prova attrazione emotiva e fisica nei confronti di persone sia dell'altro sesso che del propri",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
  },
  {
   "termine": "bocchino",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "diminutivo e  vezzeggiativo di bocca",
+  "senso": "sesso orale",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": "scelta a mano"
@@ -327,7 +363,7 @@
   "termine": "bombare",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "bere vino o alcolici in maniera smodata ed eccessiva ~~ quando ti prende di bombar la voglia",
+  "senso": "fare sesso ~~ quando ti prende di bombar la voglia",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": ""
@@ -363,7 +399,7 @@
   "termine": "buggerare",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "ingannare",
+  "senso": "sottoporre qualcuno a rapporto sessuale rettale",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": ""
@@ -372,10 +408,10 @@
   "termine": "cacca",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "escremento di una persona ~~ Ha fatto la cacca!",
+  "senso": "* ''Ha fatto la '''cacca'''!'' ~~ Ha fatto la cacca!",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "cagare",
@@ -399,7 +435,7 @@
   "termine": "cagna",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "femmina del cane",
+  "senso": "sciarrano, capopiatto",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -408,7 +444,7 @@
   "termine": "camionista",
   "gruppo": "erotico",
   "registro": "colloquiale",
-  "senso": "chi trasporta merci per conto di terzi con un autocarro ~~ ti stai comportando come un camionista",
+  "senso": "donna omosessuale con aspetto e modi di fare associati a quelli maschili ~~ ti stai comportando come un camionista",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "avverbio o etichetta, non parola d'uso"
@@ -435,10 +471,10 @@
   "termine": "carriola",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "piccolo carro munito di una ruota che viene, di solito spinto, con le  due mani",
+  "senso": "posizione sessuale caratteristica nella specie umana, dove il maschio viene avvolto dalla femmina con gli arti inferiori",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
  },
  {
   "termine": "caspita",
@@ -453,7 +489,7 @@
   "termine": "castagna",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "frutto del castagno, prettamente autunnale, possibile cottura tramite lessatura e arrostitura, cresce su alberi che poss ~~ castagna d'India: frutto dell'ippocastano",
+  "senso": "meccanismo atto ad impedire il movimento all'indietro di un argano ~~ castagna d'India: frutto dell'ippocastano",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -471,16 +507,16 @@
   "termine": "cazzata",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "azione o discorso stupido ~~ ha fatto una cazzata",
+  "senso": "* ''ha fatto una cazzata'' ~~ ha fatto una cazzata",
   "fonte": "wiktionary-volgari",
-  "esito": "utile",
-  "motivo": ""
+  "esito": "scarto",
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "cazzo",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "interiezione usata per esprimere sorpresa o rabbia ~~ cazzo, ho mancato il bersaglio!",
+  "senso": "pene ~~ cazzo, ho mancato il bersaglio!",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": "scelta a mano"
@@ -498,7 +534,7 @@
   "termine": "celibato",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "condizione propria di un uomo non sposato",
+  "senso": "condizione propria di chi non ha contratto matrimonio",
   "fonte": "wiktionary-sessualita",
   "esito": "utile",
   "motivo": ""
@@ -507,16 +543,16 @@
   "termine": "celibe",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "di uomo non sposato ~~ stato celibe, di un uomo non sposato",
+  "senso": "di persona di sesso femminile che non è maritata; nubile ~~ stato celibe, di un uomo non sposato",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "censura",
   "gruppo": "erotico",
   "registro": "colloquiale",
-  "senso": "controllo compiuto da un'autorità su opere da pubblicare o da rappresentare o su altre espressioni sotto diverse forme d ~~ la censura fatta al loro quotidiano ebbe come conseguenza uno sciopero",
+  "senso": "divieto di oscenità ~~ la censura fatta al loro quotidiano ebbe come conseguenza uno sciopero",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -543,10 +579,10 @@
   "termine": "che merda",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "esclamazione di disgusto ~~ Quello sarebbe il mare? Che merda!",
+  "senso": "* ''L'hai fatto davvero? '''Che merda'''!'' ~~ Quello sarebbe il mare? Che merda!",
   "fonte": "wiktionary-volgari",
-  "esito": "utile",
-  "motivo": ""
+  "esito": "scarto",
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "che palle",
@@ -579,10 +615,10 @@
   "termine": "chiavare",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "inchiodare, trafiggere con chiodi",
+  "senso": "fare sesso",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "chiavata",
@@ -615,7 +651,16 @@
   "termine": "confusione",
   "gruppo": "erotico",
   "registro": "colloquiale",
-  "senso": "raduno o suddivisione di elementi senza un principio razionale ~~ hanno fatto una confusione nei documenti...",
+  "senso": "* ''hanno fatto una confusione nei documenti...'' ~~ hanno fatto una confusione nei documenti...",
+  "fonte": "wiktionary-sessualita",
+  "esito": "scarto",
+  "motivo": "residuo di markdown"
+ },
+ {
+  "termine": "coniglietta",
+  "gruppo": "erotico",
+  "registro": "colloquiale",
+  "senso": "ragazza vestita di un succinto costume che richiama l'aspetto del coniglio, generalmente addetta a incarichi di servizio",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -633,7 +678,7 @@
   "termine": "convivenza",
   "gruppo": "erotico",
   "registro": "colloquiale",
-  "senso": "vita in comune",
+  "senso": "coabitazione di due persone unite affettivamente l'una con l'altra, non legittimata dal matrimonio",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -642,7 +687,7 @@
   "termine": "convivere",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "vivere con qualcuno",
+  "senso": "coabitare affettivamente con un'altra persona senza matrimonio",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -660,19 +705,19 @@
   "termine": "copula",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "verbo che fa identificare un soggetto con una parte nominale",
+  "senso": "rapporto sessuale",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "copulare",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "unire, mettere insieme a coppie ~~ movea l'accorta e diligente mano per copular sotto ingegnoso innesto a virgulto gentil germe villano",
+  "senso": "* ''son venuto (...) con auspici di '''copular''' un mio figlio in matrimonio'' ~~ movea l'accorta e diligente mano per copular sotto ingegnoso innesto a virgulto gentil germe villano",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "corbello",
@@ -693,10 +738,19 @@
   "motivo": "definizione non sessuale"
  },
  {
+  "termine": "corte",
+  "gruppo": "erotico",
+  "registro": "tecnico",
+  "senso": "insieme di edifici e ville che caratterizzavano il medioevo, dove il signore soggiornava e metteva in atto funzioni di c ~~ il teatro di corte; poeta di corte",
+  "fonte": "wiktionary-sessualita",
+  "esito": "scarto",
+  "motivo": "definizione non sessuale"
+ },
+ {
   "termine": "corteggiare",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "~~ vidi il duca che era  intento a corteggiare una nobildonna",
+  "senso": "cercare di attirare l'interesse di una persona, con complimenti o attenzioni, allo scopo di avere una relazione sentimen ~~ vidi il duca che era  intento a corteggiare una nobildonna",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -741,7 +795,7 @@
   "termine": "culo",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "fondoschiena ~~ culo di bottiglia",
+  "senso": "omosessuale ~~ culo di bottiglia",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": "scelta a mano"
@@ -759,10 +813,10 @@
   "termine": "dare",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "quello che si deve consegnare ~~ bisogna dare una mano di bianco a questi muri",
+  "senso": "nella forma ''darla'' (femmina) o ''darlo'' (maschio): acconsentire a un rapporto sessuale ~~ bisogna dare una mano di bianco a questi muri",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "deflorare",
@@ -795,7 +849,7 @@
   "termine": "discinto",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "vestito senza cintura, in particolare presso i latini la tunica senza cintura indicava trascuratezza",
+  "senso": "se riferito ad una persona, poco vestito",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -840,7 +894,7 @@
   "termine": "eccitante",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che eccita",
+  "senso": "che attira così fortemente da procurare turbamento",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -849,10 +903,10 @@
   "termine": "eccitare",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "mettere in eccitazione",
+  "senso": "rendere un animale in grado di avere desiderio di contatto sessuale",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "effeminatezza",
@@ -894,7 +948,7 @@
   "termine": "equilibrato",
   "gruppo": "erotico",
   "registro": "colloquiale",
-  "senso": "che è bilanciato",
+  "senso": "in grado di gestire in modo corretto una propria famiglia legalmente riconosciuta, talvolta figliolanza",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -957,10 +1011,10 @@
   "termine": "esibizionismo",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "atteggiamento di chi vuol apparire",
+  "senso": "impulso patologico a mostrare i propri caratteri sessuali",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "espressione di genere",
@@ -1011,10 +1065,10 @@
   "termine": "fare",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "l'operare per realizzare qualcosa ~~ il fare è più importante del dire",
+  "senso": "* '''''ho fatto''' una casa con il Lego'' ~~ il fare è più importante del dire",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "fare cagare",
@@ -1074,7 +1128,7 @@
   "termine": "fare marcia indietro",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "rinunciare ad un progetto",
+  "senso": "estrarre il pene dalla vagina prima dell'eiaculazione",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": ""
@@ -1119,16 +1173,16 @@
   "termine": "fascino",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "malia, maleficio",
+  "senso": "esercizio consapevole o meno del proprio potere di attrazione affettiva e sessuale",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "fatale",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che é frutto del destino ~~ s'incrociarono sul treno, fu un incontro fatale",
+  "senso": "(di) persona, specie donna, che col suo fascino può destare passioni improvvise e violente ~~ s'incrociarono sul treno, fu un incontro fatale",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -1137,10 +1191,10 @@
   "termine": "fava",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "pianta erbacea appartenente alla famiglia delle leguminose papiglionacee, con fusto eretto, foglie pennate, fiori bianch",
+  "senso": "pene",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione troppo corta"
  },
  {
   "termine": "feci",
@@ -1164,10 +1218,10 @@
   "termine": "femmina",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "congegno forato nel quale se ne innesta un altro ~~ dammi  per favore la spina femmina",
+  "senso": "di sesso femminile ~~ dammi  per favore la spina femmina",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "femminilità",
@@ -1218,7 +1272,7 @@
   "termine": "feticismo",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "in alcune religioni primitive, attribuzione di natura divina ad oggetti materiali ~~ feticismo di travestimento: ricerca di soddisfazione affettiva e sessuale con l'uso di indumenti associati al sesso opposto",
+  "senso": "interesse affettivo e sessuale anomalo, riguardante solo parti del corpo, vestiti o figure inanimate ~~ feticismo di travestimento: ricerca di soddisfazione affettiva e sessuale con l'uso di indumenti associati al sesso opposto",
   "fonte": "wiktionary-sessualita",
   "esito": "utile",
   "motivo": ""
@@ -1227,7 +1281,7 @@
   "termine": "fica",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "frutto del fico",
+  "senso": "organo genitale femminile, vulva",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": "scelta a mano"
@@ -1236,10 +1290,10 @@
   "termine": "fico",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "molto bello, alla moda, di successo ~~ che zaino fico!",
+  "senso": "* ''con maggiore sollecitudine rispetto alle altre coltivazioni, i '''fichi''' devono assolutamente essere colti al mome ~~ che zaino fico!",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "fidanzamento",
@@ -1267,6 +1321,15 @@
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
+ },
+ {
+  "termine": "figa",
+  "gruppo": "erotico",
+  "registro": "volgare",
+  "senso": "vagina",
+  "fonte": "wiktionary-volgari",
+  "esito": "utile",
+  "motivo": "scelta a mano"
  },
  {
   "termine": "figlio di puttana",
@@ -1299,10 +1362,10 @@
   "termine": "finocchio",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "pianta mediterranea dela famiglia delle Ombrellifere, del genere Finocchio (''Foeniculum vulgare'')",
+  "senso": "omosessuale",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "residuo di markdown"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "flatulenza",
@@ -1407,7 +1470,7 @@
   "termine": "genere",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "gruppo di oggetti o persone con caratteristiche affini ~~ genere alimentare, generi di largo consumo",
+  "senso": "insieme di prerogative tipicamente collegate con la rappresentazione sociale dell'identità maschile e femminile, in cont ~~ genere alimentare, generi di largo consumo",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -1416,28 +1479,37 @@
   "termine": "gigolò",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "uomo che si fa mantenere da una donna anziana",
+  "senso": "uomo che offre prestazioni sessuali in cambio di denaro",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "giravolta",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "rotazione di un corpo intorno al proprio asse",
+  "senso": "posizione sessuale caratteristica nella specie umana, dove il maschio si pone in piedi e viene frontalmente avvolto dall",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
+ },
+ {
+  "termine": "gnocca",
+  "gruppo": "erotico",
+  "registro": "volgare",
+  "senso": "vagina",
+  "fonte": "wiktionary-volgari",
+  "esito": "scarto",
+  "motivo": "definizione troppo corta"
  },
  {
   "termine": "granchio",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "animale acquatico appartenente ai crostacei dotato di chele e guscio a forma di trapezio",
+  "senso": "posizione sessuale caratteristica nella specie umana, dove la femmina si pone sopra il maschio supino, ma col torace riv",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
  },
  {
   "termine": "gretto",
@@ -1470,16 +1542,16 @@
   "termine": "impalare",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "sottoporre all'impalamento",
+  "senso": "sottoporre a rapporto sessuale anale",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "impotenza",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "mancanza di capacità",
+  "senso": "incapacità di un organo di svolgere le proprie funzioni",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -1596,7 +1668,7 @@
   "termine": "lesbico",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "di Lesbo",
+  "senso": "inerente al lesbismo",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -1614,10 +1686,10 @@
   "termine": "liaison",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "legame",
+  "senso": "unione sentimentale che va oltre il concetto stesso di amore",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione troppo corta"
+  "motivo": "definizione non sessuale"
  },
  {
   "termine": "libidine",
@@ -1641,16 +1713,16 @@
   "termine": "libido",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "insieme di pulsioni fondamentali di un individuo",
+  "senso": "desiderio sessuale tra uomo e donna",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "loto",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "nome generico dato a varie specie di piante terrestri, alcune delle quali coltivate a scopo ornamentale",
+  "senso": "il frutto di tale pianta, di color giallo-arancione e dalla polpa molto dolce, di stagione attorno a novembre",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -1717,6 +1789,15 @@
   "fonte": "parliamoitaliano-espressioni",
   "esito": "utile",
   "motivo": ""
+ },
+ {
+  "termine": "marcia",
+  "gruppo": "erotico",
+  "registro": "volgare",
+  "senso": "specialità atletica olimpica caratterizzata da un contatto continuo dei piedi sul terreno ~~ la marcia, la bicicletta e il nuoto sono sport adatti a prevenire l'infaro",
+  "fonte": "wiktionary-volgari",
+  "esito": "scarto",
+  "motivo": "definizione non sessuale"
  },
  {
   "termine": "marrone",
@@ -1794,7 +1875,7 @@
   "termine": "matrimonio",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "legittimazione, da parte di una donna, dell'unione affettiva con un uomo e della futura condizione di madre ~~ matrimonio eterosessuale, tra un uomo e una donna",
+  "senso": "istituto giuridico o religioso con cui si conferisce forma legale o sacra all'unione fisica e spirituale di una persona  ~~ matrimonio eterosessuale, tra un uomo e una donna",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "scartata a mano"
@@ -1839,10 +1920,10 @@
   "termine": "missionario",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "~~ missionario al contrario, dove la femmina si pone prona sul maschio supino, molto spesso faccia a faccia",
+  "senso": "posizione sessuale caratteristica nella specie umana, dove il maschio si pone prono sulla femmina supina ~~ missionario al contrario, dove la femmina si pone prona sul maschio supino, molto spesso faccia a faccia",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "mulo",
@@ -1857,10 +1938,10 @@
   "termine": "nero",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "scuro, spesso per correlazione qualitativa ~~ caffè nero, senza latte",
+  "senso": "* ''un gatto nero'' ~~ caffè nero, senza latte",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "ninfomane",
@@ -1884,7 +1965,7 @@
   "termine": "nubile",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "di donna non sposata",
+  "senso": "donna non sposata",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -1938,7 +2019,7 @@
   "termine": "orgia",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "antica festa in onore del dio Dioniso o Bacco, nota per la particolare licenziosità e sfrenatezza; baccanale",
+  "senso": "tipologia di rapporto sessuale che si può definire \"di gruppo\", ossia che si contraddistingue per la presenza di più di",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "scartata a mano"
@@ -2010,10 +2091,10 @@
   "termine": "palo",
   "gruppo": "erotico",
   "registro": "colloquiale",
-  "senso": "grosso bastone di legno dritto e verticale sul quale ci si può arrampicare",
+  "senso": "posizione sessuale caratteristica nella specie umana, dove il maschio si pone seduto su una sedia o su un oggetto simile",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
  },
  {
   "termine": "pansessualismo",
@@ -2091,10 +2172,10 @@
   "termine": "penetrazione",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "azione di entrare con forza",
+  "senso": "introduzione dell'organo sessuale maschile in quello femminile o in uno sbocco dell'apparato digerente",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "pere",
@@ -2106,19 +2187,28 @@
   "motivo": ""
  },
  {
+  "termine": "peripatetica",
+  "gruppo": "erotico",
+  "registro": "volgare",
+  "senso": "donna che offre prestazioni sessuali a pagamento",
+  "fonte": "wiktionary-volgari",
+  "esito": "utile",
+  "motivo": ""
+ },
+ {
   "termine": "perversione",
   "gruppo": "erotico",
   "registro": "colloquiale",
-  "senso": "ideazione e perseguimento di comportamenti distorti rispetto al senso comune ~~ perversione sessuale: ricerca del piacere sessuale da oggetti inanimati o viventi lontani da quelli ordinari",
+  "senso": "* '''perversione sessuale''': ricerca del piacere sessuale da oggetti inanimati o viventi lontani da quelli ordinari ~~ perversione sessuale: ricerca del piacere sessuale da oggetti inanimati o viventi lontani da quelli ordinari",
   "fonte": "wiktionary-sessualita",
-  "esito": "utile",
-  "motivo": ""
+  "esito": "scarto",
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "perverso",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che è propenso a gesti malvagi",
+  "senso": "chi compie azioni riprovevoli ed eticamente nonché moralmente non condivise dalla maggioranza delle persone",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -2145,7 +2235,7 @@
   "termine": "piantagrane",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "che per smodata scrupolosità, provoca difficoltà di ogni genere",
+  "senso": "che non è mai soddisfatto, oltremodo negativo",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -2226,10 +2316,10 @@
   "termine": "pisello",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "di colore verde pallido",
+  "senso": "organo sessuale maschile",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "playboy",
@@ -2253,7 +2343,7 @@
   "termine": "pompino",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "diminutivo di pompa",
+  "senso": "l'atto del succhiare il pene ad un uomo",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": "scelta a mano"
@@ -2340,22 +2430,31 @@
   "motivo": "definizione non sessuale"
  },
  {
+  "termine": "preliminari",
+  "gruppo": "erotico",
+  "registro": "tecnico",
+  "senso": "atti sessuali preparativi al coito",
+  "fonte": "wiktionary-sessualita",
+  "esito": "utile",
+  "motivo": ""
+ },
+ {
   "termine": "profilattico",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "concernente la profilassi, eseguito con un intento cautelativo",
+  "senso": "contraccettivo di uso maschile, solitamente in lattice, costituito da un involucro da applicare al pene prima dell'atto",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
  },
  {
   "termine": "promiscuità",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "concomitanza di elementi diversi",
+  "senso": "consumazione di rapporti sessuali occasionali con partner diversi",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "prostituto",
@@ -2433,10 +2532,10 @@
   "termine": "puttanata",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "affermazione oppure azione sconsiderata, sciocca, pericolosa o priva di senso ~~ guidare ubriachi è proprio una puttanata;",
+  "senso": "* ''ti credevo un amico, e invece m'hai fatto una '''puttanata'''''; ~~ guidare ubriachi è proprio una puttanata;",
   "fonte": "wiktionary-volgari",
-  "esito": "utile",
-  "motivo": ""
+  "esito": "scarto",
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "puttaniere",
@@ -2451,19 +2550,19 @@
   "termine": "quadrupede",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "di vertebrato con  quattro zampe",
+  "senso": "posizione sessuale caratteristica in tutti gli esseri viventi superiori, dove il partecipante passivo si pone in avanti",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
  },
  {
   "termine": "raspa",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "Utensile a mano, rastremato verso la punta e munito di denti, più grossi e rialzati che nelle lime (al cui gruppo appart",
+  "senso": "atto di masturbazione maschile",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "rimanere inculati",
@@ -2631,7 +2730,7 @@
   "termine": "scopare",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "pulire con una scopa",
+  "senso": "fare sesso con qualcuno",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": "scelta a mano"
@@ -2640,10 +2739,10 @@
   "termine": "scopata",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "l'azione di scopare, ovvero spazzare il pavimento con la scopa ~~ fare/farsi una scopata",
+  "senso": "atto sessuale ~~ fare/farsi una scopata",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "scopatore",
@@ -2721,7 +2820,16 @@
   "termine": "seduttore",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che seduce ~~ fu incantata da un affascinante seduttore",
+  "senso": "chi seduce ~~ fu incantata da un affascinante seduttore",
+  "fonte": "wiktionary-sessualita",
+  "esito": "scarto",
+  "motivo": "definizione non sessuale"
+ },
+ {
+  "termine": "seduttrice",
+  "gruppo": "erotico",
+  "registro": "tecnico",
+  "senso": "donna in grado di sedurre",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -2730,7 +2838,7 @@
   "termine": "sega",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "attrezzo a lama dentata utilizzato per il taglio (segare) di legno, metalli o altri materiali; sega a nastro, sega circo ~~ Si è fatto una sega guardando un film porno.",
+  "senso": "* ''Si è fatto una sega guardando un film porno.'' ~~ Si è fatto una sega guardando un film porno.",
   "fonte": "wiktionary-volgari",
   "esito": "utile",
   "motivo": "scelta a mano"
@@ -2757,10 +2865,10 @@
   "termine": "sensuale",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che riguarda i sensi",
+  "senso": "che si riferisce alla sessualità come appagamento del desiderio sessuale",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "sensualità",
@@ -2880,6 +2988,15 @@
   "motivo": ""
  },
  {
+  "termine": "sforbiciata",
+  "gruppo": "erotico",
+  "registro": "tecnico",
+  "senso": "strofinamento reciproco dei genitali esterni, tipico dell'omosessualità femminile",
+  "fonte": "wiktionary-sessualita",
+  "esito": "utile",
+  "motivo": ""
+ },
+ {
   "termine": "sfortunato",
   "gruppo": "erotico",
   "registro": "volgare",
@@ -2916,6 +3033,15 @@
   "motivo": ""
  },
  {
+  "termine": "sodomitico",
+  "gruppo": "erotico",
+  "registro": "tecnico",
+  "senso": "che riguarda un rapporto sessuale anale",
+  "fonte": "wiktionary-sessualita",
+  "esito": "utile",
+  "motivo": ""
+ },
+ {
   "termine": "sodomizzare",
   "gruppo": "erotico",
   "registro": "tecnico",
@@ -2941,6 +3067,15 @@
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
   "motivo": "definizione troppo corta"
+ },
+ {
+  "termine": "spagnola",
+  "gruppo": "erotico",
+  "registro": "volgare",
+  "senso": "rapporto sessuale che consiste nello strofinamento del pene col seno ~~ esattamente un secolo fa l'influenza spagnola uccideva circa cinquanta milioni di persone",
+  "fonte": "wiktionary-volgari",
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "spompinare",
@@ -2991,10 +3126,10 @@
   "termine": "stronzata",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "affermazione o azione insensata, falsa o scorretta ~~ Smettila di sparare stronzate.",
+  "senso": "* ''Ho proprio fatto una stronzata'' ~~ Smettila di sparare stronzate.",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "stronzo",
@@ -3081,19 +3216,19 @@
   "termine": "topa",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "la femmina del topo",
+  "senso": "vagina",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione troppo corta"
  },
  {
   "termine": "toro",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "maschio fecondo dei bovini ~~ il toro è un ruminante",
+  "senso": "posizione sessuale caratteristica nella specie umana, dove la femmina si pone sopra il maschio supino, appoggiando però  ~~ il toro è un ruminante",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "trans",
@@ -3108,19 +3243,19 @@
   "termine": "transizione",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "periodo di cambiamenti  storici e culturali",
+  "senso": "percorso che porta un individuo a smettere di vivere il ruolo di genere relativo al sesso biologico di appartenenza per",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
  },
  {
   "termine": "trapanare",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "bucare con il trapano",
+  "senso": "possedere sessualmente",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "trasgredire",
@@ -3135,10 +3270,10 @@
   "termine": "travestito",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "vestito in modo tale da non essere riconosciuto ~~ quel gelataio era un poliziotto  travestito",
+  "senso": "chi fa uso a volte di abiti, acconciature e modi di fare tipici del sesso opposto ~~ quel gelataio era un poliziotto  travestito",
   "fonte": "wiktionary-volgari",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "tribade",
@@ -3207,10 +3342,10 @@
   "termine": "uccello",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "nome comune della classe Uccelli dei Vertebrati. In genere sono coperti di piume, camminano sui due arti posteriori e ha",
+  "senso": "pene",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione troppo corta"
  },
  {
   "termine": "unicorni",
@@ -3288,7 +3423,7 @@
   "termine": "venereo",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "inerente a Venere",
+  "senso": "che riguarda l'amore fisico",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
   "motivo": "definizione non sessuale"
@@ -3333,10 +3468,10 @@
   "termine": "vibratore",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "apparecchiatura in grado di generare vibrazioni, solitamente composto da un motore elettrico ed una massa eccentrica, la",
+  "senso": "stimolatore erotico solitamente di forma fallica, le cui vibrazioni, prodotte mediante un piccolo motore, vengono usate",
   "fonte": "wiktionary-sessualita",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "definizione lunga senza esempio"
  },
  {
   "termine": "virago",
@@ -3369,10 +3504,10 @@
   "termine": "vite",
   "gruppo": "erotico",
   "registro": "volgare",
-  "senso": "arbusto coltivato per le sue bacche succose a grappolo, l'uva, e quindi per il vino",
+  "senso": "'''''vite''' senza fine'': elemento meccanico di movimento funzionante mediante l'accoppiamento con un organo a filettat",
   "fonte": "wiktionary-volgari",
   "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "motivo": "residuo di markdown"
  },
  {
   "termine": "vizietto",
@@ -3387,10 +3522,10 @@
   "termine": "voglioso",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che ha voglia di qualcosa",
+  "senso": "sessualmente incontenibile",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "voyeurismo",
@@ -3450,18 +3585,18 @@
   "termine": "zoofilia",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "attrazione per gli animali",
+  "senso": "attrazione sessuale patologica per gli animali",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  },
  {
   "termine": "zoofilo",
   "gruppo": "erotico",
   "registro": "tecnico",
-  "senso": "che prova attrazione per gli animali",
+  "senso": "che presenta attrazione sessuale patologica per gli animali",
   "fonte": "wiktionary-sessualita",
-  "esito": "scarto",
-  "motivo": "definizione non sessuale"
+  "esito": "utile",
+  "motivo": ""
  }
 ]
