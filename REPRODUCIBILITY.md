@@ -1076,3 +1076,13 @@ Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 
   quattro famiglie ora rispondono 301.
 - Vhost salvato nel backup come `etc/apache2/sites-available/pornovirtuale-le-ssl.conf` (build_app
   non lo gestisce: senza il file nel zip, un ripristino perderebbe le regole).
+
+## 85) Link interni controllati e unico 404 chiuso (2026-11-05)
+- `controlla_link.py`: legge le 111 pagine delle sitemap, estrae i link interni (3.611 distinti) e
+  li verifica in parallelo. Unico rotto: `/dmca/`, linkata dal footer di tutte le pagine ma
+  inesistente da sempre.
+- Creata la pagina "DMCA e segnalazioni" (ID 3299, pubblicata) con procedura di segnalazione,
+  tempi di rimozione e nota che i personaggi sono inventati. Permessi: reso 200, rewrite riflush.
+- Ricontrollo: **0 link interni rotti** su 3.611.
+- Nota: le pagine chiave non hanno **nessun link esterno**. Non è un errore, ma un'occasione mancata
+  (i link in uscita verso fonti incredule aumentano l'affidabilità percepita).
