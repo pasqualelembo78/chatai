@@ -1117,3 +1117,7 @@ Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 
 - Difetto trovato: `wp post update` non faceva passare il contenuto dal filtro di salvataggio, quindi
   il rel non veniva scritto. Normalizzati i contenuti con una passata diretta (52 articoli) e
   verificato che le pagine pubbliche servano `rel="nofollow noopener"`.
+- Aggiunte anche `^/autorefresh/?$` e `^/gallery(/.*)?$` (dalla lista di Search Console), verificate.
+- Prova su 150 URL vecchi presi dai log: **149 → 200, 1 → 404** (`/videos/.git/config`, file di sviluppo).
+- Verificati anche i casi non coperti da prefisso: `/page/184` e `/page/322` sono paginazioni reali e
+  danno 200; `/stanze-live/` e `/dmca/` 200 (il 301 che si vede è solo il www → senza www).
