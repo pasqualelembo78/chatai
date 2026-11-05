@@ -1121,3 +1121,6 @@ Verifiche: 40/40 casi verdi; 6 turni reali con 0,08 di sovrapposizione massima, 
 - Prova su 150 URL vecchi presi dai log: **149 → 200, 1 → 404** (`/videos/.git/config`, file di sviluppo).
 - Verificati anche i casi non coperti da prefisso: `/page/184` e `/page/322` sono paginazioni reali e
   danno 200; `/stanze-live/` e `/dmca/` 200 (il 301 che si vede è solo il www → senza www).
+- Terza lista (altre ~500 URL): trovati tre casi fuori schema, `/governance`, i percorsi numerici
+  tipo `/309/` e i vecchi `/stanze/…` (plurale, distinto da `/stanza/`). Aggiunte tre regole.
+  Prova su 250 URL dei tipi presenti nella lista: **250 su 250 in 200**.
